@@ -1,119 +1,142 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SINEPUB - Sindicato del HUV</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="widget.js" defer></script>
-</head>
-<body>
-    <!-- Encabezado -->
-    <header>
-        <div class="container">
-            <div class="logo">
-                <img src="images/logo.png" alt="SINEPUB Logo">
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>SINEPUB - Sindicato del HUV</title>
+        <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+        <script src="widget.js" defer></script>
+    </head>
+    <body>
+        <!-- Encabezado -->
+        <header>
+            <div class="container">
+                <div class="logo">
+                    <img src="images/logo.png" alt="SINEPUB Logo">
+                </div>
+                <nav>
+                    <ul>
+                        <li>
+                            <a href="#" class="dropdown-toggle">Nosotros</a>
+                            <div class="dropdown-menu">
+                                <h2>Nosotros</h2>
+                                <p>El Sindicato de Trabajadores del Hospital Universitario del Valle Evaristo García (SINEPUB) es una organización comprometida con la defensa de los derechos laborales y el bienestar de nuestros afiliados.</p>
+                                <p>Nuestra misión es proteger y promover los intereses de nuestros afiliados, mejorar sus condiciones de trabajo y contribuir al desarrollo del Hospital Universitario del Valle.</p>
+                                <p>Nuestra visión es ser una organización sindical líder y respetada, que defienda los derechos de los trabajadores y contribuya al bienestar de la comunidad.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <a href="#" class="dropdown-toggle">Afiliación</a>
+                            <div class="dropdown-menu">
+                                <h2>Afiliación</h2>
+                                <p>Forma parte de nuestra comunidad sindical. Al afiliarte, podrás acceder a múltiples beneficios y ser parte del cambio.</p>
+                                <p>Algunos de los beneficios de la afiliación incluyen:</p>
+                                <ul>
+                                    <li>Defensa de tus derechos laborales</li>
+                                    <li>Acceso a capacitaciones y entrenamientos</li>
+                                    <li>Participación en la toma de decisiones del sindicato</li>
+                                    <li>Acceso a servicios de asesoría y consultoría</li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li>
+                            <a href="#" class="dropdown-toggle">Noticias</a>
+                            <div class="dropdown-menu">
+                                <h2>Noticias</h2>
+                                <div class="noticias-grid">
+                                    <article>
+                                        <img src="noticia1.jpg" alt="Noticia 1">
+                                        <h3>Título de la noticia 1</h3>
+                                        <p>Resumen breve de la noticia 1...</p>
+                                    </article>
+                                    <article>
+                                        <img src="noticia2.jpg" alt="Noticia 2">
+                                        <h3>Título de la noticia 2</h3>
+                                        <p>Resumen breve de la noticia 2...</p>
+                                    </article>
+                                    <article>
+                                        <img src="noticia3.jpg" alt="Noticia 3">
+                                        <h3>Título de la noticia 3</h3>
+                                        <p>Resumen breve de la noticia 3...</p>
+                                    </article>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="dropdown-izquierda">
+                            <a href="#" class="dropdown-toggle">Contacto</a>
+                            <div class="dropdown-menu">
+                                <h2>Contacto</h2>
+                                <p>¿Tienes dudas o necesitas más información? Contáctanos:</p>
+                                <ul>
+                                    <li>Teléfono: +57 123 456 7890</li>
+                                    <li>Email: sinepubunionsindical@gmail.com</li>
+                                    <li>Dirección: Calle 123, Cali, Colombia</li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="dropdown-izquierda">
+                            <a href="#" class="dropdown-toggle">Estatutos</a>
+                            <div class="dropdown-menu">
+                                <h2>Estatutos</h2>
+                                <p>Los estatutos del Sindicato de Trabajadores del Hospital Universitario del Valle Evaristo García (SINEPUB) establecen las normas y procedimientos para la organización y funcionamiento del sindicato.</p>
+                                <p>Puedes descargar una copia de los estatutos <a href="estatutos.pdf">aquí</a>.</p>
+                            </div>
+                        </li>
+                        <li class="dropdown-izquierda">
+                            <a href="#" class="dropdown-toggle">Junta Directiva</a>
+                            <div class="dropdown-menu">
+                                <h2>Junta Directiva</h2>
+                                <p>La Junta Directiva del Sindicato de Trabajadores del Hospital Universitario del Valle Evaristo García (SINEPUB) es el órgano de gobierno del sindicato.</p>
+                                <p>La Junta Directiva está compuesta por:</p>
+                                <ul>
+                                    <li>Presidente: Jenny Patricia Ricaurte Zuluaga</li>
+                                    <li>Vicepresidente: Luis Fernando Van Pacheco Agredo</li>
+                                    <li>Secretario: Leydy Yohanna González Ulloa</li>
+                                    <li>Tesorero: María Fernanda Morales Valdés</li>
+                                    <li>Fiscal: Edith Medina Conde</li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
             </div>
-            <nav>
-                <ul>
-                    <li><a href="#inicio">Inicio</a></li>
-                    <li><a href="#nosotros">Nosotros</a></li>
-                    <li><a href="#afiliacion">Afiliación</a></li>
-                    <li><a href="#noticias">Noticias</a></li>
-                    <li><a href="#contacto">Contacto</a></li>
+        </header>
+
+        <!-- Slider de imágenes -->
+        <section id="inicio">
+            <div class="slider">
+                <div class="slide">
+                    <img src="banner1.jpg" alt="Banner 1">
+                    <div class="caption">Bienvenidos al Sindicato del HUV</div>
+                </div>
+                <div class="slide">
+                    <img src="banner2.jpg" alt="Banner 2">
+                    <div class="caption">Trabajamos por tus derechos</div>
+                </div>
+                <div class="slide">
+                    <img src="banner3.jpg" alt="Banner 3">
+                    <div class="caption">Únete y construyamos juntos</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pie de página -->
+        <footer>
+            <div class="container">
+                <p>&copy; 2025 SINEPUB. Todos los derechos reservados.</p>
+                <ul class="social-links">
+                    <li><a href="https://www.facebook.com/people/Sindicato-de-Empleados-P%25C3%25BAblicos-Sinepub-HUV/100064330442393/" target="_blank"><img src="images/icono.facebook.jpg" alt="Facebook" width="70" height="70"></a></li>
+                    <li><a href="https://web.whatsapp.com/send/?phone=%2B573163218579&context=ARA_Q_pzjXz8Xc1JNzpw6upSuHE9w825NQlneatdpHwu0FO26cq6ivICcbMORKR3pT_4HzmNl_Aky2IRu_neaai7HKXVwhT1CacJzpFOFANuNKjQwbhTfwQdfhk1G2rnGTY71RB49Bl3Z1bkuaivHvfxoQ&source=FB_Page&app=facebook&entry_point=page_cta&fbclid=IwY2xjawH62IxleHRuA2FlbQIxMAABHaz7Q3eybwVxMxtEi601LIJaVaPH6ttX5OI1SOxoXrV8GD8D5at1P_aksg_aem_fRKBzcZnA3IH1JogroXN_g" target="_blank"><img src="images/icono.whatsapp.png" alt="WhatsApp" width="70" height="70"></a></li>
                 </ul>
-            </nav>
-        </div>
-    </header>
-
-    <!-- Slider de imágenes -->
-    <section id="inicio">
-        <div class="slider">
-            <div class="slide">
-                <img src="banner1.jpg" alt="Banner 1">
-                <div class="caption">Bienvenidos al Sindicato del HUV</div>
             </div>
-            <div class="slide">
-                <img src="banner2.jpg" alt="Banner 2">
-                <div class="caption">Trabajamos por tus derechos</div>
-            </div>
-            <div class="slide">
-                <img src="banner3.jpg" alt="Banner 3">
-                <div class="caption">Únete y construyamos juntos</div>
-            </div>
-        </div>
-    </section>
+        </footer>
 
-    <!-- Sección Nosotros -->
-    <section id="nosotros">
-        <div class="container">
-            <h2>Nosotros</h2>
-            <p>El Sindicato de Trabajadores del Hospital Universitario del Valle Evaristo García (SINEPUB) es una organización comprometida con la defensa de los derechos laborales y el bienestar de nuestros afiliados.</p>
+        <!-- Agregar el botón flotante -->
+        <div id="boton-flotante">
+            <elevenlabs-convai agent-id="JymHy3hDeRPTfG29L13s"></elevenlabs-convai>
+            <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
         </div>
-    </section>
 
-    <!-- Sección Afiliación -->
-    <section id="afiliacion">
-        <div class="container">
-            <h2>Afiliación</h2>
-            <p>Forma parte de nuestra comunidad sindical. Al afiliarte, podrás acceder a múltiples beneficios y ser parte del cambio.</p>
-            <button>Afíliate ahora</button>
-        </div>
-    </section>
-
-    <!-- Noticias destacadas -->
-    <section id="noticias">
-        <div class="container">
-            <h2>Noticias</h2>
-            <div class="noticias-grid">
-                <article>
-                    <img src="noticia1.jpg" alt="Noticia 1">
-                    <h3>Título de la noticia 1</h3>
-                    <p>Resumen breve de la noticia 1...</p>
-                </article>
-                <article>
-                    <img src="noticia2.jpg" alt="Noticia 2">
-                    <h3>Título de la noticia 2</h3>
-                    <p>Resumen breve de la noticia 2...</p>
-                </article>
-                <article>
-                    <img src="noticia3.jpg" alt="Noticia 3">
-                    <h3>Título de la noticia 3</h3>
-                    <p>Resumen breve de la noticia 3...</p>
-                </article>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contacto -->
-    <section id="contacto">
-        <div class="container">
-            <h2>Contacto</h2>
-            <p>¿Tienes dudas o necesitas más información? Contáctanos:</p>
-            <ul>
-                <li>Teléfono: +57 123 456 7890</li>
-                <li>Email: sinepubunionsindical@gmail.com</li>
-                <li>Dirección: Calle 123, Cali, Colombia</li>
-            </ul>
-        </div>
-    </section>
-
-    <!-- Pie de página -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 SINEPUB. Todos los derechos reservados.</p>
-            <ul class="social-links">
-                <li><a href="#">Facebook</a></li>
-                <li><a href="#">Twitter</a></li>
-                <li><a href="#">Instagram</a></li>
-            </ul>
-        </div>
-    </footer>
-<!-- Agregar el botón flotante -->
-<div id="boton-flotante">
-    <elevenlabs-convai agent-id="JymHy3hDeRPTfG29L13s"></elevenlabs-convai>
-    <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
-</div>
-
-</body>
-</html>
+    </body>
+    </html>

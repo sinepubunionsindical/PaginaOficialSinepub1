@@ -1,5 +1,3 @@
-/* styles.css */
-
 body {
   font-family: Arial, sans-serif;
   background-color: #f2f2f2;
@@ -22,6 +20,29 @@ nav ul {
 
 nav li {
   margin-right: 20px;
+}
+
+/* Agrega una clase adicional a las opciones que necesitan abrirse hacia la izquierda */
+nav li.dropdown-izquierda {
+  position: relative;
+}
+
+nav li.dropdown-izquierda.dropdown-menu {
+  right: 100%;
+  left: auto;
+}
+
+/* Aplica estilos para la clase dropdown-izquierda */
+nav li.dropdown-izquierda.dropdown-menu {
+  background-color: #333;
+  border: 1px solid #ccc;
+  padding: 10px;
+  width: 700px;
+  transition: opacity 0.5s;
+}
+
+nav li.dropdown-izquierda.dropdown-menu h2, nav li.dropdown-izquierda.dropdown-menu p, nav li.dropdown-izquierda.dropdown-menu ul {
+  color: #fff;
 }
 
 nav a {
@@ -63,7 +84,97 @@ footer {
 
 #boton-flotante {
     position: fixed;
-    bottom: 20px;
+    bottom: 10vh;
     right: 20px;
     z-index: 1000;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  background-color: #333; /* Fondo gris */
+  border: 1px solid #ccc;
+  padding: 10px;
+  width: 700px; /* Ancho del menú desplegable */
+  transition: opacity 0.5s;
+}
+
+.dropdown-menu h2,.dropdown-menu p,.dropdown-menu ul {
+  color: #fff; /* Letras blancas */
+}
+
+.dropdown-toggle:hover +.dropdown-menu {
+  display: block;
+  opacity: 1;
+}
+
+.dropdown-toggle:hover {
+  background-color: #f2f2f2;
+}
+
+.dropdown-menu:hover {
+  display: block;
+  opacity: 1;
+}
+
+.dropdown-toggle:not(:hover) +.dropdown-menu:not(:hover) {
+  display: none;
+  opacity: 0;
+}
+
+.dropdown-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dropdown-menu ul li {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.dropdown-menu ul li:last-child {
+  border-bottom: none;
+}
+
+.dropdown-menu ul li a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.social-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  margin-top: -50px; /* ajusta la posición de los iconos hacia arriba */
+}
+
+.social-links li {
+  margin-right: 20px;
+}
+
+.social-links a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.social-links a:hover {
+  color: #ccc;
+}
+
+.fa-facebook {
+  margin-right: 10px;
+  color: #3b5998;
+}
+
+.fa-twitter {
+  margin-right: 10px;
+  color: #1da1f2;
+}
+
+.fa-instagram {
+  margin-right: 10px;
+  color: #e1306c;
 }
