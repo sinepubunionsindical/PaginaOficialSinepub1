@@ -5,7 +5,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>SINEPUB - Sindicato del HUV</title>
         <link rel="stylesheet" href="styles.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
         <script src="widget.js" defer></script>
     </head>
     <body>
@@ -18,15 +17,6 @@
                 <nav>
                     <ul>
                         <li>
-                            <a href="#" class="dropdown-toggle">Nosotros</a>
-                            <div class="dropdown-menu">
-                                <h2>Nosotros</h2>
-                                <p>El Sindicato de Trabajadores del Hospital Universitario del Valle Evaristo García (SINEPUB) es una organización comprometida con la defensa de los derechos laborales y el bienestar de nuestros afiliados.</p>
-                                <p>Nuestra misión es proteger y promover los intereses de nuestros afiliados, mejorar sus condiciones de trabajo y contribuir al desarrollo del Hospital Universitario del Valle.</p>
-                                <p>Nuestra visión es ser una organización sindical líder y respetada, que defienda los derechos de los trabajadores y contribuya al bienestar de la comunidad.</p>
-                            </div>
-                        </li>
-                        <li>
                             <a href="#" class="dropdown-toggle">Afiliación</a>
                             <div class="dropdown-menu">
                                 <h2>Afiliación</h2>
@@ -37,41 +27,6 @@
                                     <li>Acceso a capacitaciones y entrenamientos</li>
                                     <li>Participación en la toma de decisiones del sindicato</li>
                                     <li>Acceso a servicios de asesoría y consultoría</li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li>
-                            <a href="#" class="dropdown-toggle">Noticias</a>
-                            <div class="dropdown-menu">
-                                <h2>Noticias</h2>
-                                <div class="noticias-grid">
-                                    <article>
-                                        <img src="noticia1.jpg" alt="Noticia 1">
-                                        <h3>Título de la noticia 1</h3>
-                                        <p>Resumen breve de la noticia 1...</p>
-                                    </article>
-                                    <article>
-                                        <img src="noticia2.jpg" alt="Noticia 2">
-                                        <h3>Título de la noticia 2</h3>
-                                        <p>Resumen breve de la noticia 2...</p>
-                                    </article>
-                                    <article>
-                                        <img src="noticia3.jpg" alt="Noticia 3">
-                                        <h3>Título de la noticia 3</h3>
-                                        <p>Resumen breve de la noticia 3...</p>
-                                    </article>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="dropdown-izquierda">
-                            <a href="#" class="dropdown-toggle">Contacto</a>
-                            <div class="dropdown-menu">
-                                <h2>Contacto</h2>
-                                <p>¿Tienes dudas o necesitas más información? Contáctanos:</p>
-                                <ul>
-                                    <li>Teléfono: +57 123 456 7890</li>
-                                    <li>Email: sinepubunionsindical@gmail.com</li>
-                                    <li>Dirección: Calle 123, Cali, Colombia</li>
                                 </ul>
                             </div>
                         </li>
@@ -106,13 +61,35 @@
         <!-- Slider de imágenes -->
         <section id="inicio">
             <div class="slider">
+                <div class="slide active">
+                    <div class="imagen-y-texto">
+                        <img src="images/fotoportada.jpg" alt="Banner 1" class="imagen-banner">
+                        <div class="texto-banner">
+                            <h1>Bienvenidos al Sindicato SINEPUB del H.U.V</h1>
+                            <p>El Sindicato de Trabajadores del Hospital Universitario del Valle Evaristo García (SINEPUB) es una organización comprometida con la defensa de los derechos laborales y el bienestar de nuestros afiliados.</p>
+                            <p>Nuestra misión es proteger y promover los intereses de nuestros afiliados, mejorar sus condiciones de trabajo y contribuir al desarrollo del Hospital Universitario del Valle.</p>
+                            <p>Nuestra visión es ser una organización sindical líder y respetada, que defienda los derechos de los trabajadores y contribuya al bienestar de la comunidad.</p>
+                        </div>
+                    </div>
                 <div class="slide">
-                    <img src="banner1.jpg" alt="Banner 1">
-                    <div class="caption">Bienvenidos al Sindicato del HUV</div>
-                </div>
-                <div class="slide">
-                    <img src="banner2.jpg" alt="Banner 2">
-                    <div class="caption">Trabajamos por tus derechos</div>
+                    <div class="noticias-grid">
+                        <article>
+                            <img src="noticia1.jpg" alt="Noticia 1">
+                            <h3>Título de la noticia 1</h3>
+                            <p>Resumen breve de la noticia 1...</p>
+                        </article>
+                        <article>
+                            <img src="noticia2.jpg" alt="Noticia 2">
+                            <h3>Título de la noticia 2</h3>
+                            <p>Resumen breve de la noticia 2...</p>
+                        </article>
+                        <article>
+                            <img src="noticia3.jpg" alt="Noticia 3">
+                            <h3>Título de la noticia 3</h3>
+                            <p>Resumen breve de la noticia 3...</p>
+                        </article>
+                    </div>
+                    <div class="caption">Noticias</div>
                 </div>
                 <div class="slide">
                     <img src="banner3.jpg" alt="Banner 3">
@@ -125,10 +102,32 @@
         <footer>
             <div class="container">
                 <p>&copy; 2025 SINEPUB. Todos los derechos reservados.</p>
-                <ul class="social-links">
-                    <li><a href="https://www.facebook.com/people/Sindicato-de-Empleados-P%25C3%25BAblicos-Sinepub-HUV/100064330442393/" target="_blank"><img src="images/icono.facebook.jpg" alt="Facebook" width="70" height="70"></a></li>
-                    <li><a href="https://web.whatsapp.com/send/?phone=%2B573163218579&context=ARA_Q_pzjXz8Xc1JNzpw6upSuHE9w825NQlneatdpHwu0FO26cq6ivICcbMORKR3pT_4HzmNl_Aky2IRu_neaai7HKXVwhT1CacJzpFOFANuNKjQwbhTfwQdfhk1G2rnGTY71RB49Bl3Z1bkuaivHvfxoQ&source=FB_Page&app=facebook&entry_point=page_cta&fbclid=IwY2xjawH62IxleHRuA2FlbQIxMAABHaz7Q3eybwVxMxtEi601LIJaVaPH6ttX5OI1SOxoXrV8GD8D5at1P_aksg_aem_fRKBzcZnA3IH1JogroXN_g" target="_blank"><img src="images/icono.whatsapp.png" alt="WhatsApp" width="70" height="70"></a></li>
-                </ul>
+                <div class="contacto">
+                    <div class="informacion-y-mapa">
+                        <div class="informacion">
+                            <h1 class="titulo-contacto">Contacto</h1>
+                            <p>¿Tienes dudas o necesitas más información? Contáctanos a traves de nuestros medios digitales:</p>
+                            <ul>
+                                <li>Email: sinepubunionsindical@gmail.com</li>
+                                <li>Dirección: Cl. 5 #36 - 00, El Sindicato, Cali, Valle del Cauca</li>
+                            </ul>
+                            <div class="redes-sociales">
+                                <a href="https://www.facebook.com/people/Sindicato-de-Empleados-P%25C3%25BAblicos-Sinepub-HUV/100064330442393/" target="_blank">
+                                    <img src="images/icono.facebook.jpg" alt="Facebook" width="40" height="40">
+                                </a>
+                                <a href="https://web.whatsapp.com/send/?phone=%2B573163218579&context=ARA_Q_pzjXz8Xc1JNzpw6upSuHE9w825NQlneatdpHwu0FO26cq6ivICcbMORKR3pT_4HzmNl_Aky2IRu_neaai7HKXVwhT1CacJzpFOFANuNKjQwbhTfwQdfhk1G2rnGTY71RB49Bl3Z1bkuaivHvfxoQ&source=FB_Page&app=facebook&entry_point=page_cta&fbclid=IwY2xjawH62IxleHRuA2FlbQIxMAABHaz7Q3eybwVxMxtEi601LIJaVaPH6ttX5OI1SOxoXrV8GD8D5at1P_aksg_aem_fRKBzcZnA3IH1JogroXN_g" target="_blank">
+                                    <img src="images/icono.whatsapp.png" alt="WhatsApp" width="40" height="40">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="mapa">
+                            <div class="mapa-titulo">
+                                <h1 class="titulo-como-llegar">Cómo llegar</h1>
+                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3979.755111111111!2d-76.5473703!3d3.4306492!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e30a69c440a28bb%3A0xca12ae041f48a3b8!2sCl.+5+%2336%2C+El+Sindicato%2C+Cali%2C+Valle+del+Cauca!5e0!3m2!1ses-419!2sco!4v1667243455555!5m2!1ses-419!2sco" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </footer>
 
@@ -137,6 +136,6 @@
             <elevenlabs-convai agent-id="JymHy3hDeRPTfG29L13s"></elevenlabs-convai>
             <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
         </div>
-
+        <script src="slider.js"></script>
     </body>
     </html>
