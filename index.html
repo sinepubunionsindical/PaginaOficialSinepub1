@@ -61,7 +61,7 @@
         <!-- Slider de imágenes -->
         <section id="inicio">
             <div class="slider">
-                <div class="slide active">
+                <div class="slide active"  id="slide-1">
                     <div class="imagen-y-texto">
                         <img src="images/fotoportada.jpg" alt="Banner 1" class="imagen-banner">
                         <div class="texto-banner">
@@ -71,30 +71,16 @@
                             <p>Nuestra visión es ser una organización sindical líder y respetada, que defienda los derechos de los trabajadores y contribuya al bienestar de la comunidad.</p>
                         </div>
                     </div>
-                <div class="slide">
-                    <div class="noticias-grid">
-                        <article>
-                            <img src="noticia1.jpg" alt="Noticia 1">
-                            <h3>Título de la noticia 1</h3>
-                            <p>Resumen breve de la noticia 1...</p>
-                        </article>
-                        <article>
-                            <img src="noticia2.jpg" alt="Noticia 2">
-                            <h3>Título de la noticia 2</h3>
-                            <p>Resumen breve de la noticia 2...</p>
-                        </article>
-                        <article>
-                            <img src="noticia3.jpg" alt="Noticia 3">
-                            <h3>Título de la noticia 3</h3>
-                            <p>Resumen breve de la noticia 3...</p>
-                        </article>
+                </div>
+                <div class="slide" id="slide-2">
+                    <div class="imagen-y-texto">
+                        <img src="images/imagen2.jpg" alt="Banner 2" class="imagen-banner">
+                        <div class="texto-banner">
+                            <h3>Noticias</h3>
+                            <p>Lo ultimo de las novedades</p>
+                        </div>                            
                     </div>
-                    <div class="caption">Noticias</div>
-                </div>
-                <div class="slide">
-                    <img src="banner3.jpg" alt="Banner 3">
-                    <div class="caption">Únete y construyamos juntos</div>
-                </div>
+                </div>    
             </div>
         </section>
 
@@ -136,6 +122,6 @@
             <elevenlabs-convai agent-id="JymHy3hDeRPTfG29L13s"></elevenlabs-convai>
             <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
         </div>
-        <script src="slider.js"></script>
+        <script src="slider.js" defer></script>
     </body>
     </html>
