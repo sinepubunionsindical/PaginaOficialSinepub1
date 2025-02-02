@@ -2,33 +2,99 @@ const slider = document.querySelector('.slider');
 const slides = document.querySelectorAll('.slide');
 const prevButton = document.querySelector('.prev-slide');
 const nextButton = document.querySelector('.next-slide');
+const navLinks = document.querySelectorAll('.slider-nav a');
+const sliderDotsContainer = document.querySelector('.slider-dots'); // Seleccionamos el contenedor de dots
 let currentSlide = 0;
 
-prevButton.addEventListener('click', () => {
-    currentSlide--;
-    if (currentSlide < 0) {
-        currentSlide = slides.length - 1;
+// Función para actualizar el slider y la navegación 
+function updateSlide(slideIndex) {
+    slides.forEach((slide, index) => {
+        if (index === slideIndex) {
+            slide.classList.add('active');
+            slide.style.display = 'block';
+        } else {
+            slide.classList.remove('active');
+            slide.style.display = 'none';
+        }
+    });
+
+    // Event listeners para los links de navegación - MODIFICADO PARA LEER DATA-SLIDE
+    navLinks.forEach((link, index) => {
+      link.classList.remove('active'); // ¡NUEVA LÍNEA! Remover 'active' de *todos* los links antes de seleccionar uno nuevo
+      link.addEventListener('click', (event) => {
+        event.preventDefault(); // Evitamos el comportamiento default del enlace
+        const slideIndex = parseInt(link.dataset.slide); // ¡Leer data-slide del enlace clickeado!
+        updateSlide(slideIndex - 1);    // Actualizamos el slider, ajustando el índice a base 0 (¡IMPORTANTE: restamos 1 aquí!)
+  });
+});
+
+    if (slideIndex >= 1 && slideIndex <= 4) { // Slides de "Noticias" (slides 2 a 5)
+        navLinks[1].classList.add('active'); // Activar link "Noticias" (índice 1)
+    } else if (slideIndex === 5) {           // Slide de "Afiliación" (slide 6)
+        navLinks[2].classList.add('active'); // Activar link "Afiliación" (índice 2)
+    } else {                                  // Slide de "Inicio" (slide 1)
+        navLinks[0].classList.add('active'); // Activar link "Inicio" (índice 0)
     }
-    updateSlide();
+
+    updateDots(slideIndex); // Llamamos a updateDots para actualizar los dots
+    currentSlide = slideIndex;
+}
+
+// Event listeners para las flechas (prev/next)
+prevButton.addEventListener('click', () => {
+    let slideIndex = currentSlide - 1;
+    if (slideIndex < 0) {
+        slideIndex = slides.length - 1;
+    }
+    updateSlide(slideIndex);
 });
 
 nextButton.addEventListener('click', () => {
-    currentSlide++;
-    if (currentSlide >= slides.length) {
+    let slideIndex = currentSlide + 1;
+    if (slideIndex >= slides.length) {
         currentSlide = 0;
     }
-    updateSlide();
+    updateSlide(slideIndex);
 });
 
-function updateSlide() {
-    slides.forEach((slide, index) => {
-        if (index === currentSlide) {
-            slide.classList.add('active');
-        } else {
-            slide.classList.remove('active');
+
+// Función para crear los dots de navegación
+function createNavigationDots() {
+    const numberOfDots = 4; // ¡Creamos 4 dots (para las 4 noticias)
+    for (let i = 0; i < numberOfDots; i++) {
+        const dot = document.createElement('span');
+        dot.classList.add('slider-dot');
+        dot.dataset.slideIndex = i + 1; // ¡Dots apuntan a slides 2, 3, 4, 5 (Noticias)! (índices 1, 2, 3, 4)
+        if (i === 0) {       // ¡Añadimos la clase 'active' al PRIMER dot (índice 0) al crearse!
+            dot.classList.add('active');
         }
-    });
+        dot.addEventListener('click', (event) => {
+            const slideIndex = parseInt(event.target.dataset.slideIndex);
+            updateSlide(slideIndex);
+        });
+        sliderDotsContainer.appendChild(dot);
+    }
 }
 
-// Inicializar el slider
-updateSlide();
+// Función para actualizar el dot activo (¡¡¡¡¡ESTA FUNCIÓN DEBE ESTAR FUERA DE updateSlide()!!!!!)
+function updateDots(slideIndex) {
+    if (slideIndex >= 1 && slideIndex <= 4) { // ¡Mostrar dots solo en slides 2 a 5 (Noticias)!
+        sliderDotsContainer.style.display = 'flex'; // Mostrar el contenedor de dots
+        const dots = sliderDotsContainer.querySelectorAll('.slider-dot');
+        // Ajustamos el índice para que el primer dot se active en la primera slide de noticias (slide-2, index 1)
+        const dotIndexToActivate = slideIndex - 1; 
+        dots.forEach((dot, index) => {
+            if (index === dotIndexToActivate) {
+                dot.classList.add('active'); // Añadimos la clase 'active' al dot activo
+            } else {
+                dot.classList.remove('active'); // Removemos la clase 'active' de los demás dots
+            }
+        });
+    } else {
+        sliderDotsContainer.style.display = 'none'; // Ocultar dots en otras slides (Inicio, Afiliación)
+    }
+}
+
+// Inicialización
+createNavigationDots(); // Creamos los dots al cargar la página
+updateSlide(0);

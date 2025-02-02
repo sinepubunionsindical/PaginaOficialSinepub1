@@ -10,55 +10,64 @@
         <script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js" crossorigin></script>
     </head>
     <body>
-        <!-- Encabezado -->
+        <!-- Encabezado Principal (Franja azul delgada con títulos) -->
         <header>
-            <div class="container">
-                <div class="logo">
-                    <img src="images/logo.png" alt="SINEPUB Logo">
-                </div>
-                <nav>
+            <div class="container header-titles-container"> <!-- Nuevo contenedor para los títulos -->
+                <nav class="header-titles-nav"> <!-- Nueva navegación para los títulos -->
                     <ul>
-                        <li>
-                            <a href="#" class="dropdown-toggle">Afiliación</a>
-                            <div class="dropdown-menu">
-                                <h2>Afiliación</h2>
-                                <p>Forma parte de nuestra comunidad sindical. Al afiliarte, podrás acceder a múltiples beneficios y ser parte del cambio.</p>
-                                <p>Algunos de los beneficios de la afiliación incluyen:</p>
-                                <ul>
-                                    <li>Defensa de tus derechos laborales</li>
-                                    <li>Acceso a capacitaciones y entrenamientos</li>
-                                    <li>Participación en la toma de decisiones del sindicato</li>
-                                    <li>Acceso a servicios de asesoría y consultoría</li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="dropdown-izquierda">
-                            <a href="#" class="dropdown-toggle">Estatutos</a>
-                            <div class="dropdown-menu">
-                                <h2>Estatutos</h2>
-                                <p>Los estatutos del Sindicato de Trabajadores del Hospital Universitario del Valle Evaristo García (SINEPUB) establecen las normas y procedimientos para la organización y funcionamiento del sindicato.</p>
-                                <p>Puedes descargar una copia de los estatutos <a href="estatutos.pdf">aquí</a>.</p>
-                            </div>
-                        </li>
-                        <li class="dropdown-izquierda">
-                            <a href="#" class="dropdown-toggle">Junta Directiva</a>
-                            <div class="dropdown-menu">
-                                <h2>Junta Directiva</h2>
-                                <p>La Junta Directiva del Sindicato de Trabajadores del Hospital Universitario del Valle Evaristo García (SINEPUB) es el órgano de gobierno del sindicato.</p>
-                                <p>La Junta Directiva está compuesta por:</p>
-                                <ul>
-                                    <li>Presidente: Jenny Patricia Ricaurte Zuluaga</li>
-                                    <li>Vicepresidente: Luis Fernando Van Pacheco Agredo</li>
-                                    <li>Secretario: Leydy Yohanna González Ulloa</li>
-                                    <li>Tesorero: María Fernanda Morales Valdés</li>
-                                    <li>Fiscal: Edith Medina Conde</li>
-                                </ul>
+                        <li><a href="#">Historia</a></li>
+                        <li><a href="#">Estatutos</a></li>
+                        <li><a href="#">Junta Directiva</a></li>
+                        <li><a href="#">Logros</a></li>
+                        <li class="menu-item-redes-sociales">  <!-- Añadimos una clase al LI -->
+                            <div class="dropdown-container-redes-sociales"> <!-- NUEVO DIV CONTENEDOR -->
+                                <a href="#" class="dropdown-toggle">Redes Sociales</a>
+                                <div class="dropdown-menu dropdown-menu-redes-sociales">
+                                    <h2>Redes Sociales</h2>
+                                    <p>Síguenos en nuestras redes sociales para estar al día con las últimas noticias y novedades del sindicato:</p>
+                                    <div class="redes-sociales-header">
+                                        <a href="https://www.facebook.com/people/Sindicato-de-Empleados-P%25C3%25BAblicos-Sinepub-HUV/100064330442393/" target="_blank">
+                                            <img src="images/icono.facebook.jpg" alt="Facebook" width="40" height="40">
+                                        </a>
+                                        <a href="https://web.whatsapp.com/send/?phone=%2B573163218579&context=ARA_Q_pzjXz8Xc1JNzpw6upSuHE9w825NQlneatdpHwu0FO26cq6ivICcbMORKR3pT_4HzmNl_Aky2IRu_neaai7HKXVwhT1CacJzpFOFANuNKjQwbhTfwQdfhk1G2rnGTY71RB49Bl3Z1bkuaivHvfxoQ&source=FB_Page&app=facebook&entry_point=page_cta&fbclid=IwY2xjawH62IxleHRuA2FlbQIxMAABHaz7Q3eybwVxMxtEi601LIJaVaPH6ttX5OI1SOxoXrV8GD8D5at1P_aksg_aem_fRKBzcZnA3IH1JogroXN_g" target="_blank">
+                                            <img src="images/icono.whatsapp.png" alt="WhatsApp" width="40" height="40">
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </li>
                     </ul>
                 </nav>
             </div>
         </header>
+        
+        <!-- Imágenes del Encabezado (Debajo de la franja azul) -->
+        <section class="header-images-section"> <!-- Nueva sección para las imágenes -->
+            <div class="container header-images-container"> <!-- Contenedor para las imágenes -->
+                <div class="header-image-left">
+                    <img src="images/propais.png" alt="Imagen Izquierda Header">
+                </div>
+                <div class="logo">
+                    <img src="images/logo.png" alt="SINEPUB Logo">
+                </div>
+                <div class="header-image-right">
+                    <img src="images/fedetradh.png" alt="Imagen Derecha Header">
+                </div>
+            </div>
+        </section>
+
+        <!-- Navegación Secundaria (Inicio, Noticias, Afiliación - controla el slider) -->
+        <section class="below-header-nav">
+            <div class="container below-header-nav-container">
+                <nav class="slider-nav">  <!-- Nueva clase slider-nav para JS -->
+                    <ul>
+                        <li><a href="#" data-slide="1" class="active">Inicio</a></li>  <!-- data-slide y clase active -->
+                        <li><a href="#" data-slide="2">Noticias</a></li>   <!-- data-slide -->
+                        <li><a href="#" data-slide="6">Afiliación</a></li>  <!-- data-slide -->
+                    </ul>
+                </nav>
+            </div>
+        </section>
 
         <!-- Slider de imágenes -->
         <section id="inicio">
@@ -75,15 +84,52 @@
                             </div>
                         </div>
                     </div>
-                    <div class="slide" id="slide-2">
+                    <div class="slide" id="slide-2">  <!-- Slide de Noticias 1 -->
                         <div class="imagen-y-texto">
                             <img src="images/imagen2.jpg" alt="Banner 2" class="imagen-banner">
                             <div class="texto-banner">
-                                <h3>Noticias</h3>
-                                <p>Lo ultimo de las novedades</p>
+                                <h3>Noticias 1</h3> <p>Contenido de la noticia 1...</p>
                             </div>                            
                         </div>
                     </div>    
+                    <div class="slide" id="slide-3">  <!-- Slide de Noticias 2 -->
+                        <div class="imagen-y-texto">
+                            <img src="images/imagen2.jpg" alt="Banner 3" class="imagen-banner">
+                            <div class="texto-banner">
+                                <h3>Noticias 2</h3> <p>Contenido de la noticia 2...</p>
+                            </div>                            
+                        </div>
+                    </div>
+                    <div class="slide" id="slide-4">  <!-- Slide de Noticias 3 -->
+                        <div class="imagen-y-texto">
+                            <img src="images/imagen2.jpg" alt="Banner 4" class="imagen-banner">
+                            <div class="texto-banner">
+                                <h3>Noticias 3</h3> <p>Contenido de la noticia 3...</p>
+                            </div>                            
+                        </div>
+                    </div>
+                    <div class="slide" id="slide-5">  <!-- Slide de Noticias 4 -->
+                        <div class="imagen-y-texto">
+                            <img src="images/imagen2.jpg" alt="Banner 5" class="imagen-banner">
+                            <div class="texto-banner">
+                                <h3>Noticias 4</h3> <p>Contenido de la noticia 4...</p>
+                            </div>                            
+                        </div>
+                    </div>
+                    <div class="slide" id="slide-6">  <!-- NUEVA SLIDE para Afiliación -->
+                        <div class="imagen-y-texto">
+                            <img src="images/afiliacion_banner.jpg" alt="Banner Afiliacion" class="imagen-banner">
+                            <div class="texto-banner">
+                                <h1>¡Afíliate a SINEPUB!</h1>
+                                <p>¡Únete a nuestra comunidad sindical y defiende tus derechos laborales!</p>
+                                <p>Completa el formulario de afiliación y comienza a disfrutar de los beneficios de ser parte de SINEPUB.</p>
+                                <a href="#" class="boton-afiliacion">Formulario de Afiliación</a> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slider-dots"> <!-- NUEVO DIV para los circulitos -->
+                    <!-- Los circulitos se generarán aquí con JavaScript -->
                 </div>
                 <button class="prev-slide">&#10094;</button>
                 <button class="next-slide">&#10095;</button>
