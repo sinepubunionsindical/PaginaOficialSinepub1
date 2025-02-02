@@ -1,23 +1,34 @@
-// Selecciona todos los elementos con la clase.slide
+const slider = document.querySelector('.slider');
 const slides = document.querySelectorAll('.slide');
-
-// Inicializa el índice de la diapositiva actual
+const prevButton = document.querySelector('.prev-slide');
+const nextButton = document.querySelector('.next-slide');
 let currentSlide = 0;
 
-// Agrega la clase 'active' a la primera diapositiva inicialmente
-slides[currentSlide].classList.add('active');
+prevButton.addEventListener('click', () => {
+    currentSlide--;
+    if (currentSlide < 0) {
+        currentSlide = slides.length - 1;
+    }
+    updateSlide();
+});
 
-// Función para cambiar la diapositiva actual
-function cambiarDiapositiva() {
-  // Elimina la clase 'active' de la diapositiva actual
-  slides[currentSlide].classList.remove('active');
+nextButton.addEventListener('click', () => {
+    currentSlide++;
+    if (currentSlide >= slides.length) {
+        currentSlide = 0;
+    }
+    updateSlide();
+});
 
-  // Avanza al siguiente índice, o vuelve al principio si es necesario
-  currentSlide = (currentSlide + 1) % slides.length;
-
-  // Agrega la clase 'active' a la nueva diapositiva
-  slides[currentSlide].classList.add('active');
+function updateSlide() {
+    slides.forEach((slide, index) => {
+        if (index === currentSlide) {
+            slide.classList.add('active');
+        } else {
+            slide.classList.remove('active');
+        }
+    });
 }
 
-// Llama a la función de cambio de diapositiva cada 5 segundos
-setInterval(cambiarDiapositiva, 5000);
+// Inicializar el slider
+updateSlide();
