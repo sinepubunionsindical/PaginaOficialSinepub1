@@ -319,6 +319,8 @@ footer {
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
+  color: #333; /* Agregar color al texto */
+  font-weight: bold; /* Agregar negrita al texto */
 }
 
 .prev-slide {
