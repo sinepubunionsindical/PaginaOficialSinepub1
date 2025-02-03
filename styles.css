@@ -1,3 +1,9 @@
+/* Clase para ocultar elementos (general) */
+.hidden {
+  display: none;
+  opacity: 0; /* ¡AÑADIR OPACIDAD 0 PARA QUE SE DESVANEZCA AL OCULTAR! */
+}
+
 /* Estilos generales */
 
 * {
@@ -36,6 +42,17 @@ header {
   margin: 0;
   display: flex; /* Alinear los títulos horizontalmente */
   justify-content: center; /* Centrar los títulos horizontalmente dentro de la franja */
+}
+
+.header-titles-nav ul li a.active {
+  background-color: #35a9aa; /* Mismo color "activo" que la navegación secundaria */
+  color: white;
+  font-weight: bold;
+  padding-top: 10px;
+  padding-bottom: 11px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 5px;
 }
 
 .header-titles-nav li {
@@ -188,8 +205,6 @@ footer {
   right: 20px;
   z-index: 1000;
 }
-
-/* Menú desplegable */
 
 /* Menú desplegable */
 
@@ -401,6 +416,7 @@ footer {
   font-weight: bold;
   margin-bottom: 10px;
   color: #000;
+  text-align: center;
 }
 
 .titulo-como-llegar {
@@ -409,6 +425,14 @@ footer {
   margin-bottom: 10px;
   color: #000;
   text-align: center;
+}
+
+.titulo-historia {
+  font-size: 3.5em;       /* ¡FUENTE MUCHO MÁS GRANDE! - Ajusta este valor si es necesario */
+  font-weight: bold;       /* Mantener en negrita (si ya lo tenías, sino, añádelo) */
+  margin-bottom: 40px;    /* ¡MÁS ESPACIO DEBAJO DEL TÍTULO! - Ajusta este valor si es necesario */
+  color: #0249aa;         /* Mismo azul del header (lo tenías, mantenerlo) */
+  text-align: center;     /* ¡TEXTO CENTRADO! - Asegurar que esté centrado */
 }
 
 /* Slider */
@@ -433,6 +457,15 @@ footer {
   height: 100%;
   opacity: 0; /* ¡Inicialmente ocultas con opacidad 0! */
   transition: opacity 1s ease-in-out; /* ¡Añadimos transición de opacidad! */
+}
+
+/* Sección Historia de SINEPUB HUV */
+
+.historia-section {
+  background-color: #f9f7f7; /* Un fondo ligeramente diferente para la sección de historia */
+  padding: 30px;
+  transition: opacity 1s ease-in-out; /* ¡AÑADIR ESTA LÍNEA! */
+  opacity: 1; /* ¡AÑADIR ESTA LÍNEA! */
 }
 
 .slide.active {
@@ -496,4 +529,40 @@ footer {
 .slider-dots .slider-dot.active {
   width: 16px;      /* Dot activo un poco más grande */
   height: 16px;
+}
+
+/* Sección Slider de Fundadores */
+
+.slider-section { /* ¡AÑADIR ESTA REGLA CSS COMPLETA! */
+  background-color: #fff;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  transition: opacity 1s ease-in-out; /* ¡TRANSICIÓN DE OPACIDAD! */
+  opacity: 1; /* Opacidad inicial */
+}
+
+/* Slider Fundadores - Ajuste para imágenes a pantalla completa */
+
+#fundadores-slider-section .slider-container {
+  max-height: 600px; /* Opcional: Altura máxima si quieres limitar el tamaño vertical, ajusta este valor */
+}
+
+#fundadores-slider-section .slider {
+  height: 100%; /* Slider ocupa el 100% del contenedor */
+}
+
+#fundadores-slider-section .slide {
+  display: flex;          /* Usar flexbox para centrar la imagen */
+  justify-content: center; /* Centrar horizontalmente */
+  align-items: center;     /* Centrar verticalmente */
+}
+
+#fundadores-slider-section .imagen-banner {
+  width: auto;         /* Ancho automático para mantener la proporción de la imagen */
+  max-width: 100%;      /* Ancho máximo del 100% del slide */
+  height: auto;        /* Altura automática para mantener la proporción */
+  max-height: 100%;     /* Altura máxima del 100% del slide */
+  margin: 0;           /* Eliminar márgenes innecesarios */
+  margin-top: 0px;      /* Asegurar que margin-top sea 0 */
 }

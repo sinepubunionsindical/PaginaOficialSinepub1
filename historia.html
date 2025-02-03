@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>SINEPUB - Sindicato del HUV</title>
+        <title>SINEPUB - Historia</title>
         <link rel="stylesheet" href="styles.css">
         <script src="widget.js" defer></script>
         <script src="https://unpkg.com/react@17.0.2/umd/react.development.js" crossorigin></script>
@@ -15,8 +15,8 @@
             <div class="container header-titles-container"> <!-- Nuevo contenedor para los títulos -->
                 <nav class="header-titles-nav"> <!-- Nueva navegación para los títulos -->
                     <ul>
-                        <li><a href="historia.html" id="historia-link">Historia</a></li>
-                        <li><a href="Estatutos.pdf">Estatutos</a></li>
+                        <li><a href="historia.html" class="active" id="historia-link">Historia</a></li>  <!-- "Historia" activo y linked a historia.html -->
+                        <li><a href="#">Estatutos</a></li>
                         <li><a href="#">Junta Directiva</a></li>
                         <li><a href="#">Logros</a></li>
                         <li class="menu-item-redes-sociales">  <!-- Añadimos una clase al LI -->
@@ -64,78 +64,70 @@
             <div class="container below-header-nav-container">
                 <nav class="slider-nav">  <!-- Nueva clase slider-nav para JS -->
                     <ul>
-                        <li><a href="#" data-slide="1" class="active">Inicio</a></li>  <!-- data-slide y clase active -->
-                        <li><a href="#" data-slide="2">Noticias</a></li>   <!-- data-slide -->
-                        <li><a href="#" data-slide="6">Afiliación</a></li>  <!-- data-slide -->
+                        <li><a href="index.html" data-slide="1" id="inicio-secundario-link">Inicio</a></li>  <!-- Link a index.html, ID para JS -->
+                        <li><a href="#" data-slide="2" class="active" id="historia-secundaria-link">Historia</a></li>   <!-- "Historia" activo -->
+                        <li><a href="#" data-slide="6" id="fundadores-secundario-link">Fundadores</a></li>  <!-- ID para JS -->
                     </ul>
                 </nav>
             </div>
         </section>
 
-        <!-- Slider de imágenes -->
-        <section id="inicio">
+        <!-- Sección Historia de SINEPUB HUV (TEXTO) - Visible por defecto en historia.html -->
+        <section id="historia-sinepub" class="historia-section">
+            <div class="container historia-container">
+                <h1 class="titulo-historia">Historia de SINEPUB HUV</h1>
+                <p class="texto-historia">
+                    SINEPUB HUV nació de la necesidad de dar continuidad a la defensa de los derechos de los trabajadores incorporados, quienes fuimos afectados por la reforma administrativa del Hospital Universitario del Valle Evaristo García en el año 2016. Observamos que nuestros intereses colectivos no eran plenamente representados en la organización sindical a la que estábamos afiliados, pues como líderes veníamos de una lucha externa al hospital, buscando nuestro reingreso desde 2016 hasta finales de 2017, cuando logramos la incorporación a la nueva planta de cargos del hospital.
+                </p>
+                <p class="texto-historia">
+                    La mayoría de nosotros pertenecíamos a la carrera administrativa y, con el tiempo, otros compañeros que no se identificaban con las organizaciones sindicales a las que estaban afiliados decidieron sumarse a este nuevo proyecto. Así, en el año 2020, fundamos SINEPUB HUV con el propósito de fortalecer la lucha sindical y garantizar la defensa de nuestros derechos.
+                </p>
+                <p class="texto-historia">
+                    Desde nuestra creación, hemos mantenido una participación activa en el movimiento sindical.
+                </p>
+                <p class="texto-historia">
+                    A pesar de ser una organización nueva, presentamos nuestro propio pliego de solicitudes, el cual unificamos con otras organizaciones sindicales para la mesa de negociación del año 2021, consolidándonos como un actor relevante en la defensa de los derechos laborales.
+                </p>
+            </div>
+        </section>
+
+        <!-- Sección Slider de Fundadores (OCULTO INICIALMENTE) -->
+        <section id="fundadores-slider-section" class="slider-section hidden">  <!-- Slider de fundadores, oculto inicialmente -->
             <div class="slider-container">
-                <div class="slider">
-                    <div class="slide active"  id="slide-1">
-                        <div class="imagen-y-texto">
-                            <img src="images/fotoportada.jpg" alt="Banner 1" class="imagen-banner">
-                            <div class="texto-banner">
-                                <h1>Bienvenidos al Sindicato SINEPUB del H.U.V</h1>
-                                <p>El Sindicato de Trabajadores del Hospital Universitario del Valle Evaristo García (SINEPUB) es una organización comprometida con la defensa de los derechos laborales y el bienestar de nuestros afiliados.</p>
-                                <p>Nuestra misión es proteger y promover los intereses de nuestros afiliados, mejorar sus condiciones de trabajo y contribuir al desarrollo del Hospital Universitario del Valle.</p>
-                                <p>Nuestra visión es ser una organización sindical líder y respetada, que defienda los derechos de los empleados y trabajadores para contribuir en el bienestar de la comunidad hospitalaria.</p>
-                            </div>
-                        </div>
+                <div class="slider" id="fundadores-slider">  <!-- ID único para el slider de fundadores -->
+                    <div class="slide active" id="slide-fundador-1">  <!-- Slide Fundador 1 -->
+                        <img src="images/fundador1.jpg" alt="Fundador 1" class="imagen-banner"> <!-- IMAGEN SOLA, SIN DIV TEXTO-BANNER -->
                     </div>
-                    <div class="slide" id="slide-2">  <!-- Slide de Noticias 1 -->
-                        <div class="imagen-y-texto">
-                            <img src="images/imagen2.jpg" alt="Banner 2" class="imagen-banner">
-                            <div class="texto-banner">
-                                <h3>Noticias 1</h3> <p>Contenido de la noticia 1...</p>
-                            </div>                            
-                        </div>
-                    </div>    
-                    <div class="slide" id="slide-3">  <!-- Slide de Noticias 2 -->
-                        <div class="imagen-y-texto">
-                            <img src="images/imagen2.jpg" alt="Banner 3" class="imagen-banner">
-                            <div class="texto-banner">
-                                <h3>Noticias 2</h3> <p>Contenido de la noticia 2...</p>
-                            </div>                            
-                        </div>
+                    <div class="slide" id="slide-fundador-2">  <!-- Slide Fundador 2 -->
+                        <img src="images/fundador2.jpg" alt="Fundador 2" class="imagen-banner"> <!-- IMAGEN SOLA, SIN DIV TEXTO-BANNER -->
                     </div>
-                    <div class="slide" id="slide-4">  <!-- Slide de Noticias 3 -->
-                        <div class="imagen-y-texto">
-                            <img src="images/imagen2.jpg" alt="Banner 4" class="imagen-banner">
-                            <div class="texto-banner">
-                                <h3>Noticias 3</h3> <p>Contenido de la noticia 3...</p>
-                            </div>                            
-                        </div>
+                    <div class="slide" id="slide-fundador-3">  <!-- Slide Fundador 3 -->
+                        <img src="images/fundador3.jpg" alt="Fundador 3" class="imagen-banner"> <!-- IMAGEN SOLA, SIN DIV TEXTO-BANNER -->
                     </div>
-                    <div class="slide" id="slide-5">  <!-- Slide de Noticias 4 -->
-                        <div class="imagen-y-texto">
-                            <img src="images/imagen2.jpg" alt="Banner 5" class="imagen-banner">
-                            <div class="texto-banner">
-                                <h3>Noticias 4</h3> <p>Contenido de la noticia 4...</p>
-                            </div>                            
-                        </div>
+                    <div class="slide" id="slide-fundador-4">  <!-- Slide Fundador 4 -->
+                        <img src="images/fundador4.jpg" alt="Fundador 4" class="imagen-banner"> <!-- IMAGEN SOLA, SIN DIV TEXTO-BANNER -->
                     </div>
-                    <div class="slide" id="slide-6">  <!-- NUEVA SLIDE para Afiliación -->
-                        <div class="imagen-y-texto">
-                            <img src="images/afiliacion_banner.jpg" alt="Banner Afiliacion" class="imagen-banner">
-                            <div class="texto-banner">
-                                <h1>¡Afíliate a SINEPUB!</h1>
-                                <p>¡Únete a nuestra comunidad sindical y defiende tus derechos laborales!</p>
-                                <p>Completa el formulario de afiliación y comienza a disfrutar de los beneficios de ser parte de SINEPUB.</p>
-                                <a href="#" class="boton-afiliacion">Formulario de Afiliación</a> 
-                            </div>
-                        </div>
+                    <div class="slide" id="slide-fundador-5">  <!-- Slide Fundador 5 -->
+                        <img src="images/fundador5.jpg" alt="Fundador 5" class="imagen-banner"> <!-- IMAGEN SOLA, SIN DIV TEXTO-BANNER -->
+                    </div>
+                    <div class="slide" id="slide-fundador-6">  <!-- Slide Fundador 6 -->
+                        <img src="images/fundador6.jpg" alt="Fundador 6" class="imagen-banner"> <!-- IMAGEN SOLA, SIN DIV TEXTO-BANNER -->
+                    </div>
+                    <div class="slide" id="slide-fundador-7">  <!-- Slide Fundador 7 -->
+                        <img src="images/fundador7.jpg" alt="Fundador 7" class="imagen-banner"> <!-- IMAGEN SOLA, SIN DIV TEXTO-BANNER -->
+                    </div>
+                    <div class="slide" id="slide-fundador-8">  <!-- Slide Fundador 8 -->
+                        <img src="images/fundador8.jpg" alt="Fundador 8" class="imagen-banner"> <!-- IMAGEN SOLA, SIN DIV TEXTO-BANNER -->
+                    </div>
+                    <div class="slide" id="slide-fundador-9">  <!-- Slide Fundador 9 -->
+                        <img src="images/fundador9.jpg" alt="Fundador 9" class="imagen-banner"> <!-- IMAGEN SOLA, SIN DIV TEXTO-BANNER -->
+                    </div>
+                    <div class="slide" id="slide-fundador-10"> <!-- Slide Fundador 10 -->
+                        <img src="images/fundador10.jpg" alt="Fundador 10" class="imagen-banner"> <!-- IMAGEN SOLA, SIN DIV TEXTO-BANNER -->
                     </div>
                 </div>
-                <div class="slider-dots"> <!-- NUEVO DIV para los circulitos -->
-                    <!-- Los circulitos se generarán aquí con JavaScript -->
-                </div>
-                <button class="prev-slide">&#10094;</button>
-                <button class="next-slide">&#10095;</button>
+                <button class="prev-slide prev-slide-fundadores">❮</button>
+                <button class="next-slide next-slide-fundadores">❯</button>
             </div>
         </section>
 
@@ -177,6 +169,6 @@
             <elevenlabs-convai agent-id="JymHy3hDeRPTfG29L13s"></elevenlabs-convai>
             <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
         </div>
-        <script src="slider.js" defer></script>
+        <script src="historia.js" defer></script>  <!-- Cambiado a historia.js -->
     </body>
     </html>
