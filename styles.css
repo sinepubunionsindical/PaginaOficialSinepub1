@@ -437,14 +437,10 @@ footer {
 
 .slide.active {
   opacity: 1; /* ¡Slide activa completamente visible! */
-  display: block; /* Mantenemos display block para asegurar el layout */
 }
 
 .prev-slide,.next-slide {
   position: absolute;
-  /* Vamos a cambiar la posición top y transform para ponerlas en las esquinas */
-  /* top: 50%;
-  transform: translateY(-50%); */
   background-color: transparent;
   border: none;
   padding: 10px 20px;

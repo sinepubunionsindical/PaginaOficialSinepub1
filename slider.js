@@ -10,11 +10,9 @@ let currentSlide = 0;
 function updateSlide(slideIndex) {
     slides.forEach((slide, index) => {
         if (index === slideIndex) {
-            slide.classList.add('active');
-            slide.style.display = 'block';
+            slide.classList.add('active');            
         } else {
             slide.classList.remove('active');
-            slide.style.display = 'none';
         }
     });
 
