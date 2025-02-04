@@ -11,10 +11,10 @@ document.addEventListener('DOMContentLoaded', function() {
         vicepresidente: { nombre: "Luis Fernando Van Pacheco Agredo", cargo: "Vicepresidente", foto: "images/junta2.jpg" },     // junta2.jpg
         tesorera: { nombre: "Leidy Cecilia Hernández Acevedo", cargo: "Tesorera (E) - Secret. Humanización y DDHH", foto: "images/junta3.jpg" }, // junta3.jpg
         fiscal: { nombre: "Edith Medina Conde", cargo: "Fiscal", foto: "images/junta4.jpg" },          // junta4.jpg
-        secretario_salud_ocupacional: { nombre: "Luis Carlos Calderón", cargo: "Secretario Salud Ocupacional", foto: "images/junta5.jpg" }, // junta5.jpg
-        secretaria_carrera_administrativa: { nombre: "Martha Cecilia Solarte Caicedo", cargo: "Secretaria de Carrera Administrativa", foto: "images/junta6.jpg" }, // junta6.jpg
-        secretaria_reclamos: { nombre: "Patricia Salazar Morales", cargo: "Secretaria de Reclamos y Solución de Conflictos", foto: "images/junta7.jpg" }, // junta7.jpg
-        secretaria_general: { nombre: "Leydy Yohana González Ulabarry", cargo: "Secretaria General", foto: "images/junta8.jpg" },    // junta8.jpg
+        "secretario-salud-ocupacional": { nombre: "Luis Carlos Calderón", cargo: "Secretario Salud Ocupacional", foto: "images/junta5.jpg" }, // junta5.jpg
+        "secretaria-carrera-administrativa": { nombre: "Martha Cecilia Solarte Caicedo", cargo: "Secretaria de Carrera Administrativa", foto: "images/junta6.jpg" }, // junta6.jpg
+        "secretaria-reclamos": { nombre: "Patricia Salazar Morales", cargo: "Secretaria de Reclamos y Solución de Conflictos", foto: "images/junta7.jpg" }, // junta7.jpg
+        "secretaria-general": { nombre: "Leydy Yohana González Ulabarry", cargo: "Secretaria General", foto: "images/junta8.jpg" },    // junta8.jpg
     };
 
     // Función para actualizar la vista dinámica con la información del miembro
