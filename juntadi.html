@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SINEPUB - Junta Directiva</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="junta-directiva.css"> <!-- Enlace a CSS específico de Junta Directiva -->
+    <script src="widget.js" defer></script>
+    <script src="https://unpkg.com/react@17.0.2/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js" crossorigin></script>
+</head>
+<body>
+    <!-- Encabezado Principal (Franja azul delgada con títulos) -->
+    <header>
+        <div class="container header-titles-container">
+            <nav class="header-titles-nav">
+                <ul>
+                    <li><a href="historia.html" id="historia-link">Historia</a></li>
+                    <li><a href="Estatutos.pdf">Estatutos</a></li>
+                    <li><a href="#" class="active" id="junta-directiva-link">Junta Directiva</a></li> <!-- "Junta Directiva" activo -->
+                    <li><a href="#">Logros</a></li>
+                    <li class="menu-item-redes-sociales">
+                        <div class="dropdown-container-redes-sociales">
+                            <a href="#" class="dropdown-toggle">Redes Sociales</a>
+                            <div class="dropdown-menu dropdown-menu-redes-sociales">
+                                <h2>Redes Sociales</h2>
+                                <p>Síguenos en nuestras redes sociales:</p>
+                                <div class="redes-sociales-header">
+                                    <a href="https://www.facebook.com/people/Sindicato-de-Empleados-P%25C3%25BAblicos-Sinepub-HUV/100064330442393/" target="_blank">
+                                        <img src="images/icono.facebook.jpg" alt="Facebook" width="40" height="40">
+                                    </a>
+                                    <a href="https://web.whatsapp.com/send/?phone=%2B573163218579&context=ARA_Q_pzjXz8Xc1JNzpw6upSuHE9w825NQlneatdpHwu0FO26cq6ivICcbMORKR3pT_4HzmNl_Aky2IRu_neaai7HKXVwhT1CacJzpFOFANuNKjQwbhTfwQdfhk1G2rnGTY71RB49Bl3Z1bkuaivHvfxoQ&source=FB_Page&app=facebook&entry_point=page_cta&fbclid=IwY2xjawH62IxleHRuA2FlbQIxMAABHaz7Q3eybwVxMxtEi601LIJaVaPH6ttX5OI1SOxoXrV8GD8D5at1P_aksg_aem_fRKBzcZnA3IH1JogroXN_g" target="_blank">
+                                        <img src="images/icono.whatsapp.png" alt="WhatsApp" width="40" height="40">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Imágenes del Encabezado -->
+    <section class="header-images-section">
+        <div class="container header-images-container">
+            <div class="header-image-left">
+                <img src="images/propais.png" alt="Logo Propaís">
+            </div>
+            <div class="logo">
+                <img src="images/logo.png" alt="SINEPUB Logo">
+            </div>
+            <div class="header-image-huv">
+                <img src="images/HUV.jpg" alt="Logo HUV">
+            </div>
+            <div class="header-image-right">
+                <img src="images/fedetradh.png" alt="Logo Fedetradh">
+            </div>
+        </div>
+    </section>
+
+    <!-- Navegación Secundaria SIMPLIFICADA - Solo "Inicio" -->
+    <section class="below-header-nav">
+        <div class="container below-header-nav-container">
+            <nav class="slider-nav">
+                <ul>
+                    <li><a href="index.html" id="inicio-secundario-link">Inicio</a></li> <!-- Solo "Inicio" -->
+                </ul>
+            </nav>
+        </div>
+    </section>
+
+    <!-- Sección Principal: Lista de Cargos y Vista Dinámica de Miembros -->
+    <section id="junta-directiva-main-section" class="junta-directiva-section">
+        <div class="container junta-directiva-container">
+            <div class="junta-directiva-listado"> <!-- Contenedor para la lista de cargos (IZQUIERDA) -->
+                <h2 class="titulo-junta-directiva">Cargos Junta Directiva</h2>
+                <ul class="lista-cargos">  <!-- Lista UL para los cargos -->
+                    <li data-cargo="presidente">Presidente</li>
+                    <li data-cargo="vicepresidente">Vicepresidente</li>
+                    <li data-cargo="secretaria-general">Secretaria General</li>
+                    <li data-cargo="fiscal">Fiscal</li>
+                    <li data-cargo="tesorera">Tesorera (E) - Secret. Humanización y DDHH</li>
+                    <li data-cargo="secretario-salud-ocupacional">Secretario Salud Ocupacional</li>
+                    <li data-cargo="secretaria-carrera-administrativa">Secretaria de Carrera Administrativa</li>
+                    <li data-cargo="secretaria-reclamos">Secretaria de Reclamos y Solución de Conflictos</li>
+                </ul>
+            </div>
+            <div class="junta-directiva-vista-dinamica"> <!-- Contenedor para la vista dinámica (DERECHA) -->
+                <div class="miembro-detalle">  <!-- Contenedor para el detalle del miembro (inicialmente vacío) -->
+                    <img src="images/placeholder-miembro.jpg" alt="Foto del Miembro" class="miembro-foto" id="miembro-foto"> <!-- Placeholder de imagen -->
+                    <h3 class="miembro-nombre" id="miembro-nombre">Seleccione un Cargo</h3> <!-- Texto inicial -->
+                    <p class="miembro-cargo" id="miembro-cargo">Haga clic en un cargo de la lista para ver la información del miembro.</p> <!-- Texto inicial -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pie de página -->
+    <footer>
+        <div class="container">
+            <p>© 2025 SINEPUB. Todos los derechos reservados.</p>
+            <div class="contacto">
+                <div class="informacion-y-mapa">
+                    <div class="informacion">
+                        <h1 class="titulo-contacto">Contacto</h1>
+                        <p>¿Tienes dudas o necesitas más información? Contáctanos a traves de nuestros medios digitales:</p>
+                        <ul>
+                            <li>Email: sinepubunionsindical@gmail.com</li>
+                            <li>Dirección: Cl. 5 #36 - 00, El Sindicato, Cali, Valle del Cauca</li>
+                        </ul>
+                        <div class="redes-sociales">
+                            <a href="https://www.facebook.com/people/Sindicato-de-Empleados-P%25C3%25BAblicos-Sinepub-HUV/100064330442393/" target="_blank">
+                                <img src="images/icono.facebook.jpg" alt="Facebook" width="40" height="40">
+                            </a>
+                            <a href="https://web.whatsapp.com/send/?phone=%2B573163218579&context=ARA_Q_pzjXz8Xc1JNzpw6upSuHE9w825NQlneatdpHwu0FO26cq6ivICcbMORKR3pT_4HzmNl_Aky2IRu_neaai7HKXVwhT1CacJzpFOFANuNKjQwbhTfwQdfhk1G2rnGTY71RB49Bl3Z1bkuaivHvfxoQ&source=FB_Page&app=facebook&entry_point=page_cta&fbclid=IwY2xjawH62IxleHRuA2FlbQIxMAABHaz7Q3eybwVxMxtEi601LIJaVaPH6ttX5OI1SOxoXrV8GD8D5at1P_aksg_aem_fRKBzcZnA3IH1JogroXN_g" target="_blank">
+                                <img src="images/icono.whatsapp.png" alt="WhatsApp" width="40" height="40">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="mapa">
+                        <div class="mapa-titulo">
+                            <h1 class="titulo-como-llegar">Cómo llegar</h1>
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3979.755111111111!2d-76.5473703!3d3.4306492!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e30a69c440a28bb%3A0xca12ae041f48a3b8!2sCl.+5+%2336%2C+El+Sindicato%2C+Cali%2C+Valle+del+Cauca!5e0!3m2!1ses-419!2sco!4v1667243455555!5m2!1ses-419!2sco" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Agregar el botón flotante -->
+        <div id="boton-flotante">
+            <elevenlabs-convai agent-id="JymHy3hDeRPTfG29L13s"></elevenlabs-convai>
+            <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
+        </div>
+        <script src="historia.js" defer></script> <!-- Por ahora, usamos historia.js -->
+        <script src="junta-directiva.js" defer></script> <!-- NUEVO ARCHIVO JS -->
+    </body>
+    </html>

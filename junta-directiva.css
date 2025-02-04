@@ -1,0 +1,96 @@
+/* junta-directiva.css - Estilos específicos para la página Junta Directiva */
+
+/* Sección principal Junta Directiva */
+.junta-directiva-section {
+  padding: 20px;
+  background-color: #f9f9f9; /* Fondo ligero para la sección */
+}
+
+.junta-directiva-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex; /* Usar Flexbox para el layout de lista y vista dinámica */
+  gap: 20px;      /* Espacio entre la lista y la vista dinámica */
+}
+
+/* Listado de Cargos (Lado Izquierdo) */
+.junta-directiva-listado {
+  width: 300px; /* Ancho fijo para la lista de cargos */
+  padding: 20px;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.titulo-junta-directiva {
+  font-size: 1.8em;
+  margin-bottom: 15px;
+  color: #0249aa; /* Azul principal del header */
+  text-align: center;
+}
+
+.lista-cargos {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.lista-cargos li {
+  padding: 10px 15px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer; /* Cursor de "mano" al pasar por encima */
+  transition: background-color 0.2s ease-in-out; /* Transición suave al hacer hover */
+}
+
+.lista-cargos li:last-child {
+  border-bottom: none; /* Quitar borde inferior del último item */
+}
+
+.lista-cargos li:hover,
+.lista-cargos li.active {
+  background-color: #e0e0e0; /* Fondo gris claro al hacer hover o estar activo */
+  font-weight: bold;
+}
+
+.lista-cargos li.active {
+  background-color: #35a9aa; /* Azul-verde "activo" de la navegación secundaria */
+  color: white;
+}
+
+
+/* Vista Dinámica del Miembro (Lado Derecho) */
+.junta-directiva-vista-dinamica {
+  flex: 1; /* Ocupar el espacio restante */
+  padding: 20px;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;             /* Flexbox para centrar contenido verticalmente */
+  align-items: center;      /* Centrar verticalmente */
+  justify-content: center;   /* Centrar horizontalmente (por defecto) */
+}
+
+.miembro-detalle {
+  text-align: center; /* Centrar texto dentro del detalle del miembro */
+}
+
+.miembro-foto {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%; /* Hacer la imagen redonda */
+  object-fit: cover;   /* Ajustar imagen al contenedor manteniendo la proporción */
+  margin-bottom: 15px;
+  border: 3px solid #ddd; /* Borde alrededor de la foto */
+}
+
+.miembro-nombre {
+  font-size: 1.5em;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.miembro-cargo {
+  font-size: 1em;
+  color: #666;
+  font-style: italic; /* Texto en itálica para el cargo */
+}
