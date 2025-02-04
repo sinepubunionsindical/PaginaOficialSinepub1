@@ -75,12 +75,11 @@
 }
 
 .miembro-foto {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%; /* Hacer la imagen redonda - ¡LÍNEA COMENTADA! */
-  object-fit: cover;   /* Ajustar imagen al contenedor manteniendo la proporción */
+  width: 350px;
+  height: 350px;
+  /* border-radius: 50%;  (Ya eliminaste o comentaste esta línea) */
+  object-fit: contain;   /* ¡CAMBIAR A "CONTAIN" PARA MOSTRAR FOTO COMPLETA! */
   margin-bottom: 15px;
-  border: 3px solid #ddd; /* Borde alrededor de la foto */
 }
 
 
