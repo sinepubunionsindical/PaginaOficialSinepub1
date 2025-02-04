@@ -77,11 +77,12 @@
 .miembro-foto {
   width: 150px;
   height: 150px;
-  border-radius: 50%; /* Hacer la imagen redonda */
+  border-radius: 50%; /* Hacer la imagen redonda - ¡LÍNEA COMENTADA! */
   object-fit: cover;   /* Ajustar imagen al contenedor manteniendo la proporción */
   margin-bottom: 15px;
   border: 3px solid #ddd; /* Borde alrededor de la foto */
 }
+
 
 .miembro-nombre {
   font-size: 1.5em;
