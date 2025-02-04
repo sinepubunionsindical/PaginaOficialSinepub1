@@ -134,11 +134,87 @@
                     <div class="slide" id="slide-6">  <!-- NUEVA SLIDE para Afiliación -->
                         <div class="imagen-y-texto">
                             <img src="images/afiliacion_banner.jpg" alt="Banner Afiliacion" class="imagen-banner">
-                            <div class="texto-banner">
-                                <h1>¡Afíliate a SINEPUB!</h1>
-                                <p>¡Únete a nuestra comunidad sindical y defiende tus derechos laborales!</p>
-                                <p>Completa el formulario de afiliación y comienza a disfrutar de los beneficios de ser parte de SINEPUB.</p>
-                                <a href="#" class="boton-afiliacion">Formulario de Afiliación</a> 
+                            <div class="texto-banner formulario-afiliacion">  <!-- Añadida clase formulario-afiliacion -->
+                                <h1>Formulario de Afiliación</h1>
+                                <p>Únete a SINEPUB HUV y comienza a disfrutar de los beneficios de ser parte de nuestra comunidad sindical. Completa el siguiente formulario para iniciar tu proceso de afiliación:</p>
+                            
+                                <form id="formulario-afiliacion">  <!-- Formulario principal -->
+                                    <fieldset class="fieldset-datos-personales">  <!-- Fieldset para "Datos personales y laborales" -->
+                                        <legend>Datos Personales y Laborales</legend>
+                                        <div class="form-row">
+                                            <label for="nombre_apellidos">Nombre (s) y Apellidos (s):</label>
+                                            <input type="text" id="nombre_apellidos" name="nombre_apellidos" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label for="numero_identificacion">Número de Identificación:</label>
+                                            <input type="text" id="numero_identificacion" name="numero_identificacion" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
+                                            <input type="date" id="fecha_nacimiento" name="fecha_nacimiento">
+                                        </div>
+                                        <div class="form-row">
+                                            <label for="profesion_oficio">Profesión u Oficio:</label>
+                                            <input type="text" id="profesion_oficio" name="profesion_oficio">
+                                        </div>
+                                        <div class="form-row">
+                                            <label for="telefono">Teléfono(s):</label>
+                                            <input type="tel" id="telefono" name="telefono">
+                                        </div>
+                                        <div class="form-row">
+                                            <label for="correo_electronico">Correo Electrónico:</label>
+                                            <input type="email" id="correo_electronico" name="correo_electronico" required>
+                                        </div>
+                                        <div class="form-row">
+                                            <label for="direccion_correspondencia">Dirección de Correspondencia:</label>
+                                            <input type="text" id="direccion_correspondencia" name="direccion_correspondencia">
+                                        </div>
+                                        <div class="form-row">
+                                            <label for="departamento_municipio">Departamento y Municipio de Residencia:</label>
+                                            <input type="text" id="departamento_municipio" name="departamento_municipio">
+                                        </div>
+                                        <div class="form-row">
+                                            <label for="area_institucion">Área de la Institución:</label>
+                                            <input type="text" id="area_institucion" name="area_institucion">
+                                        </div>
+                                        <div class="form-row">
+                                            <label for="empleo">Empleo (Denominación, Código y Grado):</label>
+                                            <input type="text" id="empleo" name="empleo">
+                                        </div>
+                                        <div class="form-row">
+                                            <label for="fecha_afiliacion">Fecha de Afiliación al Sindicato:</label>
+                                            <input type="date" id="fecha_afiliacion" name="fecha_afiliacion">
+                                        </div>
+                                    </fieldset>
+                            
+                                    <fieldset class="fieldset-autorizacion-descuento">  <!-- Fieldset para "Autorización de descuento..." -->
+                                        <legend>Autorización de Descuento de Cuota Sindical ante el Nominador</legend>
+                                        <p>Yo, <input type="text" class="input-inline" id="yo_nombre" name="yo_nombre" placeholder="Nombre completo">, identificado(a) con cédula de ciudadanía número <input type="text" class="input-inline input-cedula" id="cedula_ciudadania" name="cedula_ciudadania" placeholder="Número de Cédula"> expedida en <input type="text" class="input-inline input-expedida" id="cedula_expedida" name="cedula_expedida" placeholder="Lugar de Expedición">, funcionario de carrera del Hospital Universitario del Valle “Evaristo García” E.S.E. y titular del empleo (<input type="text" class="input-inline input-empleo" id="empleo_autorizacion" name="empleo_autorizacion" placeholder="Denominación, Código y Grado">):</p>
+                                        <p>Autorizo al Hospital Universitario del Valle “Evaristo García” E.S.E., para que a partir de la fecha se sirva descontar el 1,0% de mi asignación básica mensual, destinada exclusivamente como aporte sindical, en favor del Sindicato de Empleados Públicos del Hospital Universitario del Valle “Evaristo García” SINEPUB HUV, identificada con NIT 909.434.349-6, durante el tiempo que permanezca como afiliado(a) a la organización.</p>
+                                    </fieldset>
+                            
+                                    <div class="firma-y-huella">  <!-- Contenedor para Firma y Huella -->
+                                        <div class="firma-afiliado">
+                                            <label for="firma_afiliado">Firma Afiliado(a):</label>
+                                            <div class="area-firma"></div> <!-- Área para la firma (simulado con un div) -->
+                                        </div>
+                                        <div class="huella-indice-derecho">
+                                            <label for="huella_indice">Huella Índice Derecho:</label>
+                                            <div class="area-huella"></div> <!-- Área para la huella (simulado con un div) -->
+                                        </div>
+                                    </div>
+                            
+                                    <p class="disclaimer-afiliacion">El Sindicato de Empleados Públicos del Hospital Universitario del Valle "Evaristo García" SINEPUB HUV, registro No 1525 del 30 de Octubre de 2020, conforme a su autonomía sindical, se reserva el derecho de admisión y permanencia en la organización, considerando la verificación del cumplimiento de todos los requisitos del afiliado, establecidos en sus Estatutos. Los datos personales que se suministran en el presente formato y en los documentos anexos al mismo, serán tratados mediante el buen uso y mantenimiento de medidas de seguridad técnicas, físicas y administrativas y su confidencialidad será garantizada, de conformidad con lo definido en la Ley 1581 de 2012, el Decreto reglamentario 1377 de 2013 y las demás normas que las modifiquen o sustituyan.</p>
+                                    <p class="anexar-documento">Anexar copia legible del documento de identidad</p>
+                                    <p class="fecha-formulario">1 2020</p>
+                                    <div class="contacto-formulario">
+                                        <p>Calle 5#36-08, Oficina 7 B/ San Fernando, Ext: 1835, TELÉFONOS: 3163218579</p>
+                                        <p>Email: sinepubhuv@gmail.com</p>
+                                    </div>
+                            
+                                    <button type="submit" class="boton-enviar-afiliacion">Enviar Formulario de Afiliación</button> <!-- Botón de envío -->
+                            
+                                </form>
                             </div>
                         </div>
                     </div>
