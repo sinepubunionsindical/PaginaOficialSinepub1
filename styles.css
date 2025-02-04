@@ -13,13 +13,14 @@
 }
 
 body {
-  font-family: Arial, sans-serif;
   background-color: #f2f2f2;
-  line-height: 1.6;
   color: #333;
-  display: flex;             /* ¡AÑADIR ESTA LÍNEA - Habilitar Flexbox en body! */
-  flex-direction: column;    /* ¡AÑADIR ESTA LÍNEA - Alinear elementos verticalmente! */
-  min-height: 100vh;        /* ¡AÑADIR ESTA LÍNEA - Altura mínima del 100% del viewport! */
+  display: flex;             /* ¡VERIFICA QUE ESTA LÍNEA ESTÉ AQUÍ Y NO TACHADA! */
+  flex-direction: column;    /* ¡VERIFICA QUE ESTA LÍNEA ESTÉ AQUÍ Y NO TACHADA! */
+  font-family: Arial, sans-serif;
+  font-size: 18px; /* o similar */
+  line-height: 1.6; /* o similar */
+  min-height: 100vh;        /* ¡VERIFICA QUE ESTA LÍNEA ESTÉ AQUÍ Y NO TACHADA! */
 }
 
 /* Encabezados */
@@ -192,13 +193,31 @@ p {
 
 /* Pie de página */
 
-footer {
+footer { /* REGLA CSS COMPLETA PARA footer */
   background-color: #333;
   color: #fff;
   padding: 20px;
   text-align: center;
-  clear: both;
-  margin-top: auto;
+  margin-top: auto; /* Para "sticky footer" - que se pegue al fondo */
+}
+
+footer .container { /* ¡REGLA CSS COMPLETA PARA footer .container - AÑADIR ESTA REGLA! */
+  max-width: 1200px;   /* Ancho máximo del contenedor */
+  margin: 0 auto;      /* Centrar horizontalmente */
+  padding: 0 20px;      /* Padding horizontal interno */
+  height: 100%;        /* ¡CONTENEDOR OCUPA 100% DEL ALTO DEL FOOTER! - CLAVE PARA ALINEACIÓN VERTICAL */
+  display: flex;         /* ¡USAR FLEXBOX PARA ALINEAR VERTICALMENTE EL CONTENIDO DENTRO DEL CONTAINER! */
+  flex-direction: column; /* Alinear elementos internos verticalmente */
+  justify-content: flex-end; /* ¡ALINEAR CONTENIDO AL FINAL (PARTE INFERIOR) DEL CONTAINER! */
+}
+
+footer p,
+footer .contacto {   /* Estilos para párrafos y la sección de contacto dentro del footer */
+  margin-bottom: 10px; /* Espacio inferior para los elementos dentro del footer */
+}
+
+footer .contacto:last-child { /* Quitar margin-bottom del último elemento de contacto */
+  margin-bottom: 0;
 }
 
 /* Botón flotante */
