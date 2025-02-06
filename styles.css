@@ -489,9 +489,10 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
 }
 
 .slide {
-  position: relative; /* 🔥 Cambia `absolute` por `relative` para que ocupe espacio */
+  display: none;        /* 🔥 Oculta y quita del flujo */
+  position: relative;
   width: 100%;
-  height: auto; /* 🔥 Ajusta la altura automáticamente */
+  height: auto;
   opacity: 0;
   transition: opacity 1s ease-in-out;
 }
@@ -506,7 +507,8 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
 }
 
 .slide.active {
-  opacity: 1; /* ¡Slide activa completamente visible! */
+  display: block;       /* 🔥 La slide activa sí ocupa espacio */
+  opacity: 1;
 }
 
 .prev-slide,.next-slide {
@@ -602,4 +604,127 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
   max-height: 100%;     /* Altura máxima del 100% del slide */
   margin: 0;           /* Eliminar márgenes innecesarios */
   margin-top: 0px;      /* Asegurar que margin-top sea 0 */
+}
+
+/* 🎨 Estilos para el Formulario de Afiliación */
+.formulario-afiliacion {
+  background: rgba(255, 255, 255, 0.95); /* Fondo semi-transparente */
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 600px; /* Para que no sea demasiado ancho */
+}
+
+/* 📝 Títulos y textos del formulario */
+.formulario-afiliacion h1 {
+  text-align: center;
+  font-size: 28px;
+  color: #0249aa;
+  margin-bottom: 15px;
+}
+
+.formulario-afiliacion p {
+  font-size: 16px;
+  text-align: center;
+  color: #444;
+  margin-bottom: 20px;
+}
+
+/* 📌 Organización de los campos */
+.form-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.form-row label {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.form-row input {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+  transition: border 0.3s ease;
+}
+
+.form-row input:focus {
+  border: 2px solid #0249aa;
+  outline: none;
+}
+
+/* 🏛 Fieldsets para agrupar secciones */
+fieldset {
+  border: 2px solid #0249aa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+legend {
+  font-weight: bold;
+  color: #0249aa;
+  padding: 0 10px;
+  font-size: 18px;
+}
+
+/* 🔥 Botón de envío con efecto hover */
+.boton-enviar-afiliacion {
+  background-color: #0249aa;
+  color: white;
+  padding: 12px 20px;
+  font-size: 18px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.boton-enviar-afiliacion:hover {
+  background-color: #023a8a;
+  transform: scale(1.05);
+}
+
+/* 🎯 Estilos para la firma y huella */
+.firma-y-huella {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.area-firma, .area-huella {
+  width: 45%;
+  height: 100px;
+  border: 2px dashed #0249aa;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #777;
+  font-size: 14px;
+}
+
+/* 📱 Responsive: Mejor ajuste en pantallas pequeñas */
+@media screen and (max-width: 768px) {
+  .formulario-afiliacion {
+      max-width: 100%;
+      padding: 20px;
+  }
+
+  .firma-y-huella {
+      flex-direction: column;
+      gap: 10px;
+  }
+
+  .area-firma, .area-huella {
+      width: 100%;
+  }
 }
