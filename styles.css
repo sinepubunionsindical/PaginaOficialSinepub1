@@ -13,15 +13,17 @@
 }
 
 body {
+  /* display: flex;      */
+  /* flex-direction: column; */
+  /* height: auto; */
+  /* overflow-x: hidden;  <-- puedes dejarlo si necesitas ocultar scroll horizontal */
   background-color: #f2f2f2;
   color: #333;
-  display: flex;
-  flex-direction: column;
   font-family: Arial, sans-serif;
   font-size: 18px;
   line-height: 1.6;
-  height: auto; /* 🔥 Permite que el body se ajuste solo al contenido */
-  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
 }
 
 /* Encabezados */
@@ -169,11 +171,9 @@ nav a {
 /* Contenido principal */
 
 main {
-  display: block; /* 🔥 Evita que main se estire innecesariamente */
+  display: block;
   padding: 20px;
-  min-height: auto; /* 🔥 Ajusta el tamaño solo al contenido */
-  flex: 1; /* ¡Nuevo! Permite que el main crezca y empuje el footer según el contenido */
-
+  min-height: auto; /* si gustas, incluso puedes omitir min-height */
 }
 
 section {
@@ -201,8 +201,8 @@ footer {
   text-align: center;
   padding: 20px;
   width: 100%;
-  margin-top: 0; /* 🔥 Evita que se agregue un espacio innecesario arriba */
-  position: relative;
+  /* position: relative;  <--- quítalo si no lo necesitas */
+  margin-top: 0;
 }
 
 footer .container {
@@ -481,7 +481,11 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
 .slider {
   position: relative;
   width: 100%;
-  min-height: 500px; /* 🔥 En lugar de `height: 100%`, usa `min-height` para permitir expansión */
+  /* Elimina o comenta esta línea: */
+  /* min-height: 500px; */
+  height: auto; /* Asegura que la altura se ajuste al contenido real */
+  /* Puedes agregar, si lo deseas, un min-height menor o condicional según el diseño */
+  transition: opacity 1s ease-in-out;
 }
 
 .slide {
