@@ -2,26 +2,26 @@ import { PDFDocument } from "https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.16
 
 document.getElementById("formulario-afiliacion").addEventListener("submit", async function (event) {
     event.preventDefault(); // ❌ Evita que la página se recargue
-
     console.log("Formulario enviado, capturando datos...");
 
     // Capturar datos del formulario
-    let nombre = document.getElementById("nombre_apellidos").value;
-    let identificacion = document.getElementById("numero_identificacion").value;
-    let fechaNacimiento = document.getElementById("fecha_nacimiento").value;
-    let profesion = document.getElementById("profesion_oficio").value;
-    let telefono = document.getElementById("telefono").value;
-    let correo = document.getElementById("correo_electronico").value;
-    let direccion = document.getElementById("direccion_correspondencia").value;
-    let departamento = document.getElementById("departamento_municipio").value;
-    let area = document.getElementById("area_institucion").value;
-    let empleo = document.getElementById("empleo").value;
-    let fechaAfiliacion = document.getElementById("fecha_afiliacion").value;
-
-    let yoNombre = document.getElementById("yo_nombre").value;
-    let cedulaCiudadania = document.getElementById("cedula_ciudadania").value;
-    let cedulaExpedida = document.getElementById("cedula_expedida").value;
-    let empleoAutorizacion = document.getElementById("empleo_autorizacion").value;
+    let formData = {
+        nombre: document.getElementById("nombre_apellidos").value,
+        identificacion: document.getElementById("numero_identificacion").value,
+        fechaNacimiento: document.getElementById("fecha_nacimiento").value,
+        profesion: document.getElementById("profesion_oficio").value,
+        telefono: document.getElementById("telefono").value,
+        correo: document.getElementById("correo_electronico").value,
+        direccion: document.getElementById("direccion_correspondencia").value,
+        departamento: document.getElementById("departamento_municipio").value,
+        area: document.getElementById("area_institucion").value,
+        empleo: document.getElementById("empleo").value,
+        fechaAfiliacion: document.getElementById("fecha_afiliacion").value,
+        yoNombre: document.getElementById("yo_nombre").value,
+        cedulaCiudadania: document.getElementById("cedula_ciudadania").value,
+        cedulaExpedida: document.getElementById("cedula_expedida").value,
+        empleoAutorizacion: document.getElementById("empleo_autorizacion").value,
+    };
 
     try {
         let response = await fetch("Afiliacion.pdf");
@@ -32,21 +32,11 @@ document.getElementById("formulario-afiliacion").addEventListener("submit", asyn
         let form = pdfDoc.getForm();
 
         // Rellenar los campos del PDF
-        form.getTextField("nombre_apellidos").setText(nombre);
-        form.getTextField("numero_identificacion").setText(identificacion);
-        form.getTextField("fecha_nacimiento").setText(fechaNacimiento);
-        form.getTextField("profesion_oficio").setText(profesion);
-        form.getTextField("telefono").setText(telefono);
-        form.getTextField("correo_electronico").setText(correo);
-        form.getTextField("direccion_correspondencia").setText(direccion);
-        form.getTextField("departamento_municipio").setText(departamento);
-        form.getTextField("area_institucion").setText(area);
-        form.getTextField("empleo").setText(empleo);
-        form.getTextField("fecha_afiliacion").setText(fechaAfiliacion);
-        form.getTextField("yo_nombre").setText(yoNombre);
-        form.getTextField("cedula_ciudadania").setText(cedulaCiudadania);
-        form.getTextField("cedula_expedida").setText(cedulaExpedida);
-        form.getTextField("empleo_autorizacion").setText(empleoAutorizacion);
+        Object.keys(formData).forEach((key) => {
+            if (form.getTextField(key)) {
+                form.getTextField(key).setText(formData[key]);
+            }
+        });
 
         let pdfBytesModified = await pdfDoc.save();
 
@@ -55,11 +45,11 @@ document.getElementById("formulario-afiliacion").addEventListener("submit", asyn
         let pdfUrl = URL.createObjectURL(pdfBlob);
         let a = document.createElement("a");
         a.href = pdfUrl;
-        a.download = `Afiliacion_${nombre}.pdf`;
+        a.download = `Afiliacion_${formData.nombre}.pdf`;
         a.click();
 
         // 🚀 Enviar el PDF por EmailJS
-        enviarCorreo(nombre, identificacion, pdfBytesModified);
+        enviarCorreo(formData, pdfBytesModified);
 
     } catch (error) {
         console.error("Error:", error);
@@ -68,29 +58,31 @@ document.getElementById("formulario-afiliacion").addEventListener("submit", asyn
 });
 
 // ✅ Función para enviar el formulario y PDF por EmailJS
-function enviarCorreo(nombre, identificacion, pdfBytes) {
-    emailjs.init("Dsr_zUrOMrG-9X9gh"); // 🔥 Reemplaza con tu User ID de EmailJS
+function enviarCorreo(formData, pdfBytes) {
+    emailjs.init("Dsr_zUrOMrG-9X9gh"); // 🔥 Reemplaza con tu Public Key de EmailJS
 
-    let pdfBase64 = btoa(String.fromCharCode(...new Uint8Array(pdfBytes)));
+    let pdfBase64 = btoa(
+        new Uint8Array(pdfBytes).reduce((data, byte) => data + String.fromCharCode(byte), "")
+    );
 
     let emailParams = {
         to_email: "sinepubunionsindical@gmail.com",
-        subject: `Afiliación - ${nombre} (${identificacion})`,
+        subject: `Afiliación - ${formData.nombre} (${formData.identificacion})`,
         message: `
-            Nombre: ${nombre}\n
-            Número de Identificación: ${identificacion}\n
-            Fecha de Nacimiento: ${fechaNacimiento}\n
-            Profesión u Oficio: ${profesion}\n
-            Teléfono: ${telefono}\n
-            Correo Electrónico: ${correo}\n
-            Dirección: ${direccion}\n
-            Departamento y Municipio: ${departamento}\n
-            Área de la Institución: ${area}\n
-            Empleo: ${empleo}\n
-            Fecha de Afiliación: ${fechaAfiliacion}\n
+            Nombre: ${formData.nombre}\n
+            Número de Identificación: ${formData.identificacion}\n
+            Fecha de Nacimiento: ${formData.fechaNacimiento}\n
+            Profesión u Oficio: ${formData.profesion}\n
+            Teléfono: ${formData.telefono}\n
+            Correo Electrónico: ${formData.correo}\n
+            Dirección: ${formData.direccion}\n
+            Departamento y Municipio: ${formData.departamento}\n
+            Área de la Institución: ${formData.area}\n
+            Empleo: ${formData.empleo}\n
+            Fecha de Afiliación: ${formData.fechaAfiliacion}\n
             ---------------------------\n
             Autorización de Descuento:\n
-            Yo, ${yoNombre}, identificado con cédula de ciudadanía número ${cedulaCiudadania}, expedida en ${cedulaExpedida}, autorizo el descuento del 1% de mi salario como aporte sindical en favor de SINEPUB HUV.
+            Yo, ${formData.yoNombre}, identificado con cédula de ciudadanía número ${formData.cedulaCiudadania}, expedida en ${formData.cedulaExpedida}, autorizo el descuento del 1% de mi salario como aporte sindical en favor de SINEPUB HUV.
         `,
         attachment: pdfBase64
     };
