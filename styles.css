@@ -15,12 +15,13 @@
 body {
   background-color: #f2f2f2;
   color: #333;
-  display: flex;             /* ¡VERIFICA QUE ESTA LÍNEA ESTÉ AQUÍ Y NO TACHADA! */
-  flex-direction: column;    /* ¡VERIFICA QUE ESTA LÍNEA ESTÉ AQUÍ Y NO TACHADA! */
+  display: flex;
+  flex-direction: column;
   font-family: Arial, sans-serif;
-  font-size: 18px; /* o similar */
-  line-height: 1.6; /* o similar */
-  min-height: 100vh;        /* ¡VERIFICA QUE ESTA LÍNEA ESTÉ AQUÍ Y NO TACHADA! */
+  font-size: 18px;
+  line-height: 1.6;
+  height: auto; /* 🔥 Permite que el body se ajuste solo al contenido */
+  overflow-x: hidden;
 }
 
 /* Encabezados */
@@ -168,10 +169,11 @@ nav a {
 /* Contenido principal */
 
 main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: block; /* 🔥 Evita que main se estire innecesariamente */
   padding: 20px;
+  min-height: auto; /* 🔥 Ajusta el tamaño solo al contenido */
+  flex: 1; /* ¡Nuevo! Permite que el main crezca y empuje el footer según el contenido */
+
 }
 
 section {
@@ -193,22 +195,24 @@ p {
 
 /* Pie de página */
 
-footer { /* REGLA CSS COMPLETA PARA footer */
+footer {
   background-color: #333;
-  color: #fff;
-  padding: 20px;
+  color: white;
   text-align: center;
-  margin-top: auto; /* Para "sticky footer" - que se pegue al fondo */
+  padding: 20px;
+  width: 100%;
+  margin-top: 0; /* 🔥 Evita que se agregue un espacio innecesario arriba */
+  position: relative;
 }
 
-footer .container { /* ¡REGLA CSS COMPLETA PARA footer .container - AÑADIR ESTA REGLA! */
-  max-width: 1200px;   /* Ancho máximo del contenedor */
-  margin: 0 auto;      /* Centrar horizontalmente */
-  padding: 0 20px;      /* Padding horizontal interno */
-  height: 100%;        /* ¡CONTENEDOR OCUPA 100% DEL ALTO DEL FOOTER! - CLAVE PARA ALINEACIÓN VERTICAL */
-  display: flex;         /* ¡USAR FLEXBOX PARA ALINEAR VERTICALMENTE EL CONTENIDO DENTRO DEL CONTAINER! */
-  flex-direction: column; /* Alinear elementos internos verticalmente */
-  justify-content: flex-end; /* ¡ALINEAR CONTENIDO AL FINAL (PARTE INFERIOR) DEL CONTAINER! */
+footer .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  height: auto; /* 🔥 Permite que el footer se ajuste al contenido */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
 
 footer p,
@@ -352,7 +356,9 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
 
 .imagen-y-texto {
   display: flex;
-  align-items: flex-start;
+  align-items: center; /* 🔥 En lugar de `flex-start`, esto alinea mejor la imagen y el texto */
+  justify-content: space-between; /* 🔥 Distribuye bien los elementos */
+  width: 100%; /* 🔥 Asegura que ocupen todo el ancho disponible */
 }
 
 .imagen-banner {
@@ -369,6 +375,11 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
   color: #333;
   margin-top: 0px;
   line-height: 1.5;
+  position: relative; /* 🔥 Permite que el texto forme parte del flujo del documento */
+  min-height: 100px; /* 🔥 Evita que el texto sea más pequeño de lo esperado */
+  display: flex; /* 🔥 Asegura que el texto se distribuya correctamente */
+  flex-direction: column; /* 🔥 Mantiene el formato */
+  justify-content: center; /* 🔥 Centra el contenido dentro del espacio disponible */
 }
 
 /* Contacto */
@@ -463,23 +474,22 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
 .slider-container {
   position: relative;
   width: 100%;
-  height: 500px; /* ajustar el alto según sea necesario */
+  height: auto; /* 🔥 Ajusta la altura solo si es necesario */
+  min-height: unset; /* 🔥 Evita que el slider fuerce una altura innecesaria */
 }
 
 .slider {
   position: relative;
   width: 100%;
-  height: 100%;
+  min-height: 500px; /* 🔥 En lugar de `height: 100%`, usa `min-height` para permitir expansión */
 }
 
 .slide {
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative; /* 🔥 Cambia `absolute` por `relative` para que ocupe espacio */
   width: 100%;
-  height: 100%;
-  opacity: 0; /* ¡Inicialmente ocultas con opacidad 0! */
-  transition: opacity 1s ease-in-out; /* ¡Añadimos transición de opacidad! */
+  height: auto; /* 🔥 Ajusta la altura automáticamente */
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
 }
 
 /* Sección Historia de SINEPUB HUV */
