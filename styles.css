@@ -21,6 +21,7 @@ body {
   font-size: 18px;
   line-height: 1.6;
   height: auto; /* 🔥 Permite que el body se ajuste solo al contenido */
+  min-height: 100vh; /* 🔥 Mantiene el footer en la parte inferior sin forzar un tamaño innecesario */
   overflow-x: hidden;
 }
 
