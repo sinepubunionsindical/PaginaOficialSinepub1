@@ -96,4 +96,52 @@ document.addEventListener('DOMContentLoaded', function() {
         window.location.href = 'index.html'; // Redirigir a index.html
     });
 
+        // 🔥 Nuevo Slider Incorporación 2017
+        const incorporacionSecundarioLink = document.getElementById('incorporacion-secundario-link');
+        const incorporacionSliderSection = document.getElementById('incorporacion-slider-section');
+        const incorporacionSlider = document.getElementById('incorporacion-slider');
+        const incorporacionSlides = incorporacionSlider.querySelectorAll('.slide');
+        const prevButtonIncorporacion = document.querySelector('.prev-slide-incorporacion');
+        const nextButtonIncorporacion = document.querySelector('.next-slide-incorporacion');
+    
+        let currentIncorporacionSlide = 0;
+    
+        function showIncorporacionSliderSection() {
+            incorporacionSliderSection.classList.remove('hidden');
+        }
+    
+        function hideIncorporacionSliderSection() {
+            incorporacionSliderSection.classList.add('hidden');
+        }
+    
+        function updateIncorporacionSlide(slideIndex) {
+            incorporacionSlides.forEach((slide, index) => {
+                slide.classList.toggle('active', index === slideIndex);
+            });
+            currentIncorporacionSlide = slideIndex;
+        }
+    
+        // 🚀 Evento para "Incorporación 2017"
+        incorporacionSecundarioLink.addEventListener('click', (event) => {
+            event.preventDefault();
+            hideHistoriaSection();
+            hideFundadoresSliderSection();
+            showIncorporacionSliderSection();
+            deactivateSecondaryNavLinks();
+            incorporacionSecundarioLink.classList.add('active');
+        });
+    
+        // 🔄 Flechas del slider de Incorporación 2017
+        prevButtonIncorporacion.addEventListener('click', () => {
+            let slideIndex = currentIncorporacionSlide - 1;
+            if (slideIndex < 0) slideIndex = incorporacionSlides.length - 1;
+            updateIncorporacionSlide(slideIndex);
+        });
+    
+        nextButtonIncorporacion.addEventListener('click', () => {
+            let slideIndex = currentIncorporacionSlide + 1;
+            if (slideIndex >= incorporacionSlides.length) slideIndex = 0;
+            updateIncorporacionSlide(slideIndex);
+        });
+ 
 });
