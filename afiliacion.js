@@ -23,7 +23,6 @@ document.getElementById("formulario-afiliacion").addEventListener("submit", asyn
     let cedulaExpedida = document.getElementById("cedula_expedida").value;
     let empleoAutorizacion = document.getElementById("empleo_autorizacion").value;
 
-    // 🚀 Cargar y modificar el PDF de Afiliación
     try {
         let response = await fetch("Afiliacion.pdf");
         if (!response.ok) throw new Error("No se pudo cargar el PDF");
@@ -51,18 +50,16 @@ document.getElementById("formulario-afiliacion").addEventListener("submit", asyn
 
         let pdfBytesModified = await pdfDoc.save();
 
-        // 🚀 Crear un Blob para descargar el PDF
+        // 🚀 Descargar automáticamente el PDF con los datos llenados
         let pdfBlob = new Blob([pdfBytesModified], { type: "application/pdf" });
         let pdfUrl = URL.createObjectURL(pdfBlob);
-
-        // 🚀 Descargar automáticamente el PDF con los datos llenados
         let a = document.createElement("a");
         a.href = pdfUrl;
         a.download = `Afiliacion_${nombre}.pdf`;
         a.click();
 
-        // 🚀 Enviar el PDF por correo
-        enviarCorreo(nombre, identificacion, pdfBlob);
+        // 🚀 Enviar el PDF por EmailJS
+        enviarCorreo(nombre, identificacion, pdfBytesModified);
 
     } catch (error) {
         console.error("Error:", error);
@@ -70,37 +67,37 @@ document.getElementById("formulario-afiliacion").addEventListener("submit", asyn
     }
 });
 
-// ✅ Función para enviar el PDF por correo
-function enviarCorreo(nombre, identificacion, pdfBlob) {
-    let formData = new FormData();
-    formData.append("to", "sinepubhuv@gmail.com");
-    formData.append("subject", `Afiliación - ${nombre} (${identificacion})`);
-    formData.append("message", `
-        Nombre: ${nombre}\n
-        Número de Identificación: ${identificacion}\n
-        Fecha de Nacimiento: ${fechaNacimiento}\n
-        Profesión u Oficio: ${profesion}\n
-        Teléfono: ${telefono}\n
-        Correo Electrónico: ${correo}\n
-        Dirección: ${direccion}\n
-        Departamento y Municipio: ${departamento}\n
-        Área de la Institución: ${area}\n
-        Empleo: ${empleo}\n
-        Fecha de Afiliación: ${fechaAfiliacion}\n
-        ---------------------------\n
-        Autorización de Descuento:\n
-        Yo, ${yoNombre}, identificado con cédula de ciudadanía número ${cedulaCiudadania}, expedida en ${cedulaExpedida}, autorizo el descuento del 1% de mi salario como aporte sindical en favor de SINEPUB HUV.
-    `);
-    formData.append("attachment", pdfBlob, `Afiliacion_${nombre}.pdf`);
+// ✅ Función para enviar el formulario y PDF por EmailJS
+function enviarCorreo(nombre, identificacion, pdfBytes) {
+    emailjs.init("Dsr_zUrOMrG-9X9gh"); // 🔥 Reemplaza con tu User ID de EmailJS
 
-    fetch("https://tu-servidor.com/enviar-correo", {
-        method: "POST",
-        body: formData
-    }).then(response => {
-        if (response.ok) {
+    let pdfBase64 = btoa(String.fromCharCode(...new Uint8Array(pdfBytes)));
+
+    let emailParams = {
+        to_email: "sinepubunionsindical@gmail.com",
+        subject: `Afiliación - ${nombre} (${identificacion})`,
+        message: `
+            Nombre: ${nombre}\n
+            Número de Identificación: ${identificacion}\n
+            Fecha de Nacimiento: ${fechaNacimiento}\n
+            Profesión u Oficio: ${profesion}\n
+            Teléfono: ${telefono}\n
+            Correo Electrónico: ${correo}\n
+            Dirección: ${direccion}\n
+            Departamento y Municipio: ${departamento}\n
+            Área de la Institución: ${area}\n
+            Empleo: ${empleo}\n
+            Fecha de Afiliación: ${fechaAfiliacion}\n
+            ---------------------------\n
+            Autorización de Descuento:\n
+            Yo, ${yoNombre}, identificado con cédula de ciudadanía número ${cedulaCiudadania}, expedida en ${cedulaExpedida}, autorizo el descuento del 1% de mi salario como aporte sindical en favor de SINEPUB HUV.
+        `,
+        attachment: pdfBase64
+    };
+
+    emailjs.send("service_2ov6wkg", "template_okt0ro7", emailParams)
+        .then(() => {
             alert("Formulario enviado correctamente.");
-        } else {
-            alert("Error al enviar el formulario.");
-        }
-    }).catch(error => console.error("Error:", error));
+        })
+        .catch(error => console.error("Error al enviar correo:", error));
 }
