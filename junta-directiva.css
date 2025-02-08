@@ -142,7 +142,8 @@
   }
   
   .miembro-descripcion p {
-    margin-bottom: 1em; 
+    margin-bottom: 1em;
+    text-align: justify; /* Alinear párrafos en justificado */ 
   }
   
   /* =========================
