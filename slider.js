@@ -19,7 +19,7 @@ function updateSlide(slideIndex) {
             slide.classList.remove('active');
         }
     });
-    
+
     currentSlide = slideIndex;
     // Event listeners para los links de navegación - MODIFICADO PARA LEER DATA-SLIDE
     navLinks.forEach((link, index) => {

@@ -86,13 +86,19 @@
                     <li data-cargo="secretaria-reclamos">Secretaria de Reclamos y Solución de Conflictos</li>
                 </ul>
             </div>
-            <div class="junta-directiva-vista-dinamica"> <!-- Contenedor para la vista dinámica (DERECHA) -->
-                <div class="miembro-detalle">  <!-- Contenedor para el detalle del miembro (inicialmente vacío) -->
-                    <img src="images/placeholder-miembro.jpg" alt="Foto del Miembro" class="miembro-foto" id="miembro-foto"> <!-- Placeholder de imagen -->
-                    <h3 class="miembro-nombre" id="miembro-nombre">Seleccione un Cargo</h3> <!-- Texto inicial -->
-                    <p class="miembro-cargo" id="miembro-cargo">Haga clic en un cargo de la lista para ver la información del miembro.</p> <!-- Texto inicial -->
+            <div class="junta-directiva-vista-dinamica">
+                <div class="miembro-detalle">
+                  <img id="miembro-foto" class="miembro-foto" src="" alt="Foto Miembro">
+                  <h2 id="miembro-nombre" class="miembro-nombre"></h2>
+                  <p id="miembro-cargo" class="miembro-cargo"></p>
+                  
+                  <p><strong>Ubicación: </strong><span id="miembro-ubicacion"></span></p>
+                  <p><strong>Celular: </strong><span id="miembro-celular"></span></p>
+                  
+                  <!-- Cuadro de descripción -->
+                  <div id="miembro-descripcion" class="miembro-descripcion"></div>
                 </div>
-            </div>
+              </div>
         </div>
     </section>
 

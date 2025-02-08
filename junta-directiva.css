@@ -77,8 +77,9 @@
 .miembro-foto {
   width: 350px;
   height: 350px;
-  /* border-radius: 50%;  (Ya eliminaste o comentaste esta línea) */
-  object-fit: contain;   /* ¡CAMBIAR A "CONTAIN" PARA MOSTRAR FOTO COMPLETA! */
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
   margin-bottom: 15px;
 }
 
@@ -93,4 +94,16 @@
   font-size: 1em;
   color: #666;
   font-style: italic; /* Texto en itálica para el cargo */
+}
+
+.miembro-descripcion {
+  background-color: #f5f5f5;  /* Fondo sutil */
+  padding: 15px 20px;
+  margin-top: 15px;
+  border-radius: 8px;
+  color: #333;
+  font-size: 1em;
+  line-height: 1.5;
+  text-align: left; /* O lo dejas en center si quieres */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Sombra leve para resaltar */
 }

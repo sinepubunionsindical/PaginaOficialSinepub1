@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>SINEPUB - Sindicato del HUV</title>
         <link rel="stylesheet" href="styles.css">
+        <script type="module" src="https://cdn.jsdelivr.net/npm/@huggingface/inference"></script>
         <script src="https://unpkg.com/react@17.0.2/umd/react.development.js" crossorigin></script>
         <script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js" crossorigin></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.16.0/pdf-lib.min.js"></script>
@@ -264,6 +265,138 @@
             </div>
         </footer>
 
+        <style>
+            /* Estilos básicos para el chat */
+            #chatContainer {
+                display: flex;
+                flex-direction: column;
+                width: 300px;
+                height: 400px;
+                border: 1px solid #ccc;
+                padding: 10px;
+                overflow-y: auto;
+            }
+            #userInput {
+                width: calc(100% - 22px);
+                margin-top: 10px;
+                padding: 10px;
+            }
+            .message {
+                margin: 5px 0;
+            }
+            .user {
+                text-align: right;
+                color: green;
+            }
+            .assistant {
+                text-align: left;
+                color: blue;
+            }
+        </style>
+
+    <body>
+        <div id="chatContainer"></div>
+        <input type="text" id="userInput" placeholder="Escribe tu mensaje...">
+        <button id="sendBtn">Enviar</button>
+
+        <script type="module">
+            import { HfInference } from 'https://cdn.jsdelivr.net/npm/@huggingface/inference';
+
+            // Reemplaza 'TU_TOKEN_AQUI' con tu token real de Hugging Face
+            const hfToken = 'TU_TOKEN_AQUI';
+            const client = new HfInference(hfToken);
+
+            // Configuración del modelo
+            const MODEL_ID = 'nombre-del-modelo';
+
+            // Historial de conversación
+            let chatHistory = [
+                {
+                    role: 'system',
+                    content: 'Eres un asistente virtual dispuesto a ayudar.'
+                }
+            ];
+
+            // Referencias a elementos del DOM
+            const chatContainer = document.getElementById('chatContainer');
+            const userInput = document.getElementById('userInput');
+            const sendBtn = document.getElementById('sendBtn');
+
+            // Función para renderizar el historial de chat en la pantalla
+            function renderChat() {
+                chatContainer.innerHTML = ''; // Limpiar la ventana de mensajes
+                chatHistory.forEach((msg) => {
+                    const messageDiv = document.createElement('div');
+                    messageDiv.classList.add('message');
+                    messageDiv.classList.add(msg.role === 'user' ? 'user' : 'assistant');
+                    messageDiv.textContent = msg.content;
+                    chatContainer.appendChild(messageDiv);
+                });
+                // Desplazar hacia abajo para ver el último mensaje
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+            // Renderizado inicial del historial para mostrar el mensaje de bienvenida
+            renderChat();
+
+            // Función para enviar el mensaje del usuario a Hugging Face y obtener la respuesta
+            async function sendMessageToHF(userMessage) {
+                try {
+                    // Agregar el mensaje del usuario al historial
+                    chatHistory.push({ role: 'user', content: userMessage });
+
+                    // Realizar la solicitud a la API de Hugging Face
+                    const response = await client.conversational({
+                        model: MODEL_ID,
+                        inputs: {
+                            past_user_inputs: chatHistory.filter(msg => msg.role === 'user').map(msg => msg.content),
+                            generated_responses: chatHistory.filter(msg => msg.role === 'assistant').map(msg => msg.content),
+                            text: userMessage
+                        }
+                    });
+
+                    // Agregar la respuesta del asistente al historial
+                    chatHistory.push({ role: 'assistant', content: response.generated_text });
+
+                    // Renderizar el historial actualizado
+                    renderChat();
+
+                } catch (error) {
+                    console.error('Error al enviar el mensaje a Hugging Face:', error);
+                    chatHistory.push({
+                        role: 'assistant',
+                        content: 'Lo siento, tuve un problema procesando tu mensaje. Vuelve a intentarlo.'
+                    });
+                    renderChat();
+                }
+            }
+
+        // Evento para enviar el mensaje cuando se hace clic en el botón de enviar
+        sendBtn.addEventListener('click', async () => {
+            const userMessage = userInput.value.trim();
+            if (userMessage === '') return; // No hacer nada si el input está vacío
+
+            // Enviar el mensaje al modelo
+            await sendMessageToHF(userMessage);
+
+            // Limpiar el campo de entrada
+            userInput.value = '';
+        });
+
+        // Permitir enviar el mensaje al presionar la tecla Enter
+        userInput.addEventListener('keypress', async (event) => {
+            if (event.key === 'Enter') {
+                const userMessage = userInput.value.trim();
+                if (userMessage === '') return; // No hacer nada si el input está vacío
+
+                // Enviar el mensaje al modelo
+                await sendMessageToHF(userMessage);
+
+                // Limpiar el campo de entrada
+                userInput.value = '';
+            }
+        });
+    </script>
         <!-- Agregar el botón flotante -->
         <div id="boton-flotante">
             <elevenlabs-convai agent-id="JymHy3hDeRPTfG29L13s"></elevenlabs-convai>
