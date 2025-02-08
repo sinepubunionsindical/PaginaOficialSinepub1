@@ -88,18 +88,30 @@
             </div>
             <div class="junta-directiva-vista-dinamica">
                 <div class="miembro-detalle">
-                  <img id="miembro-foto" class="miembro-foto" src="" alt="Foto Miembro">
-                  <h2 id="miembro-nombre" class="miembro-nombre"></h2>
-                  <p id="miembro-cargo" class="miembro-cargo"></p>
                   
-                  <p><strong>Ubicación: </strong><span id="miembro-ubicacion"></span></p>
-                  <p><strong>Celular: </strong><span id="miembro-celular"></span></p>
-                  
-                  <!-- Cuadro de descripción -->
-                  <div id="miembro-descripcion" class="miembro-descripcion"></div>
+                  <!-- Fila 1: Foto (spanea 2 columnas) -->
+                  <div class="miembro-foto-container">
+                    <img id="miembro-foto" class="miembro-foto" src="" alt="Foto Miembro">
+                  </div>
+              
+                  <!-- Fila 2: Nombre (spanea 2 columnas) -->
+                  <div class="miembro-nombre-container">
+                    <h2 id="miembro-nombre" class="miembro-nombre"></h2>
+                  </div>
+              
+                  <!-- Fila 3: Caja contenedora con 2 columnas (datos básicos a la izq, descripción a la der) -->
+                  <div class="miembro-datos-container">
+                    <p class="miembro-dato"><strong>Cargo:</strong> <span id="miembro-cargo" class="miembro-cargo"></span></p>
+                    <p class="miembro-dato"><strong>Ubicación:</strong> <span id="miembro-ubicacion"></span></p>
+                    <p class="miembro-dato"><strong>Celular:</strong> <span id="miembro-celular"></span></p>
+                  </div>
+              
+                  <div id="miembro-descripcion" class="miembro-descripcion">
+                    <!-- Aquí se inyecta la descripción desde el JS -->
+                  </div>
+              
                 </div>
-              </div>
-        </div>
+            </div>
     </section>
 
     <!-- Pie de página -->
