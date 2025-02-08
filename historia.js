@@ -44,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function deactivateSecondaryNavLinks() {
         historiaSecundariaLink.classList.remove('active');
         fundadoresSecundarioLink.classList.remove('active');
+        incorporacionSecundarioLink.classList.remove('active');
     }
 
 
@@ -77,6 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
         event.preventDefault();
         showFundadoresSliderSection(); // Mostrar SECCIÓN del Slider de Fundadores al hacer clic en "Fundadores"
         hideHistoriaSection(); // Ocultar SECCIÓN de Historia al hacer clic en "Fundadores"
+        hideIncorporacionSliderSection();
         deactivateSecondaryNavLinks();
         fundadoresSecundarioLink.classList.add('active');
     });
@@ -85,6 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
     historiaSecundariaLink.addEventListener('click', (event) => {
         event.preventDefault();
         hideFundadoresSliderSection(); // Ocultar SECCIÓN del Slider de Fundadores al hacer clic en "Historia"
+        hideIncorporacionSliderSection();
         showHistoriaSection(); // Mostrar SECCIÓN de Historia al hacer clic en "Historia"
         deactivateSecondaryNavLinks();
         historiaSecundariaLink.classList.add('active');

@@ -19,7 +19,8 @@ function updateSlide(slideIndex) {
             slide.classList.remove('active');
         }
     });
-
+    
+    currentSlide = slideIndex;
     // Event listeners para los links de navegación - MODIFICADO PARA LEER DATA-SLIDE
     navLinks.forEach((link, index) => {
       link.classList.remove('active'); // ¡NUEVA LÍNEA! Remover 'active' de *todos* los links antes de seleccionar uno nuevo

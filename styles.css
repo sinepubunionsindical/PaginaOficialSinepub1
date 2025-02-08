@@ -478,23 +478,25 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
   min-height: unset; /* 🔥 Evita que el slider fuerce una altura innecesaria */
 }
 
+/* Estructura del slider */
 .slider {
   position: relative;
   width: 100%;
-  /* Elimina o comenta esta línea: */
-  /* min-height: 500px; */
-  height: auto; /* Asegura que la altura se ajuste al contenido real */
-  /* Puedes agregar, si lo deseas, un min-height menor o condicional según el diseño */
+  height: auto; /* 🔥 Asegura que la altura del slider se ajuste */
   transition: opacity 1s ease-in-out;
+  overflow: hidden;
 }
 
+/* Configuración de cada diapositiva */
 .slide {
-  display: none;        /* 🔥 Oculta y quita del flujo */
-  position: relative;
+  position: absolute; /* 🔥 Saca los slides del flujo sin afectar el footer */
   width: 100%;
-  height: auto;
+  height: 100%;
+  top: 0;
+  left: 0;
   opacity: 0;
-  transition: opacity 1s ease-in-out;
+  visibility: hidden;
+  transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
 }
 
 /* Sección Historia de SINEPUB HUV */
@@ -507,8 +509,11 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
 }
 
 .slide.active {
-  display: block;       /* 🔥 La slide activa sí ocupa espacio */
+  position: relative;
   opacity: 1;
+  visibility: visible;
+  display: block;
+  z-index: 1;
 }
 
 .prev-slide,.next-slide {
@@ -571,40 +576,87 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
 }
 
 /* Sección Slider de Fundadores */
-
-.slider-section { /* ¡AÑADIR ESTA REGLA CSS COMPLETA! */
+.slider-section {
   background-color: #fff;
   padding: 20px;
   margin-bottom: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  transition: opacity 1s ease-in-out; /* ¡TRANSICIÓN DE OPACIDAD! */
-  opacity: 1; /* Opacidad inicial */
+  transition: opacity 1s ease-in-out;
+  opacity: 1;
+  position: relative; /* 🔥 Asegurar que el slider no afecte la posición de otros elementos */
 }
 
-/* Slider Fundadores - Ajuste para imágenes a pantalla completa */
-
+/* Ajustar tamaño del slider */
 #fundadores-slider-section .slider-container {
-  max-height: 600px; /* Opcional: Altura máxima si quieres limitar el tamaño vertical, ajusta este valor */
+  max-width: 1200px; /* 🔥 Limitar el ancho del slider para que no se expanda demasiado */
+  max-height: 600px;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden; /* 🔥 Evitar que imágenes desbordadas se vean */
 }
 
+/* Configuración del slider */
 #fundadores-slider-section .slider {
-  height: 100%; /* Slider ocupa el 100% del contenedor */
+  position: relative;
+  width: 100%;
+  height: 500px; /* 🔥 Ajusta la altura del slider para evitar colapsos */
 }
 
+/* Configuración de las diapositivas */
 #fundadores-slider-section .slide {
-  display: flex;          /* Usar flexbox para centrar la imagen */
-  justify-content: center; /* Centrar horizontalmente */
-  align-items: center;     /* Centrar verticalmente */
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  visibility: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
 }
 
-#fundadores-slider-section .imagen-banner {
-  width: auto;         /* Ancho automático para mantener la proporción de la imagen */
-  max-width: 100%;      /* Ancho máximo del 100% del slide */
-  height: auto;        /* Altura automática para mantener la proporción */
-  max-height: 100%;     /* Altura máxima del 100% del slide */
-  margin: 0;           /* Eliminar márgenes innecesarios */
-  margin-top: 0px;      /* Asegurar que margin-top sea 0 */
+/* Asegurar que la diapositiva activa esté visible */
+#fundadores-slider-section .slide.active {
+  position: relative;
+  opacity: 1;
+  visibility: visible;
+  z-index: 1;
 }
+
+/* Configuración de las imágenes */
+#fundadores-slider-section .slide img {
+  width: auto;
+  max-width: 90%; /* 🔥 Evita que las imágenes sean más anchas que el contenedor */
+  height: auto;
+  max-height: 100%; /* 🔥 Asegura que no sobrepasen la altura del slider */
+  object-fit: contain;
+}
+
+/* Ajuste de los botones de navegación */
+.prev-slide-fundadores, .next-slide-fundadores {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: white;
+  font-size: 2em;
+  cursor: pointer;
+  padding: 10px;
+  z-index: 2;
+}
+
+.prev-slide-fundadores { left: 10px; }
+.next-slide-fundadores { right: 10px; }
+
+.prev-slide-fundadores:hover, .next-slide-fundadores:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
 
 /* 🎨 Estilos para el Formulario de Afiliación */
 .formulario-afiliacion {
