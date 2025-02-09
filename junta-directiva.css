@@ -171,3 +171,12 @@
       grid-column: 1;
     }
   }
+
+.miembro-info {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.miembro-info.show {
+    opacity: 1;
+}

@@ -371,8 +371,8 @@
                 }
             }
 
-        // Evento para enviar el mensaje cuando se hace clic en el botón de enviar
-        sendBtn.addEventListener('click', async () => {
+            // Evento para enviar el mensaje cuando se hace clic en el botón de enviar
+            sendBtn.addEventListener('click', async () => {
             const userMessage = userInput.value.trim();
             if (userMessage === '') return; // No hacer nada si el input está vacío
 
@@ -383,8 +383,8 @@
             userInput.value = '';
         });
 
-        // Permitir enviar el mensaje al presionar la tecla Enter
-        userInput.addEventListener('keypress', async (event) => {
+            // Permitir enviar el mensaje al presionar la tecla Enter
+            userInput.addEventListener('keypress', async (event) => {
             if (event.key === 'Enter') {
                 const userMessage = userInput.value.trim();
                 if (userMessage === '') return; // No hacer nada si el input está vacío
@@ -396,13 +396,16 @@
                 userInput.value = '';
             }
         });
-    </script>
-        <!-- Agregar el botón flotante -->
+        </script>
+        <!-- Botón flotante con restricción de acceso -->
         <div id="boton-flotante">
-            <elevenlabs-convai agent-id="JymHy3hDeRPTfG29L13s"></elevenlabs-convai>
-            <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
+            <button id="chatbot-button">🗣️ Habla con SINEPUB IA</button>
+            <div id="chatbot-container" style="display: none;">
+                <elevenlabs-convai id="chatbot-widget"></elevenlabs-convai>
+            </div>
         </div>
+        <script src="chatbot-access.js"></script>
         <script src="slider.js" defer></script>
-        <script src="afiliacion.js" defer></script>
+        <script src="afiliacion.js"></script>
     </body>
     </html>
