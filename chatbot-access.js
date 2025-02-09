@@ -47,7 +47,7 @@ function showAuthPopup() {
 function verifyCedula() {
     const cedula = document.getElementById("cedula-input").value;
 
-    fetch("https://script.google.com/macros/s/AKfycbxabrPCMpfz6jDhX5ndebVN5dz95wPhc3ovOQZRJGa9NJXmQUPDWrRLKJfDMXUmllUB/exec", {
+    fetch("https://script.google.com/macros/s/AKfycbyZfE8qnEZoXNq6Kdq9osrl5NNs_AlE5AB-zh8h9erF25Xx2K5S0FwXhI-dHmW3PgIs/exec", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ cedula })
