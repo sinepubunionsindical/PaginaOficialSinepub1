@@ -46,13 +46,9 @@ function showAuthPopup() {
 
 function verifyCedula() {
     const cedula = document.getElementById("cedula-input").value;
-    const apiUrl = "https://script.google.com/macros/s/AKfycbyZfE8qnEZoXNq6Kdq9osrl5NNs_AlE5AB-zh8h9erF25Xx2K5S0FwXhI-dHmW3PgIs/exec";
-    
-    // Usamos un servidor proxy para evitar el problema de CORS
-    const proxyUrl = "https://corsproxy.io/?";
-    const finalUrl = proxyUrl + encodeURIComponent(apiUrl);
+    const apiUrl = "https://script.google.com/macros/s/AKfycbx-OnNLbsEOPWK6pd8YOD5qLitiGSXeDXgxHLFbIUJZWpcSmF9_TjEni6BMVCn9bXnP/exec";
 
-    fetch(finalUrl, {
+    fetch(apiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ cedula })
@@ -72,6 +68,7 @@ function verifyCedula() {
         alert("⚠ Ocurrió un error al verificar la cédula.");
     });
 }
+
 
 
 function iniciarChatbot() {
