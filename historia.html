@@ -41,20 +41,10 @@
         </header>
         
         <!-- Imágenes del Encabezado (Debajo de la franja azul) -->
-        <section class="header-images-section"> <!-- Nueva sección para las imágenes -->
-            <div class="container header-images-container"> <!-- Contenedor para las imágenes -->
-                <div class="header-image-left">
-                    <img src="images/propais.png" alt="Imagen Izquierda Header">
-                </div>
-                <div class="logo">
-                    <img src="images/logo.png" alt="SINEPUB Logo">
-                </div>
-                <div class="header-image-huv">  <!-- NUEVO DIV para el logo huv.jpg -->
-                    <img src="images/HUV.jpg" alt="Logo HUV">
-                </div>
-                <div class="header-image-right">
-                    <img src="images/fedetradh.png" alt="Imagen Derecha Header">
-                </div>
+        <section class="header-logos">
+            <div class="logo-container">
+                <img src="images/logo.png" alt="SINEPUB Logo" class="logo-sinepub">
+                <img src="images/HUV.jpg" alt="Logo HUV" class="logo-huv">
             </div>
         </section>
 
@@ -175,6 +165,10 @@
         <footer>
             <div class="container">
                 <p>&copy; 2025 SINEPUB. Todos los derechos reservados.</p>
+                <div class="footer-logos">
+                    <img src="images/fedetradh.png" alt="Logo Fedetradh">
+                    <img src="images/propais.png" alt="Logo Propais">
+                </div>
                 <div class="contacto">
                     <div class="informacion-y-mapa">
                         <div class="informacion">
@@ -202,8 +196,8 @@
                     </div>
                 </div>
             </div>
-        </footer>
-
+        </footer>     
+        
         <!-- Botón flotante con restricción de acceso -->
         <div id="boton-flotante">
             <button id="chatbot-button">🗣️ Habla con SINEPUB.IA (Solo Afiliados)</button>

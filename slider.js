@@ -140,6 +140,7 @@ document.addEventListener('mousedown', resetInactivityTimer);
 document.addEventListener('keypress', resetInactivityTimer);
 document.addEventListener('touchstart', resetInactivityTimer); // Para dispositivos táctiles
 
+
 // Inicialización
 createNavigationDots(); // Creamos los dots al cargar la página
 updateSlide(0);
