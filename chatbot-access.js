@@ -46,16 +46,20 @@ function showAuthPopup() {
 
 function verifyCedula() {
     const cedula = document.getElementById("cedula-input").value;
+    const apiUrl = "https://script.google.com/macros/s/AKfycbyZfE8qnEZoXNq6Kdq9osrl5NNs_AlE5AB-zh8h9erF25Xx2K5S0FwXhI-dHmW3PgIs/exec";
+    
+    // Usamos un servidor proxy para evitar el problema de CORS
+    const proxyUrl = "https://corsproxy.io/?";
+    const finalUrl = proxyUrl + encodeURIComponent(apiUrl);
 
-    fetch("https://script.google.com/macros/s/AKfycbyZfE8qnEZoXNq6Kdq9osrl5NNs_AlE5AB-zh8h9erF25Xx2K5S0FwXhI-dHmW3PgIs/exec", {
+    fetch(finalUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ cedula })
     })
     .then(response => response.json())
     .then(data => {
-        console.log("📡 Respuesta de la API:", data); // ✅ Verificar qué devuelve la API
-
+        console.log("📡 Respuesta de la API:", data);
         if (data.acceso) {
             iniciarChatbot();
         } else {
