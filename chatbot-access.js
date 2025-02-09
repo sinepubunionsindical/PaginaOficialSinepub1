@@ -46,17 +46,21 @@ function showAuthPopup() {
 
 function verifyCedula() {
     const cedula = document.getElementById("cedula-input").value;
-    const apiUrl = "https://script.google.com/macros/s/AKfycbx-OnNLbsEOPWK6pd8YOD5qLitiGSXeDXgxHLFbIUJZWpcSmF9_TjEni6BMVCn9bXnP/exec";
+    const jsonBinUrl = "https://api.jsonbin.io/v3/b/67a87a39e41b4d34e4870c44";
+    const apiKey = "$2a$10$Z828YxzIHQXkevNBQmzlIuLXVpdJQafXGR.aTqC8N05u0DNuMp.wS";
 
-    fetch(apiUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cedula })
+    fetch(jsonBinUrl, {
+        method: "GET",
+        headers: {
+            "X-Master-Key": apiKey,
+            "Content-Type": "application/json"
+        }
     })
     .then(response => response.json())
     .then(data => {
-        console.log("📡 Respuesta de la API:", data);
-        if (data.acceso) {
+        console.log("📡 Respuesta de JSONBin:", data);
+        const cedulas = data.record.cedulas;
+        if (cedulas.includes(cedula)) {
             iniciarChatbot();
         } else {
             alert("❌ Acceso denegado. No puede volver a intentarlo.");
@@ -68,8 +72,6 @@ function verifyCedula() {
         alert("⚠ Ocurrió un error al verificar la cédula.");
     });
 }
-
-
 
 function iniciarChatbot() {
     document.getElementById("chatbot-container").style.display = "block";
