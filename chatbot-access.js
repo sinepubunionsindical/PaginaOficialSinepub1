@@ -33,7 +33,7 @@ function showAuthPopup() {
     popup.style.zIndex = "10000"; // Asegurar que esté por encima de todo
 
     popup.innerHTML = `
-        <h3>Acceso Restringido</h3>
+        <h3>Acceso Restringido, Solo Afiliados</h3>
         <p>Ingrese su número de cédula para continuar</p>
         <input type="text" id="cedula-input" placeholder="Cédula">
         <button onclick="verifyCedula()">Verificar</button>
@@ -86,3 +86,13 @@ function iniciarChatbot() {
     document.getElementById("chatbot-container").style.display = "block";
 }
 
+function bloquearBoton() {
+    const chatButton = document.getElementById("chatbot-button");
+    if (chatButton) {
+        chatButton.style.backgroundColor = "red";
+        chatButton.style.color = "white";
+        chatButton.style.cursor = "not-allowed";
+        chatButton.innerText = "❌ No eres afiliado al sindicato";
+        chatButton.disabled = true;
+    }
+}
