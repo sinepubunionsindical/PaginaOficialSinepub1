@@ -33,7 +33,7 @@ function showAuthPopup() {
     popup.style.zIndex = "10000"; // Asegurar que esté por encima de todo
 
     popup.innerHTML = `
-        <h3>Acceso Restringido, Solo Afiliados</h3>
+        <h3>Acceso Restringido</h3>
         <p>Ingrese su número de cédula para continuar</p>
         <input type="text" id="cedula-input" placeholder="Cédula">
         <button onclick="verifyCedula()">Verificar</button>
@@ -63,6 +63,7 @@ function verifyCedula() {
         if (cedulas.includes(cedula)) {
             iniciarChatbot();
         } else {
+            bloquearBoton();
             alert("❌ Acceso denegado. No puede volver a intentarlo.");
             document.getElementById("auth-popup").remove();
         }
