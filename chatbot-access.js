@@ -82,12 +82,7 @@ function iniciarChatbot() {
     // Ocultar el botón inicial
     document.getElementById("chatbot-button").style.display = "none";
     
-    // Crear el contenedor para el chatbot
-    const chatbotContainer = document.createElement("div");
-    chatbotContainer.id = "boton-flotante";
-    chatbotContainer.innerHTML = `
-        <elevenlabs-convai agent-id="JymHy3hDeRPTfG29L13s"></elevenlabs-convai>
-        <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
-    `;
-    document.body.appendChild(chatbotContainer);
+    // Mostrar el widget de Eleven Labs
+    document.getElementById("chatbot-container").style.display = "block";
 }
+
