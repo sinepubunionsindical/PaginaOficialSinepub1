@@ -13,16 +13,35 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function showAuthPopup() {
+    console.log("🛠 Intentando mostrar el popup..."); // Verificar en consola
+
+    const existingPopup = document.getElementById("auth-popup");
+    if (existingPopup) {
+        console.log("⚠ Popup ya está abierto.");
+        return;
+    }
+
     const popup = document.createElement("div");
+    popup.id = "auth-popup";
+    popup.style.position = "fixed";
+    popup.style.top = "50%";
+    popup.style.left = "50%";
+    popup.style.transform = "translate(-50%, -50%)";
+    popup.style.background = "white";
+    popup.style.padding = "20px";
+    popup.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
+    popup.style.zIndex = "10000"; // Asegurar que esté por encima de todo
+
     popup.innerHTML = `
-        <div id="auth-popup">
-            <h3>Acceso Restringido</h3>
-            <p>Ingrese su número de cédula para continuar</p>
-            <input type="text" id="cedula-input" placeholder="Cédula">
-            <button onclick="verifyCedula()">Verificar</button>
-        </div>
+        <h3>Acceso Restringido</h3>
+        <p>Ingrese su número de cédula para continuar</p>
+        <input type="text" id="cedula-input" placeholder="Cédula">
+        <button onclick="verifyCedula()">Verificar</button>
+        <button onclick="document.getElementById('auth-popup').remove()">Cerrar</button>
     `;
+
     document.body.appendChild(popup);
+    console.log("✅ Popup añadido al DOM."); // Verificar si realmente se insertó
 }
 
 function verifyCedula() {
