@@ -74,7 +74,20 @@ function verifyCedula() {
 }
 
 function iniciarChatbot() {
-    document.getElementById("chatbot-container").style.display = "block";
-    document.getElementById("chatbot-widget").setAttribute("agent-id", "JymHy3hDeRPTfG29L13s");
-    alert("Acceso concedido. Iniciando IA de Eleven Labs...");
+    console.log("✅ Acceso concedido. Iniciando IA de Eleven Labs...");
+    
+    // Ocultar el popup
+    document.getElementById("auth-popup").remove();
+    
+    // Ocultar el botón inicial
+    document.getElementById("chatbot-button").style.display = "none";
+    
+    // Crear el contenedor para el chatbot
+    const chatbotContainer = document.createElement("div");
+    chatbotContainer.id = "boton-flotante";
+    chatbotContainer.innerHTML = `
+        <elevenlabs-convai agent-id="JymHy3hDeRPTfG29L13s"></elevenlabs-convai>
+        <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
+    `;
+    document.body.appendChild(chatbotContainer);
 }
