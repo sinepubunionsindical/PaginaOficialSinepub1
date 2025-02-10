@@ -13,10 +13,6 @@
 }
 
 body {
-  /* display: flex;      */
-  /* flex-direction: column; */
-  /* height: auto; */
-  /* overflow-x: hidden;  <-- puedes dejarlo si necesitas ocultar scroll horizontal */
   background-color: #f2f2f2;
   color: #333;
   font-family: Arial, sans-serif;
@@ -156,7 +152,6 @@ nav a {
   color: #fff; /* Texto blanco para la navegación secundaria */
   text-decoration: none; /* Quitar subrayado de los enlaces */
   font-size: 1.2em; /* ¡Mismo tamaño que los títulos del header!  */
-  /* Opcional: Si quieres un poco más pequeño, prueba con 1em o 1.1em */
 }
 
 /* Estilo para el link de navegación secundario activo */
@@ -295,7 +290,9 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
 
 .footer-logos {
   display: flex;
-  justify-content: center;
+  justify-content: left;
+  top: 70px;
+  left: 150px;
   gap: 20px;
   margin-top: 5px;
   position: relative; /* Asegura que el z-index funcione */
@@ -306,10 +303,36 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
   transition: transform 0.3s ease-in-out;
   position: relative;
   z-index: 15; /* Asegura que los logos estén sobre el mapa */
+  border-radius: 20%; /* Opcional: Si quieres iconos redondeados */
 }
 .footer-logos img:hover {
   transform: scale(2.2); /* Efecto de agrandado */
   z-index: 20; /* Mantiene la imagen por encima del mapa */
+}
+
+/* 🔹 Estilos para las Redes Sociales en el Footer */
+.footer-redes-sociales {
+  display: flex;
+  justify-content: center; /* 🔥 Alinea los iconos a la izquierda */
+  align-items: center;
+  gap: 15px; /* Espaciado entre iconos */
+  margin-top: 10px;
+}
+
+.footer-redes-sociales a {
+  display: inline-block;
+  transition: transform 0.3s ease-in-out;
+}
+
+.footer-redes-sociales img {
+  width: 40px; /* Tamaño estándar de los iconos */
+  height: 40px;
+  border-radius: 50%; /* Opcional: Si quieres iconos redondeados */
+}
+
+/* 🔥 Efecto al pasar el mouse */
+.footer-redes-sociales a:hover {
+  transform: scale(2.2);
 }
 
 /* Botón flotante */
@@ -319,6 +342,24 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
   bottom: 10vh;
   right: 20px;
   z-index: 1000;
+}
+
+#chatbot-button {
+  background-color: #0249aa; /* Color del sindicato */
+  color: white;
+  font-size: 18px; /* 🔥 Aumentar tamaño del texto */
+  font-weight: bold;
+  padding: 5px 5px; /* 🔥 Aumentar tamaño del botón */
+  border: none;
+  border-radius: 8px; /* Bordes más redondeados */
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+/* 🔥 Efecto al pasar el mouse */
+#chatbot-button:hover {
+  background-color: #35a9aa;
+  transform: scale(1.1);
 }
 
 /* Menú desplegable */
@@ -379,6 +420,8 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
   width: 350px;           
   text-align: center;     
   background-color: #545454;
+  z-index: 50 !important; /* 🔥 Asegura que esté por encima de la franja blanca */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Agrega una sombra para mejorar la visibilidad */
 }
 
 .dropdown-menu-redes-sociales h2 {
@@ -390,60 +433,34 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
 }
 
 .dropdown-menu-redes-sociales .redes-sociales-header {
-  display: flex;       /* Usar flexbox para los iconos */
-  justify-content: center; /* Centrar horizontalmente */
-  gap: 15px;           /* Espacio entre los iconos */
-  margin-top: 10px;    /* Espacio superior */
+  display: flex;
+  justify-content: center; /* 🔥 Asegura que los iconos estén bien alineados */
+  align-items: center;
+  gap: 15px; /* Espaciado entre los iconos */
+  margin-top: 5px;
+}
+
+.dropdown-menu-redes-sociales .redes-sociales-header a {
+  display: inline-block;
+  transition: transform 0.3s ease-in-out;
 }
 
 .dropdown-menu-redes-sociales .redes-sociales-header img {
-  width: 30px;         /* Iconos más pequeños */
-  height: 30px;
+  width: 40px; /* 🔥 Mismo tamaño que en el footer */
+  height: 40px;
+  border-radius: 50%; /* 🔥 Iconos circulares */
+  transition: transform 0.3s ease-in-out; /* 🔥 Efecto de transición */
 }
 
-/* Enlaces sociales */
-
-.social-links {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  justify-content: space-between;
-  margin-top: -50px;
-}
-
-.social-links li {
-  margin-right: 20px;
-}
-
-.social-links a {
-  color: #fff;
-  text-decoration: none;
-}
-
-.social-links a:hover {
-  color: #ccc;
-}
-
-.fa-facebook {
-  margin-right: 10px;
-  color: #3b5998;
-}
-
-.fa-twitter {
-  margin-right: 10px;
-  color: #1da1f2;
-}
-
-.fa-instagram {
-  margin-right: 10px;
-  color: #e1306c;
+/* 🔥 Efecto al pasar el mouse */
+.dropdown-menu-redes-sociales .redes-sociales-header a:hover img {
+  transform: scale(2.2); /* 🔥 Mismo efecto de agrandamiento */
 }
 
 /* Imagen y texto */
 .imagen-y-texto {
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* Mantiene alineación arriba */
   justify-content: space-between;
   width: 100%;
   position: relative;
@@ -500,10 +517,10 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
 
 .mapa {
   width: 60%;
-  padding: 20px;
-  background-color: #f7f7f7;
-  border: 1px solid #ddd;
-  border-radius: 2px;
+  padding: 40px;
+  background-color: #35a9aa;
+  border: 7px solid #0249aa;
+  border-radius: 100px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   position: relative;
 }
@@ -518,7 +535,7 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
 .titulo-contacto {
   font-size: 24px;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
   color: #000;
   text-align: center;
 }
@@ -527,7 +544,7 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 10px;
-  color: #000 !important;
+  color: #fffdfd !important;
   text-align: center;
 }
 
