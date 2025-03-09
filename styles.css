@@ -374,6 +374,7 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
   transition: opacity 0.3s ease-in-out; /* Transición más suave */
   opacity: 0; /* Inicialmente transparente */
   pointer-events: none; /* No interactivo por defecto */
+  border-radius: 8px;
 }
 
 .dropdown-menu h2,
