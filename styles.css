@@ -452,9 +452,141 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
   transition: transform 0.3s ease-in-out; /* 🔥 Efecto de transición */
 }
 
+/* 🔹 Estilo para la sección de colaboradores */
+.menu-item-colaboradores {
+  position: relative;
+}
+
+.dropdown-container-colaboradores {
+  position: relative;
+  display: inline-block;
+}
+
+/* 📌 Ajustar la posición del menú desplegable */
+.dropdown-menu-colaboradores {
+  display: none;
+  position: absolute;
+  background-color: #545454; /* Fondo oscuro similar al de Redes Sociales */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  width: 300px; /* 🔥 Ancho fijo */
+  top: 100%;
+  left: auto;
+  right: 0; /* Se despliega hacia la izquierda */
+  z-index: 1000;
+  border-radius: 8px;
+  color: white; /* Texto en blanco */
+  text-align: center;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* 📌 Mostrar el menú desplegable cuando se pasa el mouse */
+.menu-item-colaboradores:hover .dropdown-menu-colaboradores,
+.dropdown-menu-colaboradores:hover {
+  display: block;
+  opacity: 1;
+  pointer-events: auto; /* Permitir interacción */
+}
+
+/* 🔹 Ocultar cuando el mouse sale */
+.menu-item-colaboradores:not(:hover) .dropdown-menu-colaboradores,
+.dropdown-menu-colaboradores:not(:hover) {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* 🔹 Estilos dentro del menú desplegable */
+.dropdown-menu-colaboradores h2 {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+  color: #fff;
+}
+
+/* 📌 Contenedor de los colaboradores en fila */
+.colaboradores-container {
+  display: flex;
+  justify-content: space-around; /* 🔥 Distribuye las imágenes de izquierda a derecha */
+  align-items: center;
+  gap: 20px; /* 🔥 Espaciado entre imágenes */
+}
+
+/* 📌 Ajuste de los colaboradores */
+.colaborador {
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+  text-align: center;
+}
+
+/* 🔥 Efecto al pasar el mouse sobre la imagen (zoom) */
+.colaborador:hover img {
+  transform: scale(2.4) translateX(-50px); /* 🔥 Se agranda y se mueve ligeramente a la izquierda */
+  transition: transform 0.3s ease-in-out;
+  z-index: 10; /* 🔥 Asegura que la imagen agrandada esté por encima de las demás */
+  position: relative; /* 🔥 Necesario para que z-index tenga efecto */
+}
+
+/* 🔹 Estilos para la imagen del colaborador */
+.colaborador img {
+  width: 60px; /* 🔥 Tamaño inicial */
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* 📌 Cuadro emergente de información del colaborador */
+.info-colaborador {
+  display: none;
+  position: absolute;
+  background-color: #545454; /* 🔥 Mismo fondo que el primer cuadro */
+  color: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  top: 50%;
+  right: 110%; /* 🔥 Se coloca a la izquierda de la imagen */
+  transform: translateY(-50%);
+  text-align: left;
+  font-size: 14px;
+  width: 270px; /* 🔥 Se fuerza un ancho igual para ambos */
+}
+
+/* 🔹 Ajuste del tamaño para el cuadro emergente del segundo colaborador */
+.colaborador:nth-child(2) .info-colaborador {
+  width: 270px !important; /* 🔥 Mantiene el mismo ancho para ambos cuadros */
+}
+
+/* 🔹 Formato del contenido del cuadro emergente */
+.info-colaborador p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.info-colaborador strong {
+  font-weight: bold;
+}
+
+/* 🔹 Mostrar información cuando se pasa el mouse sobre la imagen */
+.colaborador:hover .info-colaborador {
+  display: block;
+}
+
+/* 🔹 Resaltar la opción "Colaboradores" al pasar el mouse */
+.menu-item-colaboradores:hover .dropdown-toggle {
+  background-color: #35a9aa; /* Mismo color que el hover de Redes Sociales */
+  color: white;
+  font-weight: bold;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+
 /* 🔥 Efecto al pasar el mouse */
 .dropdown-menu-redes-sociales .redes-sociales-header a:hover img {
-  transform: scale(2.2); /* 🔥 Mismo efecto de agrandamiento */
+  transform: scale(2.5); /* 🔥 Mismo efecto de agrandamiento */
 }
 
 /* Imagen y texto */

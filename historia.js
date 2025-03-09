@@ -1,44 +1,32 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
 
-    const inicioSecundarioLink = document.getElementById('inicio-secundario-link');
     const historiaSecundariaLink = document.getElementById('historia-secundaria-link');
     const fundadoresSecundarioLink = document.getElementById('fundadores-secundario-link');
+    const incorporacionSecundarioLink = document.getElementById('incorporacion-secundario-link');
 
     const historiaSection = document.getElementById('historia-sinepub');
     const fundadoresSliderSection = document.getElementById('fundadores-slider-section');
+    const incorporacionSliderSection = document.getElementById('incorporacion-slider-section');
+
     const fundadoresSlider = document.getElementById('fundadores-slider');
     const fundadoresSlides = fundadoresSlider.querySelectorAll('.slide');
     const prevButtonFundadores = document.querySelector('.prev-slide-fundadores');
     const nextButtonFundadores = document.querySelector('.next-slide-fundadores');
 
+    const incorporacionSlider = document.getElementById('incorporacion-slider');
+    const incorporacionSlides = incorporacionSlider.querySelectorAll('.slide');
+    const prevButtonIncorporacion = document.querySelector('.prev-slide-incorporacion');
+    const nextButtonIncorporacion = document.querySelector('.next-slide-incorporacion');
+
     let currentFundadorSlide = 0;
+    let currentIncorporacionSlide = 0;
 
-
-    function showFundadoresSliderSection() {
-        fundadoresSliderSection.classList.remove('hidden');
-    }
-
-    function hideFundadoresSliderSection() {
-        fundadoresSliderSection.classList.add('hidden');
-    }
-
-    function showHistoriaSection() {
-        historiaSection.classList.remove('hidden');
-    }
-
-    function hideHistoriaSection() {
+    function showSection(section) {
         historiaSection.classList.add('hidden');
-    }
+        fundadoresSliderSection.classList.add('hidden');
+        incorporacionSliderSection.classList.add('hidden');
 
-    function updateFundadorSlide(slideIndex) { // Mantiene la funcionalidad del slider de fundadores
-        fundadoresSlides.forEach((slide, index) => {
-            if (index === slideIndex) {
-                slide.classList.add('active');
-            } else {
-                slide.classList.remove('active');
-            }
-        });
-        currentFundadorSlide = slideIndex;
+        section.classList.remove('hidden');
     }
 
     function deactivateSecondaryNavLinks() {
@@ -47,104 +35,70 @@ document.addEventListener('DOMContentLoaded', function() {
         incorporacionSecundarioLink.classList.remove('active');
     }
 
+    function updateFundadorSlide(slideIndex) {
+        fundadoresSlides.forEach((slide, index) => {
+            slide.classList.toggle('active', index === slideIndex);
+        });
+        currentFundadorSlide = slideIndex;
+    }
 
-    // Event listeners para las flechas del slider de fundadores - SIN CAMBIOS
+    function updateIncorporacionSlide(slideIndex) {
+        incorporacionSlides.forEach((slide, index) => {
+            slide.classList.toggle('active', index === slideIndex);
+        });
+        currentIncorporacionSlide = slideIndex;
+    }
+
+    // Flechas del slider de fundadores
     prevButtonFundadores.addEventListener('click', () => {
         let slideIndex = currentFundadorSlide - 1;
-        if (slideIndex < 0) {
-            slideIndex = fundadoresSlides.length - 1;
-        }
+        if (slideIndex < 0) slideIndex = fundadoresSlides.length - 1;
         updateFundadorSlide(slideIndex);
     });
 
     nextButtonFundadores.addEventListener('click', () => {
         let slideIndex = currentFundadorSlide + 1;
-        if (slideIndex >= fundadoresSlides.length) {
-            slideIndex = 0;
-        }
+        if (slideIndex >= fundadoresSlides.length) slideIndex = 0;
         updateFundadorSlide(slideIndex);
     });
 
-
-    // Inicialización al cargar la página historia.html - REVISADO Y AJUSTADO
-    showHistoriaSection(); // Mostrar SECCIÓN de Historia INICIALMENTE
-    hideFundadoresSliderSection(); // Ocultar SECCIÓN del Slider de Fundadores INICIALMENTE
-    historiaSecundariaLink.classList.add('active'); // Activar "Historia" en nav secundaria INICIALMENTE
-    fundadoresSecundarioLink.classList.remove('active'); // Desactivar "Fundadores" en nav secundaria INICIALMENTE
-
-
-    // Event listener para el link "Fundadores" en la navegación secundaria - REVISADO Y AJUSTADO
-    fundadoresSecundarioLink.addEventListener('click', (event) => {
-        event.preventDefault();
-        showFundadoresSliderSection(); // Mostrar SECCIÓN del Slider de Fundadores al hacer clic en "Fundadores"
-        hideHistoriaSection(); // Ocultar SECCIÓN de Historia al hacer clic en "Fundadores"
-        hideIncorporacionSliderSection();
-        deactivateSecondaryNavLinks();
-        fundadoresSecundarioLink.classList.add('active');
+    // Flechas del slider de Incorporación 2017
+    prevButtonIncorporacion.addEventListener('click', () => {
+        let slideIndex = currentIncorporacionSlide - 1;
+        if (slideIndex < 0) slideIndex = incorporacionSlides.length - 1;
+        updateIncorporacionSlide(slideIndex);
     });
 
-    // Event listener para el link "Historia" en la navegación secundaria - REVISADO Y AJUSTADO
+    nextButtonIncorporacion.addEventListener('click', () => {
+        let slideIndex = currentIncorporacionSlide + 1;
+        if (slideIndex >= incorporacionSlides.length) slideIndex = 0;
+        updateIncorporacionSlide(slideIndex);
+    });
+
+    // Inicializar
+    showSection(historiaSection);
+    historiaSecundariaLink.classList.add('active');
+
+    // Event listeners para los botones del menú secundario
     historiaSecundariaLink.addEventListener('click', (event) => {
         event.preventDefault();
-        hideFundadoresSliderSection(); // Ocultar SECCIÓN del Slider de Fundadores al hacer clic en "Historia"
-        hideIncorporacionSliderSection();
-        showHistoriaSection(); // Mostrar SECCIÓN de Historia al hacer clic en "Historia"
+        showSection(historiaSection);
         deactivateSecondaryNavLinks();
         historiaSecundariaLink.classList.add('active');
     });
 
-    // Event listener para el link "Inicio" en la navegación secundaria - SIN CAMBIOS
-    inicioSecundarioLink.addEventListener('click', (event) => {
+    fundadoresSecundarioLink.addEventListener('click', (event) => {
         event.preventDefault();
-        window.location.href = 'index.html'; // Redirigir a index.html
+        showSection(fundadoresSliderSection);
+        deactivateSecondaryNavLinks();
+        fundadoresSecundarioLink.classList.add('active');
     });
 
-        // 🔥 Nuevo Slider Incorporación 2017
-        const incorporacionSecundarioLink = document.getElementById('incorporacion-secundario-link');
-        const incorporacionSliderSection = document.getElementById('incorporacion-slider-section');
-        const incorporacionSlider = document.getElementById('incorporacion-slider');
-        const incorporacionSlides = incorporacionSlider.querySelectorAll('.slide');
-        const prevButtonIncorporacion = document.querySelector('.prev-slide-incorporacion');
-        const nextButtonIncorporacion = document.querySelector('.next-slide-incorporacion');
-    
-        let currentIncorporacionSlide = 0;
-    
-        function showIncorporacionSliderSection() {
-            incorporacionSliderSection.classList.remove('hidden');
-        }
-    
-        function hideIncorporacionSliderSection() {
-            incorporacionSliderSection.classList.add('hidden');
-        }
-    
-        function updateIncorporacionSlide(slideIndex) {
-            incorporacionSlides.forEach((slide, index) => {
-                slide.classList.toggle('active', index === slideIndex);
-            });
-            currentIncorporacionSlide = slideIndex;
-        }
-    
-        // 🚀 Evento para "Incorporación 2017"
-        incorporacionSecundarioLink.addEventListener('click', (event) => {
-            event.preventDefault();
-            hideHistoriaSection();
-            hideFundadoresSliderSection();
-            showIncorporacionSliderSection();
-            deactivateSecondaryNavLinks();
-            incorporacionSecundarioLink.classList.add('active');
-        });
-    
-        // 🔄 Flechas del slider de Incorporación 2017
-        prevButtonIncorporacion.addEventListener('click', () => {
-            let slideIndex = currentIncorporacionSlide - 1;
-            if (slideIndex < 0) slideIndex = incorporacionSlides.length - 1;
-            updateIncorporacionSlide(slideIndex);
-        });
-    
-        nextButtonIncorporacion.addEventListener('click', () => {
-            let slideIndex = currentIncorporacionSlide + 1;
-            if (slideIndex >= incorporacionSlides.length) slideIndex = 0;
-            updateIncorporacionSlide(slideIndex);
-        });
- 
+    incorporacionSecundarioLink.addEventListener('click', (event) => {
+        event.preventDefault();
+        showSection(incorporacionSliderSection);
+        deactivateSecondaryNavLinks();
+        incorporacionSecundarioLink.classList.add('active');
+    });
+
 });

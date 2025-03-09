@@ -81,7 +81,11 @@ document.addEventListener('DOMContentLoaded', function() {
             foto: "images/junta6.jpg",
             ubicacion: "Pendiente",
             celular: "Pendiente",
-            descripcion: "Información en proceso de actualización."
+            descripcion: `
+                <p>Velará por el cumplimiento de la carrera administrativa, promoviendo reuniones con la Comisión de Personal y supervisando la Evaluación del Desempeño Laboral.</p>
+
+                <p>Realizará veeduría en el hospital y participará en comisiones para garantizar transparencia, equidad y eficiencia en la gestión del talento humano.</p>
+            `
         },
         "secretaria-reclamos": {
             nombre: "Patricia Salazar Morales",
@@ -89,7 +93,11 @@ document.addEventListener('DOMContentLoaded', function() {
             foto: "images/junta7.jpg",
             ubicacion: "Pendiente",
             celular: "Pendiente",
-            descripcion: "Información en proceso de actualización."
+            descripcion: `
+                <p>Velará por el cumplimiento de la Ley de Acoso Laboral, promoviendo la formación de los afiliados para identificar, prevenir y corregir conductas de agresión u hostigamiento.</p>
+
+                <p>Fomentará el liderazgo consciente y responsable, contribuyendo a una sociedad más justa y democrática.</p>
+            `
         },
         "secretaria-general": {
             nombre: "Leydy Yohana González Ulabarry",

@@ -10,6 +10,61 @@ let autoplayInterval; // Variable para almacenar el intervalo del autoplay
 let inactivityTimeout; // Variable para el timeout de inactividad
 const inactivityTime = 90000; // 90 segundos en milisegundos
 
+document.addEventListener("DOMContentLoaded", function () {
+    const menuColaboradores = document.querySelector(".menu-item-colaboradores");
+    const dropdownColaboradores = document.querySelector(".dropdown-menu-colaboradores");
+    const infoColaboradores = document.querySelectorAll(".info-colaborador");
+    const headerMenu = document.querySelector(".header-titles-nav"); // Todo el menú del header
+
+    if (menuColaboradores && dropdownColaboradores) {
+        let isHovering = false;
+
+        const showDropdown = () => {
+            dropdownColaboradores.style.display = "block";
+            dropdownColaboradores.style.opacity = "1";
+            isHovering = true;
+        };
+
+        const hideDropdown = () => {
+            setTimeout(() => {
+                if (!isHovering) {
+                    dropdownColaboradores.style.opacity = "0";
+                    dropdownColaboradores.style.display = "none";
+                }
+            }, 100);
+        };
+
+        menuColaboradores.addEventListener("mouseenter", showDropdown);
+        dropdownColaboradores.addEventListener("mouseenter", () => isHovering = true);
+        menuColaboradores.addEventListener("mouseleave", () => {
+            isHovering = false;
+            hideDropdown();
+        });
+
+        dropdownColaboradores.addEventListener("mouseleave", () => {
+            isHovering = false;
+            hideDropdown();
+        });
+
+        // Evita que el menú desaparezca cuando el mouse pasa entre los cuadros emergentes
+        infoColaboradores.forEach(info => {
+            info.addEventListener("mouseenter", () => isHovering = true);
+            info.addEventListener("mouseleave", () => {
+                isHovering = false;
+                hideDropdown();
+            });
+        });
+
+        // 🔥 Si el mouse entra a otro ítem del menú, se oculta el cuadro emergente de colaboradores
+        headerMenu.addEventListener("mouseenter", (event) => {
+            if (!menuColaboradores.contains(event.target) && !dropdownColaboradores.contains(event.target)) {
+                isHovering = false;
+                hideDropdown();
+            }
+        });
+    }
+});
+
 // Función para actualizar el slider y la navegación 
 function updateSlide(slideIndex) {
     slides.forEach((slide, index) => {
