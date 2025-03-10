@@ -1033,25 +1033,4 @@ legend {
       max-width: 100%;  /* Evita que las imágenes sobresalgan */
       height: auto;  /* Mantiene la proporción */
   }
-
-  /* 📌 Ajustar videos verticales */
-  .video-container {
-      width: 100%;
-      height: auto;
-  }
-
-  #player {
-      width: 100%;
-      height: 80vh;  /* Mantiene el tamaño vertical del video */
-  }
-
-  /* 📌 Botón flotante de autenticación */
-  .boton-flotante {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 50px;
-      height: 50px;
-      font-size: 16px;
-  }
 }
