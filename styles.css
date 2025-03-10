@@ -1000,3 +1000,12 @@ legend {
       width: 100%;
   }
 }
+
+/*seccion del tamaño del video del slider de Incorporados 2017 */
+#player {
+  width: auto;  /* Permite que el ancho se ajuste automáticamente */
+  height: 90vh;  /* Ocupa el 90% de la altura de la pantalla */
+  max-height: 600px;  /* Evita que sea demasiado grande en pantallas grandes */
+  display: block;
+  margin: 0 auto;  /* Centra el video horizontalmente */
+}

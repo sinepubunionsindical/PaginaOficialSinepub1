@@ -5,6 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>SINEPUB - Historia</title>
         <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
+        <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
         <script src="https://unpkg.com/react@17.0.2/umd/react.development.js" crossorigin></script>
         <script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js" crossorigin></script>
     </head>
@@ -181,9 +183,8 @@
                         <img src="images/incorporacion8.jpg" alt="Incorporación 8" class="imagen-banner">
                     </div>
                     <div class="slide" id="slide-incorporacion-video">
-                        <video controls>
-                            <source src="videos/incorporacion2017.mp4" type="video/mp4">
-                            Tu navegador no soporta videos.
+                        <video id="player" playsinline controls>
+                            <source src="images/incorporacion2017.mp4" type="video/mp4">
                         </video>
                     </div>
                 </div>
@@ -228,7 +229,9 @@
                 </div>
             </div>
         </footer>     
-
+        <script>
+            const player = new Plyr('#player');
+        </script>
         <script src="chatbot-access.js" defer></script>
         <script src="historia.js" defer></script>  <!-- Cambiado a historia.js -->
     </body>
