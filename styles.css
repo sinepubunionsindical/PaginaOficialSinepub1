@@ -467,7 +467,7 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
 .dropdown-menu-colaboradores {
   display: none;
   position: absolute;
-  background-color: #545454; /* Fondo oscuro similar al de Redes Sociales */
+  background-color: #35a9aa; /* Fondo oscuro similar al de Redes Sociales */
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   padding: 15px;
   width: 300px; /* 🔥 Ancho fijo */
@@ -543,7 +543,7 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
 .info-colaborador {
   display: none;
   position: absolute;
-  background-color: #545454; /* 🔥 Mismo fondo que el primer cuadro */
+  background-color: #35a9aa; /* 🔥 Mismo fondo que el primer cuadro */
   color: white;
   padding: 15px;
   border-radius: 8px;
