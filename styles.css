@@ -1009,28 +1009,3 @@ legend {
   display: block;
   margin: 0 auto;  /* Centra el video horizontalmente */
 }
-
-/* 📌 Ajustes generales para móviles */
-@media (max-width: 768px) {
-  body {
-      font-size: 14px;  /* Reduce el tamaño del texto */
-      padding: 10px;
-  }
-
-  /* 📌 Ajustar el header y el menú */
-  nav ul {
-      display: flex;
-      flex-direction: column; /* Convierte el menú en una lista vertical */
-      align-items: center;
-  }
-
-  nav ul li {
-      margin-bottom: 10px; /* Espaciado entre elementos del menú */
-  }
-
-  /* 📌 Ajustar imágenes */
-  img {
-      max-width: 100%;  /* Evita que las imágenes sobresalgan */
-      height: auto;  /* Mantiene la proporción */
-  }
-}
