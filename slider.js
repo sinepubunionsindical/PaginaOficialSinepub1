@@ -10,6 +10,46 @@ let autoplayInterval; // Variable para almacenar el intervalo del autoplay
 let inactivityTimeout; // Variable para el timeout de inactividad
 const inactivityTime = 90000; // 90 segundos en milisegundos
 
+// Función para generar dots dinámicamente según la cantidad de módulos
+function createModuleDots() {
+    const moduleDotsContainer = document.querySelector('.modulos-nav');
+    moduleDotsContainer.innerHTML = ''; // Limpiar dots previos
+    
+    const moduleSlides = document.querySelectorAll(".slide[id^='slide-7'], .slide[id^='slide-8']"); // Detectar módulos de formación
+    moduleSlides.forEach((slide, index) => {
+        const dot = document.createElement('span');
+        dot.classList.add('modulo-dot');
+        dot.dataset.slide = slide.id.split('-')[1]; // Obtener el número del slide
+        
+        if (index === 0) {
+            dot.classList.add('active'); // Activar el primer módulo por defecto
+        }
+        
+        dot.addEventListener('click', function () {
+            let targetSlide = document.getElementById('slide-' + this.dataset.slide);
+            if (targetSlide) {
+                targetSlide.scrollIntoView({ behavior: 'smooth' }); // Moverse al módulo sin ocultar los demás
+            }
+            document.querySelectorAll('.modulo-dot').forEach(d => d.classList.remove('active'));
+            this.classList.add('active');
+        });
+        
+        moduleDotsContainer.appendChild(dot);
+    });
+}
+
+// Ajuste para permitir navegación entre los módulos sin ocultar otros slides
+function setupModuleNavigation() {
+    const moduleSlides = document.querySelectorAll(".slide[id^='slide-7'], .slide[id^='slide-8']");
+    moduleSlides.forEach(slide => {
+        slide.style.display = 'block'; // Asegurar que todos los módulos sean visibles
+    });
+}
+
+// Llamar a las funciones para generar dots y mantener los módulos visibles
+createModuleDots();
+setupModuleNavigation();
+
 document.addEventListener("DOMContentLoaded", function () {
     const menuColaboradores = document.querySelector(".menu-item-colaboradores");
     const dropdownColaboradores = document.querySelector(".dropdown-menu-colaboradores");
