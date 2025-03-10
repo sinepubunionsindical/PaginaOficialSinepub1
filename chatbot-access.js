@@ -234,7 +234,8 @@ function activarChatbot() {
 
     // Ocultar el botón inicial
     document.getElementById("chatbot-button").style.display = "none";
-    
+    // Ocultar el botón inicial
+    document.getElementById("estatutos-link").style.display = "inline";
     // Mostrar el widget de Eleven Labs
     document.getElementById("chatbot-container").style.display = "block";
 }
