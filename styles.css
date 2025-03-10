@@ -420,7 +420,7 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
 .dropdown-menu-redes-sociales {
   width: 350px;           
   text-align: center;     
-  background-color: #545454;
+  background-color: #35a9aa;
   z-index: 50 !important; /* 🔥 Asegura que esté por encima de la franja blanca */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Agrega una sombra para mejorar la visibilidad */
 }
