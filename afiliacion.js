@@ -1,24 +1,22 @@
 document.getElementById("downloadPdf").addEventListener("click", async function() {
     try {
-        // Obtener el visor de PDF
-        const pdfFrame = document.getElementById("pdf-viewer"); 
-        const pdfUrl = pdfFrame.src; // Obtener la URL del PDF en el visor
+        const pdfFrame = document.getElementById("pdf-viewer");
         
-        // Obtener los datos actuales del PDF (tal como se visualizan)
-        const existingPdfBytes = await fetch(pdfUrl).then(res => res.arrayBuffer());
-        const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
+        // 🔹 Capturar la imagen del visor PDF
+        const canvas = await html2canvas(pdfFrame, { scale: 2 });
+        const imgData = canvas.toDataURL("image/png");
 
-        // Asegurar que el PDF mantenga los datos llenados y eliminar campos editables
-        pdfDoc.getForm().flatten();
+        // 🔹 Crear un nuevo PDF sin formularios
+        const pdf = new jsPDF({
+            orientation: "portrait",
+            unit: "px",
+            format: [canvas.width, canvas.height] 
+        });
 
-        // Guardar el PDF modificado
-        const pdfBytes = await pdfDoc.save();
-        const blob = new Blob([pdfBytes], { type: "application/pdf" });
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = "Afiliacion_Llenado.pdf";
-        link.click();
+        pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
+        pdf.save("Afiliacion_Llenado.pdf");
+
     } catch (error) {
-        console.error("Error al descargar el PDF con datos: ", error);
+        console.error("Error al procesar el PDF:", error);
     }
 });
