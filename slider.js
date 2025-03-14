@@ -4,38 +4,41 @@ const prevButton = document.querySelector('.prev-slide');
 const nextButton = document.querySelector('.next-slide');
 const navLinks = document.querySelectorAll('.slider-nav a');
 const sliderDotsContainer = document.querySelector('.slider-dots'); // Seleccionamos el contenedor de dots
+const moduleDotsContainer = document.querySelector('.modulos-nav'); // Contenedor de dots de módulos
 const sliderContainerElement = document.querySelector('.slider-container');
 let currentSlide = 0;
 let autoplayInterval; // Variable para almacenar el intervalo del autoplay
 let inactivityTimeout; // Variable para el timeout de inactividad
 const inactivityTime = 90000; // 90 segundos en milisegundos
 
+
 // Función para generar dots dinámicamente según la cantidad de módulos
 function createModuleDots() {
-    const moduleDotsContainer = document.querySelector('.modulos-nav');
     moduleDotsContainer.innerHTML = ''; // Limpiar dots previos
     
     const moduleSlides = document.querySelectorAll(".slide[id^='slide-7'], .slide[id^='slide-8']"); // Detectar módulos de formación
     moduleSlides.forEach((slide, index) => {
         const dot = document.createElement('span');
-        dot.classList.add('modulo-dot');
-        dot.dataset.slide = slide.id.split('-')[1]; // Obtener el número del slide
+        dot.classList.add('slider-dot');
+        dot.dataset.slideIndex = index + 7; // Ajuste para alinearlo con los slides
         
         if (index === 0) {
             dot.classList.add('active'); // Activar el primer módulo por defecto
         }
         
         dot.addEventListener('click', function () {
-            let targetSlide = document.getElementById('slide-' + this.dataset.slide);
-            if (targetSlide) {
-                targetSlide.scrollIntoView({ behavior: 'smooth' }); // Moverse al módulo sin ocultar los demás
-            }
-            document.querySelectorAll('.modulo-dot').forEach(d => d.classList.remove('active'));
+            const slideIndex = parseInt(this.dataset.slideIndex);
+            updateSlide(slideIndex - 1); // Ajuste para usar updateSlide en lugar de scrollIntoView
+            stopAutoplay();
+            resetInactivityTimer();
+            
+            document.querySelectorAll('.modulos-nav .slider-dot').forEach(d => d.classList.remove('active'));
             this.classList.add('active');
         });
         
         moduleDotsContainer.appendChild(dot);
     });
+    moduleDotsContainer.style.display = 'none'; // Ocultar inicialmente los dots de módulos
 }
 
 // Ajuste para permitir navegación entre los módulos sin ocultar otros slides
@@ -108,11 +111,7 @@ document.addEventListener("DOMContentLoaded", function () {
 // Función para actualizar el slider y la navegación 
 function updateSlide(slideIndex) {
     slides.forEach((slide, index) => {
-        if (index === slideIndex) {
-            slide.classList.add('active');            
-        } else {
-            slide.classList.remove('active');
-        }
+        slide.classList.toggle('active', index === slideIndex);
     });
 
     currentSlide = slideIndex;
@@ -130,14 +129,26 @@ function updateSlide(slideIndex) {
 
     if (slideIndex >= 1 && slideIndex <= 4) { // Slides de "Noticias" (slides 2 a 5)
         navLinks[1].classList.add('active'); // Activar link "Noticias" (índice 1)
+        moduleDotsContainer.style.display = 'none';
     } else if (slideIndex === 5) {           // Slide de "Afiliación" (slide 6)
         navLinks[2].classList.add('active'); // Activar link "Afiliación" (índice 2)
-    } else {                                  // Slide de "Inicio" (slide 1)
-        navLinks[0].classList.add('active'); // Activar link "Inicio" (índice 0)
+        moduleDotsContainer.style.display = 'none';
+    } else if (slideIndex === 6 || slideIndex === 7) {
+        navLinks[3].classList.add('active');
+        moduleDotsContainer.style.display = 'flex'; // Mostrar dots de módulos
+        document.querySelectorAll('.modulos-nav .slider-dot').forEach(dot => dot.classList.remove('active'));
+        let activeDot = document.querySelector(`.modulos-nav .slider-dot[data-slide-index='${slideIndex}']`);
+        if (!activeDot) {
+            activeDot = document.querySelector(`.modulos-nav .slider-dot[data-slide-index='6']`); // 🔹 Asegura que el primer dot (slide-7) esté activo
+        }
+        if (activeDot) {
+            activeDot.classList.add('active');
+        }
+    } else {
+        navLinks[0].classList.add('active');
+        moduleDotsContainer.style.display = 'none';
     }
-
-    updateDots(slideIndex); // Llamamos a updateDots para actualizar los dots
-    currentSlide = slideIndex;
+    updateDots(slideIndex);
 }
 
 // Event listeners para las flechas (prev/next)

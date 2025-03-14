@@ -91,8 +91,8 @@
                     <ul>
                         <li><a href="#" data-slide="1" class="active">Inicio</a></li>  <!-- data-slide y clase active -->
                         <li><a href="#" data-slide="2">Noticias</a></li>   <!-- data-slide -->
-                        <li><a href="#" data-slide="6">Afiliación</a></li>  <!-- data-slide -->
-                        <li><a href="#" data-slide="7">Modulos de Formación</a></li>
+                        <li><a href="#" data-slide="6" id="afiliacion-link">Afiliación</a></li>  <!-- data-slide -->
+                        <li><a href="#" data-slide="7" id="modulos-link" style="display: none;">Módulos de Información</a></li>
                     </ul>
                 </nav>
             </div>
@@ -101,6 +101,11 @@
         <!-- Slider de imágenes -->
         <section id="inicio">
             <div class="slider-container">
+                <!-- Navegación entre módulos -->
+                <div class="modulos-nav">
+                    <span class="modulo-dot" data-slide="7"></span>
+                    <span class="modulo-dot" data-slide="8"></span>
+                </div>                
                 <div class="slider">
                     <div class="slide active"  id="slide-1">
                         <div class="imagen-y-texto">
@@ -130,11 +135,21 @@
                     </div>
                     <div class="slide" id="slide-2">  <!-- Slide de Noticias 1 -->
                         <div class="imagen-y-texto">
-                            <img src="images/imagen2.jpg" alt="Banner 2" class="imagen-banner">
+                            <img src="images/aumento_salarial.jpeg" alt="Banner 2" class="imagen-banner">
                             <div class="texto-banner">
-                                <h3>Noticias 1</h3> <p>Contenido de la noticia 1...</p>
-                            </div>                            
+                                <h3>Sindicatos ya tienen propuesta de aumento salarial para empleados públicos en 2025</h3>
+                                <p>Los sindicatos han presentado su propuesta de aumento salarial para los empleados públicos en 2025, buscando compensar la inflación y mejorar las condiciones laborales. Se espera que las negociaciones con el Gobierno avancen en las próximas semanas.</p>
+                                <p><strong>Detalles:</strong></p>
+                                <ul>
+                                    <li>✅ Ajuste salarial acorde a la inflación 2024 más incremento adicional.</li>
+                                    <li>✅ Protección de derechos laborales y estabilidad.</li>
+                                    <li>✅ Beneficios adicionales en salud y bienestar.</li>
+                                </ul>
+                                <p>📌 Desde SINEPUB HUV respaldamos esta iniciativa en favor de los trabajadores del Hospital Universitario del Valle.</p>
+                                <p><a href="https://search.app/qieRY" target="_blank">Leer más</a></p>
+                            </div>
                         </div>
+                    </div>                    
                     </div>    
                     <div class="slide" id="slide-3">  <!-- Slide de Noticias 2 -->
                         <div class="imagen-y-texto">
@@ -160,97 +175,28 @@
                             </div>                            
                         </div>
                     </div>
-                    <div class="slide" id="slide-6">  <!-- NUEVA SLIDE para Afiliación -->
-                        <div class="imagen-y-texto">
-                            <img src="images/afiliacion_banner.jpg" alt="Banner Afiliacion" class="imagen-banner">
-                            <div class="texto-banner formulario-afiliacion">  <!-- Añadida clase formulario-afiliacion -->
+                    <div class="slide" id="slide-6">  <!-- SLIDE para Afiliación -->
+                        <div class="imagen-y-texto afiliacion-container"> <!-- Contenedor para organizar PDF y texto -->
+                            <!-- Visor de PDF -->
+                            <div class="pdf-container">
+                                <iframe id="pdfViewer" src="Afiliacion.pdf#toolbar=0" width="100%" height="700px" style="border:none;"></iframe>
+                            </div>
+                            
+                            <!-- Explicación a la derecha -->
+                            <div class="texto-banner afiliacion-info">
                                 <h1>Formulario de Afiliación</h1>
-                                <p>Únete a SINEPUB HUV y comienza a disfrutar de los beneficios de ser parte de nuestra comunidad sindical. Completa el siguiente formulario para iniciar tu proceso de afiliación:</p>
-                            
-                                <form id="formulario-afiliacion">  <!-- Formulario principal -->
-                                    <fieldset class="fieldset-datos-personales">  <!-- Fieldset para "Datos personales y laborales" -->
-                                        <legend>Datos Personales y Laborales</legend>
-                                        <div class="form-row">
-                                            <label for="nombre_apellidos">Nombre (s) y Apellidos (s):</label>
-                                            <input type="text" id="nombre_apellidos" name="nombre_apellidos" required>
-                                        </div>
-                                        <div class="form-row">
-                                            <label for="numero_identificacion">Número de Identificación:</label>
-                                            <input type="number" id="numero_identificacion" name="numero_identificacion" required>
-                                        </div>
-                                        <div class="form-row">
-                                            <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
-                                            <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" required>
-                                        </div>
-                                        <div class="form-row">
-                                            <label for="profesion_oficio">Profesión u Oficio:</label>
-                                            <input type="text" id="profesion_oficio" name="profesion_oficio" required>
-                                        </div>
-                                        <div class="form-row">
-                                            <label for="telefono">Teléfono(s):</label>
-                                            <input type="tel" id="telefono" name="telefono" required>
-                                        </div>
-                                        <div class="form-row">
-                                            <label for="correo_electronico">Correo Electrónico:</label>
-                                            <input type="email" id="correo_electronico" name="correo_electronico" required>
-                                        </div>
-                                        <div class="form-row">
-                                            <label for="direccion_correspondencia">Dirección de Correspondencia:</label>
-                                            <input type="text" id="direccion_correspondencia" name="direccion_correspondencia" required>
-                                        </div>
-                                        <div class="form-row">
-                                            <label for="departamento_municipio">Departamento y Municipio de Residencia:</label>
-                                            <input type="text" id="departamento_municipio" name="departamento_municipio" required>
-                                        </div>
-                                        <div class="form-row">
-                                            <label for="area_institucion">Área de la Institución:</label>
-                                            <input type="text" id="area_institucion" name="area_institucion" required>
-                                        </div>
-                                        <div class="form-row">
-                                            <label for="empleo">Empleo (Denominación, Código y Grado):</label>
-                                            <input type="text" id="empleo" name="empleo" required>
-                                        </div>
-                                        <div class="form-row">
-                                            <label for="fecha_afiliacion">Fecha de Afiliación al Sindicato:</label>
-                                            <input type="date" id="fecha_afiliacion" name="fecha_afiliacion" required>
-                                        </div>
-                                    </fieldset>
-                            
-                                    <fieldset class="fieldset-autorizacion-descuento">  <!-- Fieldset para "Autorización de descuento..." -->
-                                        <legend>Autorización de Descuento de Cuota Sindical ante el Nominador</legend>
-                                        <p>Yo, <input type="text" class="input-inline" id="yo_nombre" name="yo_nombre" placeholder="Nombre completo" required>, identificado(a) con cédula de ciudadanía número <input type="number" class="input-inline input-cedula" id="cedula_ciudadania" name="cedula_ciudadania" placeholder="Número de Cédula" required> expedida en <input type="text" class="input-inline input-expedida" id="cedula_expedida" name="cedula_expedida" placeholder="Lugar de Expedición" required>, funcionario de carrera del Hospital Universitario del Valle “Evaristo García” E.S.E. y titular del empleo (<input type="text" class="input-inline input-empleo" id="empleo_autorizacion" name="empleo_autorizacion" placeholder="Denominación, Código y Grado" required>):</p>
-                                        <p>Autorizo al Hospital Universitario del Valle “Evaristo García” E.S.E., para que a partir de la fecha se sirva descontar el 1,0% de mi asignación básica mensual, destinada exclusivamente como aporte sindical, en favor del Sindicato de Empleados Públicos del Hospital Universitario del Valle “Evaristo García” SINEPUB HUV, identificada con NIT 909.434.349-6, durante el tiempo que permanezca como afiliado(a) a la organización.</p>
-                                    </fieldset>
-                            
-                                    <div class="firma-y-huella">  <!-- Contenedor para Firma y Huella -->
-                                        <div class="firma-afiliado">
-                                            <label for="firma_afiliado">Firma Afiliado(a):</label>
-                                            <div class="area-firma"></div> <!-- Área para la firma (simulado con un div) -->
-                                        </div>
-                                        <div class="huella-indice-derecho">
-                                            <label for="huella_indice">Huella Índice Derecho:</label>
-                                            <div class="area-huella"></div> <!-- Área para la huella (simulado con un div) -->
-                                        </div>
-                                    </div>
-                            
-                                    <p class="disclaimer-afiliacion">El Sindicato de Empleados Públicos del Hospital Universitario del Valle "Evaristo García" SINEPUB HUV, registro No 1525 del 30 de Octubre de 2020, conforme a su autonomía sindical, se reserva el derecho de admisión y permanencia en la organización, considerando la verificación del cumplimiento de todos los requisitos del afiliado, establecidos en sus Estatutos. Los datos personales que se suministran en el presente formato y en los documentos anexos al mismo, serán tratados mediante el buen uso y mantenimiento de medidas de seguridad técnicas, físicas y administrativas y su confidencialidad será garantizada, de conformidad con lo definido en la Ley 1581 de 2012, el Decreto reglamentario 1377 de 2013 y las demás normas que las modifiquen o sustituyan.</p>
-                                    <p class="anexar-documento">Anexar copia legible del documento de identidad</p>
-                                    <p class="fecha-formulario">1 2020</p>
-                                    <div class="contacto-formulario">
-                                        <p>Calle 5#36-08, Oficina 7 B/ San Fernando, Ext: 1835, TELÉFONOS: 3163218579</p>
-                                        <p>Email: sinepubhuv@gmail.com</p>
-                                    </div>
-                            
-                                    <button type="submit" class="boton-enviar-afiliacion">Enviar Formulario de Afiliación</button> <!-- Botón de envío -->
-                            
-                                </form>
+                                <p>Por favor, llena el formulario interactivo directamente en el visor de PDF. Una vez completado, usa el botón de descarga para guardarlo con tus datos.</p>
+                                <p>Después de descargarlo, imprime el formulario y llévalo a la oficina de SINEPUB en el <strong>séptimo piso de la Torre Capilla</strong>. Asegúrate de agregar tu firma y huella antes de entregarlo.</p>
+                                
+                                <!-- Botón para descargar PDF llenado -->
+                                <button id="downloadPdf" class="boton-descargar">Descargar Formulario Lleno</button>
                             </div>
                         </div>
                     </div>
                     <div class="slide" id="slide-7">  <!-- NUEVO SLIDE para Módulos de Formación -->
                         <div class="imagen-y-texto">
                             <div class="texto-banner">
-                                <h1>Módulos de Formación</h1>
+                                <h1>Módulo aportado por JURARKO</h1>
                                 <p>📚 <strong>Disponibilidad Laboral del Empleado Público</strong></p>
                                 <p>
                                     En el entorno laboral del sector público, comprender la disponibilidad laboral es clave para garantizar el cumplimiento de las responsabilidades sin afectar los derechos fundamentales de los trabajadores.
@@ -272,14 +218,14 @@
                             
                             <!-- Sección para visualizar el PDF -->
                             <div class="pdf-container">
-                                <iframe src="Concepto_disponibilidad_empleado.pdf" width="100%" height="600px" style="border:none;"></iframe>
+                                <iframe src="Concepto_disponibilidad_empleado.pdf#toolbar=0" width="100%" height="700px"></iframe>
                             </div>
                         </div>
                     </div>
                     <div class="slide" id="slide-8">  <!-- NUEVO SLIDE para Módulos de Formación -->
                         <div class="imagen-y-texto">
                             <div class="texto-banner">
-                                <h1>Módulos de Formación</h1>
+                                <h1>Acuerdo No. 020 de la ESAP</h1>
                                 <p>📚 <strong>Beneficios Académicos del Acuerdo Nacional Estatal</strong></p>
                                 <p>
                                     El conocimiento y la educación son herramientas clave para fortalecer el ejercicio profesional en el sector público. Como parte del <strong>Acuerdo Nacional Estatal 2023</strong>, se ha establecido un beneficio exclusivo para los servidores públicos sindicalizados:
@@ -297,7 +243,7 @@
                             
                             <!-- Sección para visualizar el PDF -->
                             <div class="pdf-container">
-                                <iframe src="producto_del_acuerdo_nacional.pdf" width="100%" height="600px" style="border:none;"></iframe>
+                                <iframe src="producto_del_acuerdo_nacional.pdf#toolbar=0" width="100%" height="700px"></iframe>
                             </div>
                         </div>
                     </div>
@@ -305,11 +251,6 @@
                 <div class="slider-dots"> <!-- NUEVO DIV para los circulitos -->
                     <!-- Los circulitos se generarán aquí con JavaScript -->
                 </div>
-                <!-- Navegación entre módulos -->
-                <div class="modulos-nav">
-                    <span class="modulo-dot" data-slide="7"></span>
-                    <span class="modulo-dot" data-slide="8"></span>
-                </div>                
                 <button class="prev-slide">&#10094;</button>
                 <button class="next-slide">&#10095;</button>
             </div>
