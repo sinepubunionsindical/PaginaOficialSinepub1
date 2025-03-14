@@ -1,22 +1,23 @@
 document.getElementById("downloadPdf").addEventListener("click", async function() {
     try {
         const pdfFrame = document.getElementById("pdf-viewer");
-        
-        // 🔹 Capturar la imagen del visor PDF
-        const canvas = await html2canvas(pdfFrame, { scale: 2 });
-        const imgData = canvas.toDataURL("image/png");
+        const pdfUrl = pdfFrame.src;
 
-        // 🔹 Crear un nuevo PDF sin formularios
-        const pdf = new jsPDF({
-            orientation: "portrait",
-            unit: "px",
-            format: [canvas.width, canvas.height] 
-        });
+        const existingPdfBytes = await fetch(pdfUrl).then(res => res.arrayBuffer());
+        const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
 
-        pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
-        pdf.save("Afiliacion_Llenado.pdf");
+        // 🔹 🔥 "Aplanar" los datos para hacerlos NO editables
+        pdfDoc.getForm().flatten();
+
+        // 🔹 🔥 Guardar el PDF ya modificado
+        const pdfBytes = await pdfDoc.save();
+        const blob = new Blob([pdfBytes], { type: "application/pdf" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "Afiliacion_Llenado.pdf";
+        link.click();
 
     } catch (error) {
-        console.error("Error al procesar el PDF:", error);
+        console.error("Error al guardar el PDF lleno y no editable: ", error);
     }
 });
