@@ -1,5 +1,5 @@
 document.getElementById("downloadPdf").addEventListener("click", function() {
-    const pdfViewer = document.getElementById("pdf-viewer");
+    const pdfViewer = document.getElementById("pdfViewer");
 
     if (pdfViewer) {
         const pdfUrl = pdfViewer.src;
