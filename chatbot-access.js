@@ -84,7 +84,6 @@ function verifyCedula() {
                         <li>🤝 Obtener información clave sobre negociaciones sindicales.</li>
                     </ul>
                     <p><strong>Ademas tienes acceso a los estatutos y modulos de información, nos preocupamos por tu evolución</strong></p>
-                    <p></p>
                     <p>Gracias por tu compromiso con nuestra comunidad sindical.</p>`;
             } else {
                 mensajeBienvenida += `
@@ -97,7 +96,6 @@ function verifyCedula() {
                         <li>📝 Conocer los acuerdos colectivos recientes.</li>
                     </ul>
                     <p><strong>Ademas tienes acceso a los estatutos y modulos de información, nos preocupamos por tu evolución</strong></p>
-                    <p></p>
                     <p>¡Tu participación es clave para fortalecer nuestra organización!</p>`;
             }
             console.log("🟢 Mensaje de bienvenida generado:", mensajeBienvenida);
