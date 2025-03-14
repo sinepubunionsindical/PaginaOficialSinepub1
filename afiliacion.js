@@ -1,17 +1,17 @@
 document.getElementById("downloadPdf").addEventListener("click", function() {
-    const pdfViewer = document.getElementById("pdfViewer");
+    const pdfViewer = document.getElementById("pdfViewer"); // ID del visor de PDF
+    const pdfUrl = pdfViewer.src; // Obtener la URL del PDF cargado en el visor
 
-    if (pdfViewer) {
-        const pdfUrl = pdfViewer.src;
-
-        // Simular la descarga del archivo dirAectamente desde la URL que está en el visor
-        const link = document.createElement("a");
-        link.href = pdfUrl;
-        link.download = "Afiliacion_Lleno.pdf";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    } else {
-        console.error("No se encontró el visor de PDF.");
+    if (!pdfUrl) {
+        console.error("No se pudo obtener la URL del PDF.");
+        return;
     }
+
+    // Crear un enlace para forzar la descarga
+    const link = document.createElement("a");
+    link.href = pdfUrl;
+    link.download = "Afiliacion_Lleno.pdf";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 });
