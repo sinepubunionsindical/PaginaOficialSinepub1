@@ -83,6 +83,7 @@ function verifyCedula() {
                         <li>📌 Consultar normativas y estatutos.</li>
                         <li>🤝 Obtener información clave sobre negociaciones sindicales.</li>
                     </ul>
+                    <p><strong>Ademas tienes acceso a los estatutos y modulos de información, nos preocupamos por tu evolución</strong></p>
                     <p></p>
                     <p>Gracias por tu compromiso con nuestra comunidad sindical.</p>`;
             } else {
@@ -95,6 +96,7 @@ function verifyCedula() {
                         <li>🎓 Informarte sobre la carrera administrativa y crecimiento profesional.</li>
                         <li>📝 Conocer los acuerdos colectivos recientes.</li>
                     </ul>
+                    <p><strong>Ademas tienes acceso a los estatutos y modulos de información, nos preocupamos por tu evolución</strong></p>
                     <p></p>
                     <p>¡Tu participación es clave para fortalecer nuestra organización!</p>`;
             }
