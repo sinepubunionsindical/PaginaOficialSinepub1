@@ -175,7 +175,7 @@ nextButton.addEventListener('click', () => {
 
 // Función para crear los dots de navegación
 function createNavigationDots() {
-    const numberOfDots = 4; // ¡Creamos 4 dots (para las 4 noticias)
+    const numberOfDots = 3; // ¡Creamos 3 dots (para las 3 noticias)
     for (let i = 0; i < numberOfDots; i++) {
         const dot = document.createElement('span');
         dot.classList.add('slider-dot');
@@ -216,16 +216,16 @@ function updateDots(slideIndex) {
 function startAutoplay() {
   autoplayInterval = setInterval(() => {
       let nextSlideIndex;
-      if (currentSlide >= 0 && currentSlide <= 1) { // Si estamos en Noticias (slides 2-5)
+      if (currentSlide >= 1 && currentSlide <= 3) { // Si estamos en Noticias (slides 2-5)
           nextSlideIndex = currentSlide + 1;
-          if (nextSlideIndex > 1) { // Si llegamos al último slide de Noticias (slide 5)
-              nextSlideIndex = 0;     // Volver al primer slide de Noticias (slide 2, índice 1)
+          if (nextSlideIndex > 3) { // Si llegamos al último slide de Noticias
+              nextSlideIndex = 1;     // Volver al primer slide de Noticias (slide 2, índice 1)
           }
       } else {
           nextSlideIndex = 1; // Si no estamos en Noticias, ir al primer slide de Noticias (slide 2, índice 1)
       }
       updateSlide(nextSlideIndex); // Actualizar al siguiente slide de Noticias (o al primero si no estábamos en Noticias)
-  }, 5000);
+  }, 20000);
 }
 
 // Función para detener el autoplay

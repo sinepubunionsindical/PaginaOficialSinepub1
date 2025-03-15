@@ -79,8 +79,8 @@ document.addEventListener('DOMContentLoaded', function() {
             nombre: "Martha Cecilia Solarte Caicedo",
             cargo: "Secretaria de Carrera Administrativa",
             foto: "images/junta6.jpg",
-            ubicacion: "Pendiente",
-            celular: "Pendiente",
+            ubicacion: "Sala de Médicas Hombres.",
+            celular: "3188846015",
             descripcion: `
                 <p>Velará por el cumplimiento de la carrera administrativa, promoviendo reuniones con la Comisión de Personal y supervisando la Evaluación del Desempeño Laboral.</p>
 
@@ -91,8 +91,8 @@ document.addEventListener('DOMContentLoaded', function() {
             nombre: "Patricia Salazar Morales",
             cargo: "Secretaria de Reclamos y Solución de Conflictos",
             foto: "images/junta7.jpg",
-            ubicacion: "Pendiente",
-            celular: "Pendiente",
+            ubicacion: "Sala de Médicas Mujeres",
+            celular: "3147373069",
             descripcion: `
                 <p>Velará por el cumplimiento de la Ley de Acoso Laboral, promoviendo la formación de los afiliados para identificar, prevenir y corregir conductas de agresión u hostigamiento.</p>
 
