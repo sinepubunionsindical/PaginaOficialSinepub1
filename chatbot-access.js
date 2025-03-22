@@ -83,8 +83,7 @@ function verifyCedula() {
                         <li>📌 Consultar normativas y estatutos.</li>
                         <li>🤝 Obtener información clave sobre negociaciones sindicales.</li>
                     </ul>
-                    <p><strong>Ademas tienes acceso a los estatutos y modulos de información, nos preocupamos por tu evolución</strong></p>
-                    <p>Gracias por tu compromiso con nuestra comunidad sindical.</p>`;
+                    <p><strong>Ademas tienes acceso a los estatutos y modulos de información, nos preocupamos por tu evolución</strong></p>`;
             } else {
                 mensajeBienvenida += `
                     <p>Hola <strong>${nombre}</strong>, bienvenido a nuestra comunidad sindical.</p>
