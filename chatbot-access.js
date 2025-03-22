@@ -99,7 +99,7 @@ function verifyCedula() {
                     <p>¡Tu participación es clave para fortalecer nuestra organización!</p>`;
             }
             console.log("🟢 Mensaje de bienvenida generado:", mensajeBienvenida);
-            mostrarPopupBienvenida(mensajeBienvenida);  // ✅ Asegurar que enviamos el mensaje correctamente
+            mostrarPopupContrasena(nombre, cargo, mensajeBienvenida);  // ✅ Asegurar que se verifica la contraseña maestra tras validación
         } else {
             localStorage.setItem("afiliado", "no");
             bloquearBoton();
@@ -226,6 +226,58 @@ function mostrarPopupError() {
 
     // Ocultar el popup de autenticación
     document.getElementById("auth-popup").remove();
+}
+
+
+// 🔹 Función para activar la segunda verificación de contraseña maestra
+let intentosRestantes = 2;
+
+function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
+    const popupContrasena = document.createElement("div");
+    popupContrasena.id = "popup-contrasena";
+    popupContrasena.style.position = "fixed";
+    popupContrasena.style.top = "50%";
+    popupContrasena.style.left = "50%";
+    popupContrasena.style.transform = "translate(-50%, -50%)";
+    popupContrasena.style.background = "#ffffff";
+    popupContrasena.style.color = "#000000";
+    popupContrasena.style.padding = "25px";
+    popupContrasena.style.borderRadius = "10px";
+    popupContrasena.style.textAlign = "center";
+    popupContrasena.style.width = "400px";
+    popupContrasena.style.boxShadow = "0 5px 15px rgba(0,0,0,0.3)";
+    popupContrasena.style.zIndex = "10000";
+
+    popupContrasena.innerHTML = `
+        <h3>🔐 Verificación Adicional</h3>
+        <p>${nombre}, por favor ingresa la contraseña maestra para continuar.</p>
+        <input type="password" id="input-contrasena" placeholder="Contraseña">
+        <br><br>
+        <button id="verificar-contrasena">Verificar</button>
+        <button onclick="document.getElementById('popup-contrasena').remove()">Cancelar</button>
+    `;
+
+    document.body.appendChild(popupContrasena);
+
+    document.getElementById("verificar-contrasena").addEventListener("click", () => {
+        const contrasena = document.getElementById("input-contrasena").value;
+
+        if (contrasena === "unionsindical") {
+            popupContrasena.remove();
+            mostrarPopupBienvenida(mensajeBienvenida);
+        } else {
+            intentosRestantes--;
+            popupContrasena.remove();
+
+            if (intentosRestantes > 0) {
+                alert(`❌ Contraseña incorrecta. Te queda ${intentosRestantes} intento.`);
+                mostrarPopupContrasena(nombre, cargo, mensajeBienvenida);
+            } else {
+                alert("❌ No eres afiliado al sindicato. Recuerda que la suplantación de identidad tiene consecuencias penales.");
+                bloquearBoton();
+            }
+        }
+    });
 }
 
 // 🔹 Función para activar el chatbot después de cerrar el popup
