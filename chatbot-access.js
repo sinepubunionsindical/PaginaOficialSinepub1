@@ -275,7 +275,7 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
             } else {
                 alert("❌ No eres afiliado al sindicato. Recuerda que la suplantación de identidad tiene consecuencias penales.");
                 bloquearBoton();
-                authPopup.remove();
+                mostrarPopupError();
             }
         }
     });
