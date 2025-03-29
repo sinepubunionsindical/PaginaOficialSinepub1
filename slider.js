@@ -11,7 +11,27 @@ let autoplayInterval; // Variable para almacenar el intervalo del autoplay
 let inactivityTimeout; // Variable para el timeout de inactividad
 const inactivityTime = 90000; // 90 segundos en milisegundos
 
+document.addEventListener('DOMContentLoaded', () => {
+    document.body.classList.remove('fade-out');
+  });
 
+  window.addEventListener('beforeunload', () => {
+    document.body.classList.add('fade-out');
+  });
+
+  document.querySelectorAll('a[href]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const href = link.getAttribute('href');
+      if (href && !href.startsWith('#') && !link.hasAttribute('target')) {
+        e.preventDefault();
+        document.body.classList.add('fade-out');
+        setTimeout(() => {
+          window.location.href = href;
+        }, 600); // Tiempo de fade-out antes de cambiar
+      }
+    });
+  });
+  
 // Función para generar dots dinámicamente según la cantidad de módulos
 function createModuleDots() {
     moduleDotsContainer.innerHTML = ''; // Limpiar dots previos

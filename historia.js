@@ -1,5 +1,17 @@
 document.addEventListener('DOMContentLoaded', function () {
-
+    document.querySelectorAll('a[href]').forEach(link => {
+        link.addEventListener('click', (e) => {
+          const href = link.getAttribute('href');
+          if (href && !href.startsWith('#') && !link.hasAttribute('target')) {
+            e.preventDefault();
+            document.body.classList.add('fade-out');
+            setTimeout(() => {
+              window.location.href = href;
+            }, 600); // Tiempo de fade-out antes de cambiar
+          }
+        });
+      });
+      
     const historiaSecundariaLink = document.getElementById('historia-secundaria-link');
     const fundadoresSecundarioLink = document.getElementById('fundadores-secundario-link');
     const incorporacionSecundarioLink = document.getElementById('incorporacion-secundario-link');
@@ -21,12 +33,22 @@ document.addEventListener('DOMContentLoaded', function () {
     let currentFundadorSlide = 0;
     let currentIncorporacionSlide = 0;
 
-    function showSection(section) {
-        historiaSection.classList.add('hidden');
-        fundadoresSliderSection.classList.add('hidden');
-        incorporacionSliderSection.classList.add('hidden');
-
-        section.classList.remove('hidden');
+    function showSection(sectionToShow) {
+        // Ocultar las actuales con fade-out
+        const sections = [historiaSection, fundadoresSliderSection, incorporacionSliderSection];
+        sections.forEach(sec => {
+            sec.classList.remove('active'); // Apaga fade-in
+            sec.classList.add('fade-section');
+        });
+    
+        // Mostrar con fade-in después de corto delay
+        setTimeout(() => {
+            sections.forEach(sec => sec.classList.add('hidden')); // Oculta completamente
+            sectionToShow.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                sectionToShow.classList.add('active'); // Activa fade-in
+            });
+        }, 300);
     }
 
     function deactivateSecondaryNavLinks() {
