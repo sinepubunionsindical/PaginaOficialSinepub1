@@ -205,11 +205,10 @@
                     </div>
                     <div class="slide" id="slide-6">  <!-- SLIDE para Afiliación -->
                         <div class="imagen-y-texto afiliacion-container"> <!-- Contenedor para organizar PDF y texto -->
-                            <!-- Visor de PDF -->
-                            <div class="pdf-container">
-                                <iframe id="pdfViewer" src="Afiliacion.pdf#toolbar=0" width="100%" height="700px" style="border:none;"></iframe>
-                            </div>
-                            
+                            <!-- Visor PDF con campos interactivos -->
+                            <div id="pdf-form-viewer" style="width: 100%; height: 700px; position: relative;">
+                                <iframe id="pdfIframe" src="Afiliacion.pdf#toolbar=0&navpanes=0&scrollbar=0" width="100%" height="100%" style="border: none;"></iframe>
+                            </div>                            
                             <!-- Explicación a la derecha -->
                             <div class="texto-banner afiliacion-info">
                                 <h1>Formulario de Afiliación</h1>
