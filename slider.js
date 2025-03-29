@@ -139,7 +139,11 @@ function updateSlide(slideIndex) {
         document.querySelectorAll('.modulos-nav .slider-dot').forEach(dot => dot.classList.remove('active'));
         let activeDot = document.querySelector(`.modulos-nav .slider-dot[data-slide-index='${slideIndex}']`);
         if (!activeDot) {
-            activeDot = document.querySelector(`.modulos-nav .slider-dot[data-slide-index='6']`); // 🔹 Asegura que el primer dot (slide-7) esté activo
+            // Forzar la activación del primer dot si no se detecta ninguno activo
+            const defaultDot = document.querySelector(`.modulos-nav .slider-dot`);
+            if (defaultDot) {
+                defaultDot.classList.add('active');
+            }
         }
         if (activeDot) {
             activeDot.classList.add('active');
