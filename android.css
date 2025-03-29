@@ -40,87 +40,147 @@
   }
 
   
-    /* --- Menú Hamburguesa --- */
-    /* ▼▼▼ CAMBIO AQUÍ ▼▼▼ */
-    #mobile-menu-toggle { /* <-- Usa el ID directamente */
-      display: block !important; /* Mostrar botón hamburguesa (añadimos !important por si acaso) */
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      z-index: 1001;
-      background-color: #0249aa;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      font-size: 24px;
-      cursor: pointer;
-      border-radius: 5px;
-      line-height: 1;
+  /* --- Menú Hamburguesa (Desplegable Lateral Izquierdo) --- */
+  #mobile-menu-toggle {
+    display: block !important; /* Asegura visibilidad */
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1001; /* Encima del menú y overlay */
+    background-color: #0249aa;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    font-size: 24px;
+    cursor: pointer;
+    border-radius: 5px;
+    line-height: 1;
+    transition: background-color 0.3s ease; /* Animación hover */
+  }
+  #mobile-menu-toggle:hover {
+    background-color: #35a9aa;
   }
 
-  /* ▼▼▼ CAMBIO AQUÍ ▼▼▼ */
-  #mobile-menu { /* <-- Usa el ID directamente */
-      display: block !important; /* Asegurar que sea un bloque (añadimos !important por si acaso) */
+  /* --- (Opcional pero recomendado) Overlay para oscurecer fondo --- */
+  #mobile-menu-overlay {
+      display: none; /* Oculto por defecto */
       position: fixed;
       top: 0;
       left: 0;
-      width: 280px;
-      height: 100vh;
-      background-color: #0249aa;
-      color: white;
-      z-index: 1000;
-      transform: translateX(-100%);
-      transition: transform 0.3s ease-in-out;
-      padding: 60px 20px 20px 20px;
-      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
-      overflow-y: auto;
-      box-sizing: border-box;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5); /* Negro semitransparente */
+      z-index: 999; /* Debajo del menú pero encima del contenido */
+      opacity: 0;
+      transition: opacity 0.4s ease-in-out;
+  }
+  #mobile-menu-overlay.active {
+      display: block; /* Mostrar cuando menú está activo */
+      opacity: 1;
   }
 
-  /* La clase .active sigue siendo necesaria para el JS */
+
+  #mobile-menu {
+    display: block !important; /* Asegura que CSS puede mostrarlo */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px; /* ANCHO DEL MENÚ LATERAL - AJUSTA COMO QUIERAS */
+    max-width: 85%; /* Máximo ancho relativo */
+    height: 100vh; /* Ocupa toda la altura */
+    background-color: #0249aa; /* Fondo principal */
+    color: white;
+    z-index: 1000; /* Encima del overlay y contenido */
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.3); /* Sombra a la derecha */
+    overflow-y: auto; /* Scroll si el contenido es muy largo */
+    box-sizing: border-box;
+    padding-top: 60px; /* Dejar espacio arriba para el botón de cerrar */
+    padding-bottom: 20px;
+
+    /* --- ANIMACIÓN --- */
+    transform: translateX(-100%); /* Inicialmente oculto a la izquierda */
+    visibility: hidden; /* Oculto para accesibilidad y clics */
+    transition: transform 0.4s ease-in-out, visibility 0s linear 0.4s; /* Transición suave del deslizamiento */
+                  /* El retraso en visibility asegura que no desaparezca hasta que termine de deslizarse */
+  }
+
   #mobile-menu.active {
-      transform: translateX(0);
+    transform: translateX(0); /* Deslizar hacia adentro */
+    visibility: visible; /* Hacer visible */
+    transition: transform 0.4s ease-in-out, visibility 0s linear 0s; /* Transición al mostrar */
   }
 
-  #mobile-menu ul { /* <-- Cambiamos el selector base a ID */
-      list-style: none;
-      padding: 0;
-      margin: 0;
+  #mobile-menu .mobile-menu-close-button { /* Asegúrate que el ID es el correcto según tu HTML/JS */
+    position: absolute;
+    top: 15px; /* Ajusta posición del botón X */
+    right: 15px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 35px;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+    opacity: 0.8;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  #mobile-menu .mobile-menu-close-button:hover { /* O usa #mobile-menu-close si ese es tu ID */
+    opacity: 1;
+    transform: rotate(90deg);
   }
 
-  #mobile-menu ul li { /* <-- Cambiamos el selector base a ID */
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  #mobile-menu ul {
+    list-style: none;
+    padding: 0; /* Sin padding por defecto en ul */
+    margin: 0;
   }
 
-  #mobile-menu ul li a { /* <-- Cambiamos el selector base a ID */
-      display: block;
-      padding: 15px 10px;
-      color: white;
-      text-decoration: none;
-      font-size: 18px;
-      transition: background-color 0.2s ease;
+  #mobile-menu ul li {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  #mobile-menu ul li:last-child {
+    border-bottom: none;
+  }
+
+  #mobile-menu ul li a {
+    display: block;
+    padding: 15px 20px; /* Padding L/R */
+    color: white;
+    text-decoration: none;
+    font-size: 17px; /* Ligeramente más pequeño para caber más */
+    font-weight: 500;
+    transition: background-color 0.2s ease, padding-left 0.2s ease;
+    text-align: left; /* Alinear a la izquierda */
   }
 
   #mobile-menu ul li a:hover,
-  #mobile-menu ul li a:focus { /* <-- Cambiamos el selector base a ID */
-      background-color: rgba(255, 255, 255, 0.1);
+  #mobile-menu ul li a:focus {
+    background-color: #35a9aa;
+    padding-left: 25px; /* Indentación sutil al hover */
   }
 
-  /* La clase para el botón de cerrar puede seguir siendo clase si no tiene ID,
-     pero si tuviera ID, sería mejor usarlo. Asumimos que sigue usando clase */
-  .mobile-menu-close-button {
-      /* ... (estilos del botón de cerrar sin cambios necesarios aquí) ... */
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      background: none;
-      border: none;
-      color: white;
-      font-size: 30px;
-      cursor: pointer;
-      padding: 5px;
-      line-height: 1;
+  /* No olvides el ID correcto para el botón de cerrar si usaste #mobile-menu-close */
+  #mobile-menu-close {
+    /* Estilos idénticos a .mobile-menu-close-button si usas el ID */
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 35px;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+    opacity: 0.8;
+    transition: opacity 0.3s ease, transform 0.3s ease;
   }
+  #mobile-menu-close:hover {
+    opacity: 1;
+    transform: rotate(90deg);
+  }
+
+  /* --- FIN MENÚ HAMBURGUESA --- */
 
   /* --- Ajustes del Header (Logos) --- */
   .header-logos {
@@ -152,37 +212,81 @@
       min-height: unset;
       position: relative;
       width: 100%;
+      overflow: hidden; /* Ocultar slides que no están activos */
   }
 
   .slider {
-      position: relative; /* Cambiar a relativo */
-      height: auto; /* Altura automática */
-      width: 100%;
+    position: relative; /* Contenedor de los slides */
+    width: 100%;
+    height: auto; /* Ajustable al contenido del slide activo */
   }
 
+  /* ESTILOS ORIGINALES DEL SLIDE (o adaptados) */
   .slide {
-      position: relative; /* Cambiar a relativo para que se apilen */
-      opacity: 1 !important; /* Siempre visible */
-      visibility: visible !important; /* Siempre visible */
-      display: block !important; /* Asegurar que se muestren como bloques */
-      width: 100%;
-      height: auto; /* Altura automática */
-      margin-bottom: 25px; /* Espacio entre "slides" apilados */
-      top: auto; /* Resetear posicionamiento */
-      left: auto; /* Resetear posicionamiento */
-      transform: none !important; /* Resetear transformaciones */
-      transition: none !important; /* Sin transiciones entre slides */
-      background-color: #fff; /* Fondo blanco si no lo tienen */
-      padding: 15px; /* Padding interno */
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      box-sizing: border-box;
+    /* Volver a ocultarlos por defecto */
+    position: absolute; /* Para que se superpongan */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; /* O auto si el contenido varía mucho */
+    opacity: 0;
+    visibility: hidden;
+    /* Puedes añadir transiciones si quieres fade entre slides */
+    transition: opacity 0.6s ease-in-out, visibility 0.6s ease-in-out;
+    display: flex; /* Usar flex para controlar contenido interno */
+    flex-direction: column; /* Por defecto, puedes cambiarlo si un slide lo necesita */
+    padding: 15px;
+    box-sizing: border-box;
+    background-color: #fff; /* Fondo por si acaso */
+    /* QUITAR CUALQUIER display: block !important; position: relative; margin-bottom; que hayas añadido antes para móvil */
   }
 
-  .slide.active { /* No necesita estilos especiales de visibilidad en móvil */
-      z-index: 0; /* Resetear z-index */
+  .slide.active {
+    /* Mostrar el slide activo */
+    position: relative; /* O absolute si no necesitas que empuje contenido */
+    opacity: 1;
+    visibility: visible;
+    z-index: 1; /* Asegurar que esté por encima de los inactivos */
+    height: auto; /* Ajustar altura al contenido activo */
   }
 
+  /* --- Restaurar Slider Dots --- */
+  .slider-dots {
+    display: flex !important; /* Asegurar que se muestren */
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: 10px; /* Posicionar abajo */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5; /* Encima de los slides */
+    gap: 8px; /* Espacio entre dots */
+  }
+
+  .slider-dots .slider-dot {
+    width: 10px; /* Dots más pequeños */
+    height: 10px;
+    background-color: rgba(0, 0, 0, 0.3); /* Color base */
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    border: none; /* Quitar borde negro si lo tenías */
+  }
+
+  .slider-dots .slider-dot:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+    transform: scale(1.1);
+  }
+
+  .slider-dots .slider-dot.active {
+    background-color: #0249aa; /* Color principal para activo */
+    transform: scale(1.2); /* Hacerlo un poco más grande */
+  }
+
+  /* Ocultar flechas prev/next en móvil (opcional, pero recomendado para simplicidad) */
+  .prev-slide, .next-slide {
+    display: none !important;
+  }
   /* --- Ajustes de Layout Imagen + Texto --- */
   .imagen-y-texto {
       flex-direction: column; /* Apilar imagen y texto */
@@ -379,4 +483,49 @@
       display: none !important;
   }
 
+    .collapsible-text .collapsible-content {
+      max-height: 220px; /* Altura inicial visible (ajusta según necesites) */
+      overflow: hidden;
+      position: relative; /* Para el degradado opcional */
+      transition: max-height 0.5s ease-out;
+      margin-bottom: 10px; /* Espacio antes del botón */
+  }
+  /* Opcional: Añadir un degradado al final para indicar que hay más texto */
+  .collapsible-text .collapsible-content::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background: linear-gradient(to bottom, transparent, white);
+      pointer-events: none; /* Para que no interfiera con el clic */
+      transition: opacity 0.3s ease;
+  }
+
+  .collapsible-text.expanded .collapsible-content {
+      max-height: 1500px; /* Altura suficiente para mostrar todo */
+  }
+  .collapsible-text.expanded .collapsible-content::after {
+      opacity: 0; /* Ocultar degradado al expandir */
+  }
+
+  .toggle-details-btn {
+      display: block; /* O inline-block */
+      margin: 10px auto 0; /* Centrar botón */
+      padding: 8px 15px;
+      background-color: #35a9aa;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  .toggle-details-btn:hover {
+      background-color: #0249aa;
+  }
+  .toggle-details-btn:active {
+      transform: scale(0.95);
+  }
 } /* Fin de @media query */

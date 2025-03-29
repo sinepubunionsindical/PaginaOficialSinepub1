@@ -2,44 +2,89 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuToggle = document.getElementById('mobile-menu-toggle');
     const menuPanel = document.getElementById('mobile-menu');
     const menuClose = document.getElementById('mobile-menu-close');
+    const menuOverlay = document.getElementById('mobile-menu-overlay'); // Obtener el overlay
 
-    if (menuToggle && menuPanel) {
-        // Abrir menú
-        menuToggle.addEventListener('click', () => {
-            menuPanel.classList.add('active'); // Añade la clase que definimos en CSS
+    // Función para abrir el menú
+    function openMenu() {
+        if (menuPanel && menuToggle && menuOverlay) {
+            menuPanel.classList.add('active');
+            menuOverlay.classList.add('active'); // Mostrar overlay
             menuToggle.setAttribute('aria-expanded', 'true');
             menuPanel.setAttribute('aria-hidden', 'false');
-        });
+            document.body.style.overflow = 'hidden'; // Evitar scroll del body
+        }
     }
 
-    if (menuClose && menuPanel) {
-        // Cerrar menú con el botón X
-        menuClose.addEventListener('click', () => {
-            menuPanel.classList.remove('active'); // Quita la clase
+    // Función para cerrar el menú
+    function closeMenu() {
+        if (menuPanel && menuToggle && menuOverlay) {
+            menuPanel.classList.remove('active');
+            menuOverlay.classList.remove('active'); // Ocultar overlay
             menuToggle.setAttribute('aria-expanded', 'false');
             menuPanel.setAttribute('aria-hidden', 'true');
-        });
+            document.body.style.overflow = ''; // Restaurar scroll del body
+        }
     }
 
-    // Opcional: Cerrar menú si se hace clic fuera de él (en el overlay o contenido)
-    // document.addEventListener('click', (event) => {
-    //     if (menuPanel && menuPanel.classList.contains('active') &&
-    //         !menuPanel.contains(event.target) && !menuToggle.contains(event.target)) {
-    //         menuPanel.classList.remove('active');
-    //         menuToggle.setAttribute('aria-expanded', 'false');
-    //         menuPanel.setAttribute('aria-hidden', 'true');
-    //     }
-    // });
+    // Abrir menú con botón hamburguesa
+    if (menuToggle) {
+        menuToggle.addEventListener('click', openMenu);
+    }
 
-    // Opcional: Cerrar menú al hacer clic en un enlace del menú
+    // Cerrar menú con botón X
+    if (menuClose) {
+        menuClose.addEventListener('click', closeMenu);
+    }
+
+    // Cerrar menú haciendo clic en el overlay
+    if (menuOverlay) {
+        menuOverlay.addEventListener('click', closeMenu);
+    }
+
+    // Cerrar menú al hacer clic en un enlace del menú
     if (menuPanel) {
         const menuLinks = menuPanel.querySelectorAll('a');
         menuLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                menuPanel.classList.remove('active');
-                menuToggle.setAttribute('aria-expanded', 'false');
-                menuPanel.setAttribute('aria-hidden', 'true');
+            // No cerrar inmediatamente si es un enlace interno del slider
+            // Dejar que el slider.js maneje el cambio de slide primero
+            // El menú se cerrará de todos modos por el click en el enlace
+            link.addEventListener('click', (e) => {
+                // Solo cierra inmediatamente si NO es un link de slider o es un link a otra página
+                // Si tiene data-slide, asumimos que slider.js lo maneja.
+                 if (!link.hasAttribute('data-slide') || link.getAttribute('href') !== '#') {
+                     // Podríamos querer cerrarlo siempre, incluso los data-slide,
+                     // depende de la experiencia deseada.
+                     // Por simplicidad, cerramos siempre:
+                      closeMenu();
+                 } else {
+                     // Si es data-slide y href="#" es para slider, cerrar también
+                      closeMenu();
+                 }
+
+
+                // Podríamos necesitar un pequeño retraso si el cambio de slide es lento
+                // setTimeout(closeMenu, 150); // Descomentar si es necesario retrasar
             });
         });
     }
+
+    // --- Código existente para botones "Leer más/menos" ---
+    document.querySelectorAll('.toggle-details-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const container = button.closest('.collapsible-text');
+            // const content = container.querySelector('.collapsible-content'); // No se usa 'content' aquí
+            const isExpanded = container.classList.contains('expanded');
+
+            if (isExpanded) {
+                container.classList.remove('expanded');
+                button.textContent = 'Leer más';
+                button.setAttribute('aria-expanded', 'false');
+            } else {
+                container.classList.add('expanded');
+                button.textContent = 'Leer menos';
+                button.setAttribute('aria-expanded', 'true');
+            }
+        });
+    });
+    // --- Fin código botones ---
 });

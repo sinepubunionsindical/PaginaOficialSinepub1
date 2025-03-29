@@ -9,6 +9,11 @@ body.fade-out {
   transition: opacity 0.6s ease-in-out;
 }
 
+body.fade-in {
+  opacity: 1;
+  transition: opacity 0.6s ease-in-out;
+}
+
 /* Estilos generales */
 
 * {

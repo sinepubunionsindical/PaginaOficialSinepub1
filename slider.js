@@ -13,6 +13,7 @@ const inactivityTime = 90000; // 90 segundos en milisegundos
 
 document.addEventListener('DOMContentLoaded', () => {
     document.body.classList.remove('fade-out');
+    document.body.classList.add('fade-in');
   });
 
   window.addEventListener('beforeunload', () => {
