@@ -1,17 +1,25 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const embed = document.getElementById("pdfEmbed");
+    const iframe = document.getElementById("pdfIframe");
     const downloadBtn = document.getElementById("downloadPdf");
   
-    // 🚫 Desactivar clic derecho (en desktop principalmente)
-    embed.addEventListener("contextmenu", (e) => {
-      e.preventDefault();
+    // 🔒 Bloquear clic derecho (dentro del iframe)
+    iframe.addEventListener("load", () => {
+      try {
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        iframeDoc.addEventListener("contextmenu", (e) => e.preventDefault());
+      } catch (e) {
+        console.warn("No se pudo bloquear clic derecho dentro del iframe.");
+      }
     });
   
-    // 🖨️ Descargar mediante impresión (mantiene los campos llenos)
+    // 📥 Descargar simulando impresión
     downloadBtn.addEventListener("click", () => {
-      embed.focus();
-      embed.contentWindow?.print(); // fallback si es iframe, pero embed no siempre lo soporta
-      window.print(); // alternativa si contentWindow no funciona
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.focus();
+        iframe.contentWindow.print();
+      } else {
+        alert("No se pudo acceder al formulario.");
+      }
     });
   });
   
