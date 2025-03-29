@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // ¡IMPORTANTE! Reemplaza esto con tu clave de licencia de PDF.js Express
         licenseKey: 'Gbw1W7GvVP2DecbuUMIm', // Obtén tu clave en https://www.pdfjs.express/
         // Documento PDF inicial a cargar (asegúrate que la ruta sea correcta desde donde se sirve la página HTML)
-        initialDoc: './Afiliacion.pdf', // Ruta relativa al archivo PDF
+        initialDoc: 'Afiliacion.pdf', // Ruta relativa al archivo PDF
     }, viewerElement) // El segundo argumento es el elemento donde se montará el visor
     .then(instance => {
         // --- El visor se ha cargado ---
