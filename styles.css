@@ -980,3 +980,44 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
   color: #333;
   font-weight: bold;
 }
+
+/* 🧩 Ajuste específico para el visor PDF interactivo del slide-6 */
+#slide-6 .pdf-container {
+  width: 100%;
+  max-width: 800px;
+  height: auto;
+  margin: 0 auto;
+  padding: 0;
+  position: relative;
+}
+
+#slide-6 .pdf-container iframe {
+  width: 100%;
+  height: 100vh; /* Ocupa toda la pantalla del móvil si es necesario */
+  max-height: 700px;
+  border: none;
+}
+
+/* ✅ Asegura que el visor no se vea recortado en móviles */
+@media screen and (max-width: 768px) {
+  .afiliacion-container {
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .afiliacion-info {
+    width: 100%;
+    text-align: center;
+    padding: 10px 20px;
+  }
+
+  #slide-6 .pdf-container {
+    width: 100%;
+    height: auto;
+  }
+
+  #slide-6 .pdf-container iframe {
+    height: 80vh;
+  }
+}
