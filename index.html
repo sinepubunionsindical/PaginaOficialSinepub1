@@ -205,27 +205,28 @@
                     </div>
                     <div class="slide" id="slide-6">
                         <div class="imagen-y-texto afiliacion-container">
-                          <!-- ✅ Contenedor visible y editable en móviles -->
+                          
+                          <!-- Visor PDF editable -->
                           <div class="pdf-container">
-                            <iframe
-                              id="pdfIframe"
-                              src="Afiliacion.pdf#toolbar=0"
-                              width="100%"
-                              height="100%"
-                              style="border: none; max-height: 100vh; min-height: 400px; display: block;"
-                              allow="autoplay"
-                            ></iframe>
+                            <embed 
+                              id="pdfEmbed" 
+                              src="Afiliacion.pdf#toolbar=0&navpanes=0&scrollbar=0" 
+                              type="application/pdf" 
+                              width="100%" 
+                              height="100%" 
+                              style="min-height: 500px; max-height: 90vh;" />
                           </div>
                       
-                          <!-- Texto + botón -->
+                          <!-- Instrucciones + botón -->
                           <div class="texto-banner afiliacion-info">
                             <h1>Formulario de Afiliación</h1>
                             <p>Llena el formulario directamente aquí. Luego haz clic en descargar.</p>
                             <p><strong>Recuerda:</strong> Firma y coloca tu huella antes de llevarlo al 7° piso, Torre Capilla.</p>
                             <button id="downloadPdf" class="boton-descargar">Descargar Formulario Lleno</button>
                           </div>
+                      
                         </div>
-                    </div>                                           
+                    </div>                                                                 
                     <div class="slide" id="slide-7">  <!-- NUEVO SLIDE para Módulos de Formación -->
                         <div class="imagen-y-texto">
                             <div class="texto-banner">
