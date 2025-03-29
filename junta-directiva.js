@@ -3,8 +3,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const miembroFoto = document.getElementById('miembro-foto');
     const miembroNombre = document.getElementById('miembro-nombre');
     const miembroCargo = document.getElementById('miembro-cargo');
-
-    document.querySelectorAll('a[href]').forEach(link => {
+    document.addEventListener('DOMContentLoaded', () => {
+        document.body.classList.remove('fade-out');
+        document.body.classList.add('fade-in');
+      });
+    
+      window.addEventListener('beforeunload', () => {
+        document.body.classList.add('fade-out');
+      });
+    
+      document.querySelectorAll('a[href]').forEach(link => {
         link.addEventListener('click', (e) => {
           const href = link.getAttribute('href');
           if (href && !href.startsWith('#') && !link.hasAttribute('target')) {
@@ -16,8 +24,6 @@ document.addEventListener('DOMContentLoaded', function() {
           }
         });
       });
-      
-
     // NUEVOS: Para Ubicación, Celular y Descripción
     const miembroUbicacion = document.getElementById('miembro-ubicacion');
     const miembroCelular = document.getElementById('miembro-celular');

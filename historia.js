@@ -1,4 +1,13 @@
-document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', () => {
+        document.body.classList.remove('fade-out');
+        document.body.classList.add('fade-in');
+      });
+    
+      window.addEventListener('beforeunload', () => {
+        document.body.classList.add('fade-out');
+      });
+    
     document.querySelectorAll('a[href]').forEach(link => {
         link.addEventListener('click', (e) => {
           const href = link.getAttribute('href');
