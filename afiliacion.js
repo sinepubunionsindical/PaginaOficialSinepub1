@@ -2,23 +2,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const iframe = document.getElementById("pdfIframe");
     const downloadBtn = document.getElementById("downloadPdf");
   
-    // 🔒 Desactivar clic derecho en visor
+    // 🔒 Bloquear clic derecho (dentro del iframe)
     iframe.addEventListener("load", () => {
       try {
         const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
         iframeDoc.addEventListener("contextmenu", (e) => e.preventDefault());
       } catch (e) {
-        console.warn("No se pudo bloquear el clic derecho dentro del iframe (restricciones de seguridad).");
+        console.warn("No se pudo bloquear clic derecho dentro del iframe.");
       }
     });
   
-    // 📥 Descargar el formulario usando print
+    // 📥 Descargar simulando impresión
     downloadBtn.addEventListener("click", () => {
       if (iframe && iframe.contentWindow) {
         iframe.contentWindow.focus();
         iframe.contentWindow.print();
       } else {
-        alert("No se pudo acceder al formulario para imprimir.");
+        alert("No se pudo acceder al formulario.");
       }
     });
   });

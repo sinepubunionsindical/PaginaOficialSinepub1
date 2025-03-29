@@ -203,27 +203,29 @@
                             </div>                            
                         </div>
                     </div>
-                    <div class="slide" id="slide-6"> <!-- SLIDE para Afiliación -->
-                        <div class="imagen-y-texto afiliacion-container"> <!-- Contenedor para organizar PDF y texto -->
-                      
-                          <!-- 🔍 Visor PDF responsive con campos interactivos -->
-                          <div class="pdf-responsive-container">
+                    <div class="slide" id="slide-6">
+                        <div class="imagen-y-texto afiliacion-container">
+                          
+                          <!-- ✅ Contenedor visible y editable en móviles -->
+                          <div class="pdf-container">
                             <iframe
                               id="pdfIframe"
-                              src="Afiliacion.pdf#toolbar=0&navpanes=0&scrollbar=0"
-                              allowfullscreen
+                              src="Afiliacion.pdf#toolbar=0"
+                              width="100%"
+                              height="100%"
+                              style="border: none;"
+                              allow="autoplay"
                             ></iframe>
                           </div>
                       
-                          <!-- 📝 Explicación y botón a la derecha -->
+                          <!-- Texto + botón -->
                           <div class="texto-banner afiliacion-info">
                             <h1>Formulario de Afiliación</h1>
-                            <p>Por favor, llena el formulario interactivo directamente en el visor de PDF. Una vez completado, usa el botón de descarga para guardarlo con tus datos.</p>
-                            <p>Después de descargarlo, imprime el formulario y llévalo a la oficina de SINEPUB en el <strong>séptimo piso de la Torre Capilla</strong>. Asegúrate de agregar tu firma y huella antes de entregarlo.</p>
-                      
-                            <!-- 📥 Botón para descargar PDF llenado -->
+                            <p>Llena el formulario directamente aquí. Luego haz clic en descargar.</p>
+                            <p><strong>Recuerda:</strong> Firma y coloca tu huella antes de llevarlo al 7° piso, Torre Capilla.</p>
                             <button id="downloadPdf" class="boton-descargar">Descargar Formulario Lleno</button>
                           </div>
+                      
                         </div>
                     </div>                      
                     <div class="slide" id="slide-7">  <!-- NUEVO SLIDE para Módulos de Formación -->
