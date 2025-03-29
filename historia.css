@@ -8,3 +8,13 @@
   opacity: 1;
   pointer-events: all;
 }
+
+body.fade-out {
+  opacity: 0;
+  transition: opacity 0.6s ease-in-out;
+}
+
+body.fade-in {
+  opacity: 1;
+  transition: opacity 0.6s ease-in-out;
+}
