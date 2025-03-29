@@ -1013,3 +1013,9 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
   color: #333;
   font-weight: bold;
 }
+/* ===== OCULTAR ELEMENTOS MÓVILES EN ESCRITORIO ===== */
+
+#mobile-menu-toggle,
+#mobile-menu {
+    display: none; /* Oculta completamente estos elementos por defecto */
+}
