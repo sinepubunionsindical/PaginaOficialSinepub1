@@ -11,6 +11,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.16.0/pdf-lib.min.js"></script>
         <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     </head>
     <body>
         <!-- Encabezado Principal (Franja azul delgada con títulos) -->
@@ -242,10 +243,10 @@
                                     🔹 <strong>Este documento es una guía esencial</strong> para comprender los límites y derechos en torno a la disponibilidad laboral y su impacto en la vida personal y profesional de los trabajadores del sector salud.
                                 </p>
                             </div>
-                            
-                            <!-- Sección para visualizar el PDF -->
-                            <div class="pdf-container">
-                                <iframe src="Concepto_disponibilidad_empleado.pdf#toolbar=0" width="100%" height="700px"></iframe>
+                            <!-- Contenedor del visor PDF.js en slide-7 -->
+                            <div id="pdf-viewer-slide7" style="width: 100%; height: 700px; position: relative;">
+                                <canvas id="pdf-canvas-slide7"></canvas>
+                                <div class="loading-overlay">Cargando documento...</div>
                             </div>
                         </div>
                     </div>
@@ -267,10 +268,10 @@
                                     🔹 <strong>Este documento es una guía esencial</strong> para conocer los beneficios educativos para los afiliados sindicales.
                                 </p>
                             </div>
-                            
-                            <!-- Sección para visualizar el PDF -->
-                            <div class="pdf-container">
-                                <iframe src="producto_del_acuerdo_nacional.pdf#toolbar=0" width="100%" height="700px"></iframe>
+                            <!-- Contenedor del visor PDF.js en slide-8 -->
+                            <div id="pdf-viewer-slide8" style="width: 100%; height: 700px; position: relative;">
+                                <canvas id="pdf-canvas-slide8"></canvas>
+                                <div class="loading-overlay">Cargando documento...</div>
                             </div>
                         </div>
                     </div>
@@ -330,6 +331,7 @@
             <elevenlabs-convai agent-id="a4xeAlFI8Oq0oVnTvUps"></elevenlabs-convai>
             <script src="https://elevenlabs.io/convai-widget/index.js" type="text/javascript"></script>
         </div>
+        <script src="pdf.js" defer></script>
         <script src="chatbot-access.js" defer></script>
         <script src="slider.js" defer></script>
         <script src="afiliacion.js" defer></script>

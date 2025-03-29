@@ -952,3 +952,17 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
 .modulos-nav .slider-dot.active {
   background-color: blue;
 }
+
+canvas {
+  width: 100% !important;
+  height: auto !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  display: block;
+  margin: 0 auto;
+}
+.loading-overlay {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  color: #333;
+}
