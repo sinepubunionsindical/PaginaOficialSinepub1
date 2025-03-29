@@ -261,7 +261,7 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
     document.getElementById("verificar-contrasena").addEventListener("click", () => {
         const contrasena = document.getElementById("input-contrasena").value;
 
-        if (contrasena === "unionsindical") {
+        if (contrasena === "12") {
             popupContrasena.remove();
             mostrarPopupBienvenida(mensajeBienvenida);
         } else {
