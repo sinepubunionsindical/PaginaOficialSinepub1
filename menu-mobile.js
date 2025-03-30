@@ -144,14 +144,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- Añadir al Body (sin cambios) ---
         document.body.appendChild(mobileMenuContainer); 
 
-        // --- Event Listener Hamburguesa (sin cambios) ---
+        // --- Event Listener Hamburguesa ---
         hamburgerButton.addEventListener('click', () => {
             const isOpen = mobileMenuContainer.classList.contains('open');
             mobileMenuContainer.classList.toggle('open');
             mobileMenuContainer.setAttribute('aria-hidden', String(!isOpen)); // Usar String() para true/false
             hamburgerButton.innerHTML = isOpen ? '☰' : '✕'; 
+            hamburgerButton.classList.toggle('menu-open', !isOpen); 
             hamburgerButton.setAttribute('aria-label', isOpen ? 'Abrir menú de navegación' : 'Cerrar menú de navegación');
         });
+
 
         // --- Cerrar menú al hacer clic en enlace (sin cambios) ---
         mobileMenuContainer.querySelectorAll('a:not(.dropdown-toggle-mobile)').forEach(link => {

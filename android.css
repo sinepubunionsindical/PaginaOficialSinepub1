@@ -21,17 +21,27 @@
     }
 
     #hamburger-button {
-        display: block; /* Asegurar visibilidad */
+        display: block; 
         position: absolute;
-        top: 10px; /* Ajustar posición vertical */
-        right: 15px; /* Ajustar posición horizontal */
-        font-size: 32px; /* Tamaño del icono hamburguesa */
-        line-height: 1; /* Alinear mejor el icono */
+        top: 10px; /* Ajustar si es necesario */
+        right: 10px; /* Ajustar si es necesario */
+        font-size: 28px; /* Reducir un poco si se ve muy grande */
+        line-height: 1; 
         cursor: pointer;
         z-index: 1100;
-        padding: 5px; /* Área de toque más grande */
+        padding: 8px 10px; /* Ajustar padding para tamaño deseado */
+        border: none; 
+        border-radius: 4px; /* Opcional: redondear esquinas */
+        /* Estado inicial (Menú cerrado) */
+        background-color: #35a9aa; /* Verde azulado */
+        color: white; 
+        transition: background-color 0.3s ease, color 0.3s ease; /* Transición suave */
     }
 
+    #hamburger-button.menu-open { /* Estilo cuando el menú está abierto (✕) */
+        background-color: red; 
+        color: black; 
+    }
     /* Menú Móvil Desplegable (ANIMADO) */
     .mobile-menu {
         /* display: none;  QUITAR ESTO */
@@ -50,6 +60,8 @@
         overflow-y: auto; 
         transform: translateX(-100%); /* Estado inicial: fuera a la izquierda */
         transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; /* AÑADIR TRANSICIÓN */
+        display: flex; /* Usar Flexbox */
+        flex-direction: column; /* Apilar verticalmente */
     }
 
     .mobile-menu.open {
@@ -62,15 +74,18 @@
         list-style: none;
         padding: 0;
         margin: 0;
-        display: flex; /* Usar flexbox */
-        flex-direction: column; /* Alinear verticalmente */
-    }
+        width: 100%; /* Ocupar ancho */
+        flex-shrink: 0; /* Evitar que se encoja si hay mucho contenido abajo */
+    }   
 
     .mobile-menu li {
         margin: 0;
         border-bottom: 1px solid #0249aa; /* Separador */
     }
 
+    .mobile-menu ul li:last-child {
+        border-bottom: none; /* Quitar borde del último item */
+    }
     .mobile-menu li a,
     .mobile-menu .dropdown-toggle-mobile { /* Estilo para toggles dentro del menú */
         display: block;
@@ -81,6 +96,14 @@
         transition: background-color 0.2s ease;
     }
 
+        /* Estilo del toggle específico como botón */
+        .mobile-menu ul li .dropdown-toggle-mobile {
+        background: none;
+        border: none;
+        width: 100%;
+        text-align: left;
+        font-family: inherit; 
+    }
     .mobile-menu li a:hover,
     .mobile-menu .dropdown-toggle-mobile:hover {
         background-color: #35a9aa; /* Resaltar al pasar el mouse */
@@ -97,6 +120,27 @@
         display: none; /* Ocultos por defecto */
         background-color: #022b6d; /* Fondo ligeramente más oscuro */
         padding-left: 20px; /* Indentación */
+    }
+
+    /* Estilos específicos para el contenido del submenú Redes Sociales */
+    .redes-sociales-header-mobile {
+        display: flex;
+        gap: 55px; 
+        align-items: center;
+    }
+
+    .redes-sociales-header-mobile a img {
+        width: 30px;
+        height: 30px;
+        display: block; 
+    }
+
+    .redes-sociales-header-mobile a {
+        padding: 0 !important; 
+        display: inline-block !important;
+    }
+    .redes-sociales-header-mobile a:hover {
+         background-color: transparent !important; 
     }
 
     .mobile-submenu.open {
@@ -125,11 +169,6 @@
         padding: 10px 0;
         text-align: left;
     }
-     .mobile-menu .redes-sociales-header-mobile img {
-        width: 30px;
-        height: 30px;
-        margin-right: 10px;
-     }
     .mobile-menu .colaborador-mobile img {
          width: 40px;
          height: 40px;
@@ -167,7 +206,7 @@
     }
 
     .logo-sinepub {
-        height: 120px; /* Logo principal más grande */
+        height: 220px; /* Logo principal más grande */
         order: 1; /* Asegurar que SINEPUB esté primero */
     }
 
@@ -176,6 +215,7 @@
         position: static; /* Quitar posicionamiento absoluto */
         transform: none; /* Resetear transformación */
         order: 2; /* Poner HUV después */
+        display: none;
     }
 
 
@@ -439,4 +479,147 @@
         width: 13px;
         height: 13px;
      }
+
+     .logros-section {
+        padding: 15px 0; /* Añadir algo de padding vertical si es necesario */
+    }
+
+    .logros-container {
+        /* Cambiar a layout de columna */
+        flex-direction: column; 
+        align-items: center; /* Centrar elementos */
+        gap: 25px; /* Espacio entre imagen principal y rejilla */
+    }
+
+    .logros-imagen {
+        /* Hacer que la imagen principal ocupe casi todo el ancho */
+        width: 95%; 
+        max-width: 500px; /* Limitar tamaño máximo si quieres */
+        margin-right: 0; /* Quitar margen derecho */
+        margin-bottom: 0; /* Quitar margen inferior si lo tenía */
+        height: auto; /* Altura automática */
+        order: 1; /* Asegurar orden si es necesario */
+    }
+
+    .grid-imagenes {
+        /* Hacer que la rejilla ocupe casi todo el ancho */
+        width: 95%; 
+        max-width: none; /* Quitar max-width anterior */
+        /* grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); /* Columnas adaptables */
+        grid-template-columns: repeat(3, 1fr); /* Mantener 3 columnas si caben bien */
+        gap: 5px; /* Reducir espacio entre miniaturas */
+        padding: 8px; /* Reducir padding */
+        border-width: 1px; /* Borde más fino */
+        border-radius: 8px;
+        /* align-self: center;  Ya centrado por el flex container */
+        order: 2; /* Asegurar orden */
+        /* Quitar overflow: visible para contener las miniaturas */
+        overflow: hidden; /* Cambiado a hidden */
+    }
+
+    /* Contenedor de miniatura en móvil */
+    .img-wrapper {
+        height: 80px; /* Miniaturas un poco más pequeñas */
+        overflow: hidden; /* Cambiado a hidden */
+         /* Quitar position relative si no es necesario sin el hover */
+         /* position: relative; */ 
+    }
+
+    /* Imagen miniatura base en móvil */
+    .img-wrapper img {
+        /* Quitar posicionamiento absoluto si no hay hover */
+        /* position: absolute; */
+        /* top: 0; */
+        /* left: 0; */
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        pointer-events: none; /* Mantener esto */
+        border-radius: 4px; /* Menos redondez */
+        box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15); /* Sombra más sutil */
+        
+        /* Resetear transformaciones y transiciones */
+        transform: none; 
+        transform-origin: center center; /* Cambiar origen por si acaso */
+        transition: none; /* Desactivar transición */
+        z-index: 1; /* Resetear z-index */
+    }
+    
+    /* --- DESACTIVAR EL EFECTO HOVER EN MÓVIL --- */
+    .img-wrapper:hover img,
+    .img-vertical:hover img {
+        transform: none; /* SIN ESCALA NI TRASLACIÓN */
+        z-index: 1; /* Mismo z-index que normal */
+        box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15); /* Misma sombra que normal */
+        border: none; /* SIN BORDE ESPECIAL */
+    }
+
+    /* Ajustes específicos para imágenes verticales en móvil (si aún son necesarios) */
+    .img-vertical img {
+        object-fit: contain !important; /* Mantener contain */
+        /* Quitar posicionamiento absoluto si no hay hover */
+        /* position: absolute; */
+        /* left: 50%; */
+        /* transform: translateX(-50%); */ /* Quitar traslación base */
+        width: 100%; /* Ocupar el wrapper */
+        height: 100%; /* Ocupar el wrapper */
+        transform: none; /* Asegurar que no hay transform base */
+    }
+}
+
+/* --- Estilos para Overlay Fullscreen --- */
+.fullscreen-overlay {
+    position: fixed; /* Fijo en la pantalla */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85); /* Fondo negro semi-transparente */
+    display: flex; /* Usar flex para centrar la imagen */
+    align-items: center;
+    justify-content: center;
+    z-index: 9999; /* Muy alto para estar por encima de todo */
+    cursor: pointer; /* Indicar que se puede hacer clic para cerrar */
+    opacity: 0; /* Inicialmente invisible */
+    visibility: hidden; /* Inicialmente oculto */
+    transition: opacity 0.3s ease, visibility 0.3s ease; /* Transición suave */
+}
+
+.fullscreen-overlay:not(.hidden) { /* Estilos cuando está visible */
+    opacity: 1;
+    visibility: visible;
+}
+
+/* La imagen dentro del overlay */
+#fullscreen-image {
+    display: block; /* Evitar espacio extra */
+    max-width: 90%; /* Máximo ancho */
+    max-height: 90%; /* Máximo alto */
+    object-fit: contain; /* Mostrar toda la imagen sin recortar */
+    cursor: default; /* Cursor normal sobre la imagen */
+    box-shadow: 0 0 25px rgba(0,0,0,0.5); /* Sombra opcional */
+}
+
+/* Botón de cierre (X) */
+.close-fullscreen {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 35px; /* Tamaño grande */
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    z-index: 10000; /* Encima de la imagen */
+    line-height: 1;
+    text-shadow: 0 0 5px rgba(0,0,0,0.7); /* Sombra de texto para legibilidad */
+}
+
+.close-fullscreen:hover {
+    color: #ccc; /* Cambiar color al pasar el mouse */
+}
+
+/* Ocultar el overlay usando la clase .hidden */
+.fullscreen-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
 }
