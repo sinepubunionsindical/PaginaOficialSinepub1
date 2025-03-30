@@ -1,8 +1,9 @@
-    const listaCargos = document.querySelector('.lista-cargos');
-    const miembroFoto = document.getElementById('miembro-foto');
-    const miembroNombre = document.getElementById('miembro-nombre');
-    const miembroCargo = document.getElementById('miembro-cargo');
     document.addEventListener('DOMContentLoaded', function () {
+        const listaCargos = document.querySelector('.lista-cargos');
+        const miembroFoto = document.getElementById('miembro-foto');
+        const miembroNombre = document.getElementById('miembro-nombre');
+        const miembroCargo = document.getElementById('miembro-cargo');
+    
         // Aplicar fade-in al cargar
         document.body.classList.remove('fade-out');
         document.body.classList.add('fade-in');

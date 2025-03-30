@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       });
     });
-});
+
     const historiaSecundariaLink = document.getElementById('historia-secundaria-link');
     const fundadoresSecundarioLink = document.getElementById('fundadores-secundario-link');
     const incorporacionSecundarioLink = document.getElementById('incorporacion-secundario-link');
@@ -130,4 +130,4 @@ document.addEventListener('DOMContentLoaded', function () {
         deactivateSecondaryNavLinks();
         incorporacionSecundarioLink.classList.add('active');
     });
-
+});
