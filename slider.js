@@ -227,6 +227,7 @@ function initSlider() {
             const newsDots = sliderDotsContainer.querySelectorAll('.slider-dot');
             newsDots.forEach(dot => {
                 const dotIndex = parseInt(dot.dataset.slideIndex);
+                console.log('dotIndex:', dotIndex, 'slideIndex:', slideIndex); // Verifica los índices
                 dot.classList.toggle('active', dotIndex === slideIndex);
             });
             // Mostrar/ocultar contenedor basado en si estamos en sección noticias
