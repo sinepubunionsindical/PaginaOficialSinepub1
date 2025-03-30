@@ -6,13 +6,13 @@
         <title>SINEPUB - Historia</title>
         <link rel="stylesheet" href="styles.css">
         <link rel="stylesheet" href="historia.css">
+        <link rel="stylesheet" href="android.css">
         <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
         <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
         <script src="https://unpkg.com/react@17.0.2/umd/react.development.js" crossorigin></script>
         <script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js" crossorigin></script>
     </head>
     <body class="fade-out">
-        <div id="mobile-menu-overlay"></div> <!-- NUEVO: Overlay -->
         <!-- Encabezado Principal (Franja azul delgada con títulos) -->
         <header>
             <div class="container header-titles-container"> <!-- Nuevo contenedor para los títulos -->
@@ -235,5 +235,6 @@
             const player = new Plyr('#player');
         </script>
         <script src="historia.js" defer></script>  <!-- Cambiado a historia.js -->
+        <script src="menu-mobile.js" defer></script>
     </body>
     </html>

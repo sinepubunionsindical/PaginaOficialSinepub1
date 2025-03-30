@@ -6,6 +6,7 @@
     <title>SINEPUB - Junta Directiva</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="junta-directiva.css"> <!-- Enlace a CSS específico de Junta Directiva -->
+    <link rel="stylesheet" href="android.css">
     <script src="https://unpkg.com/react@17.0.2/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js" crossorigin></script>
 </head>
@@ -85,7 +86,7 @@
         <div class="container below-header-nav-container">
             <nav class="slider-nav">
                 <ul>
-                    <li><a href="#" class="active">Junta Directiva</a></li> 
+                    <li><a href="#" class="active" data-slide="1">Junta Directiva</a></li> <!-- Añadido data-slide="1" -->
                 </ul>
             </nav>
         </div>
@@ -176,5 +177,6 @@
         </div>
     </footer>     
         <script src="junta-directiva.js" defer></script> <!-- NUEVO ARCHIVO JS -->
+        <script src="menu-mobile.js" defer></script>
     </body>
     </html>
