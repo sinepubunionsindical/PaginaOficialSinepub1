@@ -1,488 +1,425 @@
-/* ============================================= */
-/*          ESTILOS PARA ANDROID / MÓVIL         */
-/*      (Activados para pantallas < 768px)     */
-/* ============================================= */
+/* Estilos específicos para móviles - aplicar solo en pantallas pequeñas */
+@media (max-width: 768px) {
 
-@media only screen and (max-width: 768px) {
+    /* --- Ajustes Generales --- */
+    body {
+        font-size: 16px; /* Reducir tamaño de fuente base */
+    }
 
-  /* --- Reset y Layout General --- */
-  body {
-      font-size: 16px; /* Ajustar tamaño de fuente base para móvil */
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh; /* Asegurar que el footer llegue al fondo */
-  }
+    .container {
+        padding-left: 15px;
+        padding-right: 15px; /* Menos padding lateral */
+    }
 
-  main {
-      padding: 15px; /* Reducir padding en móvil */
-      flex-grow: 1; /* Permitir que el contenido principal crezca */
-  }
+    h1 { font-size: 1.8em; }
+    h2 { font-size: 1.5em; }
+    h3 { font-size: 1.2em; }
 
-  section {
-      padding: 15px; /* Reducir padding en secciones */
-      margin-bottom: 20px; /* Espaciado entre secciones */
-      width: 100% !important; /* Forzar ancho completo */
-      box-sizing: border-box; /* Incluir padding y border en el ancho */
-  }
+    /* --- Header Principal (Títulos -> Hamburguesa) --- */
+    header .header-titles-nav ul {
+        display: none; /* Ocultar la navegación original en línea */
+    }
 
-  /* --- Ocultar Elementos de Escritorio --- */
-  header .header-titles-nav,          /* Ocultar nav principal del header */
-  .below-header-nav,                 /* Ocultar nav secundario */
-  .menu-item-redes-sociales .dropdown-menu, /* Ocultar dropdowns escritorio */
-  .menu-item-colaboradores .dropdown-menu,
-  .slider-dots,                      /* Ocultar dots del slider */
-  .prev-slide,                       /* Ocultar flecha prev */
-  .next-slide,                       /* Ocultar flecha next */
-  .prev-slide-fundadores,            /* Ocultar flechas slider fundadores */
-  .next-slide-fundadores {
-      display: none !important; /* Ocultar completamente */
-  }
+    /* Botón Hamburguesa (se creará con JS) */
+    #hamburger-button {
+        display: block; /* Mostrar el botón */
+        position: absolute; /* Posicionar relativo al header */
+        top: 15px;
+        right: 20px;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 30px; /* Tamaño del icono */
+        cursor: pointer;
+        z-index: 1100; /* Asegurar que esté por encima */
+    }
 
-  
-  /* --- Menú Hamburguesa (Desplegable Lateral Izquierdo) --- */
-  #mobile-menu-toggle {
-    display: block !important; /* Asegura visibilidad */
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    z-index: 1001; /* Encima del menú y overlay */
-    background-color: #0249aa;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    font-size: 24px;
-    cursor: pointer;
-    border-radius: 5px;
-    line-height: 1;
-    transition: background-color 0.3s ease; /* Animación hover */
-  }
-  #mobile-menu-toggle:hover {
-    background-color: #35a9aa;
-  }
+    /* Menú Móvil Desplegable (se creará con JS) */
+    .mobile-menu {
+        display: none; /* Oculto por defecto */
+        position: fixed; /* Fijar a la pantalla */
+        top: 0;
+        left: 0;
+        width: 80%; /* Ancho del menú */
+        max-width: 300px; /* Ancho máximo */
+        height: 100%;
+        background-color: #023b88; /* Un azul un poco más oscuro */
+        padding-top: 60px; /* Espacio para el botón de cerrar (opcional) */
+        box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+        z-index: 1090;
+        overflow-y: auto; /* Scroll si hay muchos items */
+        transform: translateX(-100%); /* Oculto fuera de la pantalla a la izquierda */
+        transition: transform 0.3s ease-in-out;
+    }
 
-  /* --- (Opcional pero recomendado) Overlay para oscurecer fondo --- */
-  #mobile-menu-overlay {
-      display: none; /* Oculto por defecto */
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5); /* Negro semitransparente */
-      z-index: 999; /* Debajo del menú pero encima del contenido */
-      opacity: 0;
-      transition: opacity 0.4s ease-in-out;
-  }
-  #mobile-menu-overlay.active {
-      display: block; /* Mostrar cuando menú está activo */
-      opacity: 1;
-  }
+    .mobile-menu.open {
+        display: block; /* Mostrar */
+        transform: translateX(0); /* Deslizar hacia adentro */
+    }
+
+    .mobile-menu ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex; /* Usar flexbox */
+        flex-direction: column; /* Alinear verticalmente */
+    }
+
+    .mobile-menu li {
+        margin: 0;
+        border-bottom: 1px solid #0249aa; /* Separador */
+    }
+
+    .mobile-menu li a,
+    .mobile-menu .dropdown-toggle-mobile { /* Estilo para toggles dentro del menú */
+        display: block;
+        padding: 15px 20px;
+        color: white;
+        text-decoration: none;
+        font-size: 1.1em;
+        transition: background-color 0.2s ease;
+    }
+
+    .mobile-menu li a:hover,
+    .mobile-menu .dropdown-toggle-mobile:hover {
+        background-color: #35a9aa; /* Resaltar al pasar el mouse */
+    }
+
+    /* Estilos para los sub-menús desplegables dentro del menú hamburguesa */
+    .mobile-submenu {
+        display: none; /* Ocultos por defecto */
+        background-color: #022b6d; /* Fondo ligeramente más oscuro */
+        padding-left: 20px; /* Indentación */
+    }
+
+    .mobile-submenu.open {
+        display: block; /* Mostrar submenú */
+    }
+
+    .mobile-submenu a {
+        font-size: 1em !important; /* Texto ligeramente más pequeño */
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+    }
+
+     /* Estilos específicos para Redes Sociales y Colaboradores en móvil */
+    .mobile-menu .dropdown-menu-redes-sociales-mobile,
+    .mobile-menu .dropdown-menu-colaboradores-mobile {
+        display: none; /* Ocultos hasta hacer clic */
+        background-color: #022b6d;
+        padding-left: 20px;
+    }
+    .mobile-menu .dropdown-menu-redes-sociales-mobile.open,
+    .mobile-menu .dropdown-menu-colaboradores-mobile.open {
+        display: block;
+    }
+    .mobile-menu .redes-sociales-header-mobile,
+    .mobile-menu .colaborador-mobile {
+        padding: 10px 0;
+        text-align: left;
+    }
+     .mobile-menu .redes-sociales-header-mobile img {
+        width: 30px;
+        height: 30px;
+        margin-right: 10px;
+     }
+    .mobile-menu .colaborador-mobile img {
+         width: 40px;
+         height: 40px;
+         border-radius: 50%;
+         margin-right: 10px;
+         vertical-align: middle;
+     }
+    .mobile-menu .info-colaborador-mobile {
+        display: inline-block;
+        vertical-align: middle;
+        color: #ccc;
+        font-size: 0.9em;
+     }
+     .mobile-menu .info-colaborador-mobile p {
+         margin: 2px 0;
+         color: #ccc;
+         text-align: left;
+         font-size: 0.9em;
+     }
+      .mobile-menu .info-colaborador-mobile a {
+         padding: 0 !important; /* Reset padding for inline links */
+         display: inline !important;
+         color: #6bbade !important;
+      }
 
 
-  #mobile-menu {
-    display: block !important; /* Asegura que CSS puede mostrarlo */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 280px; /* ANCHO DEL MENÚ LATERAL - AJUSTA COMO QUIERAS */
-    max-width: 85%; /* Máximo ancho relativo */
-    height: 100vh; /* Ocupa toda la altura */
-    background-color: #0249aa; /* Fondo principal */
-    color: white;
-    z-index: 1000; /* Encima del overlay y contenido */
-    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.3); /* Sombra a la derecha */
-    overflow-y: auto; /* Scroll si el contenido es muy largo */
-    box-sizing: border-box;
-    padding-top: 60px; /* Dejar espacio arriba para el botón de cerrar */
-    padding-bottom: 20px;
+    /* --- Logos Header --- */
+    .header-logos {
+        padding: 15px 0;
+    }
 
-    /* --- ANIMACIÓN --- */
-    transform: translateX(-100%); /* Inicialmente oculto a la izquierda */
-    visibility: hidden; /* Oculto para accesibilidad y clics */
-    transition: transform 0.4s ease-in-out, visibility 0s linear 0.4s; /* Transición suave del deslizamiento */
-                  /* El retraso en visibility asegura que no desaparezca hasta que termine de deslizarse */
-  }
+    .logo-container {
+        flex-direction: column; /* Apilar logos */
+        align-items: center;
+        gap: 15px; /* Espacio entre logos */
+    }
 
-  #mobile-menu.active {
-    transform: translateX(0); /* Deslizar hacia adentro */
-    visibility: visible; /* Hacer visible */
-    transition: transform 0.4s ease-in-out, visibility 0s linear 0s; /* Transición al mostrar */
-  }
+    .logo-sinepub {
+        height: 120px; /* Logo principal más grande */
+        order: 1; /* Asegurar que SINEPUB esté primero */
+    }
 
-  #mobile-menu .mobile-menu-close-button { /* Asegúrate que el ID es el correcto según tu HTML/JS */
-    position: absolute;
-    top: 15px; /* Ajusta posición del botón X */
-    right: 15px;
-    background: none;
-    border: none;
-    color: white;
-    font-size: 35px;
-    cursor: pointer;
-    padding: 5px;
-    line-height: 1;
-    opacity: 0.8;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-  #mobile-menu .mobile-menu-close-button:hover { /* O usa #mobile-menu-close si ese es tu ID */
-    opacity: 1;
-    transform: rotate(90deg);
-  }
+    .logo-huv {
+        height: 60px; /* Logo HUV más pequeño */
+        position: static; /* Quitar posicionamiento absoluto */
+        transform: none; /* Resetear transformación */
+        order: 2; /* Poner HUV después */
+    }
 
-  #mobile-menu ul {
-    list-style: none;
-    padding: 0; /* Sin padding por defecto en ul */
-    margin: 0;
-  }
 
-  #mobile-menu ul li {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-  }
-  #mobile-menu ul li:last-child {
-    border-bottom: none;
-  }
+    /* --- Navegación Secundaria (Inicio, Noticias -> Dropdown) --- */
+    .below-header-nav {
+        padding: 5px 0; /* Menos padding */
+    }
 
-  #mobile-menu ul li a {
-    display: block;
-    padding: 15px 20px; /* Padding L/R */
-    color: white;
-    text-decoration: none;
-    font-size: 17px; /* Ligeramente más pequeño para caber más */
-    font-weight: 500;
-    transition: background-color 0.2s ease, padding-left 0.2s ease;
-    text-align: left; /* Alinear a la izquierda */
-  }
+    .below-header-nav .slider-nav ul {
+        display: none; /* Ocultar navegación original */
+    }
 
-  #mobile-menu ul li a:hover,
-  #mobile-menu ul li a:focus {
-    background-color: #35a9aa;
-    padding-left: 25px; /* Indentación sutil al hover */
-  }
+    /* Contenedor para el dropdown móvil */
+    #secondary-nav-mobile {
+        display: flex; /* Usar flexbox */
+        align-items: center; /* Centrar verticalmente */
+        justify-content: space-between; /* Espaciar botón y flecha */
+        background-color: #0249aa; /* Mismo fondo que la barra */
+        padding: 10px 15px; /* Padding interno */
+        position: relative; /* Para posicionar el menú desplegable */
+    }
 
-  /* No olvides el ID correcto para el botón de cerrar si usaste #mobile-menu-close */
-  #mobile-menu-close {
-    /* Estilos idénticos a .mobile-menu-close-button si usas el ID */
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: none;
-    border: none;
-    color: white;
-    font-size: 35px;
-    cursor: pointer;
-    padding: 5px;
-    line-height: 1;
-    opacity: 0.8;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-  #mobile-menu-close:hover {
-    opacity: 1;
-    transform: rotate(90deg);
-  }
+    /* Botón que muestra la opción actual */
+    #secondary-nav-button {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.2em; /* Tamaño similar al original */
+        font-weight: bold;
+        text-align: left;
+        flex-grow: 1; /* Ocupar espacio disponible */
+        cursor: pointer;
+    }
 
-  /* --- FIN MENÚ HAMBURGUESA --- */
+    /* Flecha indicadora del dropdown */
+    #secondary-nav-button::after {
+        content: ' ▼'; /* Flecha hacia abajo */
+        font-size: 0.8em;
+        margin-left: 10px;
+    }
+     #secondary-nav-button.open::after {
+        content: ' ▲'; /* Flecha hacia arriba cuando está abierto */
+    }
 
-  /* --- Ajustes del Header (Logos) --- */
-  .header-logos {
-      padding: 15px 0;
-      background: white; /* Mantener fondo blanco */
-  }
+    /* Menú desplegable */
+    .secondary-nav-dropdown {
+        display: none; /* Oculto por defecto */
+        position: absolute;
+        top: 100%; /* Justo debajo del botón */
+        left: 0;
+        right: 0;
+        background-color: #023b88; /* Fondo oscuro */
+        border: 1px solid #0249aa;
+        z-index: 1050;
+        max-height: 250px; /* Altura máxima con scroll */
+        overflow-y: auto;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
 
-  .logo-container {
-      flex-direction: column; /* Apilar logos verticalmente */
-      align-items: center;
-      gap: 15px; /* Espacio entre logos */
-  }
+    .secondary-nav-dropdown.open {
+        display: block; /* Mostrar cuando está activo */
+    }
 
-  .logo-sinepub {
-      height: 100px; /* Reducir tamaño para móvil */
-      width: auto;
-  }
+    .secondary-nav-dropdown a {
+        display: block;
+        padding: 12px 15px;
+        color: white;
+        text-decoration: none;
+        border-bottom: 1px solid #0249aa;
+        transition: background-color 0.2s ease;
+    }
+     .secondary-nav-dropdown a:last-child {
+        border-bottom: none;
+     }
 
-  .logo-huv {
-      height: 80px; /* Reducir tamaño para móvil */
-      width: auto;
-      position: static; /* Quitar posicionamiento absoluto */
-      transform: none; /* Resetear transformaciones */
-  }
+    .secondary-nav-dropdown a:hover,
+    .secondary-nav-dropdown a.active-mobile { /* Estilo para el activo */
+        background-color: #35a9aa; /* Resaltar */
+    }
 
-  /* --- Ajustes del Contenido Principal (Slider y Secciones) --- */
-  .slider-container {
-      height: auto; /* Altura automática */
-      min-height: unset;
-      position: relative;
-      width: 100%;
-      overflow: hidden; /* Ocultar slides que no están activos */
-  }
+    /* --- Slider --- */
+    .slider-container {
+        /* Ajustes si son necesarios, por ejemplo, padding */
+    }
 
-  .slider {
-    position: relative; /* Contenedor de los slides */
-    width: 100%;
-    height: auto; /* Ajustable al contenido del slide activo */
-  }
+    .imagen-y-texto {
+        flex-direction: column; /* Apilar imagen y texto */
+        align-items: center; /* Centrar elementos */
+    }
 
-  /* ESTILOS ORIGINALES DEL SLIDE (o adaptados) */
-  .slide {
-    /* Volver a ocultarlos por defecto */
-    position: absolute; /* Para que se superpongan */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%; /* O auto si el contenido varía mucho */
-    opacity: 0;
-    visibility: hidden;
-    /* Puedes añadir transiciones si quieres fade entre slides */
-    transition: opacity 0.6s ease-in-out, visibility 0.6s ease-in-out;
-    display: flex; /* Usar flex para controlar contenido interno */
-    flex-direction: column; /* Por defecto, puedes cambiarlo si un slide lo necesita */
-    padding: 15px;
-    box-sizing: border-box;
-    background-color: #fff; /* Fondo por si acaso */
-    /* QUITAR CUALQUIER display: block !important; position: relative; margin-bottom; que hayas añadido antes para móvil */
-  }
+    .imagen-banner {
+        width: 95%; /* Imagen ocupa casi todo el ancho */
+        max-width: 400px; /* Limitar tamaño máximo de imagen */
+        margin-right: 0; /* Quitar margen derecho */
+        margin-bottom: 20px; /* Espacio debajo de la imagen */
+        height: auto; /* Altura automática */
+    }
 
-  .slide.active {
-    /* Mostrar el slide activo */
-    position: relative; /* O absolute si no necesitas que empuje contenido */
-    opacity: 1;
-    visibility: visible;
-    z-index: 1; /* Asegurar que esté por encima de los inactivos */
-    height: auto; /* Ajustar altura al contenido activo */
-  }
+    .texto-banner {
+        width: 100%; /* Texto ocupa todo el ancho */
+        padding: 0 10px; /* Añadir un poco de padding lateral al texto */
+        text-align: left; /* Alinear texto a la izquierda puede ser mejor en móvil */
+        font-size: 1em; /* Ajustar tamaño de fuente */
+    }
+     .texto-banner h1, .texto-banner h3 {
+        text-align: center; /* Centrar títulos dentro del texto */
+        margin-bottom: 15px;
+     }
 
-  /* --- Ajustes de Layout Imagen + Texto --- */
-  .imagen-y-texto {
-      flex-direction: column; /* Apilar imagen y texto */
-      align-items: center; /* Centrar elementos */
-      gap: 15px; /* Espacio entre imagen y texto */
-  }
+    /* Ajustes específicos para Misión/Visión en móvil */
+    .mision-vision {
+        flex-direction: column; /* Apilar misión y visión */
+        align-items: center;
+        gap: 15px;
+    }
+    .mision, .vision {
+        max-width: 90%; /* Hacerlos más anchos */
+    }
+     .mision:hover, .vision:hover {
+        transform: none; /* Desactivar hover de escala en móvil */
+    }
 
-  .imagen-banner {
-      width: 100%; /* Imagen ocupa todo el ancho disponible */
-      max-width: 400px; /* Limitar tamaño máximo si es necesario */
-      height: auto; /* Altura automática */
-      margin-right: 0; /* Sin margen derecho */
-      margin-bottom: 15px; /* Espacio debajo de la imagen */
-      margin-top: 0;
-      border-radius: 5px;
-  }
+    /* Ajustes para Afiliación en móvil */
+    .afiliacion-container {
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+    }
+    .pdf-container {
+        width: 100%;
+        height: 500px; /* Menor altura para el visor PDF */
+    }
+    .afiliacion-info {
+        width: 100%;
+        text-align: center;
+        padding: 15px 5px;
+    }
+    .boton-descargar {
+        width: 90%;
+        max-width: 300px;
+        font-size: 1em; /* Tamaño de fuente normal */
+    }
 
-  .texto-banner {
-      width: 100%; /* Texto ocupa todo el ancho */
-      font-size: 1rem; /* Tamaño de fuente base */
-      text-align: left; /* Alinear texto a la izquierda o justificar si se prefiere */
-      /* text-align: justify; */
-      line-height: 1.6;
-  }
+    /* Ajustes Visor PDF.js en Módulos */
+     #pdf-viewer-slide7, #pdf-viewer-slide8 {
+        height: 500px; /* Menor altura también */
+     }
 
-  .texto-banner h1,
-  .texto-banner h3 {
-      font-size: 1.5rem; /* Ajustar tamaño de títulos */
-      text-align: center;
-      margin-bottom: 10px;
-  }
 
-  .texto-banner ul {
-      padding-left: 20px; /* Indentación para listas */
-      margin-bottom: 15px;
-  }
+    /* --- Footer --- */
+    footer .container {
+        padding: 15px;
+    }
 
-  .texto-banner p a { /* Estilizar enlaces dentro del texto */
-      color: #0249aa;
-      font-weight: bold;
-  }
+    .footer-logos {
+        justify-content: center; /* Centrar logos */
+        position: static; /* Quitar posicionamiento relativo */
+        margin-bottom: 20px; /* Espacio debajo de los logos */
+        gap: 15px;
+    }
+     .footer-logos img {
+        width: 50px; /* Logos más pequeños */
+     }
+     .footer-logos img:hover {
+         transform: none; /* Desactivar zoom en hover */
+     }
 
-  /* --- Ajustes Misión y Visión --- */
-  .mision-vision {
-      flex-direction: column; /* Apilar verticalmente */
-      gap: 20px; /* Espacio entre misión y visión */
-      margin-top: 20px;
-  }
+    .informacion-y-mapa {
+        flex-direction: column; /* Apilar información y mapa */
+        align-items: center;
+    }
 
-  .mision, .vision {
-      width: 100%;
-      max-width: none; /* Ocupar todo el ancho */
-      padding: 20px;
-  }
+    .informacion {
+        width: 100%; /* Ocupar todo el ancho */
+        text-align: center; /* Centrar texto de contacto */
+        margin-bottom: 20px;
+    }
+     .informacion ul {
+        padding-left: 0; /* Quitar padding de la lista */
+        list-style: none; /* Quitar viñetas */
+     }
 
-   .mision:hover, .vision:hover {
-      transform: none; /* Desactivar efecto hover de escala */
-  }
+    .mapa {
+        width: 100%; /* Ocupar todo el ancho */
+        padding: 10px; /* Menos padding */
+        border-radius: 20px; /* Menos redondez */
+        border-width: 4px;
+    }
 
-  /* --- Ajustes Afiliación (PDF y Texto) --- */
-  .afiliacion-container {
-      flex-direction: column;
-      align-items: center;
-      padding: 10px 0; /* Ajustar padding si es necesario */
-  }
+    .mapa iframe {
+        height: 200px !important; /* Mapa MUY PEQUEÑO */
+        width: 100% !important; /* Ancho completo */
+    }
 
-  .pdf-container {
-      width: 100%;
-      height: 500px; /* Reducir altura del visor PDF en móvil */
-      margin-bottom: 20px;
-  }
+    .titulo-como-llegar {
+        font-size: 1.3em; /* Título mapa más pequeño */
+        margin-bottom: 5px;
+    }
 
-  .afiliacion-info {
-      width: 100%;
-      text-align: center;
-      padding: 10px;
-  }
+    /* --- Botón Flotante --- */
+    #boton-flotante {
+        bottom: 15px; /* Un poco más arriba */
+        right: 15px;
+    }
 
-  .boton-descargar {
-      width: 90%;
-      max-width: 300px; /* Limitar ancho del botón */
-      font-size: 16px;
-      padding: 12px 15px;
-  }
+    #chatbot-button {
+        font-size: 14px; /* Texto más pequeño */
+        padding: 8px 12px; /* Botón más pequeño */
+    }
+    #chatbot-button:hover {
+        transform: none; /* Desactivar zoom */
+    }
 
-  /* --- Ajustes Módulos de Información (PDFs) --- */
-  .pdf-viewer-container {
-      width: 100%;
-      height: 500px; /* Altura similar al de afiliación */
-      max-height: 60vh; /* Limitar altura relativa a la pantalla */
-      margin-top: 15px;
-  }
+    /* Ocultar elementos específicos de escritorio si es necesario */
+    .dropdown-container-redes-sociales .dropdown-menu, /* Ocultar menús desplegables originales */
+    .dropdown-container-colaboradores .dropdown-menu {
+        display: none !important;
+    }
 
-  #pdf-canvas-slide7, #pdf-canvas-slide8 {
-       max-width: 100%;
-       height: auto !important; /* Dejar que la altura se ajuste */
-  }
+     /* Ajustar slider dots si es necesario */
+    .slider-dots {
+        bottom: 10px; /* Ajustar posición vertical */
+        /* top: auto; */ /* Asegurarse de que no esté fijado arriba */
+    }
+    /* Ajustar flechas del slider si se superponen mucho */
+    .prev-slide, .next-slide {
+        font-size: 1.5em; /* Flechas un poco más pequeñas */
+        top: 45%; /* Centrar verticalmente */
+        transform: translateY(-50%);
+        padding: 5px 10px;
+        /* Podrías necesitar ajustar left/right si interfieren */
+        left: 5px;
+        right: 5px;
+        text-shadow: 1px 1px 2px #000000;
+    }
+    .prev-slide { left: 5px; }
+    .next-slide { right: 5px; }
 
-  /* --- Ajustes del Footer --- */
-  footer {
-      padding: 15px;
-      text-align: center;
-  }
-
-  footer .container {
-      padding: 0 10px;
-  }
-
-  .footer p {
-    font-size: 0.9rem; /* Fuente ligeramente más pequeña en footer */
-  }
-
-  .informacion-y-mapa {
-      flex-direction: column; /* Apilar información y mapa */
-      align-items: center;
-      gap: 20px; /* Espacio entre info y mapa */
-  }
-
-  .informacion, .mapa {
-      width: 100%; /* Ocupar todo el ancho */
-      text-align: center; /* Centrar texto en móvil */
-      max-width: none;
-  }
-
-  .informacion ul {
-      padding-left: 0; /* Quitar indentación de la lista */
-      list-style: none; /* Quitar viñetas */
-  }
-
-   .informacion ul li {
-      margin-bottom: 8px;
-  }
-
-  .mapa {
-      padding: 10px; /* Reducir padding del contenedor del mapa */
-      border-radius: 10px; /* Bordes menos pronunciados */
-      border-width: 3px;
-  }
-
-  .mapa iframe {
-      width: 100%;
-      height: 250px; /* Reducir altura del mapa */
-      max-width: 100%;
-  }
-
-  .footer-logos {
-      justify-content: center; /* Centrar logos del footer */
-      margin-top: 20px;
-      margin-bottom: 10px;
-      position: static; /* Resetear posición */
-      gap: 15px;
-  }
-
-  .footer-logos img {
-      width: 50px; /* Logos más pequeños */
-      height: auto;
-  }
-
-  .footer-logos img:hover {
-      transform: scale(1.1); /* Efecto hover más sutil */
-  }
-
-  .footer-redes-sociales {
-      justify-content: center; /* Centrar iconos de redes */
-      margin-top: 15px;
-  }
-
-  .footer-redes-sociales img {
-      width: 35px; /* Iconos de redes más pequeños */
-      height: 35px;
-  }
-
-   .footer-redes-sociales a:hover {
-      transform: scale(1.15); /* Efecto hover más sutil */
-  }
-
-  /* --- Ajustes Botón Flotante --- */
-  #boton-flotante {
-      bottom: 15px; /* Más cerca del borde inferior */
-      right: 15px; /* Más cerca del borde derecho */
-  }
-
-  #chatbot-button {
-      font-size: 14px; /* Texto más pequeño */
-      padding: 8px 12px; /* Botón más pequeño */
-  }
-
-  #chatbot-button:hover {
-      transform: none; /* Desactivar hover en móvil (opcional) */
-  }
-
-    .collapsible-text .collapsible-content {
-      max-height: 220px; /* Altura inicial visible (ajusta según necesites) */
-      overflow: hidden;
-      position: relative; /* Para el degradado opcional */
-      transition: max-height 0.5s ease-out;
-      margin-bottom: 10px; /* Espacio antes del botón */
-  }
-  /* Opcional: Añadir un degradado al final para indicar que hay más texto */
-  .collapsible-text .collapsible-content::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 40px;
-      background: linear-gradient(to bottom, transparent, white);
-      pointer-events: none; /* Para que no interfiera con el clic */
-      transition: opacity 0.3s ease;
-  }
-
-  .collapsible-text.expanded .collapsible-content {
-      max-height: 1500px; /* Altura suficiente para mostrar todo */
-  }
-  .collapsible-text.expanded .collapsible-content::after {
-      opacity: 0; /* Ocultar degradado al expandir */
-  }
-
-  .toggle-details-btn {
-      display: block; /* O inline-block */
-      margin: 10px auto 0; /* Centrar botón */
-      padding: 8px 15px;
-      background-color: #35a9aa;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-  }
-  .toggle-details-btn:hover {
-      background-color: #0249aa;
-  }
-  .toggle-details-btn:active {
-      transform: scale(0.95);
-  }
-} /* Fin de @media query */
+    /* Ocultar navegación de módulos si no se usa en móvil o adaptar */
+    .modulos-nav {
+        /* display: none; */ /* Descomentar si quieres ocultarla */
+        top: -25px; /* Ajustar posición si se mantiene */
+        gap: 8px;
+    }
+     .modulos-nav .modulo-dot {
+        width: 10px;
+        height: 10px;
+     }
+     .modulos-nav .modulo-dot.active {
+        width: 13px;
+        height: 13px;
+     }
+}
