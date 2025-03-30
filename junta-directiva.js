@@ -1,29 +1,29 @@
-document.addEventListener('DOMContentLoaded', function() {
     const listaCargos = document.querySelector('.lista-cargos');
     const miembroFoto = document.getElementById('miembro-foto');
     const miembroNombre = document.getElementById('miembro-nombre');
     const miembroCargo = document.getElementById('miembro-cargo');
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', function () {
+        // Aplicar fade-in al cargar
         document.body.classList.remove('fade-out');
         document.body.classList.add('fade-in');
-      });
-    
-      window.addEventListener('beforeunload', () => {
-        document.body.classList.add('fade-out');
-      });
-    
-      document.querySelectorAll('a[href]').forEach(link => {
-        link.addEventListener('click', (e) => {
-          const href = link.getAttribute('href');
-          if (href && !href.startsWith('#') && !link.hasAttribute('target')) {
-            e.preventDefault();
-            document.body.classList.add('fade-out');
-            setTimeout(() => {
-              window.location.href = href;
-            }, 600); // Tiempo de fade-out antes de cambiar
-          }
+      
+        // Interceptar clics en enlaces para aplicar fade-out
+        document.querySelectorAll('a[href]').forEach(link => {
+          link.addEventListener('click', (e) => {
+            const href = link.getAttribute('href');
+            const isInternal = href && !href.startsWith('#') && !link.hasAttribute('target');
+      
+            if (isInternal) {
+              e.preventDefault();
+              document.body.classList.remove('fade-in');
+              document.body.classList.add('fade-out');
+              setTimeout(() => {
+                window.location.href = href;
+              }, 600); // tiempo del fade
+            }
+          });
         });
-      });
+    
     // NUEVOS: Para Ubicación, Celular y Descripción
     const miembroUbicacion = document.getElementById('miembro-ubicacion');
     const miembroCelular = document.getElementById('miembro-celular');

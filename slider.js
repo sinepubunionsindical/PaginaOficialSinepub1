@@ -1,68 +1,70 @@
-const slider = document.querySelector('.slider');
-const slides = document.querySelectorAll('.slide');
-const prevButton = document.querySelector('.prev-slide');
-const nextButton = document.querySelector('.next-slide');
-const navLinks = document.querySelectorAll('.slider-nav a');
-const sliderDotsContainer = document.querySelector('.slider-dots'); // Seleccionamos el contenedor de dots
-const moduleDotsContainer = document.querySelector('.modulos-nav'); // Contenedor de dots de módulos
-const sliderContainerElement = document.querySelector('.slider-container');
-let currentSlide = 0;
-let autoplayInterval; // Variable para almacenar el intervalo del autoplay
-let inactivityTimeout; // Variable para el timeout de inactividad
-const inactivityTime = 90000; // 90 segundos en milisegundos
+document.addEventListener('DOMContentLoaded', function () {
+    // Aplicar fade-in al cargar
+    document.body.classList.remove('fade-out');
+    document.body.classList.add('fade-in');
 
-// Función para generar dots dinámicamente según la cantidad de módulos
-function createModuleDots() {
-    moduleDotsContainer.innerHTML = ''; // Limpiar dots previos
-    
-    const moduleSlides = document.querySelectorAll(".slide[id^='slide-7'], .slide[id^='slide-8']"); // Detectar módulos de formación
-    moduleSlides.forEach((slide, index) => {
-        const dot = document.createElement('span');
-        dot.classList.add('slider-dot');
-        dot.dataset.slideIndex = index + 7; // Ajuste para alinearlo con los slides
-        
-        if (index === 0) {
-            dot.classList.add('active'); // Activar el primer módulo por defecto
-        }
-        
-        dot.addEventListener('click', function () {
-            const slideIndex = parseInt(this.dataset.slideIndex);
-            updateSlide(slideIndex - 1); // Ajuste para usar updateSlide en lugar de scrollIntoView
-            stopAutoplay();
-            resetInactivityTimer();
-            
-            document.querySelectorAll('.modulos-nav .slider-dot').forEach(d => d.classList.remove('active'));
-            this.classList.add('active');
+    // Interceptar clics en enlaces para aplicar fade-out
+    document.querySelectorAll('a[href]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            const href = link.getAttribute('href');
+            // Verifica si es un enlace interno, no un ancla (#) y no abre en nueva pestaña
+            const isInternal = href && !href.startsWith('#') && !link.hasAttribute('target');
+
+            if (isInternal) {
+                e.preventDefault(); // Prevenir navegación inmediata
+                document.body.classList.remove('fade-in');
+                document.body.classList.add('fade-out');
+                // Esperar a que termine la animación de fade-out antes de navegar
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 600); // Asegúrate que este tiempo coincida con tu CSS transition/animation duration
+            }
+            // NOTA: La llamada a initSlider() estaba DENTRO del listener de click,
+            // lo cual no tiene sentido. Se movió fuera del forEach pero dentro del DOMContentLoaded.
         });
-        
-        moduleDotsContainer.appendChild(dot);
     });
-    moduleDotsContainer.style.display = 'none'; // Ocultar inicialmente los dots de módulos
-}
 
-// Ajuste para permitir navegación entre los módulos sin ocultar otros slides
-function setupModuleNavigation() {
-    const moduleSlides = document.querySelectorAll(".slide[id^='slide-7'], .slide[id^='slide-8']");
-    moduleSlides.forEach(slide => {
-        slide.style.display = 'block'; // Asegurar que todos los módulos sean visibles
-    });
-}
+    // ✅ Iniciar toda la lógica del slider una vez el DOM está listo
+    initSlider();
 
-// Llamar a las funciones para generar dots y mantener los módulos visibles
-createModuleDots();
-setupModuleNavigation();
+}); // <-- CIERRE CORRECTO DEL DOMContentLoaded listener
 
-document.addEventListener("DOMContentLoaded", function () {
+// Definición de la función principal del Slider
+function initSlider() {
+    // --- Selección de Elementos ---
+    const slider = document.querySelector('.slider');
+    const slides = document.querySelectorAll('.slide');
+    const prevButton = document.querySelector('.prev-slide');
+    const nextButton = document.querySelector('.next-slide');
+    const navLinks = document.querySelectorAll('.slider-nav a');
+    const sliderDotsContainer = document.querySelector('.slider-dots');
+    const moduleDotsContainer = document.querySelector('.modulos-nav');
+    const sliderContainerElement = document.querySelector('.slider-container'); // Usado? Verificar si se usa más adelante.
     const menuColaboradores = document.querySelector(".menu-item-colaboradores");
     const dropdownColaboradores = document.querySelector(".dropdown-menu-colaboradores");
     const infoColaboradores = document.querySelectorAll(".info-colaborador");
-    const headerMenu = document.querySelector(".header-titles-nav"); // Todo el menú del header
+    const headerMenu = document.querySelector(".header-titles-nav");
 
-    if (menuColaboradores && dropdownColaboradores) {
+    // --- Variables de Estado ---
+    let currentSlide = 0;
+    let autoplayInterval;
+    let inactivityTimeout;
+    const inactivityTime = 90000; // 90 segundos
+
+    // --- Verificar si existen elementos antes de usarlos (Buena práctica) ---
+    if (!slider || !slides.length || !prevButton || !nextButton || !sliderDotsContainer || !moduleDotsContainer) {
+        console.warn("Slider: No se encontraron todos los elementos necesarios. El slider no funcionará correctamente.");
+        return; // Salir si falta algo esencial
+    }
+
+    // --- Lógica del Menú Colaboradores ---
+    if (menuColaboradores && dropdownColaboradores && infoColaboradores.length && headerMenu) {
         let isHovering = false;
 
         const showDropdown = () => {
             dropdownColaboradores.style.display = "block";
+            // Forzar reflow para asegurar que la transición se aplique desde display: none
+            dropdownColaboradores.offsetHeight;
             dropdownColaboradores.style.opacity = "1";
             isHovering = true;
         };
@@ -71,9 +73,14 @@ document.addEventListener("DOMContentLoaded", function () {
             setTimeout(() => {
                 if (!isHovering) {
                     dropdownColaboradores.style.opacity = "0";
-                    dropdownColaboradores.style.display = "none";
+                    // Esperar que termine la transición de opacidad antes de ocultar
+                    setTimeout(() => {
+                        if (!isHovering) { // Doble chequeo por si el usuario volvió a entrar rápido
+                           dropdownColaboradores.style.display = "none";
+                        }
+                    }, 300); // Ajusta este tiempo a la duración de tu transición de opacidad CSS
                 }
-            }, 100);
+            }, 100); // Pequeño delay antes de empezar a ocultar
         };
 
         menuColaboradores.addEventListener("mouseenter", showDropdown);
@@ -82,13 +89,11 @@ document.addEventListener("DOMContentLoaded", function () {
             isHovering = false;
             hideDropdown();
         });
-
         dropdownColaboradores.addEventListener("mouseleave", () => {
             isHovering = false;
             hideDropdown();
         });
 
-        // Evita que el menú desaparezca cuando el mouse pasa entre los cuadros emergentes
         infoColaboradores.forEach(info => {
             info.addEventListener("mouseenter", () => isHovering = true);
             info.addEventListener("mouseleave", () => {
@@ -97,160 +102,212 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
 
-        // 🔥 Si el mouse entra a otro ítem del menú, se oculta el cuadro emergente de colaboradores
         headerMenu.addEventListener("mouseenter", (event) => {
+            // Si el mouse entra en el header PERO NO está sobre el item "colaboradores" o su dropdown
             if (!menuColaboradores.contains(event.target) && !dropdownColaboradores.contains(event.target)) {
                 isHovering = false;
                 hideDropdown();
             }
         });
-    }
-});
+    } // Fin lógica menú colaboradores
 
-// Función para actualizar el slider y la navegación 
-function updateSlide(slideIndex) {
-    slides.forEach((slide, index) => {
-        slide.classList.toggle('active', index === slideIndex);
+    // --- Definiciones de Funciones Auxiliares (dentro de initSlider para acceso a variables) ---
+
+    function createModuleDots() {
+        if (!moduleDotsContainer) return;
+        moduleDotsContainer.innerHTML = ''; // Limpiar dots previos
+
+        // Seleccionar slides de módulos DENTRO de esta función o pasar 'slides' como argumento
+        const moduleSlides = Array.from(slides).filter(slide => slide.id.startsWith('slide-7') || slide.id.startsWith('slide-8'));
+
+        moduleSlides.forEach((slide, index) => {
+            const dot = document.createElement('span');
+            dot.classList.add('slider-dot');
+            // El índice original del slide dentro de la colección 'slides'
+            const originalSlideIndex = Array.from(slides).indexOf(slide);
+            dot.dataset.slideIndex = originalSlideIndex; // Usar índice base 0
+
+            if (index === 0) {
+               // No activar por defecto aquí, se maneja en updateSlide/updateDots
+            }
+
+            dot.addEventListener('click', function () {
+                const slideIndexToGo = parseInt(this.dataset.slideIndex);
+                updateSlide(slideIndexToGo); // El índice ya es base 0
+                stopAutoplay();
+                resetInactivityTimer();
+                // La activación del dot se maneja en updateSlide/updateDots
+            });
+
+            moduleDotsContainer.appendChild(dot);
+        });
+        moduleDotsContainer.style.display = 'none'; // Ocultar inicialmente
+    }
+
+    function setupModuleNavigation() {
+        // Esta función parece redundante si los slides ya son visibles por defecto.
+        // Si necesitas asegurar que sean 'block', puedes hacerlo en CSS o aquí.
+        // const moduleSlides = document.querySelectorAll(".slide[id^='slide-7'], .slide[id^='slide-8']");
+        // moduleSlides.forEach(slide => {
+        //     slide.style.display = 'block';
+        // });
+    }
+
+    function updateSlide(slideIndex) {
+        // Asegurar que el índice esté dentro de los límites
+        if (slideIndex < 0) {
+            slideIndex = slides.length - 1;
+        } else if (slideIndex >= slides.length) {
+            slideIndex = 0;
+        }
+
+        slides.forEach((slide, index) => {
+            slide.classList.toggle('active', index === slideIndex);
+        });
+
+        currentSlide = slideIndex; // Actualizar el índice global
+
+        // Actualizar Nav Links (del menú principal)
+        navLinks.forEach(link => link.classList.remove('active')); // Limpiar todos primero
+
+        if (slideIndex >= 1 && slideIndex <= 4) { // Slides Noticias (índices 1, 2, 3, 4)
+            const noticiasLink = Array.from(navLinks).find(link => link.dataset.slide === '2'); // Asumiendo data-slide="2" para Noticias
+            if (noticiasLink) noticiasLink.classList.add('active');
+            moduleDotsContainer.style.display = 'none';
+            sliderDotsContainer.style.display = 'flex'; // Mostrar dots de noticias
+        } else if (slideIndex === 5) { // Slide Afiliación (índice 5)
+            const afiliacionLink = Array.from(navLinks).find(link => link.dataset.slide === '6'); // Asumiendo data-slide="6" para Afiliación
+            if (afiliacionLink) afiliacionLink.classList.add('active');
+            moduleDotsContainer.style.display = 'none';
+            sliderDotsContainer.style.display = 'none'; // Ocultar dots de noticias
+        } else if (slideIndex === 6 || slideIndex === 7) { // Slides Módulos (índices 6, 7)
+            const modulosLink = Array.from(navLinks).find(link => link.dataset.slide === '7'); // Asumiendo data-slide="7" para Módulos
+            if (modulosLink) modulosLink.classList.add('active');
+            moduleDotsContainer.style.display = 'flex'; // Mostrar dots de módulos
+            sliderDotsContainer.style.display = 'none'; // Ocultar dots de noticias
+        } else { // Slide Inicio (índice 0) o cualquier otro caso
+            const inicioLink = Array.from(navLinks).find(link => link.dataset.slide === '1'); // Asumiendo data-slide="1" para Inicio
+            if (inicioLink) inicioLink.classList.add('active');
+            moduleDotsContainer.style.display = 'none';
+            sliderDotsContainer.style.display = 'none'; // Ocultar dots de noticias
+        }
+
+        updateDots(slideIndex); // Llamar a la función para actualizar los dots correspondientes
+    }
+
+    function createNavigationDots() {
+        if (!sliderDotsContainer) return;
+        sliderDotsContainer.innerHTML = ''; // Limpiar dots previos
+
+        // Crear dots solo para los slides de noticias (índices 1, 2, 3, 4)
+        const newsSlideIndices = [1, 2, 3, 4];
+        newsSlideIndices.forEach((slideIndex) => {
+             const dot = document.createElement('span');
+             dot.classList.add('slider-dot');
+             dot.dataset.slideIndex = slideIndex; // Índice base 0
+             // La activación se maneja en updateDots
+             dot.addEventListener('click', (event) => {
+                 const slideIndexToGo = parseInt(event.target.dataset.slideIndex);
+                 updateSlide(slideIndexToGo);
+                 stopAutoplay();
+                 resetInactivityTimer();
+             });
+             sliderDotsContainer.appendChild(dot);
+        });
+         sliderDotsContainer.style.display = 'none'; // Ocultar inicialmente
+    }
+
+    function updateDots(slideIndex) {
+        // Actualizar dots de Noticias
+        if (sliderDotsContainer) {
+            const newsDots = sliderDotsContainer.querySelectorAll('.slider-dot');
+            newsDots.forEach(dot => {
+                const dotIndex = parseInt(dot.dataset.slideIndex);
+                dot.classList.toggle('active', dotIndex === slideIndex);
+            });
+            // Mostrar/ocultar contenedor basado en si estamos en sección noticias
+            sliderDotsContainer.style.display = (slideIndex >= 1 && slideIndex <= 4) ? 'flex' : 'none';
+        }
+
+        // Actualizar dots de Módulos
+        if (moduleDotsContainer) {
+            const moduleDots = moduleDotsContainer.querySelectorAll('.slider-dot');
+            moduleDots.forEach(dot => {
+                 const dotIndex = parseInt(dot.dataset.slideIndex);
+                 dot.classList.toggle('active', dotIndex === slideIndex);
+            });
+             // Mostrar/ocultar contenedor basado en si estamos en sección módulos
+            moduleDotsContainer.style.display = (slideIndex === 6 || slideIndex === 7) ? 'flex' : 'none';
+        }
+    }
+
+    function startAutoplay() {
+        stopAutoplay(); // Detener cualquier autoplay anterior
+        autoplayInterval = setInterval(() => {
+            let nextSlideIndex;
+            // Autoplay cicla solo por las noticias (índices 1, 2, 3, 4)
+            if (currentSlide >= 1 && currentSlide <= 3) { // Si estamos en una noticia (excepto la última)
+                nextSlideIndex = currentSlide + 1;
+            } else { // Si estamos en la última noticia (4) o fuera de las noticias
+                nextSlideIndex = 1; // Volver a la primera noticia (índice 1)
+            }
+            updateSlide(nextSlideIndex);
+        }, 20000); // Cambiar slide cada 20 segundos
+    }
+
+    function stopAutoplay() {
+        clearInterval(autoplayInterval);
+        clearTimeout(inactivityTimeout); // Limpiar también el timer de inactividad
+    }
+
+    function resetInactivityTimer() {
+        clearTimeout(inactivityTimeout);
+        inactivityTimeout = setTimeout(startAutoplay, inactivityTime); // Reiniciar autoplay después de inactividad
+    }
+
+    // --- Event Listeners ---
+
+    // Flechas Prev/Next
+    prevButton.addEventListener('click', () => {
+        updateSlide(currentSlide - 1);
+        stopAutoplay();
+        resetInactivityTimer();
     });
 
-    currentSlide = slideIndex;
-    // Event listeners para los links de navegación - MODIFICADO PARA LEER DATA-SLIDE
-    navLinks.forEach((link, index) => {
-      link.classList.remove('active'); // ¡NUEVA LÍNEA! Remover 'active' de *todos* los links antes de seleccionar uno nuevo
-      link.addEventListener('click', (event) => {
-        event.preventDefault(); // Evitamos el comportamiento default del enlace
-        const slideIndex = parseInt(link.dataset.slide); // ¡Leer data-slide del enlace clickeado!
-        updateSlide(slideIndex - 1);    // Actualizamos el slider, ajustando el índice a base 0 (¡IMPORTANTE: restamos 1 aquí!)
-        stopAutoplay(); // ¡DETENER autoplay al interactuar con la navegación!
-        resetInactivityTimer(); // Reiniciar el timer de inactividad
-  });
-});
+    nextButton.addEventListener('click', () => {
+        updateSlide(currentSlide + 1);
+        stopAutoplay();
+        resetInactivityTimer();
+    });
 
-    if (slideIndex >= 1 && slideIndex <= 4) { // Slides de "Noticias" (slides 2 a 5)
-        navLinks[1].classList.add('active'); // Activar link "Noticias" (índice 1)
-        moduleDotsContainer.style.display = 'none';
-    } else if (slideIndex === 5) {           // Slide de "Afiliación" (slide 6)
-        navLinks[2].classList.add('active'); // Activar link "Afiliación" (índice 2)
-        moduleDotsContainer.style.display = 'none';
-    } else if (slideIndex === 6 || slideIndex === 7) {
-        navLinks[3].classList.add('active');
-        moduleDotsContainer.style.display = 'flex'; // Mostrar dots de módulos
-        document.querySelectorAll('.modulos-nav .slider-dot').forEach(dot => dot.classList.remove('active'));
-        let activeDot = document.querySelector(`.modulos-nav .slider-dot[data-slide-index='${slideIndex}']`);
-        if (!activeDot) {
-            // Forzar la activación del primer dot si no se detecta ninguno activo
-            const defaultDot = document.querySelector(`.modulos-nav .slider-dot`);
-            if (defaultDot) {
-                defaultDot.classList.add('active');
-            }
-        }
-        if (activeDot) {
-            activeDot.classList.add('active');
-        }
-    } else {
-        navLinks[0].classList.add('active');
-        moduleDotsContainer.style.display = 'none';
-    }
-    updateDots(slideIndex);
-}
-
-// Event listeners para las flechas (prev/next)
-prevButton.addEventListener('click', () => {
-    let slideIndex = currentSlide - 1;
-    if (slideIndex < 0) {
-        slideIndex = slides.length - 1;
-    }
-    updateSlide(slideIndex);
-    stopAutoplay(); // ¡DETENER autoplay al interactuar con la navegación!
-    resetInactivityTimer(); // Reiniciar el timer de inactividad
-});
-
-nextButton.addEventListener('click', () => {
-    let slideIndex = currentSlide + 1;
-    if (slideIndex >= slides.length) {
-        slideIndex = 0;
-    }
-    updateSlide(slideIndex);
-    stopAutoplay(); // ¡DETENER autoplay al interactuar con la navegación!
-    resetInactivityTimer(); // Reiniciar el timer de inactividad  
-});
-
-
-// Función para crear los dots de navegación
-function createNavigationDots() {
-    const numberOfDots = 3; // ¡Creamos 3 dots (para las 3 noticias)
-    for (let i = 0; i < numberOfDots; i++) {
-        const dot = document.createElement('span');
-        dot.classList.add('slider-dot');
-        dot.dataset.slideIndex = i + 1; // ¡Dots apuntan a slides 2, 3, 4, 5 (Noticias)! (índices 1, 2, 3, 4)
-        if (i === 0) {       // ¡Añadimos la clase 'active' al PRIMER dot (índice 0) al crearse!
-            dot.classList.add('active');
-        }
-        dot.addEventListener('click', (event) => {
-            const slideIndex = parseInt(event.target.dataset.slideIndex);
-            updateSlide(slideIndex);
-            stopAutoplay(); // ¡DETENER autoplay al interactuar con los dots!
-            resetInactivityTimer(); // Reiniciar el timer de inactividad
-        });
-        sliderDotsContainer.appendChild(dot);
-    }
-}
-
-// Función para actualizar el dot activo (¡¡¡¡¡ESTA FUNCIÓN DEBE ESTAR FUERA DE updateSlide()!!!!!)
-function updateDots(slideIndex) {
-    if (slideIndex >= 1 && slideIndex <= 4) { // ¡Mostrar dots solo en slides 2 a 5 (Noticias)!
-        sliderDotsContainer.style.display = 'flex'; // Mostrar el contenedor de dots
-        const dots = sliderDotsContainer.querySelectorAll('.slider-dot');
-        // Ajustamos el índice para que el primer dot se active en la primera slide de noticias (slide-2, index 1)
-        const dotIndexToActivate = slideIndex - 1; 
-        dots.forEach((dot, index) => {
-            if (index === dotIndexToActivate) {
-                dot.classList.add('active'); // Añadimos la clase 'active' al dot activo
-            } else {
-                dot.classList.remove('active'); // Removemos la clase 'active' de los demás dots
+    // Links de Navegación Principal
+    navLinks.forEach(link => {
+        link.addEventListener('click', (event) => {
+            event.preventDefault();
+            // Asegúrate que el atributo data-slide existe y es un número
+            if (link.dataset.slide) {
+                 const slideIndexToGo = parseInt(link.dataset.slide) - 1; // Convertir a base 0
+                 if (!isNaN(slideIndexToGo)) {
+                     updateSlide(slideIndexToGo);
+                     stopAutoplay();
+                     resetInactivityTimer();
+                 }
             }
         });
-    } else {
-        sliderDotsContainer.style.display = 'none'; // Ocultar dots en otras slides (Inicio, Afiliación)
-    }
-}
+    });
 
-// Función para iniciar el autoplay
-function startAutoplay() {
-  autoplayInterval = setInterval(() => {
-      let nextSlideIndex;
-      if (currentSlide >= 1 && currentSlide <= 3) { // Si estamos en Noticias (slides 2-5)
-          nextSlideIndex = currentSlide + 1;
-          if (nextSlideIndex > 3) { // Si llegamos al último slide de Noticias
-              nextSlideIndex = 1;     // Volver al primer slide de Noticias (slide 2, índice 1)
-          }
-      } else {
-          nextSlideIndex = 1; // Si no estamos en Noticias, ir al primer slide de Noticias (slide 2, índice 1)
-      }
-      updateSlide(nextSlideIndex); // Actualizar al siguiente slide de Noticias (o al primero si no estábamos en Noticias)
-  }, 20000);
-}
-
-// Función para detener el autoplay
-function stopAutoplay() {
-  clearInterval(autoplayInterval);
-  clearTimeout(inactivityTimeout); // ¡LIMPIAR el timeout existente al detener el autoplay!
-}
-
-function resetInactivityTimer() {
-  clearTimeout(inactivityTimeout); // ¡LIMPIAR timeout anterior para evitar múltiples timeouts!
-  inactivityTimeout = setTimeout(startAutoplay, inactivityTime); // Iniciar timeout de 90 segundos
-}
-
-// Event listeners para RESETER el timer de inactividad con CUALQUIER interacción del usuario en la PÁGINA
-document.addEventListener('mousemove', resetInactivityTimer);
-document.addEventListener('mousedown', resetInactivityTimer);
-document.addEventListener('keypress', resetInactivityTimer);
-document.addEventListener('touchstart', resetInactivityTimer); // Para dispositivos táctiles
+    // Listeners de Inactividad Globales (para reiniciar autoplay)
+    ['mousemove', 'mousedown', 'keypress', 'touchstart'].forEach(eventType => {
+        document.addEventListener(eventType, resetInactivityTimer, { passive: true }); // Usar passive si no prevenimos default
+    });
 
 
-// Inicialización
-createNavigationDots(); // Creamos los dots al cargar la página
-updateSlide(0);
-startAutoplay(); // ¡INICIAR el autoplay al cargar la página!
-resetInactivityTimer(); // ¡INICIAR el timer de inactividad al cargar la página!
+    // --- Inicialización del Slider ---
+    createNavigationDots(); // Crear dots de noticias
+    createModuleDots();     // Crear dots de módulos
+    setupModuleNavigation(); // Configurar navegación de módulos (si es necesario)
+    updateSlide(0);         // Mostrar el slide inicial (índice 0)
+    startAutoplay();        // Iniciar autoplay (ciclará noticias)
+    resetInactivityTimer(); // Iniciar el contador de inactividad
+
+} // <-- CIERRE CORRECTO DE LA FUNCIÓN initSlider
