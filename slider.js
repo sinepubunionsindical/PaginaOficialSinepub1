@@ -165,39 +165,60 @@ function initSlider() {
             slideIndex = 0;
         }
 
+        // Cambiar el slide visualmente
         slides.forEach((slide, index) => {
             slide.classList.toggle('active', index === slideIndex);
         });
 
         currentSlide = slideIndex; // Actualizar el índice global
 
-        // Actualizar Nav Links (del menú principal)
+        // --- INICIO: Lógica Actualizada para NavLinks y Botón Móvil ---
         navLinks.forEach(link => link.classList.remove('active')); // Limpiar todos primero
 
+        let activeNavLink = null; // Para guardar el enlace que debe estar activo
+
+        // Determinar qué enlace secundario debe estar activo
         if (slideIndex >= 1 && slideIndex <= 4) { // Slides Noticias (índices 1, 2, 3, 4)
-            const noticiasLink = Array.from(navLinks).find(link => link.dataset.slide === '2'); // Asumiendo data-slide="2" para Noticias
-            if (noticiasLink) noticiasLink.classList.add('active');
-            moduleDotsContainer.style.display = 'none';
-            sliderDotsContainer.style.display = 'flex'; // Mostrar dots de noticias
+            activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '2'); // Asumiendo data-slide="2" para Noticias
         } else if (slideIndex === 5) { // Slide Afiliación (índice 5)
-            const afiliacionLink = Array.from(navLinks).find(link => link.dataset.slide === '6'); // Asumiendo data-slide="6" para Afiliación
-            if (afiliacionLink) afiliacionLink.classList.add('active');
-            moduleDotsContainer.style.display = 'none';
-            sliderDotsContainer.style.display = 'none'; // Ocultar dots de noticias
+            activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '6'); // Asumiendo data-slide="6" para Afiliación
         } else if (slideIndex === 6 || slideIndex === 7) { // Slides Módulos (índices 6, 7)
-            const modulosLink = Array.from(navLinks).find(link => link.dataset.slide === '7'); // Asumiendo data-slide="7" para Módulos
-            if (modulosLink) modulosLink.classList.add('active');
-            moduleDotsContainer.style.display = 'flex'; // Mostrar dots de módulos
-            sliderDotsContainer.style.display = 'none'; // Ocultar dots de noticias
+            activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '7'); // Asumiendo data-slide="7" para Módulos
         } else { // Slide Inicio (índice 0) o cualquier otro caso
-            const inicioLink = Array.from(navLinks).find(link => link.dataset.slide === '1'); // Asumiendo data-slide="1" para Inicio
-            if (inicioLink) inicioLink.classList.add('active');
-            moduleDotsContainer.style.display = 'none';
-            sliderDotsContainer.style.display = 'none'; // Ocultar dots de noticias
+            activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '1'); // Asumiendo data-slide="1" para Inicio
         }
 
-        updateDots(slideIndex); // Llamar a la función para actualizar los dots correspondientes
-    }
+        // Si encontramos un enlace correspondiente, lo activamos y actualizamos el botón móvil
+        if (activeNavLink) {
+            activeNavLink.classList.add('active'); // Activar en la nav secundaria original
+
+            // --- Actualizar el botón y dropdown móvil ---
+            const mobileNavButton = document.getElementById('secondary-nav-button');
+            const mobileDropdown = document.querySelector('.secondary-nav-dropdown');
+
+            if (mobileNavButton) {
+                mobileNavButton.textContent = activeNavLink.textContent; // ¡Actualiza el texto del botón!
+            }
+
+            if (mobileDropdown) {
+                // Desactivar todos los links del dropdown móvil primero
+                mobileDropdown.querySelectorAll('a').forEach(a => a.classList.remove('active-mobile'));
+                
+                // Encontrar y activar el link correspondiente en el dropdown móvil
+                // Usamos activeNavLink.dataset.slide que ya sabemos que existe
+                const correspondingMobileLink = mobileDropdown.querySelector(`a[data-slide-target="${activeNavLink.dataset.slide}"]`);
+                if (correspondingMobileLink) {
+                    correspondingMobileLink.classList.add('active-mobile'); // ¡Actualiza el activo en el dropdown!
+                }
+            }
+            // --- Fin Actualización Móvil ---
+        }
+        // --- FIN: Lógica Actualizada ---
+
+
+        // Actualizar dots (sin cambios en esta llamada)
+        updateDots(slideIndex);
+    } // Fin de la función updateSlide modificada
 
     function createNavigationDots() {
         if (!sliderDotsContainer) return;
