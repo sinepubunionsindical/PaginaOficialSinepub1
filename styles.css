@@ -961,10 +961,13 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
   background-color: gray;
   cursor: pointer;
   transition: background-color 0.3s;
+  border: 2px solid black; /* ¡Añadimos un borde negro! */
 }
 
 .modulos-nav .slider-dot.active {
   background-color: blue;
+  width: 16px;      /* Dot activo un poco más grande */
+  height: 16px;
 }
 .pdf-viewer-container {
   width: 100%;
