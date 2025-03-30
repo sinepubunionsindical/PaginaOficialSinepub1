@@ -353,7 +353,7 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
   position: fixed;
   bottom: 10vh;
   right: 20px;
-  z-index: 1000;
+  z-index: 10000;
 }
 
 #chatbot-button {

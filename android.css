@@ -8,7 +8,6 @@
   /* --- Reset y Layout General --- */
   body {
       font-size: 16px; /* Ajustar tamaño de fuente base para móvil */
-      overflow-x: hidden; /* Evitar scroll horizontal accidental */
       display: flex;
       flex-direction: column;
       min-height: 100vh; /* Asegurar que el footer llegue al fondo */
@@ -250,43 +249,6 @@
     height: auto; /* Ajustar altura al contenido activo */
   }
 
-  /* --- Restaurar Slider Dots --- */
-  .slider-dots {
-    display: flex !important; /* Asegurar que se muestren */
-    justify-content: center;
-    align-items: center;
-    position: absolute;
-    bottom: 10px; /* Posicionar abajo */
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 5; /* Encima de los slides */
-    gap: 8px; /* Espacio entre dots */
-  }
-
-  .slider-dots .slider-dot {
-    width: 10px; /* Dots más pequeños */
-    height: 10px;
-    background-color: rgba(0, 0, 0, 0.3); /* Color base */
-    border-radius: 50%;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    border: none; /* Quitar borde negro si lo tenías */
-  }
-
-  .slider-dots .slider-dot:hover {
-    background-color: rgba(0, 0, 0, 0.5);
-    transform: scale(1.1);
-  }
-
-  .slider-dots .slider-dot.active {
-    background-color: #0249aa; /* Color principal para activo */
-    transform: scale(1.2); /* Hacerlo un poco más grande */
-  }
-
-  /* Ocultar flechas prev/next en móvil (opcional, pero recomendado para simplicidad) */
-  .prev-slide, .next-slide {
-    display: none !important;
-  }
   /* --- Ajustes de Layout Imagen + Texto --- */
   .imagen-y-texto {
       flex-direction: column; /* Apilar imagen y texto */
@@ -476,11 +438,6 @@
 
   #chatbot-button:hover {
       transform: none; /* Desactivar hover en móvil (opcional) */
-  }
-
-  /* --- Ocultar elementos que no tienen sentido apilados --- */
-  .modulos-nav { /* Navegación específica de módulos del slider */
-      display: none !important;
   }
 
     .collapsible-text .collapsible-content {
