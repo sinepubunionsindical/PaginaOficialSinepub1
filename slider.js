@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     // Aplicar fade-in al cargar
     document.body.classList.remove('fade-out');
+    document.body.classList.add('fade-in'); // Aseguramos que la clase fade-in se aplica correctamente al cargar la página
 
     // Interceptar clics en enlaces para aplicar fade-out
     document.querySelectorAll('a[href]').forEach(link => {
@@ -13,10 +14,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 e.preventDefault(); // Prevenir navegación inmediata
                 document.body.classList.remove('fade-in');
                 document.body.classList.add('fade-out');
-                // Esperar a que termine la animación de fade-out antes de navegar
                 setTimeout(() => {
                     window.location.href = href;
-                }, 600); // Asegúrate que este tiempo coincida con tu CSS transition/animation duration
+                  }, 600); // tiempo del fade
             }
             // NOTA: La llamada a initSlider() estaba DENTRO del listener de click,
             // lo cual no tiene sentido. Se movió fuera del forEach pero dentro del DOMContentLoaded.
