@@ -15,15 +15,22 @@
             const isInternal = href && !href.startsWith('#') && !link.hasAttribute('target');
       
             if (isInternal) {
-              e.preventDefault();
-              document.body.classList.remove('fade-in');
-              document.body.classList.add('fade-out');
-              setTimeout(() => {
-                window.location.href = href;
-              }, 600); // tiempo del fade
-            }
-          });
+                e.preventDefault(); // Prevenir navegación inmediata
+                document.body.classList.remove('fade-in');
+                document.body.classList.add('fade-out');
+                // Usamos 'transitionend' para asegurarnos de que la transición haya terminado antes de navegar
+                document.body.addEventListener('transitionend', function onTransitionEnd() {
+                    // Eliminar el listener para evitar múltiples invocaciones
+                    document.body.removeEventListener('transitionend', onTransitionEnd);
+                setTimeout(() => {
+                    window.location.href = href;
+                  }, 600); // tiempo del fade
+            });
+            // NOTA: La llamada a initSlider() estaba DENTRO del listener de click,
+            // lo cual no tiene sentido. Se movió fuera del forEach pero dentro del DOMContentLoaded.
+        }
         });
+    });
     
     // NUEVOS: Para Ubicación, Celular y Descripción
     const miembroUbicacion = document.getElementById('miembro-ubicacion');
