@@ -6,7 +6,6 @@
     
         // Aplicar fade-in al cargar
         document.body.classList.remove('fade-out');
-        document.body.classList.add('fade-in');
       
         // Interceptar clics en enlaces para aplicar fade-out
         document.querySelectorAll('a[href]').forEach(link => {
