@@ -162,7 +162,7 @@
     
                 // 🔹 Volver a mostrar con el efecto fade-in
                 miembroInfo.classList.add('show');
-            }, 300); // 🔹 300ms para suavizar la animación
+            }, 500); // 🔹 300ms para suavizar la animación
         } else {
             // Si no se encuentra información para el cargo, mostrar placeholders
             miembroFoto.src = "images/placeholder-miembro.jpg";
