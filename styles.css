@@ -944,6 +944,32 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
   margin: 0 auto;
 }
 
+/* === Ajustes Responsivos para Móviles === */
+@media (max-width: 768px) {
+  .afiliacion-container {
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .pdf-container {
+    width: 100%;
+    height: 600px;
+  }
+
+  .afiliacion-info {
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .boton-descargar {
+    width: 100%;
+    max-width: 300px;
+    font-size: 16px;
+  }
+}
+
 .modulos-nav {
   display: none; /* Oculto por defecto */
   justify-content: center;
@@ -998,3 +1024,8 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
   font-weight: bold;
 }
 /* ===== OCULTAR ELEMENTOS MÓVILES EN ESCRITORIO ===== */
+
+#mobile-menu-toggle,
+#mobile-menu {
+    display: none; /* Oculta completamente estos elementos por defecto */
+}
