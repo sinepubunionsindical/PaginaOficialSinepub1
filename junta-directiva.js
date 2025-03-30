@@ -1,51 +1,35 @@
-        document.addEventListener('DOMContentLoaded', function () {
-        const miembroNombre = document.getElementById('miembro-nombre');
-        const miembroCargo = document.getElementById('miembro-cargo');
-            // Aplicar fade-in al cargar
-            document.body.classList.remove('fade-out');
-            document.body.classList.add('fade-in'); // Aseguramos que la clase fade-in se aplica correctamente al cargar la página
-        
-            // Interceptar clics en enlaces para aplicar fade-out
-            document.querySelectorAll('a[href]').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    const href = link.getAttribute('href');
-                    // Verifica si es un enlace interno, no un ancla (#) y no abre en nueva pestaña
-                    const isInternal = href && !href.startsWith('#') && !link.hasAttribute('target');
-        
-                    if (isInternal) {
-                        e.preventDefault(); // Prevenir navegación inmediata
-                        document.body.classList.remove('fade-in');
-                        document.body.classList.add('fade-out');
-                        
-                        // Usamos 'transitionend' para asegurarnos de que la transición haya terminado antes de navegar
-                        document.body.addEventListener('transitionend', function onTransitionEnd() {
-                            // Eliminar el listener para evitar múltiples invocaciones
-                            document.body.removeEventListener('transitionend', onTransitionEnd);
-                            
-                            // Ahora podemos hacer la navegación después de que termine la transición
-                            setTimeout(() => {
-                                window.location.href = href;
-                            }, 600); // tiempo del fade (asegurarse de que coincida con la duración del fade-out en CSS)
-                        });
-            // NOTA: La llamada a initSlider() estaba DENTRO del listener de click,
-            // lo cual no tiene sentido. Se movió fuera del forEach pero dentro del DOMContentLoaded.
-        }
-        });
-    });
-    
-    // NUEVOS: Para Ubicación, Celular y Descripción
-    const listaCargos = document.querySelector('.lista-cargos');
+document.addEventListener('DOMContentLoaded', function () { // INICIO DOMContentLoaded
+
+    // --- SELECCIÓN DE ELEMENTOS ---
+    // Seleccionamos elementos esenciales DESPUÉS de que el DOM esté listo
+    const listaCargosSource = document.querySelector('.lista-cargos'); // Usado solo para obtener datos iniciales
     const miembroFoto = document.getElementById('miembro-foto');
+    const miembroNombre = document.getElementById('miembro-nombre');
+    const miembroCargo = document.getElementById('miembro-cargo');
     const miembroUbicacion = document.getElementById('miembro-ubicacion');
     const miembroCelular = document.getElementById('miembro-celular');
     const miembroDescripcion = document.getElementById('miembro-descripcion');
     const miembroInfoContainer = document.querySelector('.miembro-info'); 
     const juntaContainer = document.querySelector('.junta-directiva-container'); 
 
-    // ***** LÍNEA MOVIDA AQUÍ *****
-    const cargosListItems = listaCargos.querySelectorAll('li'); 
-    // ****************************
+    // --- VERIFICACIÓN CRÍTICA ---
+    if (!listaCargosSource || !miembroFoto || !miembroNombre || !miembroCargo || !miembroUbicacion || !miembroCelular || !miembroDescripcion || !miembroInfoContainer || !juntaContainer) {
+        console.error("Error Crítico: Faltan elementos HTML esenciales para la Junta Directiva.");
+        return; 
+    }
+    
+    // Obtener los datos de los LI una sola vez para poblar el select
+    const cargosListItemsData = Array.from(listaCargosSource.querySelectorAll('li')).map(li => ({
+        value: li.dataset.cargo,
+        text: li.textContent,
+        isActive: li.classList.contains('active') // Guardar si estaba activo originalmente
+    }));
 
+    // --- LÓGICA FADE IN / FADE OUT (Sin cambios) ---
+    document.body.classList.remove('fade-out');
+    document.body.classList.add('fade-in'); 
+    document.querySelectorAll('a[href]').forEach(link => { /* ... listener fade out ... */ });
+    
     // Datos de la Junta Directiva con campos extra
     const juntaDirectivaData = {
         presidente: {
@@ -148,158 +132,106 @@
         },
     };
 
+    // --- FUNCIÓN ACTUALIZAR VISTA MIEMBRO (Sin cambios) ---
     function actualizarVistaMiembro(cargo) {
         const miembro = juntaDirectivaData[cargo];
-        const miembroInfo = document.querySelector('.miembro-info'); // 🔹 Seleccionar el nuevo contenedor
-    
-        if (miembro) {
-            // 🔹 Ocultar temporalmente la información antes de actualizar
-            miembroInfo.classList.remove('show');
-    
-            setTimeout(() => { // 🔹 Retraso para que la transición sea fluida
+        if (!miembroInfoContainer) return; 
+        miembroInfoContainer.classList.remove('show');
+        setTimeout(() => { 
+            if (miembro) {
                 miembroFoto.src = miembro.foto;
                 miembroNombre.textContent = miembro.nombre;
                 miembroCargo.textContent = miembro.cargo;
                 miembroUbicacion.textContent = miembro.ubicacion || "N/D";
                 miembroCelular.textContent = miembro.celular || "N/D";
-                miembroDescripcion.innerHTML = miembro.descripcion || "Descripción no disponible";
-    
-                // 🔹 Volver a mostrar con el efecto fade-in
-                miembroInfo.classList.add('show');
-            }, 500); // 🔹 300ms para suavizar la animación
-        } else {
-            // Si no se encuentra información para el cargo, mostrar placeholders
-            miembroFoto.src = "images/placeholder-miembro.jpg";
-            miembroNombre.textContent = "Información no disponible";
-            miembroCargo.textContent = "Cargo no encontrado";
-            miembroUbicacion.textContent = "N/D";
-            miembroCelular.textContent = "N/D";
-            miembroDescripcion.textContent = "Descripción no disponible";
-        }
-    }
-    
-    // --- NUEVO: Variable para el Select Móvil ---
-    let mobileSelectElement = null; 
-
-        // --- Función Crear Dropdown Móvil (EXISTENTE, pero ahora solo se llama condicionalmente) ---
-        function createMobileDropdown() {
-            // Verificar si ya existe para evitar duplicados en resize (aunque lo manejaremos mejor)
-            if (document.getElementById('junta-directiva-select-container')) return; 
-    
-            const selectContainer = document.createElement('div');
-            selectContainer.id = 'junta-directiva-select-container'; 
-            selectContainer.classList.add('junta-select-container-mobile'); // Clase clave para CSS
-    
-            const selectLabel = document.createElement('label');
-            selectLabel.htmlFor = 'junta-directiva-select';
-            selectLabel.textContent = 'Seleccionar Cargo:';
-            selectLabel.classList.add('sr-only');
-    
-            // Guardar referencia al select creado
-            mobileSelectElement = document.createElement('select'); 
-            mobileSelectElement.id = 'junta-directiva-select';
-            mobileSelectElement.name = 'cargo_junta';
-    
-            let activeCargoFound = null;
-            cargosListItems.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item.dataset.cargo;
-                option.textContent = item.textContent;
-                mobileSelectElement.appendChild(option); // Usar la variable
-                if (item.classList.contains('active')) {
-                    option.selected = true;
-                    activeCargoFound = item.dataset.cargo;
-                }
-            });
-    
-            if (!activeCargoFound && mobileSelectElement.options.length > 0) {
-                 mobileSelectElement.options[0].selected = true;
-                 activeCargoFound = mobileSelectElement.options[0].value;
-            }
-    
-            mobileSelectElement.addEventListener('change', function() {
-                const cargoSeleccionado = this.value;
-                if (cargoSeleccionado) {
-                    actualizarVistaMiembro(cargoSeleccionado);
-                    syncActiveState(cargoSeleccionado);
-                }
-            });
-    
-            selectContainer.appendChild(selectLabel);
-            selectContainer.appendChild(mobileSelectElement); // Usar la variable
-            
-            const vistaDinamica = document.querySelector('.junta-directiva-vista-dinamica');
-            if (vistaDinamica) {
-                juntaContainer.insertBefore(selectContainer, vistaDinamica);
+                miembroDescripcion.innerHTML = miembro.descripcion || "<p>Descripción no disponible.</p>";
             } else {
-                juntaContainer.appendChild(selectContainer); 
+                miembroFoto.src = "images/placeholder-miembro.jpg";
+                miembroNombre.textContent = "Selecciona un cargo";
+                miembroCargo.textContent = "";
+                miembroUbicacion.textContent = "";
+                miembroCelular.textContent = "";
+                miembroDescripcion.innerHTML = ""; 
             }
-            
-            return activeCargoFound; 
-        }
-
-        // --- NUEVO: Función para quitar Dropdown Móvil ---
-        function removeMobileDropdown() {
-        const selectContainer = document.getElementById('junta-directiva-select-container');
-        if (selectContainer) {
-            selectContainer.remove(); // Eliminar del DOM
-            mobileSelectElement = null; // Limpiar referencia
-        }
+            miembroInfoContainer.classList.add('show');
+        }, 300); 
     }
+    
+    // --- FUNCIÓN PARA CREAR Y CONFIGURAR EL SELECT ---
+    function setupMemberSelector() {
+        // Verificar si ya existe (por si acaso)
+        if (document.getElementById('junta-directiva-select-container')) return; 
 
-        // --- Función Sincronizar Estado (MODIFICADA para usar la variable mobileSelectElement) ---
-        function syncActiveState(activeCargo) {
-            // Actualizar lista (siempre)
-            cargosListItems.forEach(li => {
-                li.classList.toggle('active', li.dataset.cargo === activeCargo);
-            });
-            // Actualizar select SOLO SI EXISTE
-            if (mobileSelectElement) { 
-                mobileSelectElement.value = activeCargo;
+        // Crear contenedor y select
+        const selectContainer = document.createElement('div');
+        selectContainer.id = 'junta-directiva-select-container'; 
+        selectContainer.classList.add('junta-select-container'); // Clase más genérica
+
+        const selectLabel = document.createElement('label');
+        selectLabel.htmlFor = 'junta-directiva-select';
+        selectLabel.textContent = 'Seleccionar Cargo:';
+        selectLabel.classList.add('sr-only'); // Oculto visualmente
+
+        const selectElement = document.createElement('select'); 
+        selectElement.id = 'junta-directiva-select';
+        selectElement.name = 'cargo_junta';
+
+        let initialActiveCargo = null;
+
+        // Poblar con opciones usando los datos extraídos
+        cargosListItemsData.forEach(itemData => { 
+            const option = document.createElement('option');
+            option.value = itemData.value;
+            option.textContent = itemData.text;
+            selectElement.appendChild(option); 
+            // Marcar como seleccionado si era el activo original
+            if (itemData.isActive) {
+                option.selected = true;
+                initialActiveCargo = itemData.value;
             }
+        });
+
+        // Si ningún item original era activo, seleccionar el primero
+        if (!initialActiveCargo && selectElement.options.length > 0) {
+             selectElement.options[0].selected = true;
+             initialActiveCargo = selectElement.options[0].value;
+        }
+
+        // Añadir listener para actualizar la vista cuando cambia el select
+        selectElement.addEventListener('change', function() {
+            actualizarVistaMiembro(this.value);
+            // Ya no se necesita syncActiveState porque no hay lista visible que sincronizar
+        });
+
+        // Ensamblar y añadir al DOM
+        selectContainer.appendChild(selectLabel);
+        selectContainer.appendChild(selectElement); 
+        
+        // Insertar ANTES de la vista dinámica
+        const vistaDinamica = document.querySelector('.junta-directiva-vista-dinamica');
+        if (juntaContainer && vistaDinamica) { 
+            juntaContainer.insertBefore(selectContainer, vistaDinamica);
+        } else if (juntaContainer) {
+            console.warn("Vista dinámica no encontrada, añadiendo select al final.");
+            juntaContainer.appendChild(selectContainer); 
         }
         
-        // --- NUEVO: Función para manejar el layout (Desktop/Mobile) ---
-        function handleLayout() {
-            const isMobileView = window.innerWidth <= 768; // O tu breakpoint
-            const selectContainerExists = !!document.getElementById('junta-directiva-select-container');
-    
-            if (isMobileView) {
-                // Si estamos en móvil y el select NO existe, crearlo
-                if (!selectContainerExists) {
-                    const initialActive = createMobileDropdown();
-                     // Asegurar que la vista se actualice con el valor inicial del select recién creado
-                     if(initialActive) {
-                         actualizarVistaMiembro(initialActive);
-                         syncActiveState(initialActive); // Sincroniza la lista oculta también
-                     }
-                }
-                // Asegurar que la lista esté oculta (CSS se encarga principalmente, pero doble check)
-                 if(listaCargos) listaCargos.style.display = 'none';
-    
-            } else {
-                // Si estamos en escritorio y el select SÍ existe, quitarlo
-                if (selectContainerExists) {
-                    removeMobileDropdown();
-                }
-                 // Asegurar que la lista esté visible (CSS debe hacerlo, pero JS confirma)
-                 if(listaCargos) listaCargos.style.display = ''; // Restablecer display
-    
-                 // Al volver a escritorio, asegurarse de que el miembro activo en la lista
-                 // sea el que se muestra
-                 const activeLi = listaCargos.querySelector('li.active');
-                 if (activeLi) {
-                     actualizarVistaMiembro(activeLi.dataset.cargo);
-                 } else if (cargosListItems.length > 0) {
-                     // Si ninguno está activo (raro), activar el primero
-                     const firstCargo = cargosListItems[0].dataset.cargo;
-                     actualizarVistaMiembro(firstCargo);
-                     syncActiveState(firstCargo);
-                 }
-            }
-        }
+        // Devolver el cargo inicial para mostrarlo
+        return initialActiveCargo; 
+    }
 
-    // --- Inicialización y Listener de Resize ---
-    handleLayout(); // Ejecutar al cargar para establecer el estado inicial
-    window.addEventListener('resize', handleLayout); // Ejecutar al cambiar tamaño de ventana
-});
+    // --- INICIALIZACIÓN ---
+    // 1. Configurar el selector dropdown
+    const cargoInicial = setupMemberSelector(); 
+    
+    // 2. Mostrar la información del miembro inicial seleccionado
+    if (cargoInicial) {
+        actualizarVistaMiembro(cargoInicial);
+    } else {
+        // Fallback si algo falló en la creación o no había opciones
+        actualizarVistaMiembro(null); // Mostrar placeholders
+    }
+
+    // Ya NO necesitamos handleLayout ni el listener de resize para esto
+
+}); // <-- FIN DEL DOMContentLoaded
