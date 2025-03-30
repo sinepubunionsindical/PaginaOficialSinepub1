@@ -32,29 +32,32 @@
         padding: 5px; /* Área de toque más grande */
     }
 
-    /* Menú Móvil Desplegable (se creará con JS) */
+    /* Menú Móvil Desplegable (ANIMADO) */
     .mobile-menu {
-        display: none; /* Oculto por defecto */
-        position: fixed; /* Fijar a la pantalla */
+        /* display: none;  QUITAR ESTO */
+        visibility: hidden; /* Ocultar sin afectar layout */
+        opacity: 0; /* Hacerlo transparente */
+        position: fixed; 
         top: 0;
         left: 0;
-        width: 80%; /* Ancho del menú */
-        max-width: 300px; /* Ancho máximo */
+        width: 80%; 
+        max-width: 300px; 
         height: 100%;
-        background-color: #023b88; /* Un azul un poco más oscuro */
-        padding-top: 60px; /* Espacio para el botón de cerrar (opcional) */
+        background-color: #023b88; 
+        padding-top: 60px; 
         box-shadow: 2px 0 5px rgba(0,0,0,0.5);
         z-index: 1090;
-        overflow-y: auto; /* Scroll si hay muchos items */
-        transform: translateX(-100%); /* Oculto fuera de la pantalla a la izquierda */
-        transition: transform 0.3s ease-in-out;
+        overflow-y: auto; 
+        transform: translateX(-100%); /* Estado inicial: fuera a la izquierda */
+        transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; /* AÑADIR TRANSICIÓN */
     }
 
     .mobile-menu.open {
-        display: block; /* Mostrar */
-        transform: translateX(0); /* Deslizar hacia adentro */
+        /* display: block; QUITAR ESTO */
+        visibility: visible; /* Hacer visible */
+        opacity: 1; /* Hacer opaco */
+        transform: translateX(0); /* Estado final: deslizado adentro */
     }
-
     .mobile-menu ul {
         list-style: none;
         padding: 0;
@@ -81,6 +84,12 @@
     .mobile-menu li a:hover,
     .mobile-menu .dropdown-toggle-mobile:hover {
         background-color: #35a9aa; /* Resaltar al pasar el mouse */
+    }
+
+    /* --- NUEVO: Estilo para el enlace activo en menú hamburguesa --- */
+    .mobile-menu li a.active-mobile {
+        background-color: #35a9aa; /* Mismo color que hover/subtítulo activo */
+        font-weight: bold; /* Opcional: hacerlo negrita */
     }
 
     /* Estilos para los sub-menús desplegables dentro del menú hamburguesa */
@@ -206,28 +215,39 @@
         content: ' ▼'; /* Flecha hacia abajo */
         font-size: 0.8em;
         margin-left: 10px;
+        display: inline-block; /* Para que la transición funcione */
+        transition: transform 0.2s ease-out; /* Animar la flecha */
     }
      #secondary-nav-button.open::after {
-        content: ' ▲'; /* Flecha hacia arriba cuando está abierto */
+        content: ' ▼'; /* Mantener flecha abajo */
+        transform: rotate(180deg); /* Girarla */
     }
 
-    /* Menú desplegable */
+    /* Menú desplegable secundario (ANIMADO) */
     .secondary-nav-dropdown {
-        display: none; /* Oculto por defecto */
+        /* display: none; QUITAR ESTO */
+        visibility: hidden; /* Ocultar */
+        opacity: 0; /* Transparente */
+        transform: scaleY(0.9) translateY(-10px); /* Encoger y subir un poco */
+        transform-origin: top; /* Pivotar desde arriba */
         position: absolute;
-        top: 100%; /* Justo debajo del botón */
+        top: 100%; 
         left: 0;
         right: 0;
-        background-color: #023b88; /* Fondo oscuro */
+        background-color: #023b88; 
         border: 1px solid #0249aa;
         z-index: 1050;
-        max-height: 250px; /* Altura máxima con scroll */
+        max-height: 250px; 
         overflow-y: auto;
         box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        transition: transform 0.2s ease-out, opacity 0.2s ease-out, visibility 0.2s ease-out; /* AÑADIR TRANSICIÓN */
     }
 
     .secondary-nav-dropdown.open {
-        display: block; /* Mostrar cuando está activo */
+        /* display: block; QUITAR ESTO */
+        visibility: visible; /* Mostrar */
+        opacity: 1; /* Opaco */
+        transform: scaleY(1) translateY(0); /* Estado normal */
     }
 
     .secondary-nav-dropdown a {
