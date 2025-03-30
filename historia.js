@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
             requestAnimationFrame(() => {
                 sectionToShow.classList.add('active'); // Activa fade-in
             });
-        }, 300);
+        }, 400);
     }
 
     function deactivateSecondaryNavLinks() {
