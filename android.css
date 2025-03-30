@@ -14,24 +14,22 @@
     h1 { font-size: 1.8em; }
     h2 { font-size: 1.5em; }
     h3 { font-size: 1.2em; }
-
+    
     /* --- Header Principal (Títulos -> Hamburguesa) --- */
     header .header-titles-nav ul {
         display: none; /* Ocultar la navegación original en línea */
     }
 
-    /* Botón Hamburguesa (se creará con JS) */
     #hamburger-button {
-        display: block; /* Mostrar el botón */
-        position: absolute; /* Posicionar relativo al header */
-        top: 15px;
-        right: 20px;
-        background: none;
-        border: none;
-        color: white;
-        font-size: 30px; /* Tamaño del icono */
+        display: block; /* Asegurar visibilidad */
+        position: absolute;
+        top: 10px; /* Ajustar posición vertical */
+        right: 15px; /* Ajustar posición horizontal */
+        font-size: 32px; /* Tamaño del icono hamburguesa */
+        line-height: 1; /* Alinear mejor el icono */
         cursor: pointer;
-        z-index: 1100; /* Asegurar que esté por encima */
+        z-index: 1100;
+        padding: 5px; /* Área de toque más grande */
     }
 
     /* Menú Móvil Desplegable (se creará con JS) */
