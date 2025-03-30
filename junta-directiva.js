@@ -1,6 +1,4 @@
         document.addEventListener('DOMContentLoaded', function () {
-        const listaCargos = document.querySelector('.lista-cargos');
-        const miembroFoto = document.getElementById('miembro-foto');
         const miembroNombre = document.getElementById('miembro-nombre');
         const miembroCargo = document.getElementById('miembro-cargo');
             // Aplicar fade-in al cargar
@@ -36,11 +34,17 @@
     });
     
     // NUEVOS: Para Ubicación, Celular y Descripción
+    const listaCargos = document.querySelector('.lista-cargos');
+    const miembroFoto = document.getElementById('miembro-foto');
     const miembroUbicacion = document.getElementById('miembro-ubicacion');
     const miembroCelular = document.getElementById('miembro-celular');
     const miembroDescripcion = document.getElementById('miembro-descripcion');
+    const miembroInfoContainer = document.querySelector('.miembro-info'); 
+    const juntaContainer = document.querySelector('.junta-directiva-container'); 
 
-    const cargosListItems = listaCargos.querySelectorAll('li');
+    // ***** LÍNEA MOVIDA AQUÍ *****
+    const cargosListItems = listaCargos.querySelectorAll('li'); 
+    // ****************************
 
     // Datos de la Junta Directiva con campos extra
     const juntaDirectivaData = {
@@ -174,20 +178,128 @@
         }
     }
     
+    // --- NUEVO: Variable para el Select Móvil ---
+    let mobileSelectElement = null; 
 
-    // Event listeners para cada item de la lista de cargos
-    cargosListItems.forEach(item => {
-        item.addEventListener('click', function() {
-            const cargoSeleccionado = this.dataset.cargo; // Obtener el cargo del atributo data-cargo
-            actualizarVistaMiembro(cargoSeleccionado); // Actualizar la vista dinámica con la información del cargo
+        // --- Función Crear Dropdown Móvil (EXISTENTE, pero ahora solo se llama condicionalmente) ---
+        function createMobileDropdown() {
+            // Verificar si ya existe para evitar duplicados en resize (aunque lo manejaremos mejor)
+            if (document.getElementById('junta-directiva-select-container')) return; 
+    
+            const selectContainer = document.createElement('div');
+            selectContainer.id = 'junta-directiva-select-container'; 
+            selectContainer.classList.add('junta-select-container-mobile'); // Clase clave para CSS
+    
+            const selectLabel = document.createElement('label');
+            selectLabel.htmlFor = 'junta-directiva-select';
+            selectLabel.textContent = 'Seleccionar Cargo:';
+            selectLabel.classList.add('sr-only');
+    
+            // Guardar referencia al select creado
+            mobileSelectElement = document.createElement('select'); 
+            mobileSelectElement.id = 'junta-directiva-select';
+            mobileSelectElement.name = 'cargo_junta';
+    
+            let activeCargoFound = null;
+            cargosListItems.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.dataset.cargo;
+                option.textContent = item.textContent;
+                mobileSelectElement.appendChild(option); // Usar la variable
+                if (item.classList.contains('active')) {
+                    option.selected = true;
+                    activeCargoFound = item.dataset.cargo;
+                }
+            });
+    
+            if (!activeCargoFound && mobileSelectElement.options.length > 0) {
+                 mobileSelectElement.options[0].selected = true;
+                 activeCargoFound = mobileSelectElement.options[0].value;
+            }
+    
+            mobileSelectElement.addEventListener('change', function() {
+                const cargoSeleccionado = this.value;
+                if (cargoSeleccionado) {
+                    actualizarVistaMiembro(cargoSeleccionado);
+                    syncActiveState(cargoSeleccionado);
+                }
+            });
+    
+            selectContainer.appendChild(selectLabel);
+            selectContainer.appendChild(mobileSelectElement); // Usar la variable
             
-            // Remover la clase 'active' de todos los items y activarla solo en el item clickeado
-            cargosListItems.forEach(li => li.classList.remove('active'));
-            this.classList.add('active'); // Añadir clase 'active' al item clickeado
-        });
-    });
+            const vistaDinamica = document.querySelector('.junta-directiva-vista-dinamica');
+            if (vistaDinamica) {
+                juntaContainer.insertBefore(selectContainer, vistaDinamica);
+            } else {
+                juntaContainer.appendChild(selectContainer); 
+            }
+            
+            return activeCargoFound; 
+        }
 
-    // Mostrar la información del primer cargo por defecto al cargar la página (Presidente)
-    actualizarVistaMiembro('presidente');
-    cargosListItems[0].classList.add('active'); // Activar el primer item (Presidente) inicialmente
+        // --- NUEVO: Función para quitar Dropdown Móvil ---
+        function removeMobileDropdown() {
+        const selectContainer = document.getElementById('junta-directiva-select-container');
+        if (selectContainer) {
+            selectContainer.remove(); // Eliminar del DOM
+            mobileSelectElement = null; // Limpiar referencia
+        }
+    }
+
+        // --- Función Sincronizar Estado (MODIFICADA para usar la variable mobileSelectElement) ---
+        function syncActiveState(activeCargo) {
+            // Actualizar lista (siempre)
+            cargosListItems.forEach(li => {
+                li.classList.toggle('active', li.dataset.cargo === activeCargo);
+            });
+            // Actualizar select SOLO SI EXISTE
+            if (mobileSelectElement) { 
+                mobileSelectElement.value = activeCargo;
+            }
+        }
+        
+        // --- NUEVO: Función para manejar el layout (Desktop/Mobile) ---
+        function handleLayout() {
+            const isMobileView = window.innerWidth <= 768; // O tu breakpoint
+            const selectContainerExists = !!document.getElementById('junta-directiva-select-container');
+    
+            if (isMobileView) {
+                // Si estamos en móvil y el select NO existe, crearlo
+                if (!selectContainerExists) {
+                    const initialActive = createMobileDropdown();
+                     // Asegurar que la vista se actualice con el valor inicial del select recién creado
+                     if(initialActive) {
+                         actualizarVistaMiembro(initialActive);
+                         syncActiveState(initialActive); // Sincroniza la lista oculta también
+                     }
+                }
+                // Asegurar que la lista esté oculta (CSS se encarga principalmente, pero doble check)
+                 if(listaCargos) listaCargos.style.display = 'none';
+    
+            } else {
+                // Si estamos en escritorio y el select SÍ existe, quitarlo
+                if (selectContainerExists) {
+                    removeMobileDropdown();
+                }
+                 // Asegurar que la lista esté visible (CSS debe hacerlo, pero JS confirma)
+                 if(listaCargos) listaCargos.style.display = ''; // Restablecer display
+    
+                 // Al volver a escritorio, asegurarse de que el miembro activo en la lista
+                 // sea el que se muestra
+                 const activeLi = listaCargos.querySelector('li.active');
+                 if (activeLi) {
+                     actualizarVistaMiembro(activeLi.dataset.cargo);
+                 } else if (cargosListItems.length > 0) {
+                     // Si ninguno está activo (raro), activar el primero
+                     const firstCargo = cargosListItems[0].dataset.cargo;
+                     actualizarVistaMiembro(firstCargo);
+                     syncActiveState(firstCargo);
+                 }
+            }
+        }
+
+    // --- Inicialización y Listener de Resize ---
+    handleLayout(); // Ejecutar al cargar para establecer el estado inicial
+    window.addEventListener('resize', handleLayout); // Ejecutar al cambiar tamaño de ventana
 });
