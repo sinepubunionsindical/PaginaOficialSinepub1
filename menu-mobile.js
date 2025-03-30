@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const secondaryNavButton = document.createElement('button');
     const secondaryNavDropdown = document.createElement('div');
 
+    // --- NUEVO: Elemento Overlay ---
+    const mobileMenuOverlay = document.createElement('div'); // Crear el overlay
+
     let isMobileMenuSetup = false;
     let isSecondaryNavSetup = false;
 
@@ -20,11 +23,22 @@ document.addEventListener('DOMContentLoaded', () => {
         hamburgerButton.id = 'hamburger-button';
         hamburgerButton.innerHTML = '☰';
         hamburgerButton.setAttribute('aria-label', 'Abrir menú de navegación');
-        header.appendChild(hamburgerButton); 
+        // Asegurarse de que el botón esté DENTRO del header o donde tenga sentido visualmente
+        const headerContainer = header.querySelector('.container.header-titles-container');
+        if (headerContainer) {
+            headerContainer.appendChild(hamburgerButton); 
+        } else {
+            header.appendChild(hamburgerButton); // Fallback
+        } 
 
         // --- Crear Contenedor del Menú Móvil (sin cambios) ---
         mobileMenuContainer.className = 'mobile-menu';
         mobileMenuContainer.setAttribute('aria-hidden', 'true');
+
+        // --- NUEVO: Configurar y añadir Overlay ---
+        mobileMenuOverlay.id = 'mobile-menu-overlay';
+        mobileMenuOverlay.classList.add('mobile-menu-overlay'); // Añadir clase para CSS
+        document.body.appendChild(mobileMenuOverlay); // Añadir al body
 
         // --- Clonar items de navegación originales (sin cambios) ---
         const mobileNavList = headerNav.cloneNode(true);
@@ -144,41 +158,63 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- Añadir al Body (sin cambios) ---
         document.body.appendChild(mobileMenuContainer); 
 
-        // --- Event Listener Hamburguesa ---
+        // --- Listener Botón Hamburguesa (MODIFICADO) ---
         hamburgerButton.addEventListener('click', () => {
-            const isOpen = mobileMenuContainer.classList.contains('open');
-            mobileMenuContainer.classList.toggle('open');
-            mobileMenuContainer.setAttribute('aria-hidden', String(!isOpen)); // Usar String() para true/false
-            hamburgerButton.innerHTML = isOpen ? '☰' : '✕'; 
-            hamburgerButton.classList.toggle('menu-open', !isOpen); 
-            hamburgerButton.setAttribute('aria-label', isOpen ? 'Abrir menú de navegación' : 'Cerrar menú de navegación');
-        });
-
-
-        // --- Cerrar menú al hacer clic en enlace (sin cambios) ---
-        mobileMenuContainer.querySelectorAll('a:not(.dropdown-toggle-mobile)').forEach(link => {
-            if (!link.closest('.mobile-submenu')) {
-                link.addEventListener('click', () => {
-                    mobileMenuContainer.classList.remove('open');
-                    mobileMenuContainer.setAttribute('aria-hidden', 'true');
-                    hamburgerButton.innerHTML = '☰';
-                    hamburgerButton.setAttribute('aria-label', 'Abrir menú de navegación');
-                });
+            const isCurrentlyOpen = mobileMenuContainer.classList.contains('open');
+            if (isCurrentlyOpen) {
+                closeMobileMenu(); // Llama a la función centralizada para cerrar
+            } else {
+                openMobileMenu(); // Llama a la función centralizada para abrir
             }
         });
 
-        // --- Cerrar menú al hacer clic fuera (sin cambios) ---
-        document.addEventListener('click', (event) => {
-            if (!mobileMenuContainer.contains(event.target) && !hamburgerButton.contains(event.target) && mobileMenuContainer.classList.contains('open')) {
-                mobileMenuContainer.classList.remove('open');
-                mobileMenuContainer.setAttribute('aria-hidden', 'true');
-                hamburgerButton.innerHTML = '☰';
-                hamburgerButton.setAttribute('aria-label', 'Abrir menú de navegación');
+
+        // --- Listener Enlaces del Menú ---
+        mobileMenuContainer.querySelectorAll('ul > li > a:not(.dropdown-toggle-mobile)').forEach(link => {
+            if (!link.closest('.mobile-submenu')) { 
+                link.addEventListener('click', (e) => {
+                   // Prevenir cierre si es solo un ancla en la misma página
+                   if (link.getAttribute('href') === '#') {
+                       e.preventDefault(); 
+                   } else {
+                       // Retraso mínimo para permitir que la navegación inicie antes de cerrar visualmente
+                       setTimeout(closeMobileMenu, 50); 
+                   }
+                });
+            }
+       });
+
+        // --- Listener Clic Fuera / Overlay (MODIFICADO) ---
+        // Usamos el overlay para detectar clics fuera
+        mobileMenuOverlay.addEventListener('click', () => {
+            // Solo cierra si el menú está actualmente abierto
+            if (mobileMenuContainer.classList.contains('open')) {
+                closeMobileMenu(); 
             }
         });
 
         isMobileMenuSetup = true; 
     }
+
+        // --- NUEVAS: Funciones para Abrir y Cerrar Menú ---
+        function openMobileMenu() {
+            mobileMenuContainer.classList.add('open');
+            mobileMenuContainer.setAttribute('aria-hidden', 'false');
+            hamburgerButton.innerHTML = '✕';
+            hamburgerButton.classList.add('menu-open'); // Añadir clase para estilo ROJO
+            hamburgerButton.setAttribute('aria-label', 'Cerrar menú de navegación');
+            document.body.classList.add('mobile-menu-is-open'); // Activar overlay/dimming
+        }
+
+        function closeMobileMenu() {
+            mobileMenuContainer.classList.remove('open');
+            mobileMenuContainer.setAttribute('aria-hidden', 'true');
+            hamburgerButton.innerHTML = '☰';
+            hamburgerButton.classList.remove('menu-open'); // QUITAR clase para estilo VERDE
+            hamburgerButton.setAttribute('aria-label', 'Abrir menú de navegación');
+            document.body.classList.remove('mobile-menu-is-open'); // Desactivar overlay
+            deselectCollaborator(); // Deseleccionar colaborador al cerrar
+       }
 
     function setupSecondaryNavMobile() {
         if (!belowHeaderNav || !sliderNav || isSecondaryNavSetup) return;
@@ -280,28 +316,43 @@ document.addEventListener('DOMContentLoaded', () => {
         isSecondaryNavSetup = true; 
     }
 
-    // --- Lógica de Ejecución y Limpieza (sin cambios) ---
+    // --- Lógica de Ejecución y Limpieza (MODIFICADO para quitar overlay) ---
     function applyMobileLayout() {
-        if (window.innerWidth <= 768) {
-            setupMobileMenu();
-            setupSecondaryNavMobile();
-            if(headerNav) headerNav.style.display = 'none';
-            if(sliderNav) sliderNav.style.display = 'none';
-        } else {
+        const isMobile = window.innerWidth <= 768;
+        
+        // Limpiar elementos específicos de móvil si estamos en escritorio
+        if (!isMobile) {
             if (hamburgerButton && hamburgerButton.parentNode) {
-                hamburgerButton.parentNode.removeChild(hamburgerButton);
+                hamburgerButton.remove(); 
             }
             if (mobileMenuContainer && mobileMenuContainer.parentNode) {
-                mobileMenuContainer.parentNode.removeChild(mobileMenuContainer);
+                mobileMenuContainer.remove();
             }
+            // Quitar overlay al pasar a escritorio
+            if (mobileMenuOverlay && mobileMenuOverlay.parentNode) {
+                 mobileMenuOverlay.remove();
+            }
+            // Quitar clase del body si quedó por error
+             document.body.classList.remove('mobile-menu-is-open'); 
+
             if (secondaryNavMobileContainer && secondaryNavMobileContainer.parentNode) {
-                secondaryNavMobileContainer.parentNode.removeChild(secondaryNavMobileContainer);
+                secondaryNavMobileContainer.remove();
             }
-            if(headerNav) headerNav.style.display = ''; 
-            if(sliderNav) sliderNav.style.display = ''; 
+             if(headerNav) headerNav.style.display = ''; 
+             if(sliderNav) sliderNav.style.display = ''; 
 
             isMobileMenuSetup = false; 
             isSecondaryNavSetup = false;
+             collaboratorsData = []; 
+             collaboratorButtonsContainer = null;
+             collaboratorInfoContainer = null;
+        } else {
+            // Configurar elementos móviles si estamos en móvil
+            if (!isMobileMenuSetup) setupMobileMenu(); 
+            if (!isSecondaryNavSetup && belowHeaderNav && sliderNav) setupSecondaryNavMobile(); 
+            // Ocultar elementos de escritorio (CSS debería manejar esto principalmente)
+            if(headerNav) headerNav.style.display = 'none';
+            if(sliderNav) sliderNav.style.display = 'none';
         }
     }
 
