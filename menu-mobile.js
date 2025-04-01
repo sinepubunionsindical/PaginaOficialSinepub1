@@ -239,6 +239,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const mobileLink = document.createElement('a');
             mobileLink.href = link.href; // Copiar href original (puede ser útil)
             mobileLink.textContent = link.textContent;
+
+            // ⬇⬇⬇ NUEVO: Copiar ID y estilos si existen
+            if (link.id) {
+                mobileLink.id = link.id; 
+                mobileLink.style.display = link.style.display; 
+            }
             // Asegurarse de que data-slide exista antes de copiarlo
             if(link.dataset.slide) {
                  mobileLink.dataset.slideTarget = link.dataset.slide;
