@@ -263,28 +263,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
             mobileLink.addEventListener('click', (e) => {
                 e.preventDefault();
-                secondaryNavButton.textContent = mobileLink.textContent; 
-                secondaryNavDropdown.classList.remove('open'); 
+            
+                secondaryNavButton.textContent = mobileLink.textContent;
+                secondaryNavDropdown.classList.remove('open');
                 secondaryNavButton.classList.remove('open');
                 secondaryNavButton.setAttribute('aria-expanded', 'false');
-
-                 // Marcar este como activo y desmarcar otros
-                 secondaryNavDropdown.querySelectorAll('a').forEach(a => a.classList.remove('active-mobile'));
-                 mobileLink.classList.add('active-mobile');
-
-                // Simular clic en el original SÓLO si existe y tiene data-slide
-                 // Y si no es un enlace directo a un archivo (como PDF)
-                 if (mobileLink.dataset.slideTarget && !link.href.endsWith('.pdf')) { // Evitar click en PDF
-                     const originalTargetLink = sliderNav.querySelector(`a[data-slide="${mobileLink.dataset.slideTarget}"]`);
-                     if (originalTargetLink) {
-                         originalTargetLink.click(); 
-                     }
-                 } else if (link.href.endsWith('.pdf')) {
-                     // Si es un PDF, abrirlo en nueva pestaña
-                     window.open(link.href, '_blank');
-                 }
-                 // Podrías añadir lógica para otros tipos de enlaces si es necesario
+            
+                // Marcar este como activo y desmarcar otros
+                secondaryNavDropdown.querySelectorAll('a').forEach(a => a.classList.remove('active-mobile'));
+                mobileLink.classList.add('active-mobile');
+            
+                // --- Lógica personalizada para enlaces especiales ---
+                const isEstatutos = mobileLink.id === 'estatutos-link' || mobileLink.id === 'estatutos-link-mobile';
+                const isAcuerdo = mobileLink.id === 'acuerdo-colectivo-link' || mobileLink.id === 'acuerdo-colectivo-link-mobile';
+            
+                if (isEstatutos && typeof openSecurePDFModal === 'function') {
+                    openSecurePDFModal("https://trainheartx.github.io/sinepub-website1/Estatutos.pdf");
+                } else if (isAcuerdo && typeof openSecurePDFModal === 'function') {
+                    openSecurePDFModal("https://trainheartx.github.io/sinepub-website1/RESOLUCION.pdf");
+                }
+                else if (mobileLink.dataset.slideTarget && !link.href.endsWith('.pdf')) {
+                    const originalTargetLink = sliderNav.querySelector(`a[data-slide="${mobileLink.dataset.slideTarget}"]`);
+                    if (originalTargetLink) {
+                        originalTargetLink.click();
+                    }
+                } else if (link.href.endsWith('.pdf')) {
+                    window.open(link.href, '_blank');
+                }
             });
+            
             secondaryNavDropdown.appendChild(mobileLink);
         });
         
@@ -301,27 +308,56 @@ document.addEventListener('DOMContentLoaded', () => {
             secondaryNavButton.setAttribute('aria-expanded', isOpen);
         });
 
-        // --- Agregar ESTATUTOS manualmente si existe y está oculto ---
-        const estatutosOriginal = document.querySelector('#estatutos-link');
-        if (estatutosOriginal) {
-            const estatutosLinkMobile = document.createElement('a');
-            estatutosLinkMobile.href = estatutosOriginal.href;
-            estatutosLinkMobile.textContent = 'Estatutos';
-            estatutosLinkMobile.id = 'estatutos-link-mobile'; // Útil para mostrarlo después
-            estatutosLinkMobile.style.display = 'none'; // Oculto inicialmente
-            estatutosLinkMobile.setAttribute('role', 'option');
-            
-            estatutosLinkMobile.addEventListener('click', (e) => {
-                e.preventDefault();
-                // Abre en nueva pestaña (si es PDF)
-                window.open(estatutosLinkMobile.href, '_blank');
-                secondaryNavDropdown.classList.remove('open'); 
-                secondaryNavButton.classList.remove('open');
-                secondaryNavButton.setAttribute('aria-expanded', 'false');
-            });
+// --- Agregar ESTATUTOS manualmente si existe y está oculto ---
+const estatutosOriginal = document.querySelector('#estatutos-link');
+if (estatutosOriginal) {
+    const estatutosLinkMobile = document.createElement('a');
+    estatutosLinkMobile.href = estatutosOriginal.href;
+    estatutosLinkMobile.textContent = 'Estatutos';
+    estatutosLinkMobile.id = 'estatutos-link-mobile';
+    estatutosLinkMobile.style.display = 'none';
+    estatutosLinkMobile.setAttribute('role', 'option');
 
-            secondaryNavDropdown.appendChild(estatutosLinkMobile);
+    estatutosLinkMobile.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        // ✅ Abrir en modal (como en escritorio)
+        if (typeof openSecurePDFModal === 'function') {
+            openSecurePDFModal("https://trainheartx.github.io/sinepub-website1/Estatutos.pdf");
         }
+
+        secondaryNavDropdown.classList.remove('open');
+        secondaryNavButton.classList.remove('open');
+        secondaryNavButton.setAttribute('aria-expanded', 'false');
+    });
+
+    secondaryNavDropdown.appendChild(estatutosLinkMobile);
+    }
+
+    // Opcional: agregar otro link (como "acuerdo-colectivo") si también es dinámico
+    const acuerdoOriginal = document.querySelector('#acuerdo-colectivo-link');
+    if (acuerdoOriginal) {
+        const acuerdoLinkMobile = document.createElement('a');
+        acuerdoLinkMobile.href = acuerdoOriginal.href;
+        acuerdoLinkMobile.textContent = 'Acuerdo Colectivo';
+        acuerdoLinkMobile.id = 'acuerdo-colectivo-link-mobile';
+        acuerdoLinkMobile.style.display = 'none';
+        acuerdoLinkMobile.setAttribute('role', 'option');
+
+        acuerdoLinkMobile.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (typeof openSecurePDFModal === 'function') {
+                openSecurePDFModal("https://trainheartx.github.io/sinepub-website1/RESOLUCION.pdf");
+            }
+
+            secondaryNavDropdown.classList.remove('open');
+            secondaryNavButton.classList.remove('open');
+            secondaryNavButton.setAttribute('aria-expanded', 'false');
+        });
+
+        secondaryNavDropdown.appendChild(acuerdoLinkMobile);
+    }
+
          // --- Cerrar dropdown al hacer clic fuera (sin cambios) ---
          document.addEventListener('click', (event) => {
             if (!secondaryNavMobileContainer.contains(event.target) && secondaryNavDropdown.classList.contains('open')) {
