@@ -69,7 +69,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const estatutosLink = document.getElementById("estatutos-link");
   if (estatutosLink) {
     // Asegurar que sea visible y clickeable
-    estatutosLink.style.display = "inline";
     estatutosLink.style.pointerEvents = "auto";
 
     estatutosLink.addEventListener("click", e => {
