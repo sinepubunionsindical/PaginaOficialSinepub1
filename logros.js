@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
   document.body.classList.add('fade-in'); // Aseguramos que la clase fade-in se aplica correctamente al cargar la página
 
   // Interceptar clics en enlaces para aplicar fade-out
-  document.querySelectorAll('a[href]').forEach(link => {
+  document.querySelectorAll('a[href]:not(.no-fade)').forEach(link => {
       link.addEventListener('click', (e) => {
           const href = link.getAttribute('href');
           // Verifica si es un enlace interno, no un ancla (#) y no abre en nueva pestaña

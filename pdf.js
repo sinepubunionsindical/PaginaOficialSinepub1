@@ -31,24 +31,72 @@ function loadSecurePDFMulti(containerId, url) {
     container.innerHTML = '<div class="loading-overlay">Error al cargar el documento</div>';
   });
 }
+
 document.addEventListener("DOMContentLoaded", () => {
-  // Solo si estás en una página donde existen esos contenedores
+  // Visores embebidos en slides
   if (document.getElementById("pdf-viewer-slide7")) {
     loadSecurePDFMulti("pdf-viewer-slide7", "Concepto_disponibilidad_empleado.pdf");
   }
-
   if (document.getElementById("pdf-viewer-slide8")) {
     loadSecurePDFMulti("pdf-viewer-slide8", "producto_del_acuerdo_nacional.pdf");
   }
+
+  // Cierre del modal por botón X
+  const closeModalBtn = document.getElementById("close-pdf-modal");
+  if (closeModalBtn) {
+    closeModalBtn.addEventListener("click", () => {
+      document.getElementById("modal-pdf-viewer").classList.add("hidden");
+    });
+  }
+
+  // Cierre con tecla ESC
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      document.getElementById("modal-pdf-viewer").classList.add("hidden");
+    }
+  });
+
+  // Interceptar links si ya están en el DOM al cargar
+  const acuerdoLink = document.getElementById("acuerdo-colectivo-link");
+  if (acuerdoLink) {
+    acuerdoLink.addEventListener("click", e => {
+      e.preventDefault();
+      openSecurePDFModal("https://trainheartx.github.io/sinepub-website1/RESOLUCION.pdf");
+    });
+  }
+
+  // REVISAR si el link de Estatutos fue insertado dinámicamente
+  const estatutosLink = document.getElementById("estatutos-link");
+  if (estatutosLink) {
+    // Asegurar que sea visible y clickeable
+    estatutosLink.style.display = "inline";
+    estatutosLink.style.pointerEvents = "auto";
+
+    estatutosLink.addEventListener("click", e => {
+      e.preventDefault();
+      openSecurePDFModal("https://trainheartx.github.io/sinepub-website1/Estatutos.pdf");
+    });
+  }
+
+  // También capturar eventos dinámicos por seguridad
+  document.addEventListener("click", function (e) {
+    if (e.target && e.target.id === "estatutos-link") {
+      e.preventDefault();
+      openSecurePDFModal("https://trainheartx.github.io/sinepub-website1/Estatutos.pdf");
+    }
+  });
 });
+
+// Función para mostrar modal con PDF
 function openSecurePDFModal(url) {
-  const overlay = document.getElementById("fullscreen-pdf-viewer");
-  const container = document.getElementById("secure-pdf-container");
-  overlay.classList.remove("hidden");
+  const modal = document.getElementById("modal-pdf-viewer");
+  const container = document.getElementById("modal-pdf-container");
+
   container.innerHTML = '<div class="loading-overlay">Cargando documento...</div>';
+  modal.classList.remove("hidden");
 
   pdfjsLib.getDocument(url).promise.then(pdf => {
-    container.innerHTML = ''; // Limpiar loader
+    container.innerHTML = '';
     for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
       const canvas = document.createElement("canvas");
       canvas.className = "pdf-canvas";
@@ -70,18 +118,3 @@ function openSecurePDFModal(url) {
     container.innerHTML = '<div class="loading-overlay">Error al cargar el documento</div>';
   });
 }
-
-// Cierre del visor
-document.getElementById("close-pdf-viewer").addEventListener("click", () => {
-  document.getElementById("fullscreen-pdf-viewer").classList.add("hidden");
-});
-
-// Interceptar clics de los links
-document.getElementById("estatutos-link").addEventListener("click", e => {
-  e.preventDefault();
-  openSecurePDFModal("Estatutos.pdf");
-});
-document.getElementById("acuerdo-colectivo-link").addEventListener("click", e => {
-  e.preventDefault();
-  openSecurePDFModal("RESOLUCION.pdf");
-});

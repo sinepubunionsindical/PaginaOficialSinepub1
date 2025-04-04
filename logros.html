@@ -89,7 +89,7 @@
             <nav class="slider-nav">
                 <ul>
                     <li><a href="#" class="active" data-slide="1">Logros</a></li> 
-                    <li><a href="javascript:void(0)" id="acuerdo-colectivo-link">Acuerdo Colectivo 2024 - 2027</a></li>
+                    <li><a href="javascript:void(0)" id="acuerdo-colectivo-link" class="no-fade">Acuerdo Colectivo 2024 - 2027</a></li>
                 </ul>
             </nav>
         </div>
@@ -175,10 +175,13 @@
         <img id="fullscreen-image" src="" alt="Imagen en pantalla completa">
     </div>
     <!-- ==== FIN: Overlay para Imagen Fullscreen ==== -->
-    <div id="fullscreen-pdf-viewer" class="fullscreen-overlay hidden">
-        <span class="close-fullscreen" id="close-pdf-viewer">×</span>
-        <div id="secure-pdf-container" class="pdf-viewer-container"></div>
-    </div>      
+    <!-- NUEVO Modal PDF centrado -->
+    <div id="modal-pdf-viewer" class="pdf-modal hidden">
+        <div class="pdf-modal-content">
+        <span class="close-modal" id="close-pdf-modal">×</span>
+        <div id="modal-pdf-container" class="pdf-viewer-container"></div>
+        </div>
+    </div>     
     <script src="logros.js" defer></script> <!-- NUEVO ARCHIVO JS -->
     <script src="pdf.js" defer></script>
     <script src="menu-mobile.js" defer></script>

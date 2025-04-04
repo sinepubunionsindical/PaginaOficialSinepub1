@@ -22,7 +22,7 @@
                     <ul>
                         <li><a href="#" class="active">Inicio</a></li>
                         <li><a href="historia.html" id="historia-link" >Historia</a></li>
-                        <li><a href="Estatutos.pdf" id="estatutos-link" style="display: none;">Estatutos</a></li>
+                        <li><a href="javascript:void(0)" id="estatutos-link" class="no-fade" style="display: none;">Estatutos</a></li>
                         <li><a href="juntadi.html">Junta Directiva</a></li>
                         <li><a href="logros.html">Logros</a></li>
                         <li class="menu-item-redes-sociales">  <!-- Añadimos una clase al LI -->
@@ -282,11 +282,13 @@
                 <div class="slider-dots"> <!-- NUEVO DIV para los circulitos -->
                     <!-- Los circulitos se generarán aquí con JavaScript -->
                 </div>
-                <div id="fullscreen-pdf-viewer" class="fullscreen-overlay hidden">
-                    <span class="close-fullscreen" id="close-pdf-viewer">×</span>
-                    <div id="secure-pdf-container" class="pdf-viewer-container"></div>
+                <!-- NUEVO Modal PDF centrado -->
+                <div id="modal-pdf-viewer" class="pdf-modal hidden">
+                    <div class="pdf-modal-content">
+                    <span class="close-modal" id="close-pdf-modal">×</span>
+                    <div id="modal-pdf-container" class="pdf-viewer-container"></div>
+                    </div>
                 </div>
-                  
                 <button class="prev-slide" style="display: none;">&#10094;</button>
                 <button class="next-slide" style="display: none;">&#10095;</button>
             </div>
