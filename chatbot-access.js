@@ -284,19 +284,21 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
 function activarChatbot() {
     console.log("🎙️ Activando chatbot de Eleven Labs...");
 
-    // Ocultar el botón inicial
-    document.getElementById("chatbot-button").style.display = "none";
-    // mstrar el botón estatutos escritorio
-    document.getElementById("estatutos-link").style.display = "inline";
-    // mstrar el botón estatutos movil
-    document.getElementById("estatutos-link-mobile").style.display = "block";
-    // mostrar boton de modulos
-    document.getElementById("modulos-link").style.display = "inline";
-    // Ocultar el botón de afiliacion
-    document.getElementById("afiliacion-link").style.display = "none";
-    // Mostrar el widget de Eleven Labs
-    document.getElementById("chatbot-container").style.display = "block";
+    const botonChat = document.getElementById("chatbot-button");
+    const linkEstatutos = document.getElementById("estatutos-link");
+    const linkEstatutosMobile = document.getElementById("estatutos-link-mobile");
+    const linkModulos = document.getElementById("modulos-link");
+    const linkAfiliacion = document.getElementById("afiliacion-link");
+    const contenedorChatbot = document.getElementById("chatbot-container");
+
+    if (botonChat) botonChat.style.display = "none";
+    if (linkEstatutos) linkEstatutos.style.display = "inline";
+    if (linkEstatutosMobile) linkEstatutosMobile.style.display = "block";
+    if (linkModulos) linkModulos.style.display = "inline";
+    if (linkAfiliacion) linkAfiliacion.style.display = "none";
+    if (contenedorChatbot) contenedorChatbot.style.display = "block";
 }
+
 
 // 🔹 Función para bloquear el botón en caso de acceso denegado
 function bloquearBoton() {
