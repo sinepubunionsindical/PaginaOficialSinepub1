@@ -451,19 +451,6 @@
         bottom: 10px; /* Ajustar posición vertical */
         /* top: auto; */ /* Asegurarse de que no esté fijado arriba */
     }
-    /* Ajustar flechas del slider si se superponen mucho */
-    .prev-slide, .next-slide {
-        font-size: 1.5em; /* Flechas un poco más pequeñas */
-        top: 45%; /* Centrar verticalmente */
-        transform: translateY(-50%);
-        padding: 5px 10px;
-        /* Podrías necesitar ajustar left/right si interfieren */
-        left: 5px;
-        right: 5px;
-        text-shadow: 1px 1px 2px #000000;
-    }
-    .prev-slide { left: 5px; }
-    .next-slide { right: 5px; }
 
     /* Ocultar navegación de módulos si no se usa en móvil o adaptar */
     .modulos-nav {
@@ -670,3 +657,28 @@
     .miembro-detalle { /* ... grid 1 columna ... */ }
     .miembro-foto-container, /* ... grid-column: 1 / -1; ... */
     .miembro-foto { /* ... tamaño ajustado ... */ }
+
+/* Fundadores – mantener centrados */
+.prev-slide-fundadores, .next-slide-fundadores {
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    background-color: rgba(0, 0, 0, 0.5);
+    font-size: 2em;
+    padding: 10px;
+    z-index: 2;
+}
+
+/* Incorporación – subir un poco más los botones */
+.prev-slide-incorporacion, .next-slide-incorporacion {
+    top: -15% !important; /* MÁS ARRIBA que los de fundadores */
+    transform: translateY(-50%) !important;
+    background-color: rgba(0, 0, 0, 0.5);
+    font-size: 2em;
+    padding: 10px;
+    z-index: 2;
+}
+
+/* Posiciones laterales */
+.prev-slide-fundadores, .prev-slide-incorporacion { left: 10px !important; }
+.next-slide-fundadores, .next-slide-incorporacion { right: 10px !important; }
+

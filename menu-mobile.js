@@ -301,6 +301,27 @@ document.addEventListener('DOMContentLoaded', () => {
             secondaryNavButton.setAttribute('aria-expanded', isOpen);
         });
 
+        // --- Agregar ESTATUTOS manualmente si existe y está oculto ---
+        const estatutosOriginal = document.querySelector('#estatutos-link');
+        if (estatutosOriginal) {
+            const estatutosLinkMobile = document.createElement('a');
+            estatutosLinkMobile.href = estatutosOriginal.href;
+            estatutosLinkMobile.textContent = 'Estatutos';
+            estatutosLinkMobile.id = 'estatutos-link-mobile'; // Útil para mostrarlo después
+            estatutosLinkMobile.style.display = 'none'; // Oculto inicialmente
+            estatutosLinkMobile.setAttribute('role', 'option');
+            
+            estatutosLinkMobile.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Abre en nueva pestaña (si es PDF)
+                window.open(estatutosLinkMobile.href, '_blank');
+                secondaryNavDropdown.classList.remove('open'); 
+                secondaryNavButton.classList.remove('open');
+                secondaryNavButton.setAttribute('aria-expanded', 'false');
+            });
+
+            secondaryNavDropdown.appendChild(estatutosLinkMobile);
+        }
          // --- Cerrar dropdown al hacer clic fuera (sin cambios) ---
          document.addEventListener('click', (event) => {
             if (!secondaryNavMobileContainer.contains(event.target) && secondaryNavDropdown.classList.contains('open')) {

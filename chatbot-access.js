@@ -286,8 +286,10 @@ function activarChatbot() {
 
     // Ocultar el botón inicial
     document.getElementById("chatbot-button").style.display = "none";
-    // Ocultar el botón inicial
+    // mstrar el botón estatutos escritorio
     document.getElementById("estatutos-link").style.display = "inline";
+    // mstrar el botón estatutos movil
+    document.getElementById("estatutos-link-mobile").style.display = "block";
     // mostrar boton de modulos
     document.getElementById("modulos-link").style.display = "inline";
     // Ocultar el botón de afiliacion
