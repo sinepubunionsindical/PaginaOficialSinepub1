@@ -76,7 +76,6 @@ document.addEventListener("DOMContentLoaded", () => {
       openSecurePDFModal("https://trainheartx.github.io/sinepub-website1/Estatutos.pdf");
     });
   }
-
   // También capturar eventos dinámicos por seguridad
   document.addEventListener("click", function (e) {
     if (e.target && e.target.id === "estatutos-link") {
