@@ -1,17 +1,5 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const chatButton = document.getElementById("chatbot-button");
-
-    // 🟢 Revisar si el usuario ya falló antes y bloquear botón
-    if (localStorage.getItem("afiliado") === "no") {
-        bloquearBoton(); // 🚫 Bloquea el botón automáticamente
-    }
-
-    if (chatButton) {
-        chatButton.addEventListener("click", function () {
-            showAuthPopup();
-        });
-    }
-});
+// Este archivo ahora solo contiene la funcionalidad del chat IA
+// La autenticación se ha movido a auth-popup.js
 
 // 🔹 Función para mostrar el Popup de autenticación
 function showAuthPopup() {
@@ -40,12 +28,25 @@ function showAuthPopup() {
         <h3>Acceso Restringido, Solo Afiliados</h3>
         <p>Ingrese su número de cédula para continuar</p>
         <input type="text" id="cedula-input" placeholder="Cédula">
-        <button onclick="verifyCedula()">Verificar</button>
-        <button onclick="document.getElementById('auth-popup').remove()">Cerrar</button>
+        <button id="verificar-cedula-btn">Verificar</button>
+        <button id="cerrar-popup-btn">Cerrar</button>
     `;
 
     document.body.appendChild(popup);
     console.log("✅ Popup de autenticación añadido al DOM.");
+
+    // Agregar event listeners a los botones
+    document.getElementById('verificar-cedula-btn').addEventListener('click', verifyCedula);
+    document.getElementById('cerrar-popup-btn').addEventListener('click', () => {
+        document.getElementById('auth-popup').remove();
+    });
+
+    // Permitir enviar con Enter
+    document.getElementById('cedula-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            verifyCedula();
+        }
+    });
 }
 
 // ✅ Verificación de cédula
@@ -64,8 +65,8 @@ function verifyCedula() {
     .then(response => response.json())
     .then(data => {
         console.log("📡 Respuesta de JSONBin:", data);
-        
-        const afiliados = data.record ? data.record.afiliados : data.afiliados; 
+
+        const afiliados = data.record ? data.record.afiliados : data.afiliados;
         const afiliado = afiliados.find(persona => persona.cedula === cedula);
 
         if (afiliado) {
@@ -133,13 +134,13 @@ function mostrarPopupBienvenida(mensaje) {
     popupBienvenida.innerHTML = `
         ${mensaje}
         <button id="cerrar-popup" style="
-            background-color: red; 
-            color: white; 
-            font-size: 16px; 
-            padding: 10px 20px; 
-            border: none; 
-            border-radius: 5px; 
-            cursor: pointer; 
+            background-color: red;
+            color: white;
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
             transition: background 0.3s ease-in-out;">
             Aceptar
         </button>
@@ -204,13 +205,13 @@ function mostrarPopupError() {
         <p><strong>1️⃣ Llena el formulario en la sección de afiliación.</strong></p>
         <p><strong>2️⃣ Descárgalo, agrégale tu huella y llévalo al sindicato en el séptimo piso.</strong></p>
         <button id="cerrar-popup-error" style="
-            background-color: gray; 
-            color: white; 
-            font-size: 16px; 
-            padding: 10px 20px; 
-            border: none; 
-            border-radius: 5px; 
-            cursor: pointer; 
+            background-color: gray;
+            color: white;
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
             transition: background 0.3s ease-in-out;">
             Aceptar
         </button>
@@ -264,6 +265,7 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
         if (contrasena === "12") {
             popupContrasena.remove();
             mostrarPopupBienvenida(mensajeBienvenida);
+            setUserData(nombre, cargo);
         } else {
             intentosRestantes--;
             popupContrasena.remove();
@@ -281,24 +283,158 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
 }
 
 // 🔹 Función para activar el chatbot después de cerrar el popup
-function activarChatbot() {
-    console.log("🎙️ Activando chatbot de Eleven Labs...");
+async function activarChatbot() {
+    console.log("🎙️ Activando chatbot con IA...");
 
     const botonChat = document.getElementById("chatbot-button");
     const linkEstatutos = document.getElementById("estatutos-link");
     const linkEstatutosMobile = document.getElementById("estatutos-link-mobile");
     const linkModulos = document.getElementById("modulos-link");
     const linkAfiliacion = document.getElementById("afiliacion-link");
+    const botonFlotante = document.getElementById("boton-flotante");
     const contenedorChatbot = document.getElementById("chatbot-container");
 
+    // Ocultar botón y mostrar/ocultar enlaces
     if (botonChat) botonChat.style.display = "none";
     if (linkEstatutos) linkEstatutos.style.display = "inline";
     if (linkEstatutosMobile) linkEstatutosMobile.style.display = "block";
     if (linkModulos) linkModulos.style.display = "inline";
     if (linkAfiliacion) linkAfiliacion.style.display = "none";
-    if (contenedorChatbot) contenedorChatbot.style.display = "block";
+
+    // Mostrar y configurar el contenedor del chatbot
+    if (contenedorChatbot) {
+        contenedorChatbot.style.display = "block";
+        contenedorChatbot.innerHTML = `
+            <div class="elektra-chat-interface">
+                <div class="chat-header">
+                    <img src="images/HUV.jpg" alt="Elektra Avatar" class="elektra-avatar">
+                    <h3>ELEKTRA - Asistente Virtual</h3>
+                    <button class="close-chat">×</button>
+                </div>
+                <div id="chat-messages" class="chat-messages"></div>
+                <div class="chat-input-container">
+                    <input type="text" id="user-input" placeholder="Escribe tu mensaje aquí...">
+                    <button id="send-message">
+                        Enviar
+                    </button>
+                </div>
+            </div>
+        `;
+
+        try {
+            // Inicializar el chat
+            await inicializarChatIA();
+            console.log('Chat inicializado correctamente');
+        } catch (error) {
+            console.error('Error al inicializar el chat:', error);
+            const chatMessages = document.getElementById('chat-messages');
+            if (chatMessages) {
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'message ai-message';
+                errorMsg.textContent = 'Lo siento, hubo un error al inicializar el chat. Por favor, recarga la página.';
+                chatMessages.appendChild(errorMsg);
+            }
+        }
+
+        // Agregar funcionalidad al botón de cerrar
+        const closeButton = contenedorChatbot.querySelector('.close-chat');
+        if (closeButton) {
+            closeButton.addEventListener('click', () => {
+                contenedorChatbot.style.display = "none";
+                if (botonFlotante) {
+                    botonFlotante.style.display = "block";
+                }
+            });
+        }
+    } else {
+        console.error("No se encontró el contenedor del chatbot");
+    }
 }
 
+// Variable global para la instancia de AIChat
+let aiChatInstance = null;
+
+async function inicializarChatIA() {
+    // Obtener referencias a los elementos del DOM
+    const userInput = document.getElementById('user-input');
+    const sendButton = document.getElementById('send-message');
+
+    // Crear instancia de AIChat si no existe
+    if (!aiChatInstance) {
+        try {
+            // Usar la clase AIChat global
+            aiChatInstance = new AIChat();
+
+            // Determinar el rol basado en el cargo del usuario
+            let roleType = 'NoAfiliado';
+            if (userData && userData.cargo) {
+                if (userData.cargo === 'Presidente') {
+                    roleType = 'Presidenciales';
+                } else if (userData.cargo.includes('Directiv')) {
+                    roleType = 'JuntaDirectiva';
+                } else if (userData.cargo === 'Afiliado') {
+                    roleType = 'Afiliado';
+                }
+            }
+
+            // Inicializar el chat con el rol apropiado
+            await aiChatInstance.initialize(roleType);
+        } catch (error) {
+            console.error('Error al inicializar AIChat:', error);
+            mostrarMensajeIA('Lo siento, hubo un error al inicializar el chat. Por favor, recarga la página.');
+            return;
+        }
+    }
+
+    // Mensaje de bienvenida
+    mostrarMensajeIA("¡Hola! Soy Elektra, tu asistente virtual. ¿En qué puedo ayudarte hoy?");
+
+    // Manejar envío de mensajes
+    async function enviarMensaje() {
+        const mensaje = userInput.value.trim();
+        if (!mensaje) return;
+
+        // Mostrar mensaje del usuario
+        mostrarMensajeUsuario(mensaje);
+        userInput.value = '';
+
+        try {
+            // Usar la instancia de AIChat para procesar el mensaje
+            const respuesta = await aiChatInstance.processMessage(mensaje);
+
+            // Mostrar respuesta de la IA
+            mostrarMensajeIA(respuesta);
+
+        } catch (error) {
+            console.error("Error al procesar mensaje:", error);
+            mostrarMensajeIA("Lo siento, hubo un error al procesar tu mensaje. Por favor, intenta de nuevo.");
+        }
+    }
+
+    // Event listeners
+    sendButton.addEventListener('click', enviarMensaje);
+    userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') enviarMensaje();
+    });
+}
+
+function mostrarMensajeUsuario(mensaje) {
+    const chatMessages = document.getElementById('chat-messages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message user-message';
+    messageDiv.textContent = mensaje;
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function mostrarMensajeIA(mensaje) {
+    const chatMessages = document.getElementById('chat-messages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message ai-message';
+    messageDiv.textContent = mensaje;
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
 
 // 🔹 Función para bloquear el botón en caso de acceso denegado
 function bloquearBoton() {
