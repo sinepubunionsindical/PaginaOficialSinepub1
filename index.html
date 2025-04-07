@@ -15,6 +15,15 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     </head>
         <body clas  s="fade-out">
+            <div id="video-bienvenida" class="video-container">
+                <h1 class="titulo-bienvenida">BIENVENIDO A NUESTRO PORTAL</h1>
+                <div class="video-wrapper">
+                    <video id="video-intro" autoplay muted playsinline loop controls>
+                        <source src="proyecto.mp4" type="video/mp4">
+                    </video>
+                    <button id="cerrar-video" class="cerrar-video">×</button>
+                </div>
+            </div>
         <!-- Encabezado Principal (Franja azul delgada con títulos) -->
         <header>
             <div class="container header-titles-container"> <!-- Nuevo contenedor para los títulos -->
@@ -349,5 +358,6 @@
         <script src="chatbot-access.js" defer></script>
         <script src="afiliacion.js" defer></script>
         <script src="menu-mobile.js" defer></script>
+        <script src="video-bienvenida.js" defer></script>
     </body>
     </html>

@@ -1063,3 +1063,71 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
 #mobile-menu {
     display: none; /* Oculta completamente estos elementos por defecto */
 }
+
+.video-container {
+    position: fixed;
+    right: -100%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 600px;
+    background: rgba(0, 0, 0, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    transition: right 0.8s ease-in-out;
+}
+
+.video-container.active {
+    right: 20px;
+}
+
+.titulo-bienvenida {
+    color: #fff;
+    text-align: center;
+    margin-bottom: 20px;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 1s ease;
+    font-size: 24px;
+}
+
+.titulo-bienvenida.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.video-wrapper {
+    position: relative;
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#video-intro {
+    width: 100%;
+    display: block;
+    border-radius: 8px;
+}
+
+.cerrar-video {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+}
+
+.cerrar-video:hover {
+    background: darkred;
+}
