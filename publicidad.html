@@ -357,5 +357,114 @@
     <script src="slider.js" defer></script>
     <script src="menu-mobile.js" defer></script>
     <script src="publicidad.js" defer></script>
+
+            <script id="me-gusta-script">
+            // Función para obtener datos de "me gusta" del backend
+            function cargarMeGusta() {
+                const cards = document.querySelectorAll('[data-anuncio-id]');
+                
+                cards.forEach(card => {
+                    const anuncioId = card.getAttribute('data-anuncio-id');
+                    const contador = card.querySelector('.contador-me-gusta');
+                    
+                    if (anuncioId && contador) {
+                        fetch(`http://localhost:8000/api/me-gusta/${anuncioId}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                contador.textContent = data.me_gusta || 0;
+                                
+                                // Verificar si el usuario actual dio me gusta
+                                const usuarioId = localStorage.getItem('cedula');
+                                if (usuarioId) {
+                                    fetch(`http://localhost:8000/api/me-gusta/${anuncioId}/${usuarioId}`)
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            if (data.dio_me_gusta) {
+                                                const btnMeGusta = card.querySelector('.btn-me-gusta');
+                                                if (btnMeGusta) {
+                                                    btnMeGusta.classList.add('active');
+                                                    const icon = btnMeGusta.querySelector('i');
+                                                    if (icon) {
+                                                        icon.classList.remove('far');
+                                                        icon.classList.add('fas');
+                                                    }
+                                                }
+                                            }
+                                        })
+                                        .catch(error => console.error('Error verificando me gusta:', error));
+                                }
+                            })
+                            .catch(error => console.error('Error cargando me gusta:', error));
+                    }
+                });
+            }
+            
+            // Función para dar/quitar "me gusta"
+            function toggleMeGusta(button, anuncioId) {
+                const usuarioId = localStorage.getItem('cedula');
+                
+                if (!usuarioId) {
+                    alert('Debes iniciar sesión para dar me gusta');
+                    return;
+                }
+                
+                // Enviar solicitud al backend
+                fetch('http://localhost:8000/api/me-gusta', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        anuncio_id: anuncioId,
+                        usuario_id: usuarioId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Actualizar contador
+                    const contador = button.querySelector('.contador-me-gusta');
+                    if (contador) {
+                        contador.textContent = data.cantidad || 0;
+                    }
+                    
+                    // Actualizar ícono
+                    const icon = button.querySelector('i');
+                    if (icon) {
+                        if (data.accion === 'agregado') {
+                            button.classList.add('active');
+                            icon.classList.remove('far');
+                            icon.classList.add('fas');
+                        } else {
+                            button.classList.remove('active');
+                            icon.classList.remove('fas');
+                            icon.classList.add('far');
+                        }
+                    }
+                })
+                .catch(error => console.error('Error al procesar me gusta:', error));
+            }
+            
+            // Cargar datos al iniciar la página
+            document.addEventListener('DOMContentLoaded', cargarMeGusta);
+            </script>
+            
+            <style>
+            .btn-me-gusta {
+                background: none;
+                border: none;
+                color: #6c757d;
+                cursor: pointer;
+                transition: color 0.3s;
+            }
+            
+            .btn-me-gusta:hover, .btn-me-gusta.active {
+                color: #dc3545;
+            }
+            
+            .user-avatar {
+                background-color: #f8f9fa;
+            }
+            </style>
+            
 </body>
 </html>

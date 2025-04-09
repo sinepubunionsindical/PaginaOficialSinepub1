@@ -70,80 +70,104 @@ function verifyCedula(cedula) {
     // NUEVO: Guardar cédula en localStorage
     localStorage.setItem("cedula", cedula);
 
-    // Reemplazar JsonBin con nuestra API
-    const backendUrl = window.API_ENDPOINTS ? window.API_ENDPOINTS.afiliados : "http://localhost:8000/api/afiliados";
+    // Usar la URL del API de publicidad 
+    const backendUrl = window.API_ENDPOINTS ? window.API_ENDPOINTS.publicidad : "http://localhost:8000/api/publicidad";
     
-    console.log("🔄 Consultando API de afiliados:", backendUrl);
+    console.log("🔄 Verificando cédula en:", backendUrl);
+    
+    // Verificar si el servidor está activo antes de hacer la solicitud
+    fetch(backendUrl, { method: 'OPTIONS' })
+        .then(response => {
+            console.log("✅ Servidor backend disponible. Verificando cédula.");
+            return verificarCedulaEnServidor(cedula);
+        })
+        .catch(error => {
+            console.error("🚨 Error de conexión con el servidor:", error);
+            alert("El servidor no está respondiendo. Verifica tu conexión a internet y que el servidor esté activo.");
+        });
+}
 
-    fetch(backendUrl, {
-        method: "GET",
+// Función para cerrar el popup de autenticación
+function closeAuthPopup() {
+    const authPopup = document.getElementById("auth-popup");
+    if (authPopup) {
+        authPopup.remove();
+    }
+}
+
+// Función separada para verificar la cédula una vez confirmado que el servidor está activo
+function verificarCedulaEnServidor(cedula) {
+    console.log("🔍 Verificando cédula:", cedula);
+    
+    // Guardar la cédula en localStorage para usarla más tarde
+    localStorage.setItem("cedula", cedula);
+    
+    // Mostrar indicador de carga
+    const btnVerificar = document.getElementById('verificar-cedula-btn');
+    if (btnVerificar) {
+        btnVerificar.textContent = 'Verificando...';
+        btnVerificar.disabled = true;
+    }
+    
+    fetch(`${getBackendUrl()}/api/verificar_cedula`, {
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json"
-        }
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ cedula: cedula })
     })
     .then(response => {
-        console.log("📡 Estado de respuesta:", response.status, response.statusText);
+        console.log("📡 Status respuesta verificación cédula:", response.status, response.statusText);
+        console.log("📡 Tipo de contenido:", response.headers.get('content-type'));
+        
         if (!response.ok) {
             throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
         }
+        
+        // Verificar que la respuesta sea JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            console.error("⚠️ Respuesta no es JSON:", contentType);
+            // Si no es JSON, leer como texto y mostrar parte del contenido para diagnóstico
+            return response.text().then(text => {
+                console.error("Contenido HTML recibido (primeros 500 caracteres):", text.substring(0, 500) + "...");
+                console.error("URL completa de la solicitud:", `${getBackendUrl()}/api/verificar_cedula`);
+                throw new Error('La respuesta del servidor no es JSON válido. Posiblemente el servidor está devolviendo una página HTML de error.');
+            });
+        }
+        
         return response.json();
     })
     .then(data => {
-        console.log("📡 Respuesta de API de afiliados:", data);
+        console.log("📡 Respuesta verificación cédula:", data);
         
-        if (!data || !data.afiliados) {
-            throw new Error("Estructura de datos inválida: falta la propiedad 'afiliados'");
-        }
-
-        const afiliados = data.afiliados;
-        if (!Array.isArray(afiliados)) {
-            throw new Error("Formato incorrecto: 'afiliados' no es un array");
+        // Restaurar botón
+        if (btnVerificar) {
+            btnVerificar.textContent = 'Verificar';
+            btnVerificar.disabled = false;
         }
         
-        console.log(`📋 Se encontraron ${afiliados.length} afiliados en total`);
-        const afiliado = afiliados.find(persona => persona.cedula === cedula);
-        console.log("🔍 Búsqueda de afiliado:", afiliado ? "Encontrado" : "No encontrado");
-
-        if (afiliado) {
-            const nombre = afiliado.nombre;
-            const cargo = afiliado.cargo;
-            let mensajeBienvenida = `<h2>Bienvenido al Sindicato</h2>`;
-
-            if (cargo !== "Afiliado") {
-                mensajeBienvenida += `
-                    <p>Hola <strong>${nombre}</strong>, un placer volverte a saludar.</p>
-                    <p>Como <strong>${cargo}</strong> de SINEPUB HUV, tienes un papel fundamental en la representación y defensa de nuestros afiliados.</p>
-                    <p><strong>Te invitamos a utilizar la Inteligencia Artificial para:</strong></p>
-                    <ul>
-                        <li>📑 Acceder rápidamente a documentos y acuerdos.</li>
-                        <li>📌 Consultar normativas y estatutos.</li>
-                        <li>🤝 Obtener información clave sobre negociaciones sindicales.</li>
-                    </ul>
-                    <p><strong>Ademas tienes acceso a los estatutos y modulos de información, nos preocupamos por tu evolución</strong></p>`;
-            } else {
-                mensajeBienvenida += `
-                    <p>Hola <strong>${nombre}</strong>, bienvenido a nuestra comunidad sindical.</p>
-                    <p><strong>Como afiliado, puedes aprovechar la Inteligencia Artificial para:</strong></p>
-                    <ul>
-                        <li>🔍 Consultar beneficios del sindicato.</li>
-                        <li>📚 Revisar los estatutos y normativas.</li>
-                        <li>🎓 Informarte sobre la carrera administrativa y crecimiento profesional.</li>
-                        <li>📝 Conocer los acuerdos colectivos recientes.</li>
-                    </ul>
-                    <p><strong>Ademas tienes acceso a los estatutos y modulos de información, nos preocupamos por tu evolución</strong></p>
-                    <p>¡Tu participación es clave para fortalecer nuestra organización!</p>`;
-            }
-            console.log("🟢 Mensaje de bienvenida generado:", mensajeBienvenida);
-            mostrarPopupContrasena(nombre, cargo, mensajeBienvenida);
+        if (data.error) {
+            mostrarError(data.error);
+            return;
+        }
+        
+        if (data.valid) {
+            mostrarFormularioPerfil(cedula, data.nombre);
         } else {
-            localStorage.setItem("afiliado", "no");
-            bloquearBoton();
-            mostrarPopupError();
+            mostrarError("La cédula ingresada no es válida o no está registrada en el sistema.");
         }
     })
     .catch(error => {
-        console.error("🚨 Error en la verificación de cédula:", error);
-        alert(`⚠ Ocurrió un error al verificar la cédula: ${error.message}`);
+        console.error('Error al verificar cédula:', error);
+        
+        // Restaurar botón
+        if (btnVerificar) {
+            btnVerificar.textContent = 'Verificar';
+            btnVerificar.disabled = false;
+        }
+        
+        mostrarError("Error al verificar la cédula: " + error.message);
     });
 }
 
@@ -305,7 +329,7 @@ function mostrarPopupBienvenida(mensaje) {
         // NUEVO: Verificar si el usuario ya existe en el backend y solicitar foto/email si es necesario
         const cedula = localStorage.getItem("cedula");
         if (cedula) {
-            verificarPerfilUsuario(cedula, nombre, cargo);
+            verificarPerfilUsuario();
         } else {
             // Si no tenemos la cédula almacenada, continuar con activación normal
             // Activar el chat con el nuevo sistema de botón flotante
@@ -327,247 +351,221 @@ function mostrarPopupBienvenida(mensaje) {
 }
 
 // NUEVA FUNCIÓN: Verificar si el usuario necesita completar su perfil
-function verificarPerfilUsuario(cedula, nombre, cargo) {
-    console.log("🔍 Verificando perfil de usuario en el backend...");
-    console.log("🔑 Datos: Cédula:", cedula, "Nombre:", nombre, "Cargo:", cargo);
+function verificarPerfilUsuario() {
+    const cedula = localStorage.getItem("cedula");
+    const nombre = localStorage.getItem("nombre");
     
-    // URL del backend
-    const backendUrl = window.API_ENDPOINTS ? window.API_ENDPOINTS.usuario + "/" + cedula : "http://localhost:8000/api/usuario/" + cedula;
-    console.log("🌐 URL de verificación de perfil:", backendUrl);
-    
-    // Solicitar datos del usuario
-    fetch(backendUrl)
-        .then(response => {
-            console.log("📡 Status respuesta perfil:", response.status, response.statusText);
-            if (!response.ok) {
-                throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log("📡 Datos del usuario recibidos:", data);
-            
-            if (data.status === "pendiente" || !data.foto_ruta || !data.email) {
-                console.log("⚠️ Perfil incompleto o pendiente, mostrando formulario...");
-                // Usuario no existe o falta información, mostrar formulario
-                mostrarFormularioCompletarPerfil(cedula, nombre, cargo);
-            } else {
-                console.log("✅ Perfil completo, activando chat...");
-                // Usuario existe y tiene toda la información, activar chat
-                if (window.activateChatAfterAuth) {
-                    window.activateChatAfterAuth(nombre, cargo);
-                } else {
-                    activarChatbot();
-                }
-            }
-        })
-        .catch(error => {
-            console.error("🚨 Error al verificar perfil:", error);
-            console.log("⚠️ Continuando con activación normal debido al error");
-            // En caso de error, continuar con activación normal
-            if (window.activateChatAfterAuth) {
-                window.activateChatAfterAuth(nombre, cargo);
-            } else {
-                activarChatbot();
-            }
-        });
-}
-
-// NUEVA FUNCIÓN: Mostrar formulario para completar perfil
-function mostrarFormularioCompletarPerfil(cedula, nombre, cargo) {
-    console.log("📝 Mostrando formulario para completar perfil...");
-    console.log("📋 Datos para el perfil - Cédula:", cedula, "Nombre:", nombre, "Cargo:", cargo);
-    
-    // Crear popup para el formulario
-    const popupPerfil = document.createElement("div");
-    popupPerfil.id = "popup-perfil";
-    popupPerfil.style.position = "fixed";
-    popupPerfil.style.top = "50%";
-    popupPerfil.style.left = "50%";
-    popupPerfil.style.transform = "translate(-50%, -50%)";
-    popupPerfil.style.background = "#ffffff";
-    popupPerfil.style.color = "#333333";
-    popupPerfil.style.padding = "30px";
-    popupPerfil.style.borderRadius = "10px";
-    popupPerfil.style.width = "500px";
-    popupPerfil.style.boxShadow = "0 5px 15px rgba(0,0,0,0.3)";
-    popupPerfil.style.zIndex = "10000";
-    
-    popupPerfil.innerHTML = `
-        <h2 style="color: #0249aa; text-align: center;">Completa tu perfil</h2>
-        <p style="text-align: center;">Para mejorar tu experiencia, necesitamos algunos datos adicionales:</p>
-        
-        <form id="perfil-form" style="margin-top: 20px;">
-            <div style="margin-bottom: 15px;">
-                <label for="user-email" style="display: block; margin-bottom: 5px; font-weight: bold;">Correo electrónico:</label>
-                <input type="email" id="user-email" placeholder="tu@email.com" 
-                       style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" required>
-            </div>
-            
-            <div style="margin-bottom: 20px;">
-                <label for="user-photo" style="display: block; margin-bottom: 5px; font-weight: bold;">Foto de perfil:</label>
-                <input type="file" id="user-photo" accept="image/*" 
-                       style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                <p style="font-size: 12px; color: #666; margin-top: 5px;">Una foto de perfil nos ayuda a personalizar tu experiencia.</p>
-            </div>
-            
-            <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-                <button type="button" id="skip-perfil" 
-                        style="padding: 10px 15px; border: none; border-radius: 5px; background-color: #cccccc; cursor: pointer;">
-                    Omitir
-                </button>
-                <button type="submit" id="guardar-perfil" 
-                        style="padding: 10px 15px; border: none; border-radius: 5px; background-color: #0249aa; color: white; cursor: pointer;">
-                    Guardar perfil
-                </button>
-            </div>
-        </form>
-    `;
-    
-    document.body.appendChild(popupPerfil);
-    console.log("✅ Formulario de perfil añadido al DOM");
-    
-    // Manejar envío del formulario
-    document.getElementById("perfil-form").addEventListener("submit", function(e) {
-        e.preventDefault();
-        console.log("📤 Enviando formulario de perfil...");
-        
-        const email = document.getElementById("user-email").value;
-        const fileInput = document.getElementById("user-photo");
-        
-        // Preparar datos del usuario
-        const userData = {
-            cedula: cedula,
-            nombre: nombre,
-            cargo: cargo,
-            email: email,
-            fecha_registro: new Date().toISOString()
-        };
-        
-        console.log("📦 Datos a enviar:", userData);
-        
-        // Si hay foto, procesarla
-        if (fileInput.files && fileInput.files[0]) {
-            console.log("📷 Procesando foto de perfil...");
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                try {
-                    // Verificar que el resultado sea una cadena válida
-                    if (typeof e.target.result !== 'string') {
-                        throw new Error("Formato de imagen no válido");
-                    }
-                    
-                    // Asegurarse de que la cadena base64 esté bien formada
-                    const base64String = e.target.result;
-                    if (!base64String.startsWith('data:image/')) {
-                        throw new Error("Formato base64 no válido");
-                    }
-                    
-                    console.log("📷 Foto de perfil cargada correctamente");
-                    console.log("📷 Longitud de la foto en base64:", base64String.length);
-                    
-                    userData.foto_base64 = base64String;
-                    enviarDatosUsuario(userData, popupPerfil);
-                } catch (err) {
-                    console.error('Error procesando imagen:', err);
-                    alert('Error procesando la imagen. Enviando perfil sin foto.');
-                    enviarDatosUsuario(userData, popupPerfil);
-                }
-            };
-            
-            reader.onerror = function() {
-                console.error('Error leyendo el archivo de imagen');
-                alert('Error al leer la imagen. Enviando perfil sin foto.');
-                enviarDatosUsuario(userData, popupPerfil);
-            };
-            
-            reader.readAsDataURL(fileInput.files[0]);
-        } else {
-            // Enviar sin foto
-            console.log("📝 Enviando perfil sin foto");
-            enviarDatosUsuario(userData, popupPerfil);
-        }
-    });
-    
-    // Manejar botón de omitir
-    document.getElementById("skip-perfil").addEventListener("click", function() {
-        console.log("⏭️ Omitiendo completar perfil");
-        popupPerfil.remove();
-        
-        // Activar chat
-        if (window.activateChatAfterAuth) {
-            window.activateChatAfterAuth(nombre, cargo);
-        } else {
-            activarChatbot();
-        }
-    });
-}
-
-// NUEVA FUNCIÓN: Enviar datos del usuario al backend
-function enviarDatosUsuario(userData, popupElement) {
-    console.log("📤 Enviando datos de usuario al backend...");
-    
-    // URL del backend
-    const backendUrl = window.API_ENDPOINTS ? window.API_ENDPOINTS.usuario : "http://localhost:8000/api/usuario";
-    console.log("🌐 URL para envío de perfil:", backendUrl);
-    
-    // Mostrar indicador de progreso
-    const btnGuardar = document.getElementById("guardar-perfil");
-    if (btnGuardar) {
-        btnGuardar.disabled = true;
-        btnGuardar.textContent = "Guardando...";
-    }
-    
-    // Enviar datos al backend
-    fetch(backendUrl, {
-        method: "POST",
+    // Obtener datos del perfil del usuario desde el backend
+    fetch(`${getBackendUrl()}/obtener_perfil`, {
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json"
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(userData)
+        body: JSON.stringify({ cedula: cedula })
     })
     .then(response => {
-        console.log("📡 Status respuesta perfil:", response.status, response.statusText);
+        console.log("📡 Status respuesta obtención perfil:", response.status, response.statusText);
+        
         if (!response.ok) {
             throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
         }
+        
+        // Verificar que la respuesta sea JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            return response.text().then(text => {
+                console.error("⚠️ Respuesta no es JSON:", contentType);
+                console.error("Contenido recibido (primeros 500 caracteres):", text.substring(0, 500) + "...");
+                throw new Error('La respuesta del servidor no es JSON válido');
+            });
+        }
+        
         return response.json();
     })
     .then(data => {
-        console.log("📡 Respuesta del backend:", data);
+        console.log("📡 Datos de perfil del usuario:", data);
         
-        if (data.success) {
-            // Guardar email en localStorage
-            localStorage.setItem("email", userData.email);
-            
-            // Cerrar popup
-            popupElement.remove();
-            
-            // Mostrar mensaje de éxito
-            alert("✅ Perfil actualizado correctamente");
-            
-            // Activar chat
-            if (window.activateChatAfterAuth) {
-                window.activateChatAfterAuth(userData.nombre, userData.cargo);
-            } else {
-                activarChatbot();
-            }
+        if (data.perfil_completo) {
+            // El perfil ya está completo, activar el chat
+            activarChatbot();
         } else {
-            if (btnGuardar) {
-                btnGuardar.disabled = false;
-                btnGuardar.textContent = "Guardar perfil";
-            }
-            alert("❌ Error al actualizar perfil: " + (data.error || "Error desconocido"));
+            // Mostrar formulario para completar perfil
+            mostrarFormularioCompletarPerfil(cedula, nombre);
         }
     })
     .catch(error => {
-        console.error("🚨 Error al enviar datos:", error);
-        if (btnGuardar) {
-            btnGuardar.disabled = false;
-            btnGuardar.textContent = "Guardar perfil";
+        console.error('Error al obtener datos del perfil:', error);
+        // Si hay error, mostrar formulario por defecto
+        mostrarFormularioCompletarPerfil(cedula, nombre);
+    });
+}
+
+// Función para mostrar el formulario de completar perfil
+function mostrarFormularioCompletarPerfil(cedula, nombre) {
+    console.log("📋 Mostrando formulario para completar perfil");
+    
+    const existingPopup = document.getElementById("auth-popup");
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+    
+    const popup = document.createElement("div");
+    popup.id = "auth-popup";
+    popup.style.position = "fixed";
+    popup.style.top = "50%";
+    popup.style.left = "50%";
+    popup.style.transform = "translate(-50%, -50%)";
+    popup.style.background = "white";
+    popup.style.padding = "20px";
+    popup.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
+    popup.style.zIndex = "10000";
+    popup.style.borderRadius = "8px";
+    popup.style.width = "400px";
+    popup.style.textAlign = "center";
+
+    popup.innerHTML = `
+        <h3>Completa tu perfil</h3>
+        <p>Por favor completa la siguiente información para continuar:</p>
+        
+        <div id="profile-panel">
+            <div style="margin-bottom: 15px;">
+                <label for="nombre">Nombre completo:</label>
+                <input type="text" id="nombre" value="${nombre || ''}" placeholder="Tu nombre completo">
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label for="correo">Correo electrónico:</label>
+                <input type="email" id="correo" placeholder="tu@correo.com">
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label>Foto de perfil:</label>
+                <div style="display: flex; align-items: center; justify-content: center; margin-top: 10px;">
+                    <img id="user-photo-preview" src="" alt="Foto de perfil" style="width: 100px; height: 100px; border-radius: 50%; border: 1px solid #ccc; object-fit: cover; display: none;">
+                    <input type="file" id="user-photo" accept="image/*" style="display: block; margin: 10px auto;">
+                </div>
+            </div>
+            
+            <button id="guardar-perfil-btn">Guardar Perfil</button>
+            <button id="cancelar-perfil-btn">Cancelar</button>
+        </div>
+    `;
+
+    document.body.appendChild(popup);
+    
+    // Obtener correo de localStorage si existe
+    const correo = localStorage.getItem("correo");
+    if (correo) {
+        document.getElementById('correo').value = correo;
+    }
+    
+    // Evento para previsualizar la imagen seleccionada
+    document.getElementById('user-photo').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const preview = document.getElementById('user-photo-preview');
+                preview.src = event.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
         }
-        alert("❌ Error al actualizar perfil: " + error.message);
+    });
+    
+    // Evento para guardar el perfil
+    document.getElementById('guardar-perfil-btn').addEventListener('click', function() {
+        const nombreValue = document.getElementById('nombre').value;
+        const correoValue = document.getElementById('correo').value;
+        const fotoPreview = document.getElementById('user-photo-preview');
+        const fotoValue = fotoPreview.style.display !== 'none' ? fotoPreview.src : '';
+        
+        guardarPerfilUsuario(cedula, nombreValue, correoValue, fotoValue);
+    });
+    
+    // Evento para cancelar
+    document.getElementById('cancelar-perfil-btn').addEventListener('click', function() {
+        closeAuthPopup();
+    });
+}
+
+// Función para guardar el perfil del usuario
+function guardarPerfilUsuario(cedula, nombre, correo, foto) {
+    if (!cedula || !nombre || !correo) {
+        alert('Por favor completa todos los campos obligatorios');
+        return;
+    }
+    
+    // Validar correo con expresión regular
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(correo)) {
+        alert('Por favor ingresa un correo electrónico válido');
+        return;
+    }
+    
+    const datos = {
+        cedula: cedula,
+        nombre: nombre,
+        correo: correo,
+        foto: foto
+    };
+    
+    console.log("📡 Enviando datos de perfil:", {...datos, foto: foto ? '(Base64 imagen)' : null});
+    
+    fetch(`${getBackendUrl()}/actualizar_perfil`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(datos)
+    })
+    .then(response => {
+        console.log("📡 Status respuesta actualización perfil:", response.status, response.statusText);
+        console.log("📡 Tipo de contenido:", response.headers.get('content-type'));
+        
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+        }
+        
+        // Verificar que la respuesta sea JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            console.error("⚠️ Respuesta no es JSON:", contentType);
+            // Si no es JSON, leer como texto y mostrar parte del contenido para diagnóstico
+            return response.text().then(text => {
+                console.error("Contenido HTML recibido (primeros 500 caracteres):", text.substring(0, 500) + "...");
+                console.error("URL completa de la solicitud:", `${getBackendUrl()}/actualizar_perfil`);
+                throw new Error('La respuesta del servidor no es JSON válido. Posiblemente el servidor está devolviendo una página HTML de error.');
+            });
+        }
+        
+        return response.json();
+    })
+    .then(data => {
+        console.log("📡 Respuesta actualización perfil:", data);
+        
+        if (data.error) {
+            alert('❌ Error al actualizar perfil: ' + data.error);
+            return;
+        }
+        
+        if (data.success) {
+            // Guardar la información del usuario en localStorage
+            localStorage.setItem('nombre', nombre);
+            localStorage.setItem('correo', correo);
+            
+            // Cerrar el popup
+            closeAuthPopup();
+            
+            // Activar el chatbot
+            activarChatbot();
+        } else {
+            alert('Ha ocurrido un error al actualizar tu perfil. Por favor intenta nuevamente.');
+        }
+    })
+    .catch(error => {
+        console.error('Error al actualizar perfil:', error);
+        alert('Error al actualizar perfil: ' + error.message);
     });
 }
 
@@ -749,3 +747,128 @@ window.mostrarPopupBienvenida = mostrarPopupBienvenida;
 window.mostrarPopupError = mostrarPopupError;
 window.bloquearBoton = bloquearBoton;
 window.activarChatbot = activarChatbot;
+
+// Función para mostrar el formulario de perfil
+function mostrarFormularioPerfil(cedula, nombre) {
+    console.log("📋 Mostrando formulario de perfil para cédula:", cedula);
+    
+    // Guardar datos en localStorage
+    localStorage.setItem("cedula", cedula);
+    if (nombre) {
+        localStorage.setItem("nombre", nombre);
+    }
+    
+    // Cerrar el popup actual si existe
+    const existingPopup = document.getElementById("auth-popup");
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+    
+    // Crear el nuevo popup de perfil
+    const popup = document.createElement("div");
+    popup.id = "auth-popup";
+    popup.style.position = "fixed";
+    popup.style.top = "50%";
+    popup.style.left = "50%";
+    popup.style.transform = "translate(-50%, -50%)";
+    popup.style.background = "white";
+    popup.style.padding = "20px";
+    popup.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
+    popup.style.zIndex = "10000";
+    popup.style.borderRadius = "8px";
+    popup.style.width = "400px";
+    popup.style.textAlign = "center";
+
+    popup.innerHTML = `
+        <h3>Completa tu perfil</h3>
+        <p>Por favor completa la siguiente información para continuar:</p>
+        
+        <div id="profile-panel">
+            <div style="margin-bottom: 15px;">
+                <label for="nombre">Nombre completo:</label>
+                <input type="text" id="nombre" value="${nombre || ''}" placeholder="Tu nombre completo">
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label for="correo">Correo electrónico:</label>
+                <input type="email" id="correo" placeholder="tu@correo.com">
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label>Foto de perfil:</label>
+                <div style="display: flex; align-items: center; justify-content: center; margin-top: 10px;">
+                    <img id="user-photo-preview" src="" alt="Foto de perfil" style="width: 100px; height: 100px; border-radius: 50%; border: 1px solid #ccc; object-fit: cover; display: none;">
+                    <input type="file" id="user-photo" accept="image/*" style="display: block; margin: 10px auto;">
+                </div>
+            </div>
+            
+            <button id="guardar-perfil-btn">Guardar Perfil</button>
+            <button id="cancelar-perfil-btn">Cancelar</button>
+        </div>
+    `;
+
+    document.body.appendChild(popup);
+    
+    // Obtener correo de localStorage si existe
+    const correo = localStorage.getItem("correo");
+    if (correo) {
+        document.getElementById('correo').value = correo;
+    }
+    
+    // Evento para previsualizar la imagen seleccionada
+    document.getElementById('user-photo').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const preview = document.getElementById('user-photo-preview');
+                preview.src = event.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    // Evento para guardar el perfil
+    document.getElementById('guardar-perfil-btn').addEventListener('click', function() {
+        const nombreValue = document.getElementById('nombre').value;
+        const correoValue = document.getElementById('correo').value;
+        const fotoPreview = document.getElementById('user-photo-preview');
+        const fotoValue = fotoPreview.style.display !== 'none' ? fotoPreview.src : '';
+        
+        guardarPerfilUsuario(cedula, nombreValue, correoValue, fotoValue);
+    });
+    
+    // Evento para cancelar
+    document.getElementById('cancelar-perfil-btn').addEventListener('click', function() {
+        closeAuthPopup();
+    });
+}
+
+// Función para mostrar mensajes de error
+function mostrarError(mensaje) {
+    console.error("❌ Error:", mensaje);
+    alert(mensaje);
+}
+
+// Función auxiliar para obtener la URL del backend
+function getBackendUrl() {
+    // Verificar primero si hay una URL definida en window.API_ENDPOINTS
+    if (window.API_ENDPOINTS && window.API_ENDPOINTS.publicidad) {
+        console.log("📡 Usando API_ENDPOINTS.publicidad:", window.API_ENDPOINTS.publicidad);
+        return window.API_ENDPOINTS.publicidad;
+    }
+    
+    // Usar la URL de ngrok desde config.js si está disponible
+    if (window.BACKEND_URL) {
+        console.log("📡 Usando BACKEND_URL global:", window.BACKEND_URL);
+        return window.BACKEND_URL;
+    }
+    
+    // Usar una URL definida localmente como respaldo
+    const urlNgrok = "https://d01c-2800-484-8786-7d00-a958-9ef1-7e9c-89b9.ngrok-free.app";
+    console.log("📡 Usando URL de respaldo:", urlNgrok);
+    
+    // Valor por defecto como última opción
+    return urlNgrok;
+}

@@ -224,56 +224,99 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Función para enviar datos al backend
     function enviarDatosAlBackend(datos, submitBtn, originalBtnText) {
-        // Usar la URL centralizada desde config.js
+        console.log("🔄 Iniciando envío de datos al backend");
+        
+        // Obtener los elementos del DOM que necesitamos manipular
+        const submitButton = submitBtn;
+        const originalButtonText = originalBtnText;
+        submitButton.disabled = true;
+        submitButton.textContent = "Enviando...";
+        
+        // Determinar la URL del backend según el modo (debug/producción)
         const backendUrl = window.API_ENDPOINTS ? window.API_ENDPOINTS.publicidad : 'http://localhost:8000/api/publicidad';
+        console.log("🔄 URL del backend:", backendUrl);
         
-        console.log("🔄 Enviando publicidad al backend:", backendUrl);
-        console.log("📦 Datos a enviar:", datos);
+        // Verificar primero si el servidor está respondiendo
+        fetch(backendUrl, { method: 'OPTIONS' })
+            .then(response => {
+                console.log("✅ Servidor backend disponible. Enviando datos...");
+                enviarPublicidad(datos, backendUrl, submitButton, originalButtonText);
+            })
+            .catch(error => {
+                console.error("🚨 Error al conectar con el servidor:", error);
+                alert("No se pudo conectar con el servidor. Verifica tu conexión a internet y que el servidor esté activo.");
+                // Restaurar el botón
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+            });
+    }
+    
+    // Nueva función separada para enviar datos de publicidad
+    function enviarPublicidad(datos, backendUrl, submitButton, originalButtonText) {
+        // Mostrar los datos que se van a enviar
+        console.log("📤 Datos a enviar:", Object.fromEntries(datos));
         
+        // Realizar la petición fetch
         fetch(backendUrl, {
-            method: 'POST',
+            method: "POST",
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(datos)
         })
         .then(response => {
-            console.log("📡 Status respuesta publicidad:", response.status, response.statusText);
+            console.log("📡 Estado respuesta:", response.status, response.statusText);
+            console.log("📡 Tipo de contenido:", response.headers.get('content-type'));
+            
             if (!response.ok) {
-                throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+                throw new Error(`Error HTTP ${response.status}: ${response.statusText}`);
             }
+            
+            // Verificar que la respuesta sea JSON
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                console.error("⚠️ Respuesta no es JSON:", contentType);
+                return response.text().then(text => {
+                    console.error("Contenido de la respuesta:", text.substring(0, 500) + "...");
+                    throw new Error('La respuesta no es JSON. Recibido: ' + contentType);
+                });
+            }
+            
             return response.json();
         })
         .then(data => {
-            console.log("📡 Respuesta del backend para publicidad:", data);
+            console.log("✅ Respuesta del servidor:", data);
+            
+            // Restaurar el botón
+            submitButton.disabled = false;
+            submitButton.textContent = originalButtonText;
             
             if (data.error) {
-                throw new Error(data.error);
+                console.error("❌ Error reportado por el servidor:", data.error);
+                alert("Error: " + data.error);
+                return;
             }
-
-            // Mostrar mensaje de éxito
-            alert('¡Gracias por registrar tu publicidad! Tu solicitud ha sido enviada para aprobación. Recibirás un correo de confirmación pronto.');
-
-            // Resetear el formulario
-            formulario.reset();
-
-            // Restaurar botón
-            submitBtn.textContent = originalBtnText;
-            submitBtn.disabled = false;
-
-            // Ocultar el slide del formulario y volver al inicio
-            formularioSlide.style.display = 'none';
-            formularioSlide.classList.remove('active');
-            updateSlide(0);
+            
+            if (data.success) {
+                // Guardar el ID del anuncio en sessionStorage
+                if (data.id) {
+                    sessionStorage.setItem("ultimoAnuncioId", data.id);
+                    console.log("📝 ID de anuncio guardado:", data.id);
+                }
+                
+                // Redireccionar a la página de éxito
+                window.location.href = "confirmacion.html";
+            } else {
+                alert("Error desconocido al procesar la solicitud");
+            }
         })
         .catch(error => {
-            // Mostrar error
-            console.error('Error en envío de publicidad:', error);
-            alert('Error al enviar la publicidad: ' + error.message);
-
-            // Restaurar botón
-            submitBtn.textContent = originalBtnText;
-            submitBtn.disabled = false;
+            console.error("❌ Error en el envío:", error);
+            alert("Error al enviar la publicidad: " + error.message);
+            
+            // Restaurar el botón
+            submitButton.disabled = false;
+            submitButton.textContent = originalButtonText;
         });
     }
 
