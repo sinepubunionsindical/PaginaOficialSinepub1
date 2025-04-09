@@ -148,8 +148,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Función para enviar datos al backend
     function enviarDatosAlBackend(datos, submitBtn, originalBtnText) {
-        // URL del backend (ajustar según configuración)
-        const backendUrl = 'http://localhost:8000/api/publicidad';
+        // Usar la URL centralizada desde config.js
+        const backendUrl = window.API_ENDPOINTS ? window.API_ENDPOINTS.publicidad : 'https://d01c-2800-484-8786-7d00-a958-9ef1-7e9c-89b9.ngrok-free.app/api/publicidad';
 
         fetch(backendUrl, {
             method: 'POST',
