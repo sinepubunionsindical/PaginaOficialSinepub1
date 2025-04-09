@@ -5,7 +5,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>SINEPUB - Sindicato del HUV</title>
         <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="chat-styles.css">
         <link rel="stylesheet" href="android.css">
+        <link rel="stylesheet" href="elektra-chat.css">
+        <link rel="stylesheet" href="chat-button.css">
         <script type="module" src="https://cdn.jsdelivr.net/npm/@huggingface/inference"></script>
         <script src="https://unpkg.com/react@17.0.2/umd/react.development.js" crossorigin></script>
         <script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js" crossorigin></script>
@@ -15,6 +18,15 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     </head>
         <body clas  s="fade-out">
+            <div id="video-bienvenida" class="video-container">
+                <h1 class="titulo-bienvenida">BIENVENIDO A NUESTRO PORTAL</h1>
+                <div class="video-wrapper">
+                    <video id="video-intro" autoplay muted playsinline loop controls>
+                        <source src="Proyecto.mp4" type="video/mp4">
+                    </video>
+                    <button id="cerrar-video" class="cerrar-video">×</button>
+                </div>
+            </div>
         <!-- Encabezado Principal (Franja azul delgada con títulos) -->
         <header>
             <div class="container header-titles-container"> <!-- Nuevo contenedor para los títulos -->
@@ -43,13 +55,13 @@
                             </div>
                         </li>
                         <!-- Nueva sección de Colaboradores -->
-                        <li class="menu-item-colaboradores">  
+                        <li class="menu-item-colaboradores">
                             <div class="dropdown-container-colaboradores">
                                 <a href="#" class="dropdown-toggle">Colaboradores</a>
                                 <div class="dropdown-menu dropdown-menu-colaboradores">
                                     <h2>Colaboradores</h2>
                                     <p>Conoce a nuestros aliados estratégicos:</p>
-                                    
+
                                     <!-- JURARKO SAS -->
                                     <div class="colaborador">
                                         <img src="images/jurarko_logo.jpg" alt="JURARKO SAS">
@@ -77,10 +89,10 @@
                 <!-- BOTÓN HAMBURGUESA - Añadido aquí -->
                 <button id="hamburger-button" class="hamburger-button" aria-label="Abrir menú de navegación" aria-controls="mobile-menu-container" aria-expanded="false" style="display: none;">
                     ☰ <!-- Código HTML para el icono de hamburguesa -->
-                </button>                
+                </button>
             </div>
         </header>
-        
+
         <!-- Imágenes del Encabezado (Debajo de la franja azul) -->
         <section class="header-logos">
             <div class="logo-container">
@@ -97,6 +109,7 @@
                         <li><a href="#" data-slide="1" class="active">Inicio</a></li>  <!-- data-slide y clase active -->
                         <li><a href="#" data-slide="2">Noticias</a></li>   <!-- data-slide -->
                         <li><a href="#" data-slide="6" id="afiliacion-link">Afiliación</a></li>  <!-- data-slide -->
+                        <li><a href="publicidad.html" id="publicidad-link">Publicidad</a></li>  <!-- Link to new publicidad.html -->
                         <li><a href="#" data-slide="7" id="modulos-link" style="display: none;">Módulos de Información</a></li>
                     </ul>
                 </nav>
@@ -110,7 +123,7 @@
                 <div class="modulos-nav">
                     <span class="modulo-dot" data-slide="7"></span>
                     <span class="modulo-dot" data-slide="8"></span>
-                </div>                
+                </div>
                 <div class="slider">
                     <div class="slide active"  id="slide-1">
                         <div class="imagen-y-texto">
@@ -129,9 +142,9 @@
                                         <p>Para el año 2030, aspiramos a consolidarnos como la organización sindical líder en Colombia, un referente en la defensa y promoción de los derechos de los trabajadores del sector salud. Visualizamos un futuro donde nuestros afiliados cuenten con seguridad laboral, condiciones justas y un ambiente de trabajo óptimo para su desarrollo profesional y personal.</p>
                                     </div>
                                 </div>
-                                
+
                                 <p>El poder del cambio reside en la unidad, y en SINEPUB HUV trabajamos con el firme propósito de construir una comunidad sindical fuerte y unida, capaz de transformar la realidad de los trabajadores. Nuestro compromiso va más allá de lo contractual; buscamos el bienestar integral de cada afiliado, promoviendo el respeto, la equidad y la justicia en cada una de nuestras acciones.</p>
-                                
+
                                 <p>¡Únete a nosotros y forma parte de una organización que lucha por ti, que te escucha y que jamás dejará de trabajar para construir un futuro mejor para todos!</p>
                                 </div>
                             </div>
@@ -152,8 +165,8 @@
                                 <p>📌 Desde SINEPUB HUV respaldamos esta iniciativa en favor de los trabajadores del Hospital Universitario del Valle.</p>
                                 <p><a href="https://search.app/qieRY" target="_blank">Leer más</a></p>
                             </div>
-                        </div>               
-                    </div>    
+                        </div>
+                    </div>
                     <div class="slide" id="slide-3">  <!-- Slide de Noticias 2 -->
                         <div class="imagen-y-texto">
                             <img src="images/licencia_mascotas.jpeg" alt="Banner 3" class="imagen-banner">
@@ -169,7 +182,7 @@
                                 <p>📌 Desde SINEPUB HUV apoyamos esta medida que reconoce el valor emocional de las mascotas en la vida de nuestros afiliados.</p>
                                 <p><a href="https://www.infobae.com/colombia/2025/03/12/congreso-aprobo-en-primer-debate-proyecto-de-ley-que-busca-dar-licencia-remunerada-a-empleados-cuyos-perros-y-gatos-han-fallecido/" target="_blank">Leer más</a></p>
                             </div>
-                        </div>                        
+                        </div>
                     </div>
                     <div class="slide" id="slide-4">  <!-- Slide de Noticias 3 -->
                         <div class="imagen-y-texto">
@@ -177,12 +190,12 @@
                             <div class="texto-banner">
                                 <h3>Atención servidores públicos del HUV: Certificados de ingresos 2024 y actualización en SIGEP II</h3>
                                 <p>Se informa a todos los colaboradores del Hospital Universitario del Valle (HUV) que los certificados de ingresos correspondientes al año 2024 están siendo enviados a sus correos electrónicos registrados. Es fundamental que cada servidor público esté atento a la recepción de este documento, ya que es necesario para cumplir con la obligación de actualizar la Declaración de Bienes y Rentas en el Sistema de Información y Gestión del Empleo Público (SIGEP II).</p>
-                    
+
                                 <p><strong>📅 Fechas clave para la actualización en SIGEP II:</strong></p>
                                 <ul>
                                     <li>🗓️ Del 1 de junio al 31 de julio de 2025: Periodo destinado para que los servidores públicos de entidades y organismos públicos de orden territorial, como el HUV, realicen la actualización de su Declaración de Bienes y Rentas.</li>
                                 </ul>
-                    
+
                                 <p><strong>✅ Pasos a seguir:</strong></p>
                                 <ul>
                                     <li>📩 Revisión del correo electrónico institucional: Verifique la recepción del certificado de ingresos 2024.</li>
@@ -190,20 +203,20 @@
                                     <li>📝 Actualización de la Declaración de Bienes y Rentas: Diligencie la información correspondiente al año 2024, asegurándose de incluir todos los datos requeridos.</li>
                                     <li>📌 Confirmación de envío: Una vez completada la actualización, confirme que la información ha sido enviada correctamente.</li>
                                 </ul>
-                    
+
                                 <p>⚠️ El cumplimiento de esta obligación es esencial para garantizar la transparencia y la correcta gestión de la función pública. Se recomienda no esperar hasta el último momento para realizar este trámite y, en caso de dudas o inconvenientes, contactar al área de recursos humanos del HUV o al soporte del SIGEP II.</p>
-                    
+
                                 <p>📽️ Guía paso a paso para actualizar la información en SIGEP II:</p>
                                 <p><a href="https://www.youtube.com/watch?v=cjG1Aw4MatY" target="_blank">🎥 Ver tutorial en YouTube</a></p>
-                            </div>                            
+                            </div>
                         </div>
-                    </div>                    
+                    </div>
                     <div class="slide" id="slide-5">  <!-- Slide de Noticias 4 -->
                         <div class="imagen-y-texto">
                             <img src="images/imagen2.jpg" alt="Banner 5" class="imagen-banner">
                             <div class="texto-banner">
                                 <h3>Noticias 4</h3> <p>Contenido de la noticia 4...</p>
-                            </div>                            
+                            </div>
                         </div>
                     </div>
                     <div class="slide" id="slide-6">  <!-- SLIDE para Afiliación -->
@@ -211,13 +224,13 @@
                             <!-- Visor de PDF -->
                             <div class="pdf-container">
                                 <iframe id="pdfViewer" src="Afiliacion.pdf#toolbar=0" width="100%" height="700px" style="border:none;"></iframe>
-                            </div>                            
+                            </div>
                             <!-- Explicación a la derecha -->
                             <div class="texto-banner afiliacion-info">
                                 <h1>Formulario de Afiliación</h1>
                                 <p>Por favor, llena el formulario interactivo directamente en el visor de PDF. Una vez completado, usa el botón de descarga para guardarlo con tus datos.</p>
                                 <p>Después de descargarlo, imprime el formulario y llévalo a la oficina de SINEPUB en el <strong>séptimo piso de la Torre Capilla</strong>. Asegúrate de agregar tu firma y huella antes de entregarlo.</p>
-                                
+
                                 <!-- Botón para descargar PDF llenado -->
                                 <button id="downloadPdf" class="boton-descargar">Descargar Formulario Lleno</button>
                             </div>
@@ -329,25 +342,45 @@
                     </div>
                 </div>
             </div>
-        </footer> 
+        </footer>
         <!-- CONTENEDOR DEL MENÚ MÓVIL LATERAL - Añadido aquí -->
         <div id="mobile-menu-container" class="mobile-menu" aria-hidden="true">
             <!-- El contenido (la lista ul) será clonado aquí por JavaScript -->
-        </div>    
-        
+        </div>
+
         <!-- Botón flotante con restricción de acceso -->
         <div id="boton-flotante">
             <button id="chatbot-button">🗣️ Acceder a los Beneficios (Solo Afiliados)</button>
         </div>
-        <!-- Agregar el botón flotante -->
-        <div id="chatbot-container" style="display: none;">
-            <elevenlabs-convai agent-id="a4xeAlFI8Oq0oVnTvUps"></elevenlabs-convai>
-            <script src="https://elevenlabs.io/convai-widget/index.js" type="text/javascript"></script>
+        <!-- Contenedor del chatbot -->
+        <div id="chatbot-container" style="display: none;"></div>
+
+        <!-- Contenedor del video de la IA (inicialmente oculto) -->
+        <div id="ai-video-container" class="ai-video-container" style="display: none;">
+            <div class="video-wrapper">
+                <!-- Video de espera (idle) -->
+                <video id="idle-video" class="ai-avatar-video active" autoplay loop muted playsinline preload="auto">
+                    <source src="1.mp4" type="video/mp4">
+                    Tu navegador no soporta videos HTML5.
+                </video>
+
+                <!-- Video de habla (speaking) -->
+                <video id="speaking-video" class="ai-avatar-video" autoplay loop muted playsinline preload="auto">
+                    <source src="2.mp4" type="video/mp4">
+                    Tu navegador no soporta videos HTML5.
+                </video>
+            </div>
         </div>
-        <script src="slider.js" defer></script>   
+        <script src="config.js"></script>
+        <script src="elektra-chat.js" defer></script>
+        <script src="slider.js" defer></script>
         <script src="pdf.js" defer></script>
+        <script src="chat-integration.js" defer></script>
+        <script src="chat-button.js" defer></script>
+        <script src="auth-popup.js" defer></script>
         <script src="chatbot-access.js" defer></script>
         <script src="afiliacion.js" defer></script>
         <script src="menu-mobile.js" defer></script>
+        <script src="video-bienvenida.js" defer></script>
     </body>
     </html>
