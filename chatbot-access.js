@@ -3,113 +3,31 @@
 
 // 🔹 Función para mostrar el Popup de autenticación
 function showAuthPopup() {
-    console.log("🛠 Intentando mostrar el popup...");
-
-    const existingPopup = document.getElementById("auth-popup");
-    if (existingPopup) {
-        console.log("⚠ Popup ya está abierto.");
-        return;
+    console.log("🛠 Redirigiendo a la función de autenticación en auth-popup.js");
+    
+    // Verificar si la función existe en el ámbito global (window)
+    if (typeof window.showAuthPopup === 'function') {
+        window.showAuthPopup();
+    } else {
+        console.error("❌ La función showAuthPopup no está disponible globalmente. Asegúrate de que auth-popup.js se cargue antes que chatbot-access.js");
+        alert("Error al cargar el sistema de autenticación. Por favor, recarga la página.");
     }
-
-    const popup = document.createElement("div");
-    popup.id = "auth-popup";
-    popup.style.position = "fixed";
-    popup.style.top = "50%";
-    popup.style.left = "50%";
-    popup.style.transform = "translate(-50%, -50%)";
-    popup.style.background = "white";
-    popup.style.padding = "20px";
-    popup.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
-    popup.style.zIndex = "10000";
-    popup.style.borderRadius = "8px";
-    popup.style.textAlign = "center";
-
-    popup.innerHTML = `
-        <h3>Acceso Restringido, Solo Afiliados</h3>
-        <p>Ingrese su número de cédula para continuar</p>
-        <input type="text" id="cedula-input" placeholder="Cédula">
-        <button id="verificar-cedula-btn">Verificar</button>
-        <button id="cerrar-popup-btn">Cerrar</button>
-    `;
-
-    document.body.appendChild(popup);
-    console.log("✅ Popup de autenticación añadido al DOM.");
-
-    // Agregar event listeners a los botones
-    document.getElementById('verificar-cedula-btn').addEventListener('click', verifyCedula);
-    document.getElementById('cerrar-popup-btn').addEventListener('click', () => {
-        document.getElementById('auth-popup').remove();
-    });
-
-    // Permitir enviar con Enter
-    document.getElementById('cedula-input').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            verifyCedula();
-        }
-    });
 }
 
 // ✅ Verificación de cédula
 function verifyCedula() {
+    console.log("🛠 Redirigiendo a la función de verificación en auth-popup.js");
+    
+    // Obtener el valor de la cédula
     const cedula = document.getElementById("cedula-input").value;
-    const jsonBinUrl = "https://api.jsonbin.io/v3/b/67a87a39e41b4d34e4870c44";
-    const apiKey = "$2a$10$Z828YxzIHQXkevNBQmzlIuLXVpdJQafXGR.aTqC8N05u0DNuMp.wS";
-
-    fetch(jsonBinUrl, {
-        method: "GET",
-        headers: {
-            "X-Master-Key": apiKey,
-            "Content-Type": "application/json"
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log("📡 Respuesta de JSONBin:", data);
-
-        const afiliados = data.record ? data.record.afiliados : data.afiliados;
-        const afiliado = afiliados.find(persona => persona.cedula === cedula);
-
-        if (afiliado) {
-            const nombre = afiliado.nombre;
-            const cargo = afiliado.cargo;
-            let mensajeBienvenida = `<h2>Bienvenido al Sindicato</h2>`;
-
-            if (cargo !== "Afiliado") {
-                mensajeBienvenida += `
-                    <p>Hola <strong>${nombre}</strong>, un placer volverte a saludar.</p>
-                    <p>Como <strong>${cargo}</strong> de SINEPUB HUV, tienes un papel fundamental en la representación y defensa de nuestros afiliados.</p>
-                    <p><strong>Te invitamos a utilizar la Inteligencia Artificial para:</strong></p>
-                    <ul>
-                        <li>📑 Acceder rápidamente a documentos y acuerdos.</li>
-                        <li>📌 Consultar normativas y estatutos.</li>
-                        <li>🤝 Obtener información clave sobre negociaciones sindicales.</li>
-                    </ul>
-                    <p><strong>Ademas tienes acceso a los estatutos y modulos de información, nos preocupamos por tu evolución</strong></p>`;
-            } else {
-                mensajeBienvenida += `
-                    <p>Hola <strong>${nombre}</strong>, bienvenido a nuestra comunidad sindical.</p>
-                    <p><strong>Como afiliado, puedes aprovechar la Inteligencia Artificial para:</strong></p>
-                    <ul>
-                        <li>🔍 Consultar beneficios del sindicato.</li>
-                        <li>📚 Revisar los estatutos y normativas.</li>
-                        <li>🎓 Informarte sobre la carrera administrativa y crecimiento profesional.</li>
-                        <li>📝 Conocer los acuerdos colectivos recientes.</li>
-                    </ul>
-                    <p><strong>Ademas tienes acceso a los estatutos y modulos de información, nos preocupamos por tu evolución</strong></p>
-                    <p>¡Tu participación es clave para fortalecer nuestra organización!</p>`;
-            }
-            console.log("🟢 Mensaje de bienvenida generado:", mensajeBienvenida);
-            mostrarPopupContrasena(nombre, cargo, mensajeBienvenida);  // ✅ Asegurar que se verifica la contraseña maestra tras validación
-        } else {
-            localStorage.setItem("afiliado", "no");
-            bloquearBoton();
-            mostrarPopupError();
-        }
-    })
-    .catch(error => {
-        console.error("🚨 Error en la verificación de cédula:", error);
-        alert("⚠ Ocurrió un error al verificar la cédula.");
-    });
+    
+    // Verificar si la función existe en el ámbito global (window)
+    if (typeof window.verifyCedula === 'function') {
+        window.verifyCedula(cedula);
+    } else {
+        console.error("❌ La función verifyCedula no está disponible globalmente. Asegúrate de que auth-popup.js se cargue antes que chatbot-access.js");
+        alert("Error al cargar el sistema de verificación. Por favor, recarga la página.");
+    }
 }
 
 // ✅ Función corregida para mostrar el popup

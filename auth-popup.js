@@ -409,6 +409,7 @@ function verificarPerfilUsuario() {
             return response.text().then(text => {
                 console.error("⚠️ Respuesta no es JSON:", contentType);
                 console.error("Contenido recibido (primeros 500 caracteres):", text.substring(0, 500) + "...");
+                console.error("URL completa de la solicitud:", `${getBackendUrl()}/obtener_perfil`);
                 throw new Error('La respuesta del servidor no es JSON válido');
             });
         }
@@ -668,16 +669,16 @@ function guardarPerfilUsuario(cedula, nombre, correo, foto, guardarBtn, cancelar
             // --- ACTUALIZAR UI INMEDIATAMENTE ---
             if (!window.location.pathname.includes('publicidad.html')) {
                 console.log("   - [GuardarPerfil] Actualizando UI para index/otras...");
-                const initialAuthButton = document.getElementById('chatbot-button'); 
-                if (initialAuthButton) {
-                    initialAuthButton.style.display = 'none';
-                    console.log("      - Botón inicial (#chatbot-button) oculto.");
+                const initialContainer = document.getElementById('boton-flotante'); // <-- CONTENEDOR INICIAL
+                if (initialContainer) {
+                    initialContainer.style.display = 'none'; // <-- OCULTAR contenedor inicial
+                    console.log("      - Contenedor inicial (#boton-flotante) oculto.");
                 } else {
-                    console.warn("      - No se encontró el botón inicial (#chatbot-button) para ocultar.");
+                    console.warn("      - No se encontró el contenedor inicial (#boton-flotante) para ocultar.");
                 }
-                if (window.crearBotonFlotante) {
-                    crearBotonFlotante();
-                    console.log("      - Botón flotante asegurado.");
+                if (window.crearBotonFlotante) { 
+                    crearBotonFlotante(); // <-- MOSTRAR el flotante real
+                    console.log("      - Botón flotante real asegurado.");
                 } else {
                      console.error("      - La función crearBotonFlotante no está definida.");
                 }
@@ -804,6 +805,7 @@ function activarChatbot() {
     const botonFlotante = document.getElementById("boton-flotante");
     const contenedorChatbot = document.getElementById("chatbot-container");
     const registrarBtn = document.getElementById("registrar-publicidad");
+    const videoContainer = document.getElementById("ai-video-container"); // <-- Contenedor del video
 
     // Ocultar botón y mostrar/ocultar enlaces
     if (botonChat) botonChat.style.display = "none";
@@ -812,9 +814,9 @@ function activarChatbot() {
     if (linkModulos) linkModulos.style.display = "inline";
     if (linkAfiliacion) linkAfiliacion.style.display = "none";
 
-    // Mostrar y configurar el contenedor del chatbot
+    // Mostrar y configurar el contenedor del chatbot Y EL VIDEO
     if (contenedorChatbot) {
-        contenedorChatbot.style.display = "block";
+        contenedorChatbot.style.display = "block"; // <-- Mostrar contenedor del chat
         contenedorChatbot.innerHTML = `
             <div class="elektra-chat-interface">
                 <div class="chat-header">
@@ -876,8 +878,18 @@ function activarChatbot() {
                 }
             });
         }
+
+        // Mostrar también el contenedor del video
+        if (videoContainer) {
+            console.log("🎬 Mostrando contenedor de video AI.");
+            videoContainer.style.display = "block"; // O 'flex' o lo que corresponda
+            // Aquí podrías añadir lógica para iniciar la reproducción si es necesario
+        } else {
+            console.warn("🎬 Contenedor de video AI (#ai-video-container) no encontrado.");
+        }
+
     } else {
-        console.error("No se encontró el contenedor del chatbot");
+        console.error("No se encontró el contenedor del chatbot (#chatbot-container)");
     }
 }
 
@@ -926,12 +938,11 @@ function crearBotonFlotante() {
         
         // Agregar evento para reabrir el chat
         botonFlotante.addEventListener('click', () => {
-            // --- MODIFICADO: Llamar a activarChatbot para abrir E inicializar ---
-            console.log("🖱️ Botón flotante clickeado, activando chatbot...");
-            activarChatbot(); 
-            
-            // Ocultar el botón flotante después de activar el chat
+            console.log("🖱️ Botón flotante real clickeado, activando chatbot...");
+            // Ocultar ESTE botón flotante real
             botonFlotante.style.display = "none"; 
+            // Llamar a activarChatbot para mostrar el contenedor del chat y el video
+            activarChatbot(); 
         });
     }
     
@@ -1021,11 +1032,13 @@ setInterval(verificarYRestaurarChatbot, 2000);
 // Exponer funciones globalmente
 window.showAuthPopup = showAuthPopup;
 window.verifyCedula = verifyCedula;
+window.verificarCedulaEnServidor = verificarCedulaEnServidor;
 window.mostrarPopupContrasena = mostrarPopupContrasena;
 window.mostrarPopupBienvenida = mostrarPopupBienvenida;
 window.mostrarPopupError = mostrarPopupError;
 window.bloquearBoton = bloquearBoton;
 window.activarChatbot = activarChatbot;
+window.verificarPerfilUsuario = verificarPerfilUsuario;
 
 // Función para mostrar el formulario de perfil
 function mostrarFormularioPerfil(cedula, nombre) {

@@ -33,29 +33,26 @@ function verificarEstadoUsuarioAlCargar() {
         verificarPerfilEnBackend(cedula);
     } else {
         console.log("👤 Profile-Checker: Sin cédula ni perfil completo en localStorage. Estado inicial.");
-        // Asegurarse de que el botón de inicio esté visible y el flotante oculto
-        // SOLO si NO estamos en publicidad.html
+        
         if (!window.location.pathname.includes('publicidad.html')) {
-            console.log("   - En index/otras, intentando mostrar botón inicial...");
-            const initialAuthButton = document.getElementById('chatbot-button');
-            const botonFlotante = document.getElementById("boton-flotante");
+            console.log("   - En index/otras, configurando UI inicial...");
+            const initialContainer = document.getElementById('boton-flotante'); // <-- CONTENEDOR INICIAL
+            const chatContainer = document.getElementById('chatbot-container');
+            const videoContainer = document.getElementById('ai-video-container');
+            const realFloatingButton = document.querySelector('.chat-flotante'); // <-- Asumiendo que crearBotonFlotante usa esta clase
             
-            if (initialAuthButton) {
-                console.log("      - Botón inicial (#chatbot-button) ENCONTRADO.");
-                initialAuthButton.style.display = 'block'; 
-                console.log(`      - Estilo display aplicado a #chatbot-button: ${initialAuthButton.style.display}`);
+            if (initialContainer) {
+                 console.log("      - Contenedor inicial (#boton-flotante) ENCONTRADO.");
+                 initialContainer.style.display = 'block'; // <-- MOSTRAR el contenedor inicial
+                 console.log(`      - Estilo display aplicado a #boton-flotante: ${initialContainer.style.display}`);
             } else {
-                console.error("      - ¡ERROR! No se encontró el botón inicial con id='chatbot-button'.");
+                 console.error("      - ¡ERROR! No se encontró el contenedor inicial con id='boton-flotante'.");
             }
             
-            if (botonFlotante) {
-                 console.log("      - Botón flotante (#boton-flotante) encontrado.");
-                 botonFlotante.style.display = 'none';
-                 console.log(`      - Estilo display aplicado a #boton-flotante: ${botonFlotante.style.display}`);
-            } else {
-                 console.warn("      - No se encontró el botón flotante con id='boton-flotante' (puede ser normal si no existe aún).");
-            }
-            // console.log("   - Asegurando botón inicial visible y flotante oculto para index/otras."); // Log anterior redundante
+            if (chatContainer) chatContainer.style.display = 'none';
+            if (videoContainer) videoContainer.style.display = 'none';
+            if (realFloatingButton) realFloatingButton.style.display = 'none'; // Ocultar el flotante real si existe
+            
         } else {
             console.log("   - En publicidad.html, no se muestra botón de chat inicial.");
         }
@@ -159,59 +156,57 @@ function verificarPerfilEnBackend(cedula) {
             console.log("❌ Profile-Checker: Perfil incompleto según el backend.");
             // Aquí podríamos opcionalmente forzar la aparición del popup de completar perfil si es necesario
             // o simplemente dejar la UI como está (con botón inicial visible)
-            const initialAuthButton = document.getElementById('chatbot-button');
-            const botonFlotante = document.getElementById("boton-flotante");
-            if (initialAuthButton) initialAuthButton.style.display = 'block';
-            if (botonFlotante) botonFlotante.style.display = 'none';
+            const initialContainer = document.getElementById('boton-flotante');
+            if (initialContainer) initialContainer.style.display = 'block';
         }
     })
     .catch(error => {
         console.error("❌ Profile-Checker: Error al verificar perfil con el backend:", error);
         // En caso de error, mantener estado inicial
-        const initialAuthButton = document.getElementById('chatbot-button');
-        const botonFlotante = document.getElementById("boton-flotante");
-        if (initialAuthButton) initialAuthButton.style.display = 'block';
-        if (botonFlotante) botonFlotante.style.display = 'none';
+        const initialContainer = document.getElementById('boton-flotante');
+        if (initialContainer) initialContainer.style.display = 'block';
     });
 }
 
-// Nueva función para centralizar la actualización de UI cuando el perfil está completo
+// Función para actualizar UI cuando el perfil está completo
 function actualizarUIParaPerfilCompleto() {
     console.log("⚙️ Profile-Checker: Actualizando UI para perfil completo...");
     
-    // Lógica específica según la página
     if (!window.location.pathname.includes('publicidad.html')) {
         // --- Lógica para INDEX.HTML y otras páginas --- 
         console.log("   - Ejecutando UI para index/otras...");
-        // Ocultar botón inicial
-        const initialAuthButton = document.getElementById('chatbot-button');
-        if (initialAuthButton) {
-            initialAuthButton.style.display = 'none';
-            console.log("      - Botón inicial (#chatbot-button) oculto.");
+        const initialContainer = document.getElementById('boton-flotante'); // <-- CONTENEDOR INICIAL
+        
+        if (initialContainer) {
+            initialContainer.style.display = 'none'; // <-- OCULTAR el contenedor inicial
+            console.log("      - Contenedor inicial (#boton-flotante) oculto.");
         }
         
-        // Asegurar que el botón flotante exista y esté visible
         if (window.crearBotonFlotante) {
-            window.crearBotonFlotante();
-            console.log("      - Botón flotante asegurado.");
+            window.crearBotonFlotante(); // <-- Mostrar el flotante REAL
+            console.log("      - Botón flotante real asegurado.");
         } else {
             console.warn("      - Función crearBotonFlotante no disponible.");
         }
     } else {
         // --- Lógica para PUBLICIDAD.HTML --- 
         console.log("   - Ejecutando UI para publicidad.html...");
-        // Configurar botón de publicidad 
+        const initialContainer = document.getElementById('boton-flotante');
+        const realFloatingButton = document.querySelector('.chat-flotante'); 
+        const chatContainer = document.getElementById('chatbot-container');
+        const videoContainer = document.getElementById('ai-video-container');
+
+        if (initialContainer) initialContainer.style.display = 'none';
+        if (realFloatingButton) realFloatingButton.style.display = 'none'; 
+        if (chatContainer) chatContainer.style.display = 'none';
+        if (videoContainer) videoContainer.style.display = 'none';
+        console.log("      - Contenedores/botones de chat ocultos.");
+
         if (window.configurarBotonRegistro) {
             console.log("      - Configurando botón de registro de publicidad...");
             window.configurarBotonRegistro();
         } else {
             console.warn("      - Función configurarBotonRegistro no disponible.");
         }
-        // Asegurarse que botones de chat NO estén visibles
-        const initialAuthButton = document.getElementById('chatbot-button');
-        const botonFlotante = document.getElementById("boton-flotante");
-         if (initialAuthButton) initialAuthButton.style.display = 'none';
-         if (botonFlotante) botonFlotante.style.display = 'none';
-         console.log("      - Botones de chat (inicial y flotante) ocultos.");
     }
 } 
