@@ -856,22 +856,6 @@ function activarChatbot() {
     } else {
         console.error("No se encontró el contenedor del chatbot");
     }
-
-    // Asegurarse de que el botón de registro esté habilitado si el usuario está autenticado
-    if (window.configurarBotonRegistro) {
-        console.log("🔑 Llamando a configurarBotonRegistro desde activarChatbot");
-        window.configurarBotonRegistro();
-    } else if (registrarBtn) {
-        // Si no está disponible la función pero el botón existe y el usuario está autenticado
-        const isUserAuth = localStorage.getItem("afiliado") === "yes";
-        const isProfileComplete = localStorage.getItem("perfil_completo") === "true";
-        
-        if (isUserAuth || isProfileComplete) {
-            console.log("🔓 Habilitando botón de registro directamente");
-            registrarBtn.disabled = false;
-            registrarBtn.classList.remove('boton-deshabilitado');
-        }
-    }
 }
 
 // Función para crear el botón flotante de chat si no existe
