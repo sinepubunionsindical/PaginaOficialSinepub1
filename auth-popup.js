@@ -329,20 +329,30 @@ function mostrarPopupBienvenida(mensaje) {
 // NUEVA FUNCIÓN: Verificar si el usuario necesita completar su perfil
 function verificarPerfilUsuario(cedula, nombre, cargo) {
     console.log("🔍 Verificando perfil de usuario en el backend...");
+    console.log("🔑 Datos: Cédula:", cedula, "Nombre:", nombre, "Cargo:", cargo);
     
     // URL del backend
     const backendUrl = window.API_ENDPOINTS ? window.API_ENDPOINTS.usuario + "/" + cedula : "http://localhost:8000/api/usuario/" + cedula;
+    console.log("🌐 URL de verificación de perfil:", backendUrl);
     
     // Solicitar datos del usuario
     fetch(backendUrl)
-        .then(response => response.json())
+        .then(response => {
+            console.log("📡 Status respuesta perfil:", response.status, response.statusText);
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+            }
+            return response.json();
+        })
         .then(data => {
             console.log("📡 Datos del usuario recibidos:", data);
             
             if (data.status === "pendiente" || !data.foto_ruta || !data.email) {
+                console.log("⚠️ Perfil incompleto o pendiente, mostrando formulario...");
                 // Usuario no existe o falta información, mostrar formulario
                 mostrarFormularioCompletarPerfil(cedula, nombre, cargo);
             } else {
+                console.log("✅ Perfil completo, activando chat...");
                 // Usuario existe y tiene toda la información, activar chat
                 if (window.activateChatAfterAuth) {
                     window.activateChatAfterAuth(nombre, cargo);
@@ -353,6 +363,7 @@ function verificarPerfilUsuario(cedula, nombre, cargo) {
         })
         .catch(error => {
             console.error("🚨 Error al verificar perfil:", error);
+            console.log("⚠️ Continuando con activación normal debido al error");
             // En caso de error, continuar con activación normal
             if (window.activateChatAfterAuth) {
                 window.activateChatAfterAuth(nombre, cargo);

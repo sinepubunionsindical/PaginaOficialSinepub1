@@ -191,8 +191,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Función para enviar datos al backend
     function enviarDatosAlBackend(datos, submitBtn, originalBtnText) {
         // Usar la URL centralizada desde config.js
-        const backendUrl = window.API_ENDPOINTS ? window.API_ENDPOINTS.publicidad : 'https://d01c-2800-484-8786-7d00-a958-9ef1-7e9c-89b9.ngrok-free.app/api/publicidad';
-
+        const backendUrl = window.API_ENDPOINTS ? window.API_ENDPOINTS.publicidad : 'http://localhost:8000/api/publicidad';
+        
+        console.log("🔄 Enviando publicidad al backend:", backendUrl);
+        console.log("📦 Datos a enviar:", datos);
+        
         fetch(backendUrl, {
             method: 'POST',
             headers: {
@@ -200,8 +203,16 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: JSON.stringify(datos)
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log("📡 Status respuesta publicidad:", response.status, response.statusText);
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+            }
+            return response.json();
+        })
         .then(data => {
+            console.log("📡 Respuesta del backend para publicidad:", data);
+            
             if (data.error) {
                 throw new Error(data.error);
             }
@@ -223,8 +234,8 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => {
             // Mostrar error
+            console.error('Error en envío de publicidad:', error);
             alert('Error al enviar la publicidad: ' + error.message);
-            console.error('Error:', error);
 
             // Restaurar botón
             submitBtn.textContent = originalBtnText;
