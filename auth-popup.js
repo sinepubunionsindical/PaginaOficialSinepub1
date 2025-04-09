@@ -81,12 +81,28 @@ function verifyCedula(cedula) {
             "Content-Type": "application/json"
         }
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log("📡 Estado de respuesta:", response.status, response.statusText);
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+    })
     .then(data => {
         console.log("📡 Respuesta de API de afiliados:", data);
+        
+        if (!data || !data.afiliados) {
+            throw new Error("Estructura de datos inválida: falta la propiedad 'afiliados'");
+        }
 
-        const afiliados = data.afiliados || [];
+        const afiliados = data.afiliados;
+        if (!Array.isArray(afiliados)) {
+            throw new Error("Formato incorrecto: 'afiliados' no es un array");
+        }
+        
+        console.log(`📋 Se encontraron ${afiliados.length} afiliados en total`);
         const afiliado = afiliados.find(persona => persona.cedula === cedula);
+        console.log("🔍 Búsqueda de afiliado:", afiliado ? "Encontrado" : "No encontrado");
 
         if (afiliado) {
             const nombre = afiliado.nombre;
@@ -127,7 +143,7 @@ function verifyCedula(cedula) {
     })
     .catch(error => {
         console.error("🚨 Error en la verificación de cédula:", error);
-        alert("⚠ Ocurrió un error al verificar la cédula.");
+        alert(`⚠ Ocurrió un error al verificar la cédula: ${error.message}`);
     });
 }
 
