@@ -150,6 +150,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     formDataObj[key] = value;
                 }
             });
+            
+            // Asignar el nombre del usuario autenticado
+            const nombreUsuario = localStorage.getItem("nombre");
+            if (nombreUsuario) {
+                formDataObj["nombre"] = nombreUsuario;
+            }
+            
+            // Usar el email guardado en localStorage si el campo está vacío
+            const emailGuardado = localStorage.getItem("email");
+            if (emailGuardado && (!formDataObj.email || formDataObj.email.trim() === "")) {
+                formDataObj.email = emailGuardado;
+                document.getElementById('email').value = emailGuardado;
+            }
 
             // Procesar la imagen si existe
             const imagenInput = document.getElementById('imagen');

@@ -67,6 +67,9 @@ function verifyCedula(cedula) {
         return;
     }
 
+    // NUEVO: Guardar cédula en localStorage
+    localStorage.setItem("cedula", cedula);
+
     const jsonBinUrl = "https://api.jsonbin.io/v3/b/67a87a39e41b4d34e4870c44";
     const apiKey = "$2a$10$Z828YxzIHQXkevNBQmzlIuLXVpdJQafXGR.aTqC8N05u0DNuMp.wS";
 
@@ -266,14 +269,21 @@ function mostrarPopupBienvenida(mensaje) {
             cargo = cargoMatch[1];
             localStorage.setItem("cargo", cargo);
         }
-
-        // Activar el chat con el nuevo sistema de botón flotante
-        if (window.activateChatAfterAuth) {
-            window.activateChatAfterAuth(nombre, cargo);
+        
+        // NUEVO: Verificar si el usuario ya existe en el backend y solicitar foto/email si es necesario
+        const cedula = localStorage.getItem("cedula");
+        if (cedula) {
+            verificarPerfilUsuario(cedula, nombre, cargo);
         } else {
-            console.error("La función activateChatAfterAuth no está disponible");
-            // Fallback al método antiguo
-            activarChatbot();
+            // Si no tenemos la cédula almacenada, continuar con activación normal
+            // Activar el chat con el nuevo sistema de botón flotante
+            if (window.activateChatAfterAuth) {
+                window.activateChatAfterAuth(nombre, cargo);
+            } else {
+                console.error("La función activateChatAfterAuth no está disponible");
+                // Fallback al método antiguo
+                activarChatbot();
+            }
         }
     });
 
@@ -282,6 +292,184 @@ function mostrarPopupBienvenida(mensaje) {
     if (authPopup) {
         authPopup.remove();
     }
+}
+
+// NUEVA FUNCIÓN: Verificar si el usuario necesita completar su perfil
+function verificarPerfilUsuario(cedula, nombre, cargo) {
+    console.log("🔍 Verificando perfil de usuario en el backend...");
+    
+    // URL del backend
+    const backendUrl = "http://localhost:8000/api/usuario/" + cedula;
+    
+    // Solicitar datos del usuario
+    fetch(backendUrl)
+        .then(response => response.json())
+        .then(data => {
+            console.log("📡 Datos del usuario recibidos:", data);
+            
+            if (data.status === "pendiente" || !data.foto_ruta || !data.email) {
+                // Usuario no existe o falta información, mostrar formulario
+                mostrarFormularioCompletarPerfil(cedula, nombre, cargo);
+            } else {
+                // Usuario existe y tiene toda la información, activar chat
+                if (window.activateChatAfterAuth) {
+                    window.activateChatAfterAuth(nombre, cargo);
+                } else {
+                    activarChatbot();
+                }
+            }
+        })
+        .catch(error => {
+            console.error("🚨 Error al verificar perfil:", error);
+            // En caso de error, continuar con activación normal
+            if (window.activateChatAfterAuth) {
+                window.activateChatAfterAuth(nombre, cargo);
+            } else {
+                activarChatbot();
+            }
+        });
+}
+
+// NUEVA FUNCIÓN: Mostrar formulario para completar perfil
+function mostrarFormularioCompletarPerfil(cedula, nombre, cargo) {
+    console.log("📝 Mostrando formulario para completar perfil...");
+    
+    // Crear popup para el formulario
+    const popupPerfil = document.createElement("div");
+    popupPerfil.id = "popup-perfil";
+    popupPerfil.style.position = "fixed";
+    popupPerfil.style.top = "50%";
+    popupPerfil.style.left = "50%";
+    popupPerfil.style.transform = "translate(-50%, -50%)";
+    popupPerfil.style.background = "#ffffff";
+    popupPerfil.style.color = "#333333";
+    popupPerfil.style.padding = "30px";
+    popupPerfil.style.borderRadius = "10px";
+    popupPerfil.style.width = "500px";
+    popupPerfil.style.boxShadow = "0 5px 15px rgba(0,0,0,0.3)";
+    popupPerfil.style.zIndex = "10000";
+    
+    popupPerfil.innerHTML = `
+        <h2 style="color: #0249aa; text-align: center;">Completa tu perfil</h2>
+        <p style="text-align: center;">Para mejorar tu experiencia, necesitamos algunos datos adicionales:</p>
+        
+        <form id="perfil-form" style="margin-top: 20px;">
+            <div style="margin-bottom: 15px;">
+                <label for="user-email" style="display: block; margin-bottom: 5px; font-weight: bold;">Correo electrónico:</label>
+                <input type="email" id="user-email" placeholder="tu@email.com" 
+                       style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" required>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label for="user-photo" style="display: block; margin-bottom: 5px; font-weight: bold;">Foto de perfil:</label>
+                <input type="file" id="user-photo" accept="image/*" 
+                       style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <p style="font-size: 12px; color: #666; margin-top: 5px;">Una foto de perfil nos ayuda a personalizar tu experiencia.</p>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                <button type="button" id="skip-perfil" 
+                        style="padding: 10px 15px; border: none; border-radius: 5px; background-color: #cccccc; cursor: pointer;">
+                    Omitir
+                </button>
+                <button type="submit" id="guardar-perfil" 
+                        style="padding: 10px 15px; border: none; border-radius: 5px; background-color: #0249aa; color: white; cursor: pointer;">
+                    Guardar perfil
+                </button>
+            </div>
+        </form>
+    `;
+    
+    document.body.appendChild(popupPerfil);
+    
+    // Manejar envío del formulario
+    document.getElementById("perfil-form").addEventListener("submit", function(e) {
+        e.preventDefault();
+        
+        const email = document.getElementById("user-email").value;
+        const fileInput = document.getElementById("user-photo");
+        
+        // Preparar datos del usuario
+        const userData = {
+            cedula: cedula,
+            nombre: nombre,
+            cargo: cargo,
+            email: email,
+            fecha_registro: new Date().toISOString()
+        };
+        
+        // Si hay foto, procesarla
+        if (fileInput.files && fileInput.files[0]) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                userData.foto_base64 = e.target.result;
+                enviarDatosUsuario(userData, popupPerfil);
+            };
+            
+            reader.readAsDataURL(fileInput.files[0]);
+        } else {
+            // Enviar sin foto
+            enviarDatosUsuario(userData, popupPerfil);
+        }
+    });
+    
+    // Manejar botón de omitir
+    document.getElementById("skip-perfil").addEventListener("click", function() {
+        popupPerfil.remove();
+        
+        // Activar chat
+        if (window.activateChatAfterAuth) {
+            window.activateChatAfterAuth(nombre, cargo);
+        } else {
+            activarChatbot();
+        }
+    });
+}
+
+// NUEVA FUNCIÓN: Enviar datos del usuario al backend
+function enviarDatosUsuario(userData, popupElement) {
+    console.log("📤 Enviando datos de usuario al backend...", userData);
+    
+    // URL del backend
+    const backendUrl = "http://localhost:8000/api/usuario";
+    
+    // Enviar datos al backend
+    fetch(backendUrl, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(userData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("📡 Respuesta del backend:", data);
+        
+        if (data.success) {
+            // Guardar email en localStorage
+            localStorage.setItem("email", userData.email);
+            
+            // Cerrar popup
+            popupElement.remove();
+            
+            // Mostrar mensaje de éxito
+            alert("✅ Perfil actualizado correctamente");
+            
+            // Activar chat
+            if (window.activateChatAfterAuth) {
+                window.activateChatAfterAuth(userData.nombre, userData.cargo);
+            } else {
+                activarChatbot();
+            }
+        } else {
+            alert("❌ Error al actualizar perfil: " + (data.error || "Error desconocido"));
+        }
+    })
+    .catch(error => {
+        console.error("🚨 Error al enviar datos:", error);
+        alert("❌ Error al actualizar perfil. Por favor, intenta de nuevo.");
+    });
 }
 
 // Función para mostrar el popup de error
