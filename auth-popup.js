@@ -383,7 +383,7 @@ function verificarPerfilUsuario() {
         }
         
         // --- MODIFICADO: Solo crear el botón flotante, no activar el chat --- 
-        console.log("👤 Perfil completo (localStorage). Asegurando que el botón flotante del chat esté visible.");
+        console.log("👤 Perfil completo (LocalStorage). Asegurando botón flotante.");
         crearBotonFlotante();
         return; 
     }
@@ -439,9 +439,9 @@ function verificarPerfilUsuario() {
             }
             
             // --- MODIFICADO: Solo crear el botón flotante, no activar el chat --- 
-            console.log("👤 Perfil completo. Asegurando que el botón flotante del chat esté visible.");
+            console.log("👤 Perfil completo (Backend). Asegurando botón flotante.");
             crearBotonFlotante(); 
-            // Comentado: activarChatbot(); 
+            // Ya no se llama a activarChatbot aquí.
             
         } else {
             // Mostrar formulario para completar perfil
@@ -660,6 +660,7 @@ function guardarPerfilUsuario(cedula, nombre, correo, foto, guardarBtn, cancelar
             
             // Añadir bandera para indicar que el perfil está completo
             localStorage.setItem('perfil_completo', 'true');
+            console.log("💾 localStorage: perfil_completo establecido a true.");
             
             // Cerrar el popup
             closeAuthPopup();

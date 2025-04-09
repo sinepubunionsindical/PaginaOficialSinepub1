@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Verificar si el usuario está autenticado y configurar el botón de registro
     function configurarBotonRegistro() {
+        const registrarBtn = document.getElementById('registrar-publicidad');
         if (registrarBtn) {
             // Verificar si el usuario está autenticado
             const isUserAuth = localStorage.getItem("afiliado") === "yes";
@@ -24,10 +25,13 @@ document.addEventListener('DOMContentLoaded', function() {
             // Verificar si tiene cédula
             const hasCedula = localStorage.getItem("cedula") !== null;
             
-            console.log("🔐 Estado de autenticación:", isUserAuth);
-            console.log("🔐 Valor de localStorage.afiliado:", localStorage.getItem("afiliado"));
-            console.log("🔐 Perfil completo:", isProfileComplete);
-            console.log("🔐 Tiene cédula:", hasCedula);
+            // --- Log de Verificación ---
+            console.log("🔧 configurarBotonRegistro: Verificando estado:");
+            console.log(`   - localStorage afiliado: ${localStorage.getItem("afiliado")}`);
+            console.log(`   - localStorage perfil_completo: ${localStorage.getItem("perfil_completo")}`);
+            console.log(`   - isUserAuth: ${isUserAuth}`);
+            console.log(`   - isProfileComplete: ${isProfileComplete}`);
+            // --- Fin Log ---
             
             // Si el perfil está completo o el usuario está autenticado, debemos habilitarlo
             const isAuthenticated = isUserAuth || isProfileComplete;
