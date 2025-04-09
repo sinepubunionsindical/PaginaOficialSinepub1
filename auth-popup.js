@@ -376,6 +376,7 @@ function verificarPerfilUsuario(cedula, nombre, cargo) {
 // NUEVA FUNCIÓN: Mostrar formulario para completar perfil
 function mostrarFormularioCompletarPerfil(cedula, nombre, cargo) {
     console.log("📝 Mostrando formulario para completar perfil...");
+    console.log("📋 Datos para el perfil - Cédula:", cedula, "Nombre:", nombre, "Cargo:", cargo);
     
     // Crear popup para el formulario
     const popupPerfil = document.createElement("div");
@@ -424,10 +425,12 @@ function mostrarFormularioCompletarPerfil(cedula, nombre, cargo) {
     `;
     
     document.body.appendChild(popupPerfil);
+    console.log("✅ Formulario de perfil añadido al DOM");
     
     // Manejar envío del formulario
     document.getElementById("perfil-form").addEventListener("submit", function(e) {
         e.preventDefault();
+        console.log("📤 Enviando formulario de perfil...");
         
         const email = document.getElementById("user-email").value;
         const fileInput = document.getElementById("user-photo");
@@ -441,24 +444,55 @@ function mostrarFormularioCompletarPerfil(cedula, nombre, cargo) {
             fecha_registro: new Date().toISOString()
         };
         
+        console.log("📦 Datos a enviar:", userData);
+        
         // Si hay foto, procesarla
         if (fileInput.files && fileInput.files[0]) {
+            console.log("📷 Procesando foto de perfil...");
             const reader = new FileReader();
             
             reader.onload = function(e) {
-                userData.foto_base64 = e.target.result;
+                try {
+                    // Verificar que el resultado sea una cadena válida
+                    if (typeof e.target.result !== 'string') {
+                        throw new Error("Formato de imagen no válido");
+                    }
+                    
+                    // Asegurarse de que la cadena base64 esté bien formada
+                    const base64String = e.target.result;
+                    if (!base64String.startsWith('data:image/')) {
+                        throw new Error("Formato base64 no válido");
+                    }
+                    
+                    console.log("📷 Foto de perfil cargada correctamente");
+                    console.log("📷 Longitud de la foto en base64:", base64String.length);
+                    
+                    userData.foto_base64 = base64String;
+                    enviarDatosUsuario(userData, popupPerfil);
+                } catch (err) {
+                    console.error('Error procesando imagen:', err);
+                    alert('Error procesando la imagen. Enviando perfil sin foto.');
+                    enviarDatosUsuario(userData, popupPerfil);
+                }
+            };
+            
+            reader.onerror = function() {
+                console.error('Error leyendo el archivo de imagen');
+                alert('Error al leer la imagen. Enviando perfil sin foto.');
                 enviarDatosUsuario(userData, popupPerfil);
             };
             
             reader.readAsDataURL(fileInput.files[0]);
         } else {
             // Enviar sin foto
+            console.log("📝 Enviando perfil sin foto");
             enviarDatosUsuario(userData, popupPerfil);
         }
     });
     
     // Manejar botón de omitir
     document.getElementById("skip-perfil").addEventListener("click", function() {
+        console.log("⏭️ Omitiendo completar perfil");
         popupPerfil.remove();
         
         // Activar chat
@@ -472,10 +506,18 @@ function mostrarFormularioCompletarPerfil(cedula, nombre, cargo) {
 
 // NUEVA FUNCIÓN: Enviar datos del usuario al backend
 function enviarDatosUsuario(userData, popupElement) {
-    console.log("📤 Enviando datos de usuario al backend...", userData);
+    console.log("📤 Enviando datos de usuario al backend...");
     
     // URL del backend
     const backendUrl = window.API_ENDPOINTS ? window.API_ENDPOINTS.usuario : "http://localhost:8000/api/usuario";
+    console.log("🌐 URL para envío de perfil:", backendUrl);
+    
+    // Mostrar indicador de progreso
+    const btnGuardar = document.getElementById("guardar-perfil");
+    if (btnGuardar) {
+        btnGuardar.disabled = true;
+        btnGuardar.textContent = "Guardando...";
+    }
     
     // Enviar datos al backend
     fetch(backendUrl, {
@@ -485,7 +527,13 @@ function enviarDatosUsuario(userData, popupElement) {
         },
         body: JSON.stringify(userData)
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log("📡 Status respuesta perfil:", response.status, response.statusText);
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+    })
     .then(data => {
         console.log("📡 Respuesta del backend:", data);
         
@@ -506,12 +554,20 @@ function enviarDatosUsuario(userData, popupElement) {
                 activarChatbot();
             }
         } else {
+            if (btnGuardar) {
+                btnGuardar.disabled = false;
+                btnGuardar.textContent = "Guardar perfil";
+            }
             alert("❌ Error al actualizar perfil: " + (data.error || "Error desconocido"));
         }
     })
     .catch(error => {
         console.error("🚨 Error al enviar datos:", error);
-        alert("❌ Error al actualizar perfil. Por favor, intenta de nuevo.");
+        if (btnGuardar) {
+            btnGuardar.disabled = false;
+            btnGuardar.textContent = "Guardar perfil";
+        }
+        alert("❌ Error al actualizar perfil: " + error.message);
     });
 }
 

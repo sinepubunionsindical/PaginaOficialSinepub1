@@ -170,17 +170,51 @@ document.addEventListener('DOMContentLoaded', function() {
             // Procesar la imagen si existe
             const imagenInput = document.getElementById('imagen');
             if (imagenInput.files && imagenInput.files[0]) {
-                const reader = new FileReader();
+                try {
+                    const reader = new FileReader();
 
-                reader.onload = function(e) {
-                    // Agregar la imagen como base64
-                    formDataObj['imagen_base64'] = e.target.result;
+                    reader.onload = function(e) {
+                        try {
+                            // Verificar que el resultado sea una cadena válida
+                            if (typeof e.target.result !== 'string') {
+                                throw new Error("Formato de imagen no válido");
+                            }
+                            
+                            // Asegurarse de que la cadena base64 esté bien formada
+                            const base64String = e.target.result;
+                            if (!base64String.startsWith('data:image/')) {
+                                throw new Error("Formato base64 no válido");
+                            }
+                            
+                            console.log("📷 Imagen cargada correctamente");
+                            console.log("📷 Longitud de la imagen en base64:", base64String.length);
+                            
+                            // Agregar la imagen como base64
+                            formDataObj['imagen_base64'] = base64String;
 
-                    // Enviar datos al backend
+                            // Enviar datos al backend
+                            enviarDatosAlBackend(formDataObj, submitBtn, originalBtnText);
+                        } catch (err) {
+                            console.error('Error procesando imagen:', err);
+                            alert('Error procesando la imagen. Por favor, intenta con otra imagen o sin imagen.');
+                            submitBtn.textContent = originalBtnText;
+                            submitBtn.disabled = false;
+                        }
+                    };
+
+                    reader.onerror = function() {
+                        console.error('Error leyendo el archivo de imagen');
+                        alert('Error al leer la imagen. Por favor, intenta con otra imagen o sin imagen.');
+                        submitBtn.textContent = originalBtnText;
+                        submitBtn.disabled = false;
+                    };
+
+                    reader.readAsDataURL(imagenInput.files[0]);
+                } catch (err) {
+                    console.error('Error general procesando imagen:', err);
+                    alert('Error general al procesar la imagen. Enviando formulario sin imagen.');
                     enviarDatosAlBackend(formDataObj, submitBtn, originalBtnText);
-                };
-
-                reader.readAsDataURL(imagenInput.files[0]);
+                }
             } else {
                 // Enviar datos sin imagen
                 enviarDatosAlBackend(formDataObj, submitBtn, originalBtnText);

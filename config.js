@@ -13,11 +13,14 @@ const API_KEYS = {
 const BACKEND_URL = 'https://d01c-2800-484-8786-7d00-a958-9ef1-7e9c-89b9.ngrok-free.app';
 
 // Modo de depuración - cambia a true para usar localhost en lugar de ngrok
-const DEBUG_MODE = true;
+// Si hay problemas con ngrok, cambiar a true
+const DEBUG_MODE = false;
 const LOCAL_URL = 'http://localhost:8000';
 
 // URL efectiva a usar
 const EFFECTIVE_URL = DEBUG_MODE ? LOCAL_URL : BACKEND_URL;
+console.log("🔧 Configuración:", DEBUG_MODE ? "Modo depuración (localhost)" : "Modo producción (ngrok)");
+console.log("🌐 URL del backend:", EFFECTIVE_URL);
 
 // Funciones para APIs específicas
 const API_ENDPOINTS = {
