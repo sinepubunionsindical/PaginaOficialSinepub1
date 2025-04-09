@@ -30,7 +30,8 @@ const API_ENDPOINTS = {
     meGusta: `${EFFECTIVE_URL}/api/me-gusta`,
     afiliacion: `${EFFECTIVE_URL}/api/afiliacion`,
     afiliados: `${EFFECTIVE_URL}/api/afiliados`,
-    validarCodigo: `${EFFECTIVE_URL}/api/validar-codigo`
+    validarCodigo: `${EFFECTIVE_URL}/api/validar-codigo`,
+    verificarCedula: `${EFFECTIVE_URL}/api/verificar_cedula`  // Usar la misma URL base con ngrok
 };
 
 // Función para enviar formulario de afiliación por correo

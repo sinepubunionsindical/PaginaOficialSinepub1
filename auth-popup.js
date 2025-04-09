@@ -109,7 +109,14 @@ function verificarCedulaEnServidor(cedula) {
         btnVerificar.disabled = true;
     }
     
-    fetch(`${getBackendUrl()}/api/verificar_cedula`, {
+    // Usar la URL específica para verificación de cédula
+    const verificarCedulaUrl = window.API_ENDPOINTS && window.API_ENDPOINTS.verificarCedula ? 
+                              window.API_ENDPOINTS.verificarCedula : 
+                              "http://localhost:8001/api/verificar_cedula";
+    
+    console.log("📡 Usando URL para verificación:", verificarCedulaUrl);
+    
+    fetch(verificarCedulaUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -131,7 +138,7 @@ function verificarCedulaEnServidor(cedula) {
             // Si no es JSON, leer como texto y mostrar parte del contenido para diagnóstico
             return response.text().then(text => {
                 console.error("Contenido HTML recibido (primeros 500 caracteres):", text.substring(0, 500) + "...");
-                console.error("URL completa de la solicitud:", `${getBackendUrl()}/api/verificar_cedula`);
+                console.error("URL completa de la solicitud:", verificarCedulaUrl);
                 throw new Error('La respuesta del servidor no es JSON válido. Posiblemente el servidor está devolviendo una página HTML de error.');
             });
         }
