@@ -361,6 +361,32 @@ function mostrarPopupBienvenida(mensaje) {
 function verificarPerfilUsuario() {
     const cedula = localStorage.getItem("cedula");
     const nombre = localStorage.getItem("nombre");
+    const correo = localStorage.getItem("correo");
+    const email = localStorage.getItem("email");
+    const perfilCompleto = localStorage.getItem("perfil_completo");
+    
+    console.log("🔍 Verificando perfil de usuario:");
+    console.log("- Cédula:", cedula);
+    console.log("- Nombre:", nombre);
+    console.log("- Correo:", correo);
+    console.log("- Email:", email);
+    console.log("- Perfil completo:", perfilCompleto);
+    
+    // Comprobar primero si el perfil ya está marcado como completo en localStorage
+    if (perfilCompleto === "true") {
+        console.log("🔍 Perfil ya marcado como completo en localStorage");
+        
+        // Si estamos en la página de publicidad, primero configurar el botón de registro
+        if (window.configurarBotonRegistro) {
+            console.log("🔄 Reconfigurando botón de registro después de verificar perfil completo");
+            window.configurarBotonRegistro();
+        }
+        
+        // --- MODIFICADO: Solo crear el botón flotante, no activar el chat --- 
+        console.log("👤 Perfil completo (localStorage). Asegurando que el botón flotante del chat esté visible.");
+        crearBotonFlotante();
+        return; 
+    }
     
     // Obtener datos del perfil del usuario desde el backend
     fetch(`${getBackendUrl()}/obtener_perfil`, {
@@ -393,8 +419,30 @@ function verificarPerfilUsuario() {
         console.log("📡 Datos de perfil del usuario:", data);
         
         if (data.perfil_completo) {
-            // El perfil ya está completo, activar el chat
-            activarChatbot();
+            // El perfil ya está completo, guardar esta información en localStorage
+            localStorage.setItem('perfil_completo', 'true');
+            
+            // Guardar los datos del usuario en localStorage
+            if (data.datos) {
+                if (data.datos.nombre) localStorage.setItem('nombre', data.datos.nombre);
+                if (data.datos.correo) {
+                    localStorage.setItem('correo', data.datos.correo);
+                    localStorage.setItem('email', data.datos.correo);
+                }
+                if (data.datos.foto_ruta) localStorage.setItem('foto_ruta', data.datos.foto_ruta);
+            }
+            
+            // Si estamos en la página de publicidad, configurar el botón de registro
+            if (window.configurarBotonRegistro) {
+                console.log("🔄 Reconfigurando botón de registro después de obtener datos completos");
+                window.configurarBotonRegistro();
+            }
+            
+            // --- MODIFICADO: Solo crear el botón flotante, no activar el chat --- 
+            console.log("👤 Perfil completo. Asegurando que el botón flotante del chat esté visible.");
+            crearBotonFlotante(); 
+            // Comentado: activarChatbot(); 
+            
         } else {
             // Mostrar formulario para completar perfil
             mostrarFormularioCompletarPerfil(cedula, nombre);
@@ -481,25 +529,58 @@ function mostrarFormularioCompletarPerfil(cedula, nombre) {
     });
     
     // Evento para guardar el perfil
-    document.getElementById('guardar-perfil-btn').addEventListener('click', function() {
-        const nombreValue = document.getElementById('nombre').value;
-        const correoValue = document.getElementById('correo').value;
-        const fotoPreview = document.getElementById('user-photo-preview');
-        const fotoValue = fotoPreview.style.display !== 'none' ? fotoPreview.src : '';
-        
-        guardarPerfilUsuario(cedula, nombreValue, correoValue, fotoValue);
-    });
+    let guardarBtn = document.getElementById('guardar-perfil-btn');
+    let cancelarBtn = document.getElementById('cancelar-perfil-btn');
     
-    // Evento para cancelar
-    document.getElementById('cancelar-perfil-btn').addEventListener('click', function() {
-        closeAuthPopup();
-    });
+    if (guardarBtn) {
+        // --- CLONAR PARA LIMPIAR LISTENERS ---
+        const newGuardarBtn = guardarBtn.cloneNode(true);
+        guardarBtn.parentNode.replaceChild(newGuardarBtn, guardarBtn);
+        guardarBtn = newGuardarBtn; // Actualizar la referencia
+        // --- FIN CLONADO ---
+        
+        guardarBtn.addEventListener('click', function() {
+            // Deshabilitar botones
+            guardarBtn.disabled = true;
+            guardarBtn.textContent = 'Guardando...';
+            if(cancelarBtn) cancelarBtn.disabled = true;
+            
+            const nombreValue = document.getElementById('nombre').value;
+            const correoValue = document.getElementById('correo').value;
+            const fotoPreview = document.getElementById('user-photo-preview');
+            const fotoValue = fotoPreview.style.display !== 'none' ? fotoPreview.src : '';
+            
+            // Pasar la referencia correcta del botón
+            guardarPerfilUsuario(cedula, nombreValue, correoValue, fotoValue, guardarBtn, cancelarBtn);
+        });
+    }
+    
+    // Evento para cancelar (podría necesitar clonado similar si la función se llama múltiples veces)
+    if (cancelarBtn) {
+        // Opcional: Clonar y reemplazar cancelarBtn si es necesario
+        // const newCancelarBtn = cancelarBtn.cloneNode(true);
+        // cancelarBtn.parentNode.replaceChild(newCancelarBtn, cancelarBtn);
+        // cancelarBtn = newCancelarBtn;
+        
+        cancelarBtn.addEventListener('click', function() {
+            closeAuthPopup();
+        });
+    }
 }
 
 // Función para guardar el perfil del usuario
-function guardarPerfilUsuario(cedula, nombre, correo, foto) {
+function guardarPerfilUsuario(cedula, nombre, correo, foto, guardarBtn, cancelarBtn) {
+    const originalBtnText = 'Guardar Perfil'; // Guardar texto original
+    
     if (!cedula || !nombre || !correo) {
         alert('Por favor completa todos los campos obligatorios');
+        // --- REHABILITAR BOTONES EN ERROR --- 
+        if (guardarBtn) {
+             guardarBtn.disabled = false;
+             guardarBtn.textContent = originalBtnText;
+        }
+        if (cancelarBtn) cancelarBtn.disabled = false;
+        // --- FIN REHABILITACIÓN ---
         return;
     }
     
@@ -507,6 +588,13 @@ function guardarPerfilUsuario(cedula, nombre, correo, foto) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(correo)) {
         alert('Por favor ingresa un correo electrónico válido');
+        // --- REHABILITAR BOTONES EN ERROR --- 
+        if (guardarBtn) {
+             guardarBtn.disabled = false;
+             guardarBtn.textContent = originalBtnText;
+        }
+        if (cancelarBtn) cancelarBtn.disabled = false;
+        // --- FIN REHABILITACIÓN ---
         return;
     }
     
@@ -553,6 +641,13 @@ function guardarPerfilUsuario(cedula, nombre, correo, foto) {
         
         if (data.error) {
             alert('❌ Error al actualizar perfil: ' + data.error);
+            // --- REHABILITAR BOTONES EN ERROR --- 
+            if (guardarBtn) {
+                 guardarBtn.disabled = false;
+                 guardarBtn.textContent = originalBtnText;
+            }
+            if (cancelarBtn) cancelarBtn.disabled = false;
+            // --- FIN REHABILITACIÓN ---
             return;
         }
         
@@ -560,19 +655,50 @@ function guardarPerfilUsuario(cedula, nombre, correo, foto) {
             // Guardar la información del usuario en localStorage
             localStorage.setItem('nombre', nombre);
             localStorage.setItem('correo', correo);
+            // También guardar correo como email para mantener consistencia en otras partes del código
+            localStorage.setItem('email', correo);
+            
+            // Añadir bandera para indicar que el perfil está completo
+            localStorage.setItem('perfil_completo', 'true');
             
             // Cerrar el popup
             closeAuthPopup();
             
-            // Activar el chatbot
-            activarChatbot();
+            // Si estamos en la página de publicidad, configurar el botón de registro
+            if (window.configurarBotonRegistro) {
+                console.log("✅ Perfil guardado. Configurando botón de registro.");
+                window.configurarBotonRegistro();
+            } else {
+                console.log("✅ Perfil guardado. No se encontró configurarBotonRegistro (quizás no estamos en publicidad.html)");
+            }
+            
+            // --- NO ACTIVAR CHATBOT AQUÍ ---
+            // Comentado: Esperar un momento antes de activar el chatbot...
+            // setTimeout(() => {
+            //     activarChatbot();
+            // }, 100);
+            console.log("✅ Perfil guardado con éxito. Botón de registro configurado (si aplica). Chatbot NO se activa desde aquí.");
         } else {
             alert('Ha ocurrido un error al actualizar tu perfil. Por favor intenta nuevamente.');
+            // --- REHABILITAR BOTONES EN ERROR --- 
+            if (guardarBtn) {
+                 guardarBtn.disabled = false;
+                 guardarBtn.textContent = originalBtnText;
+            }
+            if (cancelarBtn) cancelarBtn.disabled = false;
+            // --- FIN REHABILITACIÓN ---
         }
     })
     .catch(error => {
         console.error('Error al actualizar perfil:', error);
         alert('Error al actualizar perfil: ' + error.message);
+        // --- REHABILITAR BOTONES EN ERROR --- 
+        if (guardarBtn) {
+             guardarBtn.disabled = false;
+             guardarBtn.textContent = originalBtnText;
+        }
+        if (cancelarBtn) cancelarBtn.disabled = false;
+        // --- FIN REHABILITACIÓN ---
     });
 }
 
@@ -653,6 +779,7 @@ function activarChatbot() {
     const linkAfiliacion = document.getElementById("afiliacion-link");
     const botonFlotante = document.getElementById("boton-flotante");
     const contenedorChatbot = document.getElementById("chatbot-container");
+    const registrarBtn = document.getElementById("registrar-publicidad");
 
     // Ocultar botón y mostrar/ocultar enlaces
     if (botonChat) botonChat.style.display = "none";
@@ -669,6 +796,7 @@ function activarChatbot() {
                 <div class="chat-header">
                     <img src="images/HUV.jpg" alt="Elektra Avatar" class="elektra-avatar">
                     <h3>ELEKTRA - Asistente Virtual</h3>
+                    <button class="minimize-chat">_</button>
                     <button class="close-chat">×</button>
                 </div>
                 <div id="chat-messages" class="chat-messages"></div>
@@ -702,12 +830,96 @@ function activarChatbot() {
                 contenedorChatbot.style.display = "none";
                 if (botonFlotante) {
                     botonFlotante.style.display = "block";
+                } else {
+                    crearBotonFlotante();
+                }
+            });
+        }
+
+        // Agregar funcionalidad al botón de minimizar
+        const minimizeButton = contenedorChatbot.querySelector('.minimize-chat');
+        if (minimizeButton) {
+            minimizeButton.addEventListener('click', () => {
+                // Ocultar el contenedor del chatbot
+                contenedorChatbot.style.display = "none";
+                
+                // Mostrar el botón flotante
+                if (botonFlotante) {
+                    botonFlotante.style.display = "block";
+                } else {
+                    // Si no existe el botón flotante, crearlo
+                    crearBotonFlotante();
                 }
             });
         }
     } else {
         console.error("No se encontró el contenedor del chatbot");
     }
+
+    // Asegurarse de que el botón de registro esté habilitado si el usuario está autenticado
+    if (window.configurarBotonRegistro) {
+        console.log("🔑 Llamando a configurarBotonRegistro desde activarChatbot");
+        window.configurarBotonRegistro();
+    } else if (registrarBtn) {
+        // Si no está disponible la función pero el botón existe y el usuario está autenticado
+        const isUserAuth = localStorage.getItem("afiliado") === "yes";
+        const isProfileComplete = localStorage.getItem("perfil_completo") === "true";
+        
+        if (isUserAuth || isProfileComplete) {
+            console.log("🔓 Habilitando botón de registro directamente");
+            registrarBtn.disabled = false;
+            registrarBtn.classList.remove('boton-deshabilitado');
+        }
+    }
+}
+
+// Función para crear el botón flotante de chat si no existe
+function crearBotonFlotante() {
+    // Verificar si ya existe
+    let botonFlotante = document.getElementById("boton-flotante");
+    
+    if (!botonFlotante) {
+        botonFlotante = document.createElement("div");
+        botonFlotante.id = "boton-flotante";
+        botonFlotante.className = "chat-flotante";
+        botonFlotante.innerHTML = `
+            <div class="chat-icon">
+                <img src="images/chat-icon.png" alt="Chat" width="40">
+            </div>
+            <span>Hablar con Elektra</span>
+        `;
+        
+        // Estilos básicos
+        botonFlotante.style.position = "fixed";
+        botonFlotante.style.bottom = "20px";
+        botonFlotante.style.right = "20px";
+        botonFlotante.style.backgroundColor = "#35a9aa";
+        botonFlotante.style.color = "white";
+        botonFlotante.style.padding = "10px 15px";
+        botonFlotante.style.borderRadius = "25px";
+        botonFlotante.style.display = "flex";
+        botonFlotante.style.alignItems = "center";
+        botonFlotante.style.gap = "10px";
+        botonFlotante.style.cursor = "pointer";
+        botonFlotante.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
+        botonFlotante.style.zIndex = "9999";
+        
+        document.body.appendChild(botonFlotante);
+        
+        // Agregar evento para reabrir el chat
+        botonFlotante.addEventListener('click', () => {
+            // --- MODIFICADO: Llamar a activarChatbot para abrir E inicializar ---
+            console.log("🖱️ Botón flotante clickeado, activando chatbot...");
+            activarChatbot(); 
+            
+            // Ocultar el botón flotante después de activar el chat
+            botonFlotante.style.display = "none"; 
+        });
+    }
+    
+    // Asegurarse de que el botón esté visible si se acaba de crear o ya existía
+    botonFlotante.style.display = "flex";
+    return botonFlotante;
 }
 
 // Inicializar el botón de chat cuando el DOM esté listo
@@ -743,8 +955,50 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
         } else {
             console.error('Botón de chat no encontrado en el DOM (inicialización inmediata)');
         }
+
+        // Comprobar si tenemos cédula guardada pero no perfil completo
+        const cedula = localStorage.getItem("cedula");
+        const perfilCompleto = localStorage.getItem("perfil_completo");
+        
+        if (cedula && perfilCompleto !== "true") {
+            console.log("🔄 Cédula encontrada pero perfil no marcado como completo, verificando con el backend...");
+            // Verificar si el perfil ya existe en el backend
+            comprobarPerfilUsuarioEnBackground(cedula);
+        }
     }, 100);
 }
+
+// Función para verificar y restaurar el chatbot si es necesario
+function verificarYRestaurarChatbot() {
+    // Verificar si el usuario está autenticado
+    const isAuth = localStorage.getItem("afiliado") === "yes" || localStorage.getItem("perfil_completo") === "true";
+    
+    if (!isAuth) {
+        console.log("👤 Usuario no autenticado, no se restaura el chatbot");
+        return;
+    }
+    
+    console.log("🔍 Verificando estado del chatbot...");
+    
+    // Buscar elementos relacionados con el chatbot
+    const botonFlotante = document.getElementById("boton-flotante");
+    const contenedorChatbot = document.getElementById("chatbot-container");
+    
+    // Si no hay botón flotante ni contenedor de chatbot visibles, hay que restaurarlos
+    const restaurarNecesario = (!botonFlotante || botonFlotante.style.display === "none") && 
+                              (!contenedorChatbot || contenedorChatbot.style.display === "none");
+                              
+    if (restaurarNecesario) {
+        console.log("🔄 Restaurando botón flotante del chatbot...");
+        // Crear el botón flotante
+        crearBotonFlotante();
+    } else {
+        console.log("✅ Chatbot en estado correcto, no es necesario restaurar");
+    }
+}
+
+// Ejecutar verificación periódica para asegurar que el botón del chatbot esté disponible
+setInterval(verificarYRestaurarChatbot, 2000);
 
 // Exponer funciones globalmente
 window.showAuthPopup = showAuthPopup;
@@ -837,19 +1091,43 @@ function mostrarFormularioPerfil(cedula, nombre) {
     });
     
     // Evento para guardar el perfil
-    document.getElementById('guardar-perfil-btn').addEventListener('click', function() {
-        const nombreValue = document.getElementById('nombre').value;
-        const correoValue = document.getElementById('correo').value;
-        const fotoPreview = document.getElementById('user-photo-preview');
-        const fotoValue = fotoPreview.style.display !== 'none' ? fotoPreview.src : '';
-        
-        guardarPerfilUsuario(cedula, nombreValue, correoValue, fotoValue);
-    });
+    let guardarBtn = document.getElementById('guardar-perfil-btn');
+    let cancelarBtn = document.getElementById('cancelar-perfil-btn');
     
-    // Evento para cancelar
-    document.getElementById('cancelar-perfil-btn').addEventListener('click', function() {
-        closeAuthPopup();
-    });
+    if (guardarBtn) {
+        // --- CLONAR PARA LIMPIAR LISTENERS ---
+        const newGuardarBtn = guardarBtn.cloneNode(true);
+        guardarBtn.parentNode.replaceChild(newGuardarBtn, guardarBtn);
+        guardarBtn = newGuardarBtn; // Actualizar la referencia
+        // --- FIN CLONADO ---
+        
+        guardarBtn.addEventListener('click', function() {
+            // Deshabilitar botones
+            guardarBtn.disabled = true;
+            guardarBtn.textContent = 'Guardando...';
+            if(cancelarBtn) cancelarBtn.disabled = true;
+            
+            const nombreValue = document.getElementById('nombre').value;
+            const correoValue = document.getElementById('correo').value;
+            const fotoPreview = document.getElementById('user-photo-preview');
+            const fotoValue = fotoPreview.style.display !== 'none' ? fotoPreview.src : '';
+            
+            // Pasar la referencia correcta del botón
+            guardarPerfilUsuario(cedula, nombreValue, correoValue, fotoValue, guardarBtn, cancelarBtn);
+        });
+    }
+    
+    // Evento para cancelar (podría necesitar clonado similar si la función se llama múltiples veces)
+    if (cancelarBtn) {
+        // Opcional: Clonar y reemplazar cancelarBtn si es necesario
+        // const newCancelarBtn = cancelarBtn.cloneNode(true);
+        // cancelarBtn.parentNode.replaceChild(newCancelarBtn, cancelarBtn);
+        // cancelarBtn = newCancelarBtn;
+        
+        cancelarBtn.addEventListener('click', function() {
+            closeAuthPopup();
+        });
+    }
 }
 
 // Función para mostrar mensajes de error
@@ -887,4 +1165,53 @@ function getBackendUrl() {
     
     // Valor por defecto como última opción
     return urlNgrok;
+}
+
+// Nueva función para comprobar el perfil en el backend sin mostrar UI
+function comprobarPerfilUsuarioEnBackground(cedula) {
+    console.log("🔍 Comprobando perfil en background para cédula:", cedula);
+    
+    // Obtener datos del perfil del usuario desde el backend
+    fetch(`${getBackendUrl()}/obtener_perfil`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ cedula: cedula })
+    })
+    .then(response => {
+        if (!response.ok) return null;
+        return response.json();
+    })
+    .then(data => {
+        if (!data) return;
+        
+        console.log("📡 Datos de perfil recibidos en background:", data);
+        
+        if (data.perfil_completo) {
+            // Guardar información en localStorage
+            localStorage.setItem('perfil_completo', 'true');
+            
+            // Guardar los datos del usuario en localStorage
+            if (data.datos) {
+                if (data.datos.nombre) localStorage.setItem('nombre', data.datos.nombre);
+                if (data.datos.correo) {
+                    localStorage.setItem('correo', data.datos.correo);
+                    localStorage.setItem('email', data.datos.correo);
+                }
+                if (data.datos.foto_ruta) localStorage.setItem('foto_ruta', data.datos.foto_ruta);
+            }
+            
+            console.log("✅ Perfil completo encontrado en el backend, datos guardados en localStorage");
+            
+            // Si estamos en la página de publicidad, reconfigurar el botón
+            if (window.configurarBotonRegistro) {
+                console.log("🔄 Reconfigurando botón de registro después de verificar perfil");
+                window.configurarBotonRegistro();
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error al comprobar perfil en background:', error);
+    });
 }

@@ -365,17 +365,26 @@ async function inicializarChatIA() {
             // Usar la clase AIChat global
             aiChatInstance = new AIChat();
 
+            // --- MODIFICADO: Obtener nombre y cargo de localStorage --- 
+            const nombreUsuario = localStorage.getItem('nombre');
+            const cargoUsuario = localStorage.getItem('cargo');
+            console.log(`🤖 Obteniendo datos para rol del chat: Nombre=${nombreUsuario}, Cargo=${cargoUsuario}`);
+            
             // Determinar el rol basado en el cargo del usuario
-            let roleType = 'NoAfiliado';
-            if (userData && userData.cargo) {
-                if (userData.cargo === 'Presidente') {
+            let roleType = 'NoAfiliado'; // Rol por defecto
+            if (cargoUsuario) {
+                if (cargoUsuario === 'Presidente') {
                     roleType = 'Presidenciales';
-                } else if (userData.cargo.includes('Directiv')) {
+                } else if (cargoUsuario.includes('Directiv')) {
                     roleType = 'JuntaDirectiva';
-                } else if (userData.cargo === 'Afiliado') {
+                } else if (cargoUsuario === 'Afiliado') {
                     roleType = 'Afiliado';
                 }
+            } else {
+                 console.warn("🤖 No se encontró cargo en localStorage, usando rol por defecto.");
             }
+            console.log(`🤖 Rol asignado para el chat: ${roleType}`);
+            // --- FIN MODIFICACIÓN ---
 
             // Inicializar el chat con el rol apropiado
             await aiChatInstance.initialize(roleType);

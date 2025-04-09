@@ -19,8 +19,20 @@ document.addEventListener('DOMContentLoaded', function() {
         if (registrarBtn) {
             // Verificar si el usuario está autenticado
             const isUserAuth = localStorage.getItem("afiliado") === "yes";
+            // Verificar si el perfil está completo
+            const isProfileComplete = localStorage.getItem("perfil_completo") === "true";
+            // Verificar si tiene cédula
+            const hasCedula = localStorage.getItem("cedula") !== null;
             
-            if (!isUserAuth) {
+            console.log("🔐 Estado de autenticación:", isUserAuth);
+            console.log("🔐 Valor de localStorage.afiliado:", localStorage.getItem("afiliado"));
+            console.log("🔐 Perfil completo:", isProfileComplete);
+            console.log("🔐 Tiene cédula:", hasCedula);
+            
+            // Si el perfil está completo o el usuario está autenticado, debemos habilitarlo
+            const isAuthenticated = isUserAuth || isProfileComplete;
+            
+            if (!isAuthenticated) {
                 // Si no está autenticado, deshabilitar el botón y agregar tooltip
                 registrarBtn.classList.add('boton-deshabilitado');
                 registrarBtn.disabled = true;
@@ -30,34 +42,62 @@ document.addEventListener('DOMContentLoaded', function() {
                 registrarBtn.innerHTML = "Registrar Publicidad (Solo Afiliados)";
                 
                 // Reemplazar el evento click para mostrar mensaje
-                registrarBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    alert("Debes ser afiliado al sindicato para registrar publicidad. Por favor, accede desde la página principal.");
-                    return false;
-                });
+                registrarBtn.removeEventListener('click', mostrarFormularioRegistro);
+                registrarBtn.addEventListener('click', mostrarMensajeAutenticacion);
+                
+                console.log("🔒 Botón de registro deshabilitado");
             } else {
                 // Si está autenticado, mantener funcionalidad normal
-                registrarBtn.addEventListener('click', function() {
-                    // Ocultar todos los slides
-                    slides.forEach(slide => {
-                        slide.classList.remove('active');
-                    });
-
-                    // Mostrar el slide del formulario
-                    formularioSlide.style.display = 'block';
-                    formularioSlide.classList.add('active');
-
-                    // Quitar la clase active de todos los enlaces de navegación
-                    navLinks.forEach(link => {
-                        link.classList.remove('active');
-                    });
-                });
+                console.log("🔓 Usuario autenticado, habilitando botón de registro");
+                registrarBtn.classList.remove('boton-deshabilitado');
+                registrarBtn.disabled = false;
+                registrarBtn.innerHTML = "Registrar Publicidad";
+                
+                // Reemplazar eventos
+                registrarBtn.removeEventListener('click', mostrarMensajeAutenticacion);
+                registrarBtn.addEventListener('click', mostrarFormularioRegistro);
+                
+                console.log("🔓 Botón de registro habilitado");
             }
+        } else {
+            console.error("❌ Botón de registro no encontrado en el DOM");
         }
+    }
+
+    // Función para mostrar el formulario de registro
+    function mostrarFormularioRegistro() {
+        console.log("📝 Mostrando formulario de registro");
+        // Ocultar todos los slides
+        slides.forEach(slide => {
+            slide.classList.remove('active');
+        });
+
+        // Mostrar el slide del formulario
+        const formularioSlide = document.getElementById('slide-registro');
+        if (formularioSlide) {
+            formularioSlide.style.display = 'block';
+            formularioSlide.classList.add('active');
+        }
+
+        // Quitar la clase active de todos los enlaces de navegación
+        const navLinks = document.querySelectorAll('.slider-nav a');
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+        });
+    }
+
+    // Función para mostrar mensaje cuando no está autenticado
+    function mostrarMensajeAutenticacion(e) {
+        e.preventDefault();
+        console.log("⚠️ Intento de registro sin autenticación");
+        alert("Debes ser afiliado al sindicato para registrar publicidad. Por favor, accede desde la página principal.");
+        return false;
     }
 
     // Inicializar la página mostrando el primer slide
     function initPage() {
+        console.log("🚀 Inicializando página de publicidad...");
+        
         // Aplicar fade-in al cargar
         document.body.classList.remove('fade-out');
         document.body.classList.add('fade-in');
@@ -158,13 +198,22 @@ document.addEventListener('DOMContentLoaded', function() {
             const nombreUsuario = localStorage.getItem("nombre");
             if (nombreUsuario) {
                 formDataObj["nombre"] = nombreUsuario;
+                console.log("🔍 Usando nombre del perfil:", nombreUsuario);
             }
             
-            // Usar el email guardado en localStorage si el campo está vacío
-            const emailGuardado = localStorage.getItem("email");
+            // Usar el email guardado en localStorage
+            const emailGuardado = localStorage.getItem("email") || localStorage.getItem("correo");
             if (emailGuardado && (!formDataObj.email || formDataObj.email.trim() === "")) {
                 formDataObj.email = emailGuardado;
                 document.getElementById('email').value = emailGuardado;
+                console.log("🔍 Usando email del perfil:", emailGuardado);
+            }
+            
+            // Verificar si el usuario tiene foto de perfil
+            const fotoRuta = localStorage.getItem("foto_ruta");
+            if (fotoRuta) {
+                console.log("🔍 El usuario tiene foto de perfil guardada:", fotoRuta);
+                formDataObj["usuario_foto"] = fotoRuta;
             }
 
             // Procesar la imagen si existe
@@ -395,7 +444,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Inicializar la página
     initPage();
+    
+    // Si el estado de autenticación cambia (por ejemplo, después de iniciar sesión en otra pestaña)
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'afiliado' || e.key === 'nombre' || e.key === 'cedula') {
+            console.log("📣 Storage cambió, reconfigurando botón de registro");
+            configurarBotonRegistro();
+        }
+    });
 
     // Exponer la función para que slider.js pueda llamarla si es necesario
     window.updatePublicidadSliderDots = updateSliderDots;
+    
+    // Exponer configurarBotonRegistro globalmente para que auth-popup.js pueda llamarla
+    window.configurarBotonRegistro = configurarBotonRegistro;
 });
