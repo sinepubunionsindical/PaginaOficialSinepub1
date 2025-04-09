@@ -667,14 +667,20 @@ function guardarPerfilUsuario(cedula, nombre, correo, foto, guardarBtn, cancelar
             
             // --- ACTUALIZAR UI INMEDIATAMENTE ---
             // Ocultar el botón de autenticación inicial (si existe)
-            const initialAuthButton = document.getElementById('chatbot-button'); // Asumiendo este ID
+            const initialAuthButton = document.getElementById('chatbot-button'); 
             if (initialAuthButton) {
                 initialAuthButton.style.display = 'none';
-                console.log("✅ Botón de autenticación inicial oculto.");
+                console.log("✅ [GuardarPerfil] Botón inicial (#chatbot-button) oculto.");
+            } else {
+                console.warn("✅ [GuardarPerfil] No se encontró el botón inicial (#chatbot-button) para ocultar.");
             }
             // Asegurar que el botón flotante esté visible
-            crearBotonFlotante();
-            console.log("✅ Botón flotante asegurado.");
+            if (window.crearBotonFlotante) { // Asegurarse que la función exista
+                crearBotonFlotante();
+                console.log("✅ [GuardarPerfil] Botón flotante asegurado.");
+            } else {
+                 console.error("❌ [GuardarPerfil] La función crearBotonFlotante no está definida.");
+            }
             // --- FIN ACTUALIZACIÓN UI ---
             
             // Si estamos en la página de publicidad, configurar el botón de registro
