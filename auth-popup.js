@@ -70,21 +70,22 @@ function verifyCedula(cedula) {
     // NUEVO: Guardar cédula en localStorage
     localStorage.setItem("cedula", cedula);
 
-    const jsonBinUrl = "https://api.jsonbin.io/v3/b/67a87a39e41b4d34e4870c44";
-    const apiKey = "$2a$10$Z828YxzIHQXkevNBQmzlIuLXVpdJQafXGR.aTqC8N05u0DNuMp.wS";
+    // Reemplazar JsonBin con nuestra API
+    const backendUrl = window.API_ENDPOINTS ? window.API_ENDPOINTS.afiliados : "http://localhost:8000/api/afiliados";
+    
+    console.log("🔄 Consultando API de afiliados:", backendUrl);
 
-    fetch(jsonBinUrl, {
+    fetch(backendUrl, {
         method: "GET",
         headers: {
-            "X-Master-Key": apiKey,
             "Content-Type": "application/json"
         }
     })
     .then(response => response.json())
     .then(data => {
-        console.log("📡 Respuesta de JSONBin:", data);
+        console.log("📡 Respuesta de API de afiliados:", data);
 
-        const afiliados = data.record ? data.record.afiliados : data.afiliados;
+        const afiliados = data.afiliados || [];
         const afiliado = afiliados.find(persona => persona.cedula === cedula);
 
         if (afiliado) {
@@ -163,26 +164,41 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
     document.getElementById("verificar-contrasena").addEventListener("click", function() {
         const contrasena = document.getElementById("input-contrasena").value;
 
-        if (contrasena === "12") {
-            popupContrasena.remove();
-            mostrarPopupBienvenida(mensajeBienvenida);
-            // Guardar datos del usuario para el chat
-            if (window.setUserData) {
-                window.setUserData(nombre, cargo);
-            }
-        } else {
-            intentosRestantes--;
-            popupContrasena.remove();
+        // Validar código mediante el backend en lugar de comparar directamente
+        const validarUrl = window.API_ENDPOINTS ? `${window.API_ENDPOINTS.validarCodigo}/${contrasena}` : `http://localhost:8000/api/validar-codigo/${contrasena}`;
+        
+        console.log("🔄 Validando código con el backend:", validarUrl);
+        
+        fetch(validarUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (data.valid) {
+                    popupContrasena.remove();
+                    mostrarPopupBienvenida(mensajeBienvenida);
+                    // Guardar datos del usuario para el chat
+                    if (window.setUserData) {
+                        window.setUserData(nombre, cargo);
+                    }
+                } else {
+                    intentosRestantes--;
+                    popupContrasena.remove();
 
-            if (intentosRestantes > 0) {
-                alert(`❌ Contraseña incorrecta. Te queda ${intentosRestantes} intento.`);
+                    if (intentosRestantes > 0) {
+                        alert(`❌ Contraseña incorrecta. Te queda ${intentosRestantes} intento.`);
+                        mostrarPopupContrasena(nombre, cargo, mensajeBienvenida);
+                    } else {
+                        alert("❌ No eres afiliado al sindicato. Recuerda que la suplantación de identidad tiene consecuencias penales.");
+                        mostrarPopupError();
+                        bloquearBoton();
+                    }
+                }
+            })
+            .catch(error => {
+                console.error("🚨 Error al validar código:", error);
+                alert("⚠ Ocurrió un error al validar la contraseña. Por favor, intenta nuevamente.");
+                popupContrasena.remove();
                 mostrarPopupContrasena(nombre, cargo, mensajeBienvenida);
-            } else {
-                alert("❌ No eres afiliado al sindicato. Recuerda que la suplantación de identidad tiene consecuencias penales.");
-                mostrarPopupError();
-                bloquearBoton();
-            }
-        }
+            });
     });
 
     document.getElementById("cancelar-contrasena").addEventListener("click", function() {
@@ -299,7 +315,7 @@ function verificarPerfilUsuario(cedula, nombre, cargo) {
     console.log("🔍 Verificando perfil de usuario en el backend...");
     
     // URL del backend
-    const backendUrl = "http://localhost:8000/api/usuario/" + cedula;
+    const backendUrl = window.API_ENDPOINTS ? window.API_ENDPOINTS.usuario + "/" + cedula : "http://localhost:8000/api/usuario/" + cedula;
     
     // Solicitar datos del usuario
     fetch(backendUrl)
@@ -432,7 +448,7 @@ function enviarDatosUsuario(userData, popupElement) {
     console.log("📤 Enviando datos de usuario al backend...", userData);
     
     // URL del backend
-    const backendUrl = "http://localhost:8000/api/usuario";
+    const backendUrl = window.API_ENDPOINTS ? window.API_ENDPOINTS.usuario : "http://localhost:8000/api/usuario";
     
     // Enviar datos al backend
     fetch(backendUrl, {

@@ -9,6 +9,48 @@
     <link rel="stylesheet" href="android.css">
     <script src="https://unpkg.com/react@17.0.2/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js" crossorigin></script>
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: 'Rubik', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        body.fade-in {
+            opacity: 1;
+        }
+        
+        /* Estilos de email */
+        .email-options {
+            width: 100%;
+        }
+        
+        .email-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .email-option-btn {
+            background-color: #35a9aa;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .email-option-btn:hover {
+            background-color: #0249aa;
+        }
+        
+        /* Resto de estilos */
+    </style>
 </head>
 <body class="fade-out">
     <!-- Encabezado Principal (Franja azul delgada con títulos) -->
@@ -217,7 +259,13 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="email">Correo electrónico:</label>
-                                        <input type="email" id="email" name="email" required>
+                                        <div class="email-options">
+                                            <div class="email-buttons">
+                                                <button type="button" id="usar-email-perfil" class="email-option-btn">Usar email de mi perfil</button>
+                                                <button type="button" id="usar-email-diferente" class="email-option-btn">Usar otro email</button>
+                                            </div>
+                                            <input type="email" id="email" name="email" required>
+                                        </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="telefono">Teléfono de contacto:</label>

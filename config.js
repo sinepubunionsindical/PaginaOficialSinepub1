@@ -17,7 +17,9 @@ const API_ENDPOINTS = {
     publicidad: `${BACKEND_URL}/api/publicidad`,
     usuario: `${BACKEND_URL}/api/usuario`,
     meGusta: `${BACKEND_URL}/api/me-gusta`,
-    afiliacion: `${BACKEND_URL}/api/afiliacion`
+    afiliacion: `${BACKEND_URL}/api/afiliacion`,
+    afiliados: `${BACKEND_URL}/api/afiliados`,
+    validarCodigo: `${BACKEND_URL}/api/validar-codigo`
 };
 
 // Función para enviar formulario de afiliación por correo

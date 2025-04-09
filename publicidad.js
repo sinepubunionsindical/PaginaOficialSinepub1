@@ -70,6 +70,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Configurar el botón de registro según autenticación
         configurarBotonRegistro();
+        
+        // Configurar botones de email
+        configurarBotonesEmail();
     }
 
     // Función para actualizar el slide activo
@@ -259,6 +262,47 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateSliderDots() {
         // No hacemos nada ya que los dots están ocultos
         return;
+    }
+
+    // Función para configurar los botones de email
+    function configurarBotonesEmail() {
+        const btnEmailPerfil = document.getElementById('usar-email-perfil');
+        const btnEmailDiferente = document.getElementById('usar-email-diferente');
+        const emailInput = document.getElementById('email');
+        
+        if (btnEmailPerfil && btnEmailDiferente && emailInput) {
+            // Verificar si hay email guardado
+            const emailGuardado = localStorage.getItem("email");
+            
+            // Inicialmente, mostrar el campo de email y ocultar el botón "usar otro"
+            if (emailGuardado) {
+                emailInput.value = emailGuardado;
+                btnEmailDiferente.style.display = 'inline-block';
+            } else {
+                // Si no hay email guardado, mostrar el campo vacío
+                emailInput.value = '';
+                btnEmailDiferente.style.display = 'none';
+            }
+            
+            // Manejar clic en "Usar email de mi perfil"
+            btnEmailPerfil.addEventListener('click', function() {
+                const emailPerfil = localStorage.getItem("email");
+                if (emailPerfil) {
+                    emailInput.value = emailPerfil;
+                    btnEmailDiferente.style.display = 'inline-block';
+                } else {
+                    alert("No tienes un email guardado en tu perfil. Por favor, actualiza tu perfil primero.");
+                    emailInput.focus();
+                    btnEmailDiferente.style.display = 'none';
+                }
+            });
+            
+            // Manejar clic en "Usar otro email"
+            btnEmailDiferente.addEventListener('click', function() {
+                emailInput.value = '';
+                emailInput.focus();
+            });
+        }
     }
 
     // Inicializar la página
