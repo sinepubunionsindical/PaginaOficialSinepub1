@@ -853,10 +853,19 @@ function mostrarError(mensaje) {
 
 // Función auxiliar para obtener la URL del backend
 function getBackendUrl() {
-    // Verificar primero si hay una URL definida en window.API_ENDPOINTS
+    // Verificar primero si hay una URL base definida en window.API_ENDPOINTS
+    if (window.API_ENDPOINTS && window.API_ENDPOINTS.base) {
+        console.log("📡 Usando API_ENDPOINTS.base:", window.API_ENDPOINTS.base);
+        return window.API_ENDPOINTS.base;
+    }
+    
+    // Si no hay base pero hay URL de publicidad, extraer la base de ella
     if (window.API_ENDPOINTS && window.API_ENDPOINTS.publicidad) {
-        console.log("📡 Usando API_ENDPOINTS.publicidad:", window.API_ENDPOINTS.publicidad);
-        return window.API_ENDPOINTS.publicidad;
+        // Extraer la base quitando "/api/publicidad" del final
+        const url = window.API_ENDPOINTS.publicidad;
+        const baseUrl = url.replace(/\/api\/publicidad$/, '');
+        console.log("📡 Extrayendo base de API_ENDPOINTS.publicidad:", baseUrl);
+        return baseUrl;
     }
     
     // Usar la URL de ngrok desde config.js si está disponible

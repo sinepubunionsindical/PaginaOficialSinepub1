@@ -24,6 +24,7 @@ console.log("🌐 URL del backend:", EFFECTIVE_URL);
 
 // Funciones para APIs específicas
 const API_ENDPOINTS = {
+    base: EFFECTIVE_URL,
     publicidad: `${EFFECTIVE_URL}/api/publicidad`,
     usuario: `${EFFECTIVE_URL}/api/usuario`,
     meGusta: `${EFFECTIVE_URL}/api/me-gusta`,
