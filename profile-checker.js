@@ -36,11 +36,26 @@ function verificarEstadoUsuarioAlCargar() {
         // Asegurarse de que el botón de inicio esté visible y el flotante oculto
         // SOLO si NO estamos en publicidad.html
         if (!window.location.pathname.includes('publicidad.html')) {
+            console.log("   - En index/otras, intentando mostrar botón inicial...");
             const initialAuthButton = document.getElementById('chatbot-button');
             const botonFlotante = document.getElementById("boton-flotante");
-            if (initialAuthButton) initialAuthButton.style.display = 'block'; 
-            if (botonFlotante) botonFlotante.style.display = 'none';
-            console.log("   - Asegurando botón inicial visible y flotante oculto para index/otras.");
+            
+            if (initialAuthButton) {
+                console.log("      - Botón inicial (#chatbot-button) ENCONTRADO.");
+                initialAuthButton.style.display = 'block'; 
+                console.log(`      - Estilo display aplicado a #chatbot-button: ${initialAuthButton.style.display}`);
+            } else {
+                console.error("      - ¡ERROR! No se encontró el botón inicial con id='chatbot-button'.");
+            }
+            
+            if (botonFlotante) {
+                 console.log("      - Botón flotante (#boton-flotante) encontrado.");
+                 botonFlotante.style.display = 'none';
+                 console.log(`      - Estilo display aplicado a #boton-flotante: ${botonFlotante.style.display}`);
+            } else {
+                 console.warn("      - No se encontró el botón flotante con id='boton-flotante' (puede ser normal si no existe aún).");
+            }
+            // console.log("   - Asegurando botón inicial visible y flotante oculto para index/otras."); // Log anterior redundante
         } else {
             console.log("   - En publicidad.html, no se muestra botón de chat inicial.");
         }
