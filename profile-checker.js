@@ -34,10 +34,16 @@ function verificarEstadoUsuarioAlCargar() {
     } else {
         console.log("👤 Profile-Checker: Sin cédula ni perfil completo en localStorage. Estado inicial.");
         // Asegurarse de que el botón de inicio esté visible y el flotante oculto
-        const initialAuthButton = document.getElementById('chatbot-button');
-        const botonFlotante = document.getElementById("boton-flotante");
-        if (initialAuthButton) initialAuthButton.style.display = 'block'; // O el estilo inicial
-        if (botonFlotante) botonFlotante.style.display = 'none';
+        // SOLO si NO estamos en publicidad.html
+        if (!window.location.pathname.includes('publicidad.html')) {
+            const initialAuthButton = document.getElementById('chatbot-button');
+            const botonFlotante = document.getElementById("boton-flotante");
+            if (initialAuthButton) initialAuthButton.style.display = 'block'; 
+            if (botonFlotante) botonFlotante.style.display = 'none';
+            console.log("   - Asegurando botón inicial visible y flotante oculto para index/otras.");
+        } else {
+            console.log("   - En publicidad.html, no se muestra botón de chat inicial.");
+        }
     }
 }
 
@@ -158,26 +164,39 @@ function verificarPerfilEnBackend(cedula) {
 function actualizarUIParaPerfilCompleto() {
     console.log("⚙️ Profile-Checker: Actualizando UI para perfil completo...");
     
-    // Ocultar botón inicial
-    const initialAuthButton = document.getElementById('chatbot-button');
-    if (initialAuthButton) {
-        initialAuthButton.style.display = 'none';
-        console.log("   - Botón inicial (#chatbot-button) oculto.");
-    }
-    
-    // Asegurar que el botón flotante exista y esté visible
-    if (window.crearBotonFlotante) {
-        window.crearBotonFlotante();
-        console.log("   - Botón flotante asegurado.");
+    // Lógica específica según la página
+    if (!window.location.pathname.includes('publicidad.html')) {
+        // --- Lógica para INDEX.HTML y otras páginas --- 
+        console.log("   - Ejecutando UI para index/otras...");
+        // Ocultar botón inicial
+        const initialAuthButton = document.getElementById('chatbot-button');
+        if (initialAuthButton) {
+            initialAuthButton.style.display = 'none';
+            console.log("      - Botón inicial (#chatbot-button) oculto.");
+        }
+        
+        // Asegurar que el botón flotante exista y esté visible
+        if (window.crearBotonFlotante) {
+            window.crearBotonFlotante();
+            console.log("      - Botón flotante asegurado.");
+        } else {
+            console.warn("      - Función crearBotonFlotante no disponible.");
+        }
     } else {
-        console.warn("   - Función crearBotonFlotante no disponible en profile-checker.");
-    }
-    
-    // Configurar botón de publicidad si estamos en la página correcta
-    if (window.configurarBotonRegistro) {
-        console.log("   - Configurando botón de registro de publicidad...");
-        window.configurarBotonRegistro();
-    } else {
-        console.log("   - (No estamos en página de publicidad o función no disponible)");
+        // --- Lógica para PUBLICIDAD.HTML --- 
+        console.log("   - Ejecutando UI para publicidad.html...");
+        // Configurar botón de publicidad 
+        if (window.configurarBotonRegistro) {
+            console.log("      - Configurando botón de registro de publicidad...");
+            window.configurarBotonRegistro();
+        } else {
+            console.warn("      - Función configurarBotonRegistro no disponible.");
+        }
+        // Asegurarse que botones de chat NO estén visibles
+        const initialAuthButton = document.getElementById('chatbot-button');
+        const botonFlotante = document.getElementById("boton-flotante");
+         if (initialAuthButton) initialAuthButton.style.display = 'none';
+         if (botonFlotante) botonFlotante.style.display = 'none';
+         console.log("      - Botones de chat (inicial y flotante) ocultos.");
     }
 } 

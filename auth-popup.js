@@ -666,20 +666,23 @@ function guardarPerfilUsuario(cedula, nombre, correo, foto, guardarBtn, cancelar
             closeAuthPopup();
             
             // --- ACTUALIZAR UI INMEDIATAMENTE ---
-            // Ocultar el botón de autenticación inicial (si existe)
-            const initialAuthButton = document.getElementById('chatbot-button'); 
-            if (initialAuthButton) {
-                initialAuthButton.style.display = 'none';
-                console.log("✅ [GuardarPerfil] Botón inicial (#chatbot-button) oculto.");
+            if (!window.location.pathname.includes('publicidad.html')) {
+                console.log("   - [GuardarPerfil] Actualizando UI para index/otras...");
+                const initialAuthButton = document.getElementById('chatbot-button'); 
+                if (initialAuthButton) {
+                    initialAuthButton.style.display = 'none';
+                    console.log("      - Botón inicial (#chatbot-button) oculto.");
+                } else {
+                    console.warn("      - No se encontró el botón inicial (#chatbot-button) para ocultar.");
+                }
+                if (window.crearBotonFlotante) {
+                    crearBotonFlotante();
+                    console.log("      - Botón flotante asegurado.");
+                } else {
+                     console.error("      - La función crearBotonFlotante no está definida.");
+                }
             } else {
-                console.warn("✅ [GuardarPerfil] No se encontró el botón inicial (#chatbot-button) para ocultar.");
-            }
-            // Asegurar que el botón flotante esté visible
-            if (window.crearBotonFlotante) { // Asegurarse que la función exista
-                crearBotonFlotante();
-                console.log("✅ [GuardarPerfil] Botón flotante asegurado.");
-            } else {
-                 console.error("❌ [GuardarPerfil] La función crearBotonFlotante no está definida.");
+                 console.log("   - [GuardarPerfil] En publicidad.html, no se actualiza UI de chat.");
             }
             // --- FIN ACTUALIZACIÓN UI ---
             
@@ -784,6 +787,13 @@ function bloquearBoton() {
 
 // Función para activar el chatbot después de cerrar el popup
 function activarChatbot() {
+    // --- Añadir verificación de página ---
+    if (window.location.pathname.includes('publicidad.html')) {
+        console.log("🚫 Chatbot no se activa en publicidad.html");
+        return; // Salir de la función
+    }
+    // --- Fin verificación ---
+
     console.log("🎙️ Activando chatbot con IA...");
 
     const botonChat = document.getElementById("chatbot-button");
@@ -873,6 +883,16 @@ function activarChatbot() {
 
 // Función para crear el botón flotante de chat si no existe
 function crearBotonFlotante() {
+    // --- Añadir verificación de página ---
+    if (window.location.pathname.includes('publicidad.html')) {
+        console.log("🚫 No se crea/muestra botón flotante en publicidad.html");
+        // Asegurar que esté oculto si ya existe
+        let botonExistente = document.getElementById("boton-flotante");
+        if (botonExistente) botonExistente.style.display = 'none';
+        return; // Salir de la función
+    }
+    // --- Fin verificación ---
+    
     // Verificar si ya existe
     let botonFlotante = document.getElementById("boton-flotante");
     
