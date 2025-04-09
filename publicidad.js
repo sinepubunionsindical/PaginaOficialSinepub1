@@ -14,6 +14,48 @@ document.addEventListener('DOMContentLoaded', function() {
     // Variable para mantener el índice del slide actual
     let currentSlide = 0;
 
+    // Verificar si el usuario está autenticado y configurar el botón de registro
+    function configurarBotonRegistro() {
+        if (registrarBtn) {
+            // Verificar si el usuario está autenticado
+            const isUserAuth = localStorage.getItem("afiliado") === "yes";
+            
+            if (!isUserAuth) {
+                // Si no está autenticado, deshabilitar el botón y agregar tooltip
+                registrarBtn.classList.add('boton-deshabilitado');
+                registrarBtn.disabled = true;
+                registrarBtn.title = "Debes ser afiliado al sindicato para registrar publicidad";
+                
+                // Agregar mensaje visual al botón
+                registrarBtn.innerHTML = "Registrar Publicidad (Solo Afiliados)";
+                
+                // Reemplazar el evento click para mostrar mensaje
+                registrarBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert("Debes ser afiliado al sindicato para registrar publicidad. Por favor, accede desde la página principal.");
+                    return false;
+                });
+            } else {
+                // Si está autenticado, mantener funcionalidad normal
+                registrarBtn.addEventListener('click', function() {
+                    // Ocultar todos los slides
+                    slides.forEach(slide => {
+                        slide.classList.remove('active');
+                    });
+
+                    // Mostrar el slide del formulario
+                    formularioSlide.style.display = 'block';
+                    formularioSlide.classList.add('active');
+
+                    // Quitar la clase active de todos los enlaces de navegación
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                    });
+                });
+            }
+        }
+    }
+
     // Inicializar la página mostrando el primer slide
     function initPage() {
         // Aplicar fade-in al cargar
@@ -25,6 +67,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Inicializar los puntos de navegación
         updateSliderDots();
+        
+        // Configurar el botón de registro según autenticación
+        configurarBotonRegistro();
     }
 
     // Función para actualizar el slide activo
@@ -70,25 +115,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (activeLink) {
             activeLink.classList.add('active');
         }
-    }
-
-    // Mostrar el formulario cuando se hace clic en "Registrar Publicidad"
-    if (registrarBtn) {
-        registrarBtn.addEventListener('click', function() {
-            // Ocultar todos los slides
-            slides.forEach(slide => {
-                slide.classList.remove('active');
-            });
-
-            // Mostrar el slide del formulario
-            formularioSlide.style.display = 'block';
-            formularioSlide.classList.add('active');
-
-            // Quitar la clase active de todos los enlaces de navegación
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-            });
-        });
     }
 
     // Ocultar el formulario cuando se hace clic en "Cancelar"
