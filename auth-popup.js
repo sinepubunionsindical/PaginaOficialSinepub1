@@ -665,6 +665,18 @@ function guardarPerfilUsuario(cedula, nombre, correo, foto, guardarBtn, cancelar
             // Cerrar el popup
             closeAuthPopup();
             
+            // --- ACTUALIZAR UI INMEDIATAMENTE ---
+            // Ocultar el botón de autenticación inicial (si existe)
+            const initialAuthButton = document.getElementById('chatbot-button'); // Asumiendo este ID
+            if (initialAuthButton) {
+                initialAuthButton.style.display = 'none';
+                console.log("✅ Botón de autenticación inicial oculto.");
+            }
+            // Asegurar que el botón flotante esté visible
+            crearBotonFlotante();
+            console.log("✅ Botón flotante asegurado.");
+            // --- FIN ACTUALIZACIÓN UI ---
+            
             // Si estamos en la página de publicidad, configurar el botón de registro
             if (window.configurarBotonRegistro) {
                 console.log("✅ Perfil guardado. Configurando botón de registro.");
@@ -673,12 +685,7 @@ function guardarPerfilUsuario(cedula, nombre, correo, foto, guardarBtn, cancelar
                 console.log("✅ Perfil guardado. No se encontró configurarBotonRegistro (quizás no estamos en publicidad.html)");
             }
             
-            // --- NO ACTIVAR CHATBOT AQUÍ ---
-            // Comentado: Esperar un momento antes de activar el chatbot...
-            // setTimeout(() => {
-            //     activarChatbot();
-            // }, 100);
-            console.log("✅ Perfil guardado con éxito. Botón de registro configurado (si aplica). Chatbot NO se activa desde aquí.");
+            console.log("✅ Perfil guardado con éxito. UI actualizada (botón inicial oculto, flotante visible), botón de registro configurado (si aplica). Chatbot NO se activa desde aquí.");
         } else {
             alert('Ha ocurrido un error al actualizar tu perfil. Por favor intenta nuevamente.');
             // --- REHABILITAR BOTONES EN ERROR --- 

@@ -1,19 +1,45 @@
 // Script para verificar automáticamente el perfil del usuario
 
 document.addEventListener('DOMContentLoaded', function() {
+    console.log("🚀 Profile-Checker: DOMContentLoaded");
+    verificarEstadoUsuarioAlCargar();
+});
+
+// También intentar ejecutar al final de la carga si el DOMContentLoaded ya pasó
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    console.log("🚀 Profile-Checker: Estado ya completo/interactivo");
+    // Usar setTimeout para dar tiempo a otros scripts (como config.js) a cargar
+    setTimeout(verificarEstadoUsuarioAlCargar, 150);
+}
+
+function verificarEstadoUsuarioAlCargar() {
+    console.log("🧐 Profile-Checker: Ejecutando verificación de estado...");
     // Verificar si hay cédula guardada pero no perfil completo
     const cedula = localStorage.getItem("cedula");
     const perfilCompleto = localStorage.getItem("perfil_completo");
     
-    console.log("🔍 Profile-Checker inicializado");
-    console.log("- Cédula en localStorage:", cedula);
-    console.log("- Perfil completo en localStorage:", perfilCompleto);
+    console.log("   - Cédula en localStorage:", cedula);
+    console.log("   - Perfil completo en localStorage:", perfilCompleto);
     
-    if (cedula && perfilCompleto !== "true") {
-        console.log("🔄 Cédula encontrada pero perfil no marcado como completo, verificando con el backend...");
+    if (perfilCompleto === "true") {
+        console.log("✅ Profile-Checker: Perfil completo detectado en localStorage.");
+        // Perfil ya completo, solo asegurar UI correcta
+        actualizarUIParaPerfilCompleto();
+        return; // No necesitamos consultar backend
+    } 
+    
+    if (cedula) { // Si hay cédula pero perfil no está marcado como completo
+        console.log("🔄 Profile-Checker: Cédula encontrada pero perfil no completo en localStorage. Verificando con backend...");
         verificarPerfilEnBackend(cedula);
+    } else {
+        console.log("👤 Profile-Checker: Sin cédula ni perfil completo en localStorage. Estado inicial.");
+        // Asegurarse de que el botón de inicio esté visible y el flotante oculto
+        const initialAuthButton = document.getElementById('chatbot-button');
+        const botonFlotante = document.getElementById("boton-flotante");
+        if (initialAuthButton) initialAuthButton.style.display = 'block'; // O el estilo inicial
+        if (botonFlotante) botonFlotante.style.display = 'none';
     }
-});
+}
 
 function verificarPerfilEnBackend(cedula) {
     console.log("🔍 Comprobando perfil en backend para cédula:", cedula);
@@ -76,10 +102,10 @@ function verificarPerfilEnBackend(cedula) {
         return response.json();
     })
     .then(data => {
-        console.log("📡 Datos de perfil recibidos:", data);
+        console.log("📡 Profile-Checker: Datos de perfil recibidos:", data);
         
         if (data.perfil_completo) {
-            console.log("✅ Perfil completo encontrado en el backend");
+            console.log("✅ Profile-Checker: Perfil completo confirmado por backend.");
             
             // Guardar información en localStorage
             localStorage.setItem('perfil_completo', 'true');
@@ -103,23 +129,55 @@ function verificarPerfilEnBackend(cedula) {
                 }
             }
             
-            console.log("✅ Datos guardados en localStorage, perfil marcado como completo");
+            console.log("   - Datos guardados en localStorage.");
             
-            // Si estamos en la página de publicidad, reconfigurar el botón
-            if (window.configurarBotonRegistro) {
-                console.log("🔄 Reconfigurando botón de registro después de verificar perfil");
-                window.configurarBotonRegistro();
-            }
+            // Asegurar UI correcta
+            actualizarUIParaPerfilCompleto();
             
-            // Activar chatbot si es necesario
-            if (document.getElementById("chatbot-button") && window.activarChatbot) {
-                window.activarChatbot();
-            }
         } else {
-            console.log("❌ Perfil incompleto según el backend");
+            console.log("❌ Profile-Checker: Perfil incompleto según el backend.");
+            // Aquí podríamos opcionalmente forzar la aparición del popup de completar perfil si es necesario
+            // o simplemente dejar la UI como está (con botón inicial visible)
+            const initialAuthButton = document.getElementById('chatbot-button');
+            const botonFlotante = document.getElementById("boton-flotante");
+            if (initialAuthButton) initialAuthButton.style.display = 'block';
+            if (botonFlotante) botonFlotante.style.display = 'none';
         }
     })
     .catch(error => {
-        console.error("❌ Error al verificar perfil con el backend:", error);
+        console.error("❌ Profile-Checker: Error al verificar perfil con el backend:", error);
+        // En caso de error, mantener estado inicial
+        const initialAuthButton = document.getElementById('chatbot-button');
+        const botonFlotante = document.getElementById("boton-flotante");
+        if (initialAuthButton) initialAuthButton.style.display = 'block';
+        if (botonFlotante) botonFlotante.style.display = 'none';
     });
+}
+
+// Nueva función para centralizar la actualización de UI cuando el perfil está completo
+function actualizarUIParaPerfilCompleto() {
+    console.log("⚙️ Profile-Checker: Actualizando UI para perfil completo...");
+    
+    // Ocultar botón inicial
+    const initialAuthButton = document.getElementById('chatbot-button');
+    if (initialAuthButton) {
+        initialAuthButton.style.display = 'none';
+        console.log("   - Botón inicial (#chatbot-button) oculto.");
+    }
+    
+    // Asegurar que el botón flotante exista y esté visible
+    if (window.crearBotonFlotante) {
+        window.crearBotonFlotante();
+        console.log("   - Botón flotante asegurado.");
+    } else {
+        console.warn("   - Función crearBotonFlotante no disponible en profile-checker.");
+    }
+    
+    // Configurar botón de publicidad si estamos en la página correcta
+    if (window.configurarBotonRegistro) {
+        console.log("   - Configurando botón de registro de publicidad...");
+        window.configurarBotonRegistro();
+    } else {
+        console.log("   - (No estamos en página de publicidad o función no disponible)");
+    }
 } 
