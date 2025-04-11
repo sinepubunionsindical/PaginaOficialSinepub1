@@ -124,17 +124,20 @@ async function verificarCedulaEnServidor(cedula) {
         const data = await response.json();
         console.log(" Respuesta del servidor:", data);
         
-        if (data.valid) {
+        if (data.existe) { 
             if (window.mostrarPopupContrasena) {
-                window.mostrarPopupContrasena(data.nombre, data.cargo, data.mensajeBienvenida); // Usar data.mensajeBienvenida
+                window.mostrarPopupContrasena(data.nombre, data.cargo, "Bienvenido de nuevo"); // Usar mensaje genérico o crear uno
             }
         } else {
-            mostrarError("Cédula no válida");
+            // Usar el mensaje de detalle del servidor si existe (o el genérico)
+            const errorMsg = data.detail || "Cédula no encontrada o inválida";
+            mostrarError(errorMsg);
         }
     } catch (error) {
         console.error(" Error detallado:", error);
         console.error("Stack trace:", error.stack);
-        mostrarError("Error de conexión");
+        // Mostrar un mensaje más informativo si es posible
+        mostrarError(error.message || "Error de conexión o procesamiento"); 
     }
 }
 
