@@ -918,58 +918,37 @@ window.activarChatbot = activarChatbot;
 window.verificarPerfilUsuario = verificarPerfilUsuario;
 
 // Función para mostrar el formulario de perfil
-function mostrarFormularioPerfil(cedula, nombre) {
-    console.log(" Mostrando formulario de perfil para cédula:", cedula);
-    
-    // Guardar datos en localStorage
-    localStorage.setItem("cedula", cedula);
-    if (nombre) {
-        localStorage.setItem("nombre", nombre);
-    }
+function mostrarFormularioPerfil(cedula) {
+    console.log("📝 Mostrando formulario de perfil para cédula:", cedula);
     
     // Cerrar el popup actual si existe
     const existingPopup = document.getElementById("auth-popup");
     if (existingPopup) {
         existingPopup.remove();
     }
-    
-    // Crear el nuevo popup de perfil
-    const popup = document.createElement("div");
-    popup.id = "auth-popup";
-    popup.style.position = "fixed";
-    popup.style.top = "50%";
-    popup.style.left = "50%";
-    popup.style.transform = "translate(-50%, -50%)";
-    popup.style.background = "white";
-    popup.style.padding = "20px";
-    popup.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
-    popup.style.zIndex = "10000";
-    popup.style.borderRadius = "8px";
-    popup.style.width = "400px";
-    popup.style.textAlign = "center";
 
+    const popup = document.createElement("div");
+    popup.id = "profile-popup";
+    popup.className = "auth-popup";
     popup.innerHTML = `
-        <h3>Completa tu perfil</h3>
-        <p>Por favor completa la siguiente información para continuar:</p>
-        
-        <div id="profile-panel">
-            <div style="margin-bottom: 15px;">
-                <label for="nombre-perfil">Nombre:</label>
-                <input type="text" id="nombre-perfil" name="nombre" required value="${nombre}"> 
-            </div>
-            <div>
-                <label for="correo-perfil">Correo Electrónico:</label>
-                <input type="email" id="correo-perfil" name="correo" required>
-            </div>
-            <div style="margin-bottom: 15px;">
-                <label>Foto de perfil:</label>
-                <div style="display: flex; align-items: center; justify-content: center; margin-top: 10px;">
-                    <img id="user-photo-preview" src="" alt="Foto de perfil" style="width: 100px; height: 100px; border-radius: 50%; border: 1px solid #ccc; object-fit: cover; display: none;">
-                    <input type="file" id="user-photo" accept="image/*" style="display: block; margin: 10px auto;">
+        <div class="popup-content">
+            <h2>Completa tu Perfil</h2>
+            <p>Para continuar, necesitamos algunos datos adicionales:</p>
+            
+            <div id="profile-panel">
+                <div style="margin-bottom: 15px;">
+                    <label for="correo-perfil">Correo Electrónico: *</label>
+                    <input type="email" id="correo-perfil" name="correo" required>
                 </div>
+                <div style="margin-bottom: 15px;">
+                    <label>Foto de perfil: *</label>
+                    <div style="display: flex; align-items: center; justify-content: center; margin-top: 10px;">
+                        <img id="user-photo-preview" src="" alt="Foto de perfil" style="width: 100px; height: 100px; border-radius: 50%; border: 1px solid #ccc; object-fit: cover; display: none;">
+                        <input type="file" id="user-photo" accept="image/*" style="display: block; margin: 10px auto;" required>
+                    </div>
+                </div>
+                <button id="guardar-perfil-btn">Guardar Perfil</button>
             </div>
-            <button id="guardar-perfil-btn">Guardar Perfil</button>
-            <button id="cancelar-perfil-btn">Cancelar</button>
         </div>
     `;
 
@@ -981,7 +960,7 @@ function mostrarFormularioPerfil(cedula, nombre) {
         document.getElementById('correo-perfil').value = correo;
     }
     
-    // Evento para previsualizar la imagen seleccionada
+    // Evento para previsualizar la imagen
     document.getElementById('user-photo').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {
@@ -994,45 +973,19 @@ function mostrarFormularioPerfil(cedula, nombre) {
             reader.readAsDataURL(file);
         }
     });
-    
+
     // Evento para guardar el perfil
-    let guardarBtn = document.getElementById('guardar-perfil-btn');
-    let cancelarBtn = document.getElementById('cancelar-perfil-btn');
-    
-    if (guardarBtn) {
-        // --- CLONAR PARA LIMPIAR LISTENERS ---
-        const newGuardarBtn = guardarBtn.cloneNode(true);
-        guardarBtn.parentNode.replaceChild(newGuardarBtn, guardarBtn);
-        guardarBtn = newGuardarBtn; // Actualizar la referencia
-        // --- FIN CLONADO ---
-        
-        guardarBtn.addEventListener('click', function() {
-            // Deshabilitar botones
-            guardarBtn.disabled = true;
-            guardarBtn.textContent = 'Guardando...';
-            if(cancelarBtn) cancelarBtn.disabled = true;
-            
-            const nombreValue = document.getElementById('nombre-perfil').value;
-            const correoValue = document.getElementById('correo-perfil').value;
-            const fotoPreview = document.getElementById('user-photo-preview');
-            const fotoValue = fotoPreview.style.display !== 'none' ? fotoPreview.src : '';
-            
-            // Pasar la referencia correcta del botón
-            guardarPerfilUsuario(cedula, nombreValue, correoValue, fotoValue, guardarBtn, cancelarBtn);
-        });
-    }
-    
-    // Evento para cancelar (podría necesitar clonado similar si la función se llama múltiples veces)
-    if (cancelarBtn) {
-        // Opcional: Clonar y reemplazar cancelarBtn si es necesario
-        // const newCancelarBtn = cancelarBtn.cloneNode(true);
-        // cancelarBtn.parentNode.replaceChild(newCancelarBtn, cancelarBtn);
-        // cancelarBtn = newCancelarBtn;
-        
-        cancelarBtn.addEventListener('click', function() {
-            closeAuthPopup();
-        });
-    }
+    document.getElementById('guardar-perfil-btn').addEventListener('click', async function() {
+        const correoInput = document.getElementById('correo-perfil');
+        const fotoInput = document.getElementById('user-photo');
+
+        if (!correoInput.value || !fotoInput.files[0]) {
+            alert('Por favor completa todos los campos obligatorios (correo y foto)');
+            return;
+        }
+
+        // ... resto del código de guardado
+    });
 }
 
 // Función para mostrar mensajes de error
@@ -1118,5 +1071,8 @@ function comprobarPerfilUsuarioEnBackground(cedula) {
         console.error('Error al comprobar perfil en background:', error);
     });
 }
+
+
+
 
 
