@@ -496,152 +496,73 @@ function mostrarFormularioCompletarPerfil(cedula, nombre) {
 
 // Función para guardar el perfil del usuario
 function guardarPerfilUsuario(cedula, nombre, correo, foto, guardarBtn, cancelarBtn) {
-    const originalBtnText = 'Guardar Perfil'; // Guardar texto original
+    const originalBtnText = 'Guardar Perfil';
     
     if (!cedula || !nombre || !correo) {
         alert('Por favor completa todos los campos obligatorios');
-        // --- REHABILITAR BOTONES EN ERROR --- 
         if (guardarBtn) {
-             guardarBtn.disabled = false;
-             guardarBtn.textContent = originalBtnText;
+            guardarBtn.disabled = false;
+            guardarBtn.textContent = originalBtnText;
         }
         if (cancelarBtn) cancelarBtn.disabled = false;
-        // --- FIN REHABILITACIÓN ---
         return;
     }
-    
-    // Validar correo con expresión regular
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(correo)) {
-        alert('Por favor ingresa un correo electrónico válido');
-        // --- REHABILITAR BOTONES EN ERROR --- 
-        if (guardarBtn) {
-             guardarBtn.disabled = false;
-             guardarBtn.textContent = originalBtnText;
-        }
-        if (cancelarBtn) cancelarBtn.disabled = false;
-        // --- FIN REHABILITACIÓN ---
-        return;
-    }
-    
+
     const datos = {
         cedula: cedula,
         nombre: nombre,
         correo: correo,
         foto: foto
     };
-    
+
     console.log(" Enviando datos de perfil:", {...datos, foto: foto ? '(Base64 imagen)' : null});
-    
+
     fetch(`${getBackendUrl()}/actualizar_perfil`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
         },
         body: JSON.stringify(datos)
     })
     .then(response => {
-        console.log(" Status respuesta actualización perfil:", response.status, response.statusText);
-        console.log(" Tipo de contenido:", response.headers.get('content-type'));
-        
         if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
-        // Verificar que la respuesta sea JSON
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            console.error(" Respuesta no es JSON:", contentType);
-            // Si no es JSON, leer como texto y mostrar parte del contenido para diagnóstico
-            return response.text().then(text => {
-                console.error("Contenido HTML recibido (primeros 500 caracteres):", text.substring(0, 500) + "...");
-                console.error("URL completa de la solicitud:", `${getBackendUrl()}/actualizar_perfil`);
-                throw new Error('La respuesta del servidor no es JSON válido. Posiblemente el servidor está devolviendo una página HTML de error.');
-            });
-        }
-        
         return response.json();
     })
     .then(data => {
-        console.log(" Respuesta actualización perfil:", data);
-        
-        if (data.error) {
-            alert(' Error al actualizar perfil: ' + data.error);
-            // --- REHABILITAR BOTONES EN ERROR --- 
-            if (guardarBtn) {
-                 guardarBtn.disabled = false;
-                 guardarBtn.textContent = originalBtnText;
-            }
-            if (cancelarBtn) cancelarBtn.disabled = false;
-            // --- FIN REHABILITACIÓN ---
-            return;
-        }
-        
         if (data.success) {
-            // Guardar la información del usuario en localStorage
             localStorage.setItem('nombre', nombre);
             localStorage.setItem('correo', correo);
-            // También guardar correo como email para mantener consistencia en otras partes del código
             localStorage.setItem('email', correo);
-            
-            // Añadir bandera para indicar que el perfil está completo
             localStorage.setItem('perfil_completo', 'true');
-            console.log(" localStorage: perfil_completo establecido a true.");
+            if (data.foto_url) {
+                localStorage.setItem('foto_ruta', data.foto_url);
+            }
             
-            // Cerrar el popup
             closeAuthPopup();
             
-            // --- ACTUALIZAR UI INMEDIATAMENTE ---
             if (!window.location.pathname.includes('publicidad.html')) {
-                console.log("   - [GuardarPerfil] Actualizando UI para index/otras...");
-                const initialContainer = document.getElementById('boton-flotante'); // <-- CONTENEDOR INICIAL
+                const initialContainer = document.getElementById('boton-flotante');
                 if (initialContainer) {
-                    initialContainer.style.display = 'none'; // <-- OCULTAR contenedor inicial
-                    console.log("      - Contenedor inicial (#boton-flotante) oculto.");
-                } else {
-                    console.warn("      - No se encontró el contenedor inicial (#boton-flotante) para ocultar.");
+                    initialContainer.style.display = 'none';
                 }
-                if (window.crearBotonFlotante) { 
-                    crearBotonFlotante(); // <-- MOSTRAR el flotante real
-                    console.log("      - Botón flotante real asegurado.");
-                } else {
-                     console.error("      - La función crearBotonFlotante no está definida.");
-                }
-            } else {
-                 console.log("   - [GuardarPerfil] En publicidad.html, no se actualiza UI de chat.");
-            }
-            // --- FIN ACTUALIZACIÓN UI ---
-            
-            // Si estamos en la página de publicidad, configurar el botón de registro
-            if (window.configurarBotonRegistro) {
-                console.log(" Perfil guardado. Configurando botón de registro.");
-                window.configurarBotonRegistro();
-            } else {
-                console.log(" Perfil guardado. No se encontró configurarBotonRegistro (quizás no estamos en publicidad.html)");
             }
             
-            console.log(" Perfil guardado con éxito. UI actualizada (botón inicial oculto, flotante visible), botón de registro configurado (si aplica). Chatbot NO se activa desde aquí.");
+            crearBotonFlotante();
         } else {
-            alert('Ha ocurrido un error al actualizar tu perfil. Por favor intenta nuevamente.');
-            // --- REHABILITAR BOTONES EN ERROR --- 
-            if (guardarBtn) {
-                 guardarBtn.disabled = false;
-                 guardarBtn.textContent = originalBtnText;
-            }
-            if (cancelarBtn) cancelarBtn.disabled = false;
-            // --- FIN REHABILITACIÓN ---
+            throw new Error(data.error || 'Error al actualizar el perfil');
         }
     })
     .catch(error => {
         console.error('Error al actualizar perfil:', error);
-        alert('Error al actualizar perfil: ' + error.message);
-        // --- REHABILITAR BOTONES EN ERROR --- 
+        alert('Ha ocurrido un error al actualizar tu perfil. Por favor intenta nuevamente.');
         if (guardarBtn) {
-             guardarBtn.disabled = false;
-             guardarBtn.textContent = originalBtnText;
+            guardarBtn.disabled = false;
+            guardarBtn.textContent = originalBtnText;
         }
         if (cancelarBtn) cancelarBtn.disabled = false;
-        // --- FIN REHABILITACIÓN ---
     });
 }
 
@@ -1122,33 +1043,22 @@ function mostrarError(mensaje) {
 
 // Función auxiliar para obtener la URL del backend
 function getBackendUrl() {
-    // Verificar primero si hay una URL base definida en window.API_ENDPOINTS
+    // Primero intentar usar la URL de config.js
     if (window.API_ENDPOINTS && window.API_ENDPOINTS.base) {
-        console.log(" Usando API_ENDPOINTS.base:", window.API_ENDPOINTS.base);
+        console.log(" Usando URL desde API_ENDPOINTS:", window.API_ENDPOINTS.base);
         return window.API_ENDPOINTS.base;
     }
     
-    // Si no hay base pero hay URL de publicidad, extraer la base de ella
-    if (window.API_ENDPOINTS && window.API_ENDPOINTS.publicidad) {
-        // Extraer la base quitando "/api/publicidad" del final
-        const url = window.API_ENDPOINTS.publicidad;
-        const baseUrl = url.replace(/\/api\/publicidad$/, '');
-        console.log(" Extrayendo base de API_ENDPOINTS.publicidad:", baseUrl);
-        return baseUrl;
-    }
-    
-    // Usar la URL de ngrok desde config.js si está disponible
+    // Segundo intento: usar BACKEND_URL global
     if (window.BACKEND_URL) {
         console.log(" Usando BACKEND_URL global:", window.BACKEND_URL);
         return window.BACKEND_URL;
     }
     
-    // Usar una URL definida localmente como respaldo
-    const urlNgrok = "https://d01c-2800-484-8786-7d00-a958-9ef1-7e9c-89b9.ngrok-free.app";
-    console.log(" Usando URL de respaldo:", urlNgrok);
-    
-    // Valor por defecto como última opción
-    return urlNgrok;
+    // Si nada funciona, usar localhost como última opción
+    const localUrl = "http://localhost:8000";
+    console.log(" Usando URL local:", localUrl);
+    return localUrl;
 }
 
 // Nueva función para comprobar el perfil en el backend sin mostrar UI
@@ -1208,3 +1118,5 @@ function comprobarPerfilUsuarioEnBackground(cedula) {
         console.error('Error al comprobar perfil en background:', error);
     });
 }
+
+
