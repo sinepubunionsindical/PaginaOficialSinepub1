@@ -181,6 +181,9 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) { // Asegurars
             .then(data => {
                 if (data.valid) {
                     popupContrasena.remove();
+                    // Marcar como afiliado ANTES de mostrar el siguiente paso
+                    localStorage.setItem("afiliado", "yes");
+                    console.log("localStorage: afiliado establecido a yes.");
                     mostrarPopupBienvenida(mensajeBienvenida);
                     // Guardar datos del usuario para el chat
                     if (window.setUserData) {
@@ -241,6 +244,26 @@ function mostrarPopupBienvenida(mensaje) {
     `;
 
     document.body.appendChild(popupBienvenida);
+    // --- NUEVOS LISTENERS PARA LOS BOTONES ACTUALES ---
+    const completarBtn = document.getElementById("completar-perfil-btn");
+    const omitirBtn = document.getElementById("omitir-perfil-btn");
+    
+    if (completarBtn) {
+        completarBtn.addEventListener("click", function () {
+            popupBienvenida.remove();
+            // Llamar a la función que verifica si el perfil necesita ser completado
+            verificarPerfilUsuario(); 
+        });
+    }
+    
+    if (omitirBtn) {
+        omitirBtn.addEventListener("click", function () {
+            popupBienvenida.remove();
+            // Asegurarse de que el botón flotante para el chat esté visible
+            crearBotonFlotante(); 
+            console.log("Usuario omitió completar perfil. Botón flotante asegurado.");
+        });
+    }
 
     // Alineación a la izquierda de los ítems de la lista
     const lista = popupBienvenida.querySelector("ul");
@@ -249,59 +272,6 @@ function mostrarPopupBienvenida(mensaje) {
         lista.style.marginLeft = "20px";
         lista.style.paddingLeft = "15px";
     }
-
-    // Evento para cambiar el color del botón en hover
-    const botonAceptar = document.getElementById("cerrar-popup");
-    botonAceptar.addEventListener("mouseenter", function () {
-        this.style.backgroundColor = "green";
-        this.style.color = "black";
-    });
-
-    botonAceptar.addEventListener("mouseleave", function () {
-        this.style.backgroundColor = "red";
-        this.style.color = "white";
-    });
-
-    botonAceptar.addEventListener("click", function () {
-        popupBienvenida.remove();
-
-        // Guardar en localStorage que el usuario está autenticado
-        localStorage.setItem("afiliado", "yes");
-
-        // Extraer nombre y cargo del usuario del mensaje
-        let nombre = "Usuario";
-        let cargo = "Afiliado";
-
-        // Intentar extraer el nombre del mensaje
-        const nombreMatch = mensaje.match(/<strong>([^<]+)<\/strong>/);
-        if (nombreMatch && nombreMatch[1]) {
-            nombre = nombreMatch[1];
-            localStorage.setItem("nombre", nombre);
-        }
-
-        // Intentar extraer el cargo del mensaje
-        const cargoMatch = mensaje.match(/Como <strong>([^<]+)<\/strong>/);
-        if (cargoMatch && cargoMatch[1]) {
-            cargo = cargoMatch[1];
-            localStorage.setItem("cargo", cargo);
-        }
-        
-        // NUEVO: Verificar si el usuario ya existe en el backend y solicitar foto/email si es necesario
-        const cedula = localStorage.getItem("cedula");
-        if (cedula) {
-            verificarPerfilUsuario();
-        } else {
-            // Si no tenemos la cédula almacenada, continuar con activación normal
-            // Activar el chat con el nuevo sistema de botón flotante
-            if (window.activateChatAfterAuth) {
-                window.activateChatAfterAuth(nombre, cargo);
-            } else {
-                console.error("La función activateChatAfterAuth no está disponible");
-                // Fallback al método antiguo
-                activarChatbot();
-            }
-        }
-    });
 
     // Ocultar el popup de autenticación si aún existe
     const authPopup = document.getElementById("auth-popup");
