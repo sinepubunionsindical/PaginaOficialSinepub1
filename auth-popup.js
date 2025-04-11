@@ -496,73 +496,152 @@ function mostrarFormularioCompletarPerfil(cedula, nombre) {
 
 // Función para guardar el perfil del usuario
 function guardarPerfilUsuario(cedula, nombre, correo, foto, guardarBtn, cancelarBtn) {
-    const originalBtnText = 'Guardar Perfil';
+    const originalBtnText = 'Guardar Perfil'; // Guardar texto original
     
     if (!cedula || !nombre || !correo) {
         alert('Por favor completa todos los campos obligatorios');
+        // --- REHABILITAR BOTONES EN ERROR --- 
         if (guardarBtn) {
-            guardarBtn.disabled = false;
-            guardarBtn.textContent = originalBtnText;
+             guardarBtn.disabled = false;
+             guardarBtn.textContent = originalBtnText;
         }
         if (cancelarBtn) cancelarBtn.disabled = false;
+        // --- FIN REHABILITACIÓN ---
         return;
     }
-
+    
+    // Validar correo con expresión regular
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(correo)) {
+        alert('Por favor ingresa un correo electrónico válido');
+        // --- REHABILITAR BOTONES EN ERROR --- 
+        if (guardarBtn) {
+             guardarBtn.disabled = false;
+             guardarBtn.textContent = originalBtnText;
+        }
+        if (cancelarBtn) cancelarBtn.disabled = false;
+        // --- FIN REHABILITACIÓN ---
+        return;
+    }
+    
     const datos = {
         cedula: cedula,
         nombre: nombre,
         correo: correo,
         foto: foto
     };
-
+    
     console.log(" Enviando datos de perfil:", {...datos, foto: foto ? '(Base64 imagen)' : null});
-
+    
     fetch(`${getBackendUrl()}/actualizar_perfil`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify(datos)
     })
     .then(response => {
+        console.log(" Status respuesta actualización perfil:", response.status, response.statusText);
+        console.log(" Tipo de contenido:", response.headers.get('content-type'));
+        
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
         }
+        
+        // Verificar que la respuesta sea JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            console.error(" Respuesta no es JSON:", contentType);
+            // Si no es JSON, leer como texto y mostrar parte del contenido para diagnóstico
+            return response.text().then(text => {
+                console.error("Contenido HTML recibido (primeros 500 caracteres):", text.substring(0, 500) + "...");
+                console.error("URL completa de la solicitud:", `${getBackendUrl()}/actualizar_perfil`);
+                throw new Error('La respuesta del servidor no es JSON válido. Posiblemente el servidor está devolviendo una página HTML de error.');
+            });
+        }
+        
         return response.json();
     })
     .then(data => {
+        console.log(" Respuesta actualización perfil:", data);
+        
+        if (data.error) {
+            alert(' Error al actualizar perfil: ' + data.error);
+            // --- REHABILITAR BOTONES EN ERROR --- 
+            if (guardarBtn) {
+                 guardarBtn.disabled = false;
+                 guardarBtn.textContent = originalBtnText;
+            }
+            if (cancelarBtn) cancelarBtn.disabled = false;
+            // --- FIN REHABILITACIÓN ---
+            return;
+        }
+        
         if (data.success) {
+            // Guardar la información del usuario en localStorage
             localStorage.setItem('nombre', nombre);
             localStorage.setItem('correo', correo);
+            // También guardar correo como email para mantener consistencia en otras partes del código
             localStorage.setItem('email', correo);
-            localStorage.setItem('perfil_completo', 'true');
-            if (data.foto_url) {
-                localStorage.setItem('foto_ruta', data.foto_url);
-            }
             
+            // Añadir bandera para indicar que el perfil está completo
+            localStorage.setItem('perfil_completo', 'true');
+            console.log(" localStorage: perfil_completo establecido a true.");
+            
+            // Cerrar el popup
             closeAuthPopup();
             
+            // --- ACTUALIZAR UI INMEDIATAMENTE ---
             if (!window.location.pathname.includes('publicidad.html')) {
-                const initialContainer = document.getElementById('boton-flotante');
+                console.log("   - [GuardarPerfil] Actualizando UI para index/otras...");
+                const initialContainer = document.getElementById('boton-flotante'); // <-- CONTENEDOR INICIAL
                 if (initialContainer) {
-                    initialContainer.style.display = 'none';
+                    initialContainer.style.display = 'none'; // <-- OCULTAR contenedor inicial
+                    console.log("      - Contenedor inicial (#boton-flotante) oculto.");
+                } else {
+                    console.warn("      - No se encontró el contenedor inicial (#boton-flotante) para ocultar.");
                 }
+                if (window.crearBotonFlotante) { 
+                    crearBotonFlotante(); // <-- MOSTRAR el flotante real
+                    console.log("      - Botón flotante real asegurado.");
+                } else {
+                     console.error("      - La función crearBotonFlotante no está definida.");
+                }
+            } else {
+                 console.log("   - [GuardarPerfil] En publicidad.html, no se actualiza UI de chat.");
+            }
+            // --- FIN ACTUALIZACIÓN UI ---
+            
+            // Si estamos en la página de publicidad, configurar el botón de registro
+            if (window.configurarBotonRegistro) {
+                console.log(" Perfil guardado. Configurando botón de registro.");
+                window.configurarBotonRegistro();
+            } else {
+                console.log(" Perfil guardado. No se encontró configurarBotonRegistro (quizás no estamos en publicidad.html)");
             }
             
-            crearBotonFlotante();
+            console.log(" Perfil guardado con éxito. UI actualizada (botón inicial oculto, flotante visible), botón de registro configurado (si aplica). Chatbot NO se activa desde aquí.");
         } else {
-            throw new Error(data.error || 'Error al actualizar el perfil');
+            alert('Ha ocurrido un error al actualizar tu perfil. Por favor intenta nuevamente.');
+            // --- REHABILITAR BOTONES EN ERROR --- 
+            if (guardarBtn) {
+                 guardarBtn.disabled = false;
+                 guardarBtn.textContent = originalBtnText;
+            }
+            if (cancelarBtn) cancelarBtn.disabled = false;
+            // --- FIN REHABILITACIÓN ---
         }
     })
     .catch(error => {
         console.error('Error al actualizar perfil:', error);
-        alert('Ha ocurrido un error al actualizar tu perfil. Por favor intenta nuevamente.');
+        alert('Error al actualizar perfil: ' + error.message);
+        // --- REHABILITAR BOTONES EN ERROR --- 
         if (guardarBtn) {
-            guardarBtn.disabled = false;
-            guardarBtn.textContent = originalBtnText;
+             guardarBtn.disabled = false;
+             guardarBtn.textContent = originalBtnText;
         }
         if (cancelarBtn) cancelarBtn.disabled = false;
+        // --- FIN REHABILITACIÓN ---
     });
 }
 
@@ -918,37 +997,58 @@ window.activarChatbot = activarChatbot;
 window.verificarPerfilUsuario = verificarPerfilUsuario;
 
 // Función para mostrar el formulario de perfil
-function mostrarFormularioPerfil(cedula) {
-    console.log("📝 Mostrando formulario de perfil para cédula:", cedula);
+function mostrarFormularioPerfil(cedula, nombre) {
+    console.log(" Mostrando formulario de perfil para cédula:", cedula);
+    
+    // Guardar datos en localStorage
+    localStorage.setItem("cedula", cedula);
+    if (nombre) {
+        localStorage.setItem("nombre", nombre);
+    }
     
     // Cerrar el popup actual si existe
     const existingPopup = document.getElementById("auth-popup");
     if (existingPopup) {
         existingPopup.remove();
     }
-
+    
+    // Crear el nuevo popup de perfil
     const popup = document.createElement("div");
-    popup.id = "profile-popup";
-    popup.className = "auth-popup";
+    popup.id = "auth-popup";
+    popup.style.position = "fixed";
+    popup.style.top = "50%";
+    popup.style.left = "50%";
+    popup.style.transform = "translate(-50%, -50%)";
+    popup.style.background = "white";
+    popup.style.padding = "20px";
+    popup.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
+    popup.style.zIndex = "10000";
+    popup.style.borderRadius = "8px";
+    popup.style.width = "400px";
+    popup.style.textAlign = "center";
+
     popup.innerHTML = `
-        <div class="popup-content">
-            <h2>Completa tu Perfil</h2>
-            <p>Para continuar, necesitamos algunos datos adicionales:</p>
-            
-            <div id="profile-panel">
-                <div style="margin-bottom: 15px;">
-                    <label for="correo-perfil">Correo Electrónico: *</label>
-                    <input type="email" id="correo-perfil" name="correo" required>
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label>Foto de perfil: *</label>
-                    <div style="display: flex; align-items: center; justify-content: center; margin-top: 10px;">
-                        <img id="user-photo-preview" src="" alt="Foto de perfil" style="width: 100px; height: 100px; border-radius: 50%; border: 1px solid #ccc; object-fit: cover; display: none;">
-                        <input type="file" id="user-photo" accept="image/*" style="display: block; margin: 10px auto;" required>
-                    </div>
-                </div>
-                <button id="guardar-perfil-btn">Guardar Perfil</button>
+        <h3>Completa tu perfil</h3>
+        <p>Por favor completa la siguiente información para continuar:</p>
+        
+        <div id="profile-panel">
+            <div style="margin-bottom: 15px;">
+                <label for="nombre-perfil">Nombre:</label>
+                <input type="text" id="nombre-perfil" name="nombre" required value="${nombre}"> 
             </div>
+            <div>
+                <label for="correo-perfil">Correo Electrónico:</label>
+                <input type="email" id="correo-perfil" name="correo" required>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label>Foto de perfil:</label>
+                <div style="display: flex; align-items: center; justify-content: center; margin-top: 10px;">
+                    <img id="user-photo-preview" src="" alt="Foto de perfil" style="width: 100px; height: 100px; border-radius: 50%; border: 1px solid #ccc; object-fit: cover; display: none;">
+                    <input type="file" id="user-photo" accept="image/*" style="display: block; margin: 10px auto;">
+                </div>
+            </div>
+            <button id="guardar-perfil-btn">Guardar Perfil</button>
+            <button id="cancelar-perfil-btn">Cancelar</button>
         </div>
     `;
 
@@ -960,7 +1060,7 @@ function mostrarFormularioPerfil(cedula) {
         document.getElementById('correo-perfil').value = correo;
     }
     
-    // Evento para previsualizar la imagen
+    // Evento para previsualizar la imagen seleccionada
     document.getElementById('user-photo').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {
@@ -973,19 +1073,45 @@ function mostrarFormularioPerfil(cedula) {
             reader.readAsDataURL(file);
         }
     });
-
+    
     // Evento para guardar el perfil
-    document.getElementById('guardar-perfil-btn').addEventListener('click', async function() {
-        const correoInput = document.getElementById('correo-perfil');
-        const fotoInput = document.getElementById('user-photo');
-
-        if (!correoInput.value || !fotoInput.files[0]) {
-            alert('Por favor completa todos los campos obligatorios (correo y foto)');
-            return;
-        }
-
-        // ... resto del código de guardado
-    });
+    let guardarBtn = document.getElementById('guardar-perfil-btn');
+    let cancelarBtn = document.getElementById('cancelar-perfil-btn');
+    
+    if (guardarBtn) {
+        // --- CLONAR PARA LIMPIAR LISTENERS ---
+        const newGuardarBtn = guardarBtn.cloneNode(true);
+        guardarBtn.parentNode.replaceChild(newGuardarBtn, guardarBtn);
+        guardarBtn = newGuardarBtn; // Actualizar la referencia
+        // --- FIN CLONADO ---
+        
+        guardarBtn.addEventListener('click', function() {
+            // Deshabilitar botones
+            guardarBtn.disabled = true;
+            guardarBtn.textContent = 'Guardando...';
+            if(cancelarBtn) cancelarBtn.disabled = true;
+            
+            const nombreValue = document.getElementById('nombre-perfil').value;
+            const correoValue = document.getElementById('correo-perfil').value;
+            const fotoPreview = document.getElementById('user-photo-preview');
+            const fotoValue = fotoPreview.style.display !== 'none' ? fotoPreview.src : '';
+            
+            // Pasar la referencia correcta del botón
+            guardarPerfilUsuario(cedula, nombreValue, correoValue, fotoValue, guardarBtn, cancelarBtn);
+        });
+    }
+    
+    // Evento para cancelar (podría necesitar clonado similar si la función se llama múltiples veces)
+    if (cancelarBtn) {
+        // Opcional: Clonar y reemplazar cancelarBtn si es necesario
+        // const newCancelarBtn = cancelarBtn.cloneNode(true);
+        // cancelarBtn.parentNode.replaceChild(newCancelarBtn, cancelarBtn);
+        // cancelarBtn = newCancelarBtn;
+        
+        cancelarBtn.addEventListener('click', function() {
+            closeAuthPopup();
+        });
+    }
 }
 
 // Función para mostrar mensajes de error
@@ -1071,8 +1197,5 @@ function comprobarPerfilUsuarioEnBackground(cedula) {
         console.error('Error al comprobar perfil en background:', error);
     });
 }
-
-
-
 
 
