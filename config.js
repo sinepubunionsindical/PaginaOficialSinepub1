@@ -31,7 +31,7 @@ const API_ENDPOINTS = {
     afiliacion: `${EFFECTIVE_URL}/api/afiliacion`,
     afiliados: `${EFFECTIVE_URL}/api/afiliados`,
     validarCodigo: `${EFFECTIVE_URL}/api/validar-codigo`,
-    verificarCedula: `${EFFECTIVE_URL}/api/verificar_cedula`
+    verificarCedula: `${EFFECTIVE_URL}/api/verificar_cedula` // Sin slash al final
 };
 
 // Función para enviar formulario de afiliación por correo

@@ -98,11 +98,24 @@ function closeAuthPopup() {
 // Función separada para verificar la cédula una vez confirmado que el servidor está activo
 async function verificarCedulaEnServidor(cedula) {
     try {
-        const response = await fetch(`${API_ENDPOINTS.verificarCedula}/${cedula}`);
+        // Construir la URL completa usando API_ENDPOINTS
+        const url = `${API_ENDPOINTS.verificarCedula}/${cedula}`;
+        console.log("🔄 Intentando verificar cédula en:", url);
+
+        const response = await fetch(url);
+        
+        // Verificar el tipo de contenido
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            console.error("❌ El servidor no respondió con JSON:", contentType);
+            console.error("Respuesta del servidor:", await response.text());
+            throw new Error("Respuesta inválida del servidor");
+        }
+
         const data = await response.json();
+        console.log("✅ Respuesta del servidor:", data);
         
         if (data.valid) {
-            // Solo guardamos el estado de bloqueo si falla
             if (window.mostrarPopupContrasena) {
                 window.mostrarPopupContrasena(data.nombre, data.cargo, cedula);
             }
@@ -110,7 +123,8 @@ async function verificarCedulaEnServidor(cedula) {
             mostrarError("Cédula no válida");
         }
     } catch (error) {
-        console.error("Error en verificación:", error);
+        console.error("❌ Error detallado:", error);
+        console.error("Stack trace:", error.stack);
         mostrarError("Error de conexión");
     }
 }
@@ -1214,3 +1228,4 @@ function comprobarPerfilUsuarioEnBackground(cedula) {
         console.error('Error al comprobar perfil en background:', error);
     });
 }
+
