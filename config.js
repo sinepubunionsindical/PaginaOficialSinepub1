@@ -10,7 +10,7 @@ const API_KEYS = {
 };
 
 // URL de backend centralizada usando ngrok
-const BACKEND_URL = 'https://d01c-2800-484-8786-7d00-a958-9ef1-7e9c-89b9.ngrok-free.app';
+const BACKEND_URL = 'https://379a-2800-484-8786-7d00-851e-cb73-b7da-96ba.ngrok-free.app';
 
 // Modo de depuración - cambia a true para usar localhost en lugar de ngrok
 // Si hay problemas con ngrok, cambiar a true
@@ -31,20 +31,32 @@ const API_ENDPOINTS = {
     afiliacion: `${EFFECTIVE_URL}/api/afiliacion`,
     afiliados: `${EFFECTIVE_URL}/api/afiliados`,
     validarCodigo: `${EFFECTIVE_URL}/api/validar-codigo`,
-    verificarCedula: `${EFFECTIVE_URL}/api/verificar_cedula`  // Usar la misma URL base con ngrok
+    verificarCedula: `${EFFECTIVE_URL}/api/verificar_cedula`
 };
 
 // Función para enviar formulario de afiliación por correo
 async function enviarFormularioAfiliacion(pdfData, emailDestino) {
     try {
-        const response = await fetch(API_ENDPOINTS.afiliacion, {
+        console.log("📧 Enviando formulario a:", emailDestino || 'daniel.rr93g@gmail.com');
+        
+        // Usar el endpoint de publicidad que sabemos que funciona
+        // y tiene la funcionalidad de enviar correos
+        const response = await fetch(API_ENDPOINTS.publicidad, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                pdf_data: pdfData,
-                email: emailDestino || 'daniel.rr93g@gmail.com' // Email por defecto
+                action: 'enviar_correo',
+                destinatario: 'daniel.rr93g@gmail.com', // Siempre enviar a Daniel
+                cc_destinatario: emailDestino, // Con copia al usuario si proporcionó email
+                asunto: 'Nuevo formulario de afiliación',
+                mensaje: `
+                    <h2>Nuevo formulario de afiliación recibido</h2>
+                    <p>Se ha recibido un nuevo formulario de afiliación con los siguientes datos:</p>
+                    <pre>${JSON.stringify(pdfData, null, 2)}</pre>
+                    <p>Por favor, revisa y procesa esta solicitud.</p>
+                `
             })
         });
         
@@ -53,9 +65,10 @@ async function enviarFormularioAfiliacion(pdfData, emailDestino) {
         }
         
         const result = await response.json();
+        console.log("✅ Resultado del envío:", result);
         return result;
     } catch (error) {
-        console.error('Error al enviar formulario de afiliación:', error);
+        console.error('❌ Error al enviar formulario de afiliación:', error);
         return { error: error.message };
     }
 }
@@ -65,3 +78,4 @@ window.API_KEYS = API_KEYS;
 window.BACKEND_URL = BACKEND_URL;
 window.API_ENDPOINTS = API_ENDPOINTS;
 window.enviarFormularioAfiliacion = enviarFormularioAfiliacion;
+

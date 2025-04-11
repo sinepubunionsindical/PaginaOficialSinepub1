@@ -96,86 +96,23 @@ function closeAuthPopup() {
 }
 
 // Función separada para verificar la cédula una vez confirmado que el servidor está activo
-function verificarCedulaEnServidor(cedula) {
-    console.log("🔍 Verificando cédula:", cedula);
-    
-    // Guardar la cédula en localStorage para usarla más tarde
-    localStorage.setItem("cedula", cedula);
-    
-    // Mostrar indicador de carga
-    const btnVerificar = document.getElementById('verificar-cedula-btn');
-    if (btnVerificar) {
-        btnVerificar.textContent = 'Verificando...';
-        btnVerificar.disabled = true;
-    }
-    
-    // Usar la URL específica para verificación de cédula
-    const verificarCedulaUrl = window.API_ENDPOINTS && window.API_ENDPOINTS.verificarCedula ? 
-                              window.API_ENDPOINTS.verificarCedula : 
-                              "http://localhost:8001/api/verificar_cedula";
-    
-    console.log("📡 Usando URL para verificación:", verificarCedulaUrl);
-    
-    fetch(verificarCedulaUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ cedula: cedula })
-    })
-    .then(response => {
-        console.log("📡 Status respuesta verificación cédula:", response.status, response.statusText);
-        console.log("📡 Tipo de contenido:", response.headers.get('content-type'));
-        
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
-        }
-        
-        // Verificar que la respuesta sea JSON
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            console.error("⚠️ Respuesta no es JSON:", contentType);
-            // Si no es JSON, leer como texto y mostrar parte del contenido para diagnóstico
-            return response.text().then(text => {
-                console.error("Contenido HTML recibido (primeros 500 caracteres):", text.substring(0, 500) + "...");
-                console.error("URL completa de la solicitud:", verificarCedulaUrl);
-                throw new Error('La respuesta del servidor no es JSON válido. Posiblemente el servidor está devolviendo una página HTML de error.');
-            });
-        }
-        
-        return response.json();
-    })
-    .then(data => {
-        console.log("📡 Respuesta verificación cédula:", data);
-        
-        // Restaurar botón
-        if (btnVerificar) {
-            btnVerificar.textContent = 'Verificar';
-            btnVerificar.disabled = false;
-        }
-        
-        if (data.error) {
-            mostrarError(data.error);
-            return;
-        }
+async function verificarCedulaEnServidor(cedula) {
+    try {
+        const response = await fetch(`${API_ENDPOINTS.verificarCedula}/${cedula}`);
+        const data = await response.json();
         
         if (data.valid) {
-            mostrarFormularioPerfil(cedula, data.nombre);
+            // Solo guardamos el estado de bloqueo si falla
+            if (window.mostrarPopupContrasena) {
+                window.mostrarPopupContrasena(data.nombre, data.cargo, cedula);
+            }
         } else {
-            mostrarError("La cédula ingresada no es válida o no está registrada en el sistema.");
+            mostrarError("Cédula no válida");
         }
-    })
-    .catch(error => {
-        console.error('Error al verificar cédula:', error);
-        
-        // Restaurar botón
-        if (btnVerificar) {
-            btnVerificar.textContent = 'Verificar';
-            btnVerificar.disabled = false;
-        }
-        
-        mostrarError("Error al verificar la cédula: " + error.message);
-    });
+    } catch (error) {
+        console.error("Error en verificación:", error);
+        mostrarError("Error de conexión");
+    }
 }
 
 // Función para mostrar el popup de contraseña
@@ -797,6 +734,25 @@ function activarChatbot() {
 
     console.log("🎙️ Activando chatbot con IA...");
 
+    // Primero, asegurarse de que cualquier popup de autenticación sea removido
+    const authPopup = document.getElementById("auth-popup");
+    if (authPopup) {
+        authPopup.remove();
+        console.log("✅ Popup de autenticación removido correctamente");
+    }
+
+    const popupContrasena = document.getElementById("popup-contrasena");
+    if (popupContrasena) {
+        popupContrasena.remove();
+        console.log("✅ Popup de contraseña removido correctamente");
+    }
+
+    const popupBienvenida = document.getElementById("popup-bienvenida");
+    if (popupBienvenida) {
+        popupBienvenida.remove();
+        console.log("✅ Popup de bienvenida removido correctamente");
+    }
+
     const botonChat = document.getElementById("chatbot-button");
     const linkEstatutos = document.getElementById("estatutos-link");
     const linkEstatutosMobile = document.getElementById("estatutos-link-mobile");
@@ -808,7 +764,11 @@ function activarChatbot() {
     const videoContainer = document.getElementById("ai-video-container"); // <-- Contenedor del video
 
     // Ocultar botón y mostrar/ocultar enlaces
-    if (botonChat) botonChat.style.display = "none";
+    if (botonChat) {
+        botonChat.style.display = "none";
+        console.log("✅ Botón de chat original ocultado");
+    }
+    
     if (linkEstatutos) linkEstatutos.style.display = "inline";
     if (linkEstatutosMobile) linkEstatutosMobile.style.display = "block";
     if (linkModulos) linkModulos.style.display = "inline";
@@ -854,6 +814,9 @@ function activarChatbot() {
         if (closeButton) {
             closeButton.addEventListener('click', () => {
                 contenedorChatbot.style.display = "none";
+                if (videoContainer) {
+                    videoContainer.style.display = "none";
+                }
                 if (botonFlotante) {
                     botonFlotante.style.display = "block";
                 } else {
@@ -868,6 +831,11 @@ function activarChatbot() {
             minimizeButton.addEventListener('click', () => {
                 // Ocultar el contenedor del chatbot
                 contenedorChatbot.style.display = "none";
+                
+                // Ocultar también el contenedor de video
+                if (videoContainer) {
+                    videoContainer.style.display = "none";
+                }
                 
                 // Mostrar el botón flotante
                 if (botonFlotante) {

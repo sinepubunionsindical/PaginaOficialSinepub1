@@ -148,56 +148,48 @@ function mostrarPopupError() {
 
 
 // 🔹 Función para activar la segunda verificación de contraseña maestra
-let intentosRestantes = 2;
+let intentosRestantes = 3;
 
-function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
-    const popupContrasena = document.createElement("div");
-    popupContrasena.id = "popup-contrasena";
-    popupContrasena.style.position = "fixed";
-    popupContrasena.style.top = "50%";
-    popupContrasena.style.left = "50%";
-    popupContrasena.style.transform = "translate(-50%, -50%)";
-    popupContrasena.style.background = "#ffffff";
-    popupContrasena.style.color = "#000000";
-    popupContrasena.style.padding = "25px";
-    popupContrasena.style.borderRadius = "10px";
-    popupContrasena.style.textAlign = "center";
-    popupContrasena.style.width = "400px";
-    popupContrasena.style.boxShadow = "0 5px 15px rgba(0,0,0,0.3)";
-    popupContrasena.style.zIndex = "10000";
-
-    popupContrasena.innerHTML = `
-        <h3>🔐 Verificación Adicional</h3>
-        <p>${nombre}, por favor ingresa la contraseña maestra para continuar.</p>
-        <input type="password" id="input-contrasena" placeholder="Contraseña">
-        <br><br>
-        <button id="verificar-contrasena">Verificar</button>
-        <button onclick="document.getElementById('popup-contrasena').remove()">Cancelar</button>
-    `;
-
-    document.body.appendChild(popupContrasena);
-
-    document.getElementById("verificar-contrasena").addEventListener("click", () => {
+async function mostrarPopupContrasena(nombre, cargo, cedula) {
+    const popupContrasena = crearPopupContrasena();
+    
+    document.getElementById("verificar-contrasena").addEventListener("click", async () => {
         const contrasena = document.getElementById("input-contrasena").value;
-
-        if (contrasena === "12") {
-            popupContrasena.remove();
-            mostrarPopupBienvenida(mensajeBienvenida);
-            setUserData(nombre, cargo);
-        } else {
-            intentosRestantes--;
-            popupContrasena.remove();
-
-            if (intentosRestantes > 0) {
-                alert(`❌ Contraseña incorrecta. Te queda ${intentosRestantes} intento.`);
-                mostrarPopupContrasena(nombre, cargo, mensajeBienvenida);
+        
+        try {
+            const response = await fetch(`${API_ENDPOINTS.validarCodigo}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ cedula, codigo: contrasena })
+            });
+            
+            const data = await response.json();
+            
+            if (data.valid) {
+                popupContrasena.remove();
+                localStorage.setItem("afiliado_autenticado", "true"); // Única excepción permitida
+                verificarEstadoPerfil(cedula);
             } else {
-                alert("❌ No eres afiliado al sindicato. Recuerda que la suplantación de identidad tiene consecuencias penales.");
-                mostrarPopupError();
-                bloquearBoton();
+                manejarIntentoFallido();
             }
+        } catch (error) {
+            console.error("Error:", error);
+            mostrarError("Error de conexión");
         }
     });
+}
+
+function manejarIntentoFallido() {
+    intentosRestantes--;
+    if (intentosRestantes <= 0) {
+        localStorage.setItem("acceso_bloqueado", "true"); // Excepción permitida para bloqueo
+        bloquearBoton();
+        mostrarError("Acceso bloqueado por múltiples intentos fallidos");
+    } else {
+        mostrarError(`Contraseña incorrecta. ${intentosRestantes} intentos restantes`);
+    }
 }
 
 // 🔹 Función para activar el chatbot después de cerrar el popup
@@ -377,3 +369,4 @@ function bloquearBoton() {
         localStorage.setItem("afiliado", "no");
     }
 }
+
