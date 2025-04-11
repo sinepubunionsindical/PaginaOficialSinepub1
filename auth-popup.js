@@ -98,8 +98,9 @@ function closeAuthPopup() {
 // Función separada para verificar la cédula una vez confirmado que el servidor está activo
 async function verificarCedulaEnServidor(cedula) {
     try {
-        // Usar la URL del API de publicidad 
-        const backendUrl = window.API_ENDPOINTS ? window.API_ENDPOINTS.verificarCedula : "http://localhost:8000/api/verificar_cedula";
+        const backendUrl = window.API_ENDPOINTS ? 
+            window.API_ENDPOINTS.verificarCedula : 
+            "http://localhost:8000/api/verificar_cedula";
         
         const url = `${backendUrl}/${cedula}`;
         console.log(" Intentando verificar cédula en:", url);
@@ -110,39 +111,36 @@ async function verificarCedulaEnServidor(cedula) {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            // Añadir estas opciones para CORS
-            mode: 'cors',
-            credentials: 'same-origin'
+            mode: 'cors'
         });
-        
-        // Verificar el tipo de contenido
-        const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-            throw new Error("Respuesta inválida del servidor");
-        }
 
         const data = await response.json();
         console.log(" Respuesta del servidor:", data);
-        
-        if (data.existe) { 
-            if (window.mostrarPopupContrasena) {
-                window.mostrarPopupContrasena(data.nombre, data.cargo, "Bienvenido de nuevo"); // Usar mensaje genérico o crear uno
-            }
+
+        if (data.valid) {
+            // Guardar datos del usuario
+            localStorage.setItem("afiliado", "si");
+            localStorage.setItem("nombre", data.nombre);
+            localStorage.setItem("cargo", data.cargo);
+            localStorage.setItem("codigo_secreto", data.codigo_secreto);
+            
+            // Mostrar mensaje de bienvenida y solicitar código
+            let mensajeBienvenida = `<h2>Bienvenido al Sindicato</h2>
+                                    <p>Nombre: ${data.nombre}</p>
+                                    <p>Cargo: ${data.cargo}</p>`;
+            mostrarPopupContrasena(data.nombre, data.cargo, mensajeBienvenida);
         } else {
-            // Usar el mensaje de detalle del servidor si existe (o el genérico)
-            const errorMsg = data.detail || "Cédula no encontrada o inválida";
-            mostrarError(errorMsg);
+            localStorage.setItem("afiliado", "no");
+            mostrarPopupError();
         }
     } catch (error) {
-        console.error(" Error detallado:", error);
-        console.error("Stack trace:", error.stack);
-        // Mostrar un mensaje más informativo si es posible
-        mostrarError(error.message || "Error de conexión o procesamiento"); 
+        console.error(" Error al verificar cédula:", error);
+        mostrarPopupError();
     }
 }
 
 // Función para mostrar el popup de contraseña
-function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) { // Asegurarse de recibir mensajeBienvenida
+function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
     const popupContrasena = document.createElement("div");
     popupContrasena.id = "popup-contrasena";
     popupContrasena.style.position = "fixed";
@@ -171,47 +169,29 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) { // Asegurars
 
     let intentosRestantes = 2;
 
-    document.getElementById("verificar-contrasena").addEventListener("click", function() {
+    document.getElementById("verificar-contrasena").addEventListener("click", () => {
         const contrasena = document.getElementById("input-contrasena").value;
-
-        // Validar código mediante el backend en lugar de comparar directamente
-        const validarUrl = window.API_ENDPOINTS ? `${window.API_ENDPOINTS.validarCodigo}/${contrasena}` : `http://localhost:8000/api/validar-codigo/${contrasena}`;
+        const codigoSecreto = localStorage.getItem("codigo_secreto");
         
-        console.log(" Validando código con el backend:", validarUrl);
-        
-        fetch(validarUrl)
-            .then(response => response.json())
-            .then(data => {
-                if (data.valid) {
-                    popupContrasena.remove();
-                    // Marcar como afiliado ANTES de mostrar el siguiente paso
-                    localStorage.setItem("afiliado", "yes");
-                    console.log("localStorage: afiliado establecido a yes.");
-                    mostrarPopupBienvenida(mensajeBienvenida);
-                    // Guardar datos del usuario para el chat
-                    if (window.setUserData) {
-                        window.setUserData(nombre, cargo);
-                    }
-                } else {
-                    intentosRestantes--;
-                    popupContrasena.remove();
+        if (contrasena === codigoSecreto) {
+            popupContrasena.remove();
+            localStorage.setItem("afiliado_autenticado", "true");
+            mostrarPopupBienvenida(mensajeBienvenida);
+            // Comprobar el perfil en background
+            comprobarPerfilUsuarioEnBackground(cedula);
+        } else {
+            intentosRestantes--;
+            popupContrasena.remove();
 
-                    if (intentosRestantes > 0) {
-                        alert(` Contraseña incorrecta. Te queda ${intentosRestantes} intento.`);
-                        mostrarPopupContrasena(nombre, cargo, mensajeBienvenida);
-                    } else {
-                        alert(" No eres afiliado al sindicato. Recuerda que la suplantación de identidad tiene consecuencias penales.");
-                        mostrarPopupError();
-                        bloquearBoton();
-                    }
-                }
-            })
-            .catch(error => {
-                console.error(" Error al validar código:", error);
-                alert(" Ocurrió un error al validar la contraseña. Por favor, intenta nuevamente.");
-                popupContrasena.remove();
+            if (intentosRestantes > 0) {
+                alert(` Contraseña incorrecta. Te queda ${intentosRestantes} intento.`);
                 mostrarPopupContrasena(nombre, cargo, mensajeBienvenida);
-            });
+            } else {
+                alert(" No eres afiliado al sindicato. Recuerda que la suplantación de identidad tiene consecuencias penales.");
+                mostrarPopupError();
+                bloquearBoton();
+            }
+        }
     });
 
     document.getElementById("cancelar-contrasena").addEventListener("click", function() {
@@ -496,204 +476,80 @@ function mostrarFormularioCompletarPerfil(cedula, nombre) {
 
 // Función para guardar el perfil del usuario
 function guardarPerfilUsuario(cedula, nombre, correo, foto, guardarBtn, cancelarBtn) {
-    const originalBtnText = 'Guardar Perfil'; // Guardar texto original
+    const originalBtnText = 'Guardar Perfil';
     
     if (!cedula || !nombre || !correo) {
         alert('Por favor completa todos los campos obligatorios');
-        // --- REHABILITAR BOTONES EN ERROR --- 
         if (guardarBtn) {
-             guardarBtn.disabled = false;
-             guardarBtn.textContent = originalBtnText;
+            guardarBtn.disabled = false;
+            guardarBtn.textContent = originalBtnText;
         }
         if (cancelarBtn) cancelarBtn.disabled = false;
-        // --- FIN REHABILITACIÓN ---
         return;
     }
-    
-    // Validar correo con expresión regular
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(correo)) {
-        alert('Por favor ingresa un correo electrónico válido');
-        // --- REHABILITAR BOTONES EN ERROR --- 
-        if (guardarBtn) {
-             guardarBtn.disabled = false;
-             guardarBtn.textContent = originalBtnText;
-        }
-        if (cancelarBtn) cancelarBtn.disabled = false;
-        // --- FIN REHABILITACIÓN ---
-        return;
-    }
-    
+
     const datos = {
         cedula: cedula,
         nombre: nombre,
         correo: correo,
         foto: foto
     };
-    
+
     console.log(" Enviando datos de perfil:", {...datos, foto: foto ? '(Base64 imagen)' : null});
-    
+
     fetch(`${getBackendUrl()}/actualizar_perfil`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
         },
         body: JSON.stringify(datos)
     })
     .then(response => {
-        console.log(" Status respuesta actualización perfil:", response.status, response.statusText);
-        console.log(" Tipo de contenido:", response.headers.get('content-type'));
-        
         if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
-        // Verificar que la respuesta sea JSON
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            console.error(" Respuesta no es JSON:", contentType);
-            // Si no es JSON, leer como texto y mostrar parte del contenido para diagnóstico
-            return response.text().then(text => {
-                console.error("Contenido HTML recibido (primeros 500 caracteres):", text.substring(0, 500) + "...");
-                console.error("URL completa de la solicitud:", `${getBackendUrl()}/actualizar_perfil`);
-                throw new Error('La respuesta del servidor no es JSON válido. Posiblemente el servidor está devolviendo una página HTML de error.');
-            });
-        }
-        
         return response.json();
     })
     .then(data => {
-        console.log(" Respuesta actualización perfil:", data);
-        
-        if (data.error) {
-            alert(' Error al actualizar perfil: ' + data.error);
-            // --- REHABILITAR BOTONES EN ERROR --- 
-            if (guardarBtn) {
-                 guardarBtn.disabled = false;
-                 guardarBtn.textContent = originalBtnText;
-            }
-            if (cancelarBtn) cancelarBtn.disabled = false;
-            // --- FIN REHABILITACIÓN ---
-            return;
-        }
-        
         if (data.success) {
-            // Guardar la información del usuario en localStorage
             localStorage.setItem('nombre', nombre);
             localStorage.setItem('correo', correo);
-            // También guardar correo como email para mantener consistencia en otras partes del código
             localStorage.setItem('email', correo);
-            
-            // Añadir bandera para indicar que el perfil está completo
             localStorage.setItem('perfil_completo', 'true');
-            console.log(" localStorage: perfil_completo establecido a true.");
+            if (data.foto_url) {
+                localStorage.setItem('foto_ruta', data.foto_url);
+            }
             
-            // Cerrar el popup
             closeAuthPopup();
             
-            // --- ACTUALIZAR UI INMEDIATAMENTE ---
             if (!window.location.pathname.includes('publicidad.html')) {
-                console.log("   - [GuardarPerfil] Actualizando UI para index/otras...");
-                const initialContainer = document.getElementById('boton-flotante'); // <-- CONTENEDOR INICIAL
+                const initialContainer = document.getElementById('boton-flotante');
                 if (initialContainer) {
-                    initialContainer.style.display = 'none'; // <-- OCULTAR contenedor inicial
-                    console.log("      - Contenedor inicial (#boton-flotante) oculto.");
-                } else {
-                    console.warn("      - No se encontró el contenedor inicial (#boton-flotante) para ocultar.");
+                    initialContainer.style.display = 'none';
                 }
-                if (window.crearBotonFlotante) { 
-                    crearBotonFlotante(); // <-- MOSTRAR el flotante real
-                    console.log("      - Botón flotante real asegurado.");
-                } else {
-                     console.error("      - La función crearBotonFlotante no está definida.");
-                }
-            } else {
-                 console.log("   - [GuardarPerfil] En publicidad.html, no se actualiza UI de chat.");
-            }
-            // --- FIN ACTUALIZACIÓN UI ---
-            
-            // Si estamos en la página de publicidad, configurar el botón de registro
-            if (window.configurarBotonRegistro) {
-                console.log(" Perfil guardado. Configurando botón de registro.");
-                window.configurarBotonRegistro();
-            } else {
-                console.log(" Perfil guardado. No se encontró configurarBotonRegistro (quizás no estamos en publicidad.html)");
             }
             
-            console.log(" Perfil guardado con éxito. UI actualizada (botón inicial oculto, flotante visible), botón de registro configurado (si aplica). Chatbot NO se activa desde aquí.");
+            crearBotonFlotante();
         } else {
-            alert('Ha ocurrido un error al actualizar tu perfil. Por favor intenta nuevamente.');
-            // --- REHABILITAR BOTONES EN ERROR --- 
-            if (guardarBtn) {
-                 guardarBtn.disabled = false;
-                 guardarBtn.textContent = originalBtnText;
-            }
-            if (cancelarBtn) cancelarBtn.disabled = false;
-            // --- FIN REHABILITACIÓN ---
+            throw new Error(data.error || 'Error al actualizar el perfil');
         }
     })
     .catch(error => {
         console.error('Error al actualizar perfil:', error);
-        alert('Error al actualizar perfil: ' + error.message);
-        // --- REHABILITAR BOTONES EN ERROR --- 
+        alert('Ha ocurrido un error al actualizar tu perfil. Por favor intenta nuevamente.');
         if (guardarBtn) {
-             guardarBtn.disabled = false;
-             guardarBtn.textContent = originalBtnText;
+            guardarBtn.disabled = false;
+            guardarBtn.textContent = originalBtnText;
         }
         if (cancelarBtn) cancelarBtn.disabled = false;
-        // --- FIN REHABILITACIÓN ---
     });
 }
 
 // Función para mostrar el popup de error
 function mostrarPopupError() {
-    console.log(" Mostrando popup de error...");
-
-    const popupError = document.createElement("div");
-    popupError.id = "popup-error";
-    popupError.style.position = "fixed";
-    popupError.style.top = "50%";
-    popupError.style.left = "50%";
-    popupError.style.transform = "translate(-50%, -50%)";
-    popupError.style.background = "#35a9aa";
-    popupError.style.color = "white";
-    popupError.style.padding = "25px";
-    popupError.style.borderRadius = "10px";
-    popupError.style.textAlign = "center";
-    popupError.style.width = "420px";
-    popupError.style.boxShadow = "0 5px 15px rgba(0,0,0,0.3)";
-    popupError.style.zIndex = "10000";
-
-    popupError.innerHTML = `
-        <h2 style="color: white; font-size: 22px; margin-bottom: 15px;"> Cédula Incorrecta</h2>
-        <p>No estás afiliado a nuestro sindicato. Pero no te preocupes, puedes afiliarte llenando nuestro formulario en línea:</p>
-        <p><strong>1️⃣ Llena el formulario en la sección de afiliación.</strong></p>
-        <p><strong>2️⃣ Descárgalo, agrégale tu huella y llévalo al sindicato en el séptimo piso.</strong></p>
-        <button id="cerrar-popup-error" style="
-            background-color: gray;
-            color: white;
-            font-size: 16px;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s ease-in-out;">
-            Aceptar
-        </button>
-    `;
-
-    document.body.appendChild(popupError);
-
-    // Evento para cerrar el popup
-    document.getElementById("cerrar-popup-error").addEventListener("click", function () {
-        popupError.remove();
-    });
-
-    // Ocultar el popup de autenticación si aún existe
-    const authPopup = document.getElementById("auth-popup");
-    if (authPopup) {
-        authPopup.remove();
-    }
+    const mensaje = "Cédula no válida o no registrada en el sistema.";
+    alert(mensaje);
 }
 
 // Función para bloquear el botón en caso de acceso denegado
@@ -1142,60 +998,112 @@ function getBackendUrl() {
 
 // Nueva función para comprobar el perfil en el backend sin mostrar UI
 function comprobarPerfilUsuarioEnBackground(cedula) {
-    console.log(" Comprobando perfil en background para cédula:", cedula);
+    const validarUrl = `${getBackendUrl()}/validar_perfil/${cedula}`;
+    
+    fetch(validarUrl)
+        .then(response => response.json())
+        .then(data => {
+            if (data.perfil_completo) {
+                // El perfil ya está completo, guardar esta información
+                localStorage.setItem('perfil_completo', 'true');
+                
+                // Guardar los datos del usuario en localStorage
+                if (data.datos) {
+                    if (data.datos.nombre) localStorage.setItem('nombre', data.datos.nombre);
+                    if (data.datos.correo) {
+                        localStorage.setItem('correo', data.datos.correo);
+                        localStorage.setItem('email', data.datos.correo);
+                    }
+                    if (data.datos.foto_ruta) localStorage.setItem('foto_ruta', data.datos.foto_ruta);
+                }
+                
+                // Si estamos en la página de publicidad, configurar el botón de registro
+                if (window.configurarBotonRegistro) {
+                    console.log(" Reconfigurando botón de registro después de obtener datos completos");
+                    window.configurarBotonRegistro();
+                }
+                
+                // Crear botón flotante
+                crearBotonFlotante();
+                return;
+            } else {
+                // Solo mostrar el formulario si realmente no está completo
+                mostrarFormularioCompletarPerfil(cedula, localStorage.getItem('nombre'));
+            }
+        })
+        .catch(error => {
+            console.error('Error al obtener datos del perfil:', error);
+        });
+}
+
+function verificarPerfilEnBackend() {
+    const backendUrl = getBackendUrl();
+    const cedula = window.cedulaAutenticada;
     
     if (!cedula) {
-        console.error("No se proporcionó cédula para comprobar perfil en background.");
-        return; 
+        console.error("❌ No hay cédula autenticada en memoria");
+        mostrarUIInicial();
+        return;
     }
     
-    // Obtener datos del perfil del usuario desde el backend (USAR GET y la cédula en la URL)
-    fetch(`${getBackendUrl()}/obtener_perfil/${cedula}`, { // <-- Añadir cédula a la URL
-        method: 'GET', // <-- Cambiar a GET
+    console.log("🔍 Verificando perfil para cédula en memoria");
+    
+    fetch(`${backendUrl}/obtener_perfil/${cedula}`)
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+        })
+        .then(data => {
+            if (data.error) {
+                throw new Error(data.error);
+            }
+            
+            if (data.perfil_completo) {
+                console.log("✅ Perfil completo confirmado por backend");
+                actualizarUIParaPerfilCompleto();
+            } else {
+                console.log("⚠️ Perfil incompleto, mostrando formulario");
+                mostrarFormularioCompletarPerfil();
+            }
+        })
+        .catch(error => {
+            console.error("❌ Error verificando perfil:", error);
+            mostrarUIInicial();
+        });
+}
+
+function enviarDatosPerfil(datos) {
+    const backendUrl = getBackendUrl();
+    
+    console.log(" Enviando datos de perfil:", {...datos, foto: datos.foto ? '(Base64 imagen)' : null});
+
+    fetch(`${backendUrl}/actualizar_perfil`, {
+        method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
-            // No se necesita 'body' para GET
-        }
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(datos)
     })
     .then(response => {
         if (!response.ok) {
-             // Si hay error (ej. 404), no continuar
-             console.warn(`Error al obtener perfil en background (${response.status}):`, response.statusText);
-             return null;
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
         return response.json();
     })
     .then(data => {
-        if (!data) return; // Si hubo error en el paso anterior
-        
-        console.log(" Datos de perfil recibidos en background:", data);
-        
-        if (data.perfil_completo) {
-            // Guardar información en localStorage
-            localStorage.setItem('perfil_completo', 'true');
-            
-            // Guardar los datos del usuario en localStorage
-            if (data.datos) {
-                if (data.datos.nombre) localStorage.setItem('nombre', data.datos.nombre);
-                if (data.datos.correo) {
-                    localStorage.setItem('correo', data.datos.correo);
-                    localStorage.setItem('email', data.datos.correo);
-                }
-                if (data.datos.foto_ruta) localStorage.setItem('foto_ruta', data.datos.foto_ruta);
-            }
-            
-            console.log(" Perfil completo encontrado en el backend, datos guardados en localStorage");
-            
-            // Si estamos en la página de publicidad, reconfigurar el botón
-            if (window.configurarBotonRegistro) {
-                console.log(" Reconfigurando botón de registro después de verificar perfil");
-                window.configurarBotonRegistro();
-            }
+        if (data.success) {
+            console.log("✅ Perfil actualizado correctamente");
+            actualizarUIParaPerfilCompleto();
+        } else {
+            throw new Error(data.mensaje || "Error actualizando perfil");
         }
     })
     .catch(error => {
-        console.error('Error al comprobar perfil en background:', error);
+        console.error("❌ Error:", error);
+        alert("Error actualizando perfil: " + error.message);
     });
 }
+
 
 

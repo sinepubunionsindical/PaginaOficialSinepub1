@@ -213,19 +213,110 @@
                                 <li>Asesoría académica</li>
                             </ul>
 
-                    <div class="anuncio">
-                        <h3>Negocio de comida</h3>
-                        <p>ahora quiero agregarle una orden desde el correo de prueba daniel.rr93g@gmail.com, que si desde ese correo se envia el correo con el asunto, borrar todo publicidad, entonces el entienda y llame otro .py que tralade todos los anuncios publicados desde su secion y los mande a una memoria temportal, a la cual se la pueda reenviar si le dice ultima memoria temporal y le mande todas las publicidades que se borraron con su respectiva seccion, tambien quiero que al publicar la publicidad, aparezca un boton de me gusta, y se muestre la cantidad de personas que le han dado me gusta, este numero se guarde en el backend,</p>
-                        <div class="anuncio-contacto">
-                            <p><strong>Contacto:</strong> Jenny patty</p>
-                            <p><strong>Email:</strong> sara.saltaren@correounivalle.edu.co</p>
-                            <p><strong>Teléfono:</strong> 123123</p>
-                        </div>
-                    
-                        <div class="anuncio-imagen">
-                            <img src="backend\data\images\img_1744183564.png" alt="Negocio de comida">
-                        </div>
-                        </div>
+                            <!-- Formulario mejorado de publicidad -->
+                            <div id="formulario-container" class="formulario-publicidad" style="display: none;">
+                                <div class="formulario-header">
+                                    <h2>Registrar Nueva Publicidad</h2>
+                                    <button type="button" class="btn-cerrar" id="btn-cerrar">&times;</button>
+                                </div>
+
+                                <form id="formulario-publicidad" class="formulario-registro">
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <label for="email">Correo electrónico:</label>
+                                            <div class="input-with-icon">
+                                                <i class="fas fa-envelope"></i>
+                                                <input type="email" id="email" name="email" required>
+                                            </div>
+                                            <button type="button" id="usar-email-perfil" class="btn-link">Usar email del perfil</button>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="telefono">Teléfono de contacto:</label>
+                                            <div class="input-with-icon">
+                                                <i class="fas fa-phone"></i>
+                                                <input type="tel" id="telefono" name="telefono" required 
+                                                       pattern="[0-9]{10}" 
+                                                       title="Por favor ingrese un número de teléfono válido de 10 dígitos">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="categoria">Categoría:</label>
+                                            <select id="categoria" name="categoria" required>
+                                                <option value="">Seleccione una categoría</option>
+                                                <option value="asistencia">Asistencia</option>
+                                                <option value="comercio">Comercio</option>
+                                                <option value="servicios">Servicios</option>
+                                                <option value="educacion">Educación</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group full-width">
+                                            <label for="titulo">Título del anuncio:</label>
+                                            <div class="input-with-icon">
+                                                <i class="fas fa-heading"></i>
+                                                <input type="text" id="titulo" name="titulo" required
+                                                       maxlength="100" 
+                                                       placeholder="Ej: Clases particulares de matemáticas">
+                                            </div>
+                                            <span class="caracteres-restantes">100 caracteres restantes</span>
+                                        </div>
+
+                                        <div class="form-group full-width">
+                                            <label for="descripcion">Descripción detallada:</label>
+                                            <div class="textarea-with-icon">
+                                                <i class="fas fa-align-left"></i>
+                                                <textarea id="descripcion" name="descripcion" rows="4" required
+                                                          maxlength="500" 
+                                                          placeholder="Describe tu servicio o producto..."></textarea>
+                                            </div>
+                                            <span class="caracteres-restantes">500 caracteres restantes</span>
+                                        </div>
+
+                                        <div class="form-group full-width">
+                                            <label for="imagen">Imagen del anuncio:</label>
+                                            <div class="imagen-upload-container">
+                                                <div class="imagen-preview" id="imagen-preview">
+                                                    <img id="preview" src="" alt="" style="display: none;">
+                                                    <span class="imagen-placeholder">
+                                                        <i class="fas fa-cloud-upload-alt"></i>
+                                                        <br>Click o arrastra una imagen aquí
+                                                    </span>
+                                                </div>
+                                                <input type="file" id="imagen" name="imagen" 
+                                                       accept="image/*"
+                                                       class="imagen-input">
+                                            </div>
+                                            <span class="imagen-help">Formato: JPG, PNG. Tamaño máximo: 5MB</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-buttons">
+                                        <button type="button" id="btn-cancelar" class="btn-secundario">
+                                            <i class="fas fa-times"></i> Cancelar
+                                        </button>
+                                        <button type="submit" id="btn-guardar" class="btn-primario boton-guardar">
+                                            <i class="fas fa-save"></i> Publicar anuncio
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Contenedor de anuncios existente -->
+                            <div class="anuncio">
+                                <h3>Negocio de comida</h3>
+                                <p>ahora quiero agregarle una orden desde el correo de prueba daniel.rr93g@gmail.com, que si desde ese correo se envia el correo con el asunto, borrar todo publicidad, entonces el entienda y llame otro .py que tralade todos los anuncios publicados desde su secion y los mande a una memoria temportal, a la cual se la pueda reenviar si le dice ultima memoria temporal y le mande todas las publicidades que se borraron con su respectiva seccion, tambien quiero que al publicar la publicidad, aparezca un boton de me gusta, y se muestre la cantidad de personas que le han dado me gusta, este numero se guarde en el backend,</p>
+                                <div class="anuncio-contacto">
+                                    <p><strong>Contacto:</strong> Jenny patty</p>
+                                    <p><strong>Email:</strong> sara.saltaren@correounivalle.edu.co</p>
+                                    <p><strong>Teléfono:</strong> 123123</p>
+                                </div>
+                                
+                                <div class="anuncio-imagen">
+                                    <img src="backend\data\images\img_1744183564.png" alt="Negocio de comida">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div></div>

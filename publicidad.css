@@ -116,19 +116,68 @@
     margin-bottom: 10px;
 }
 
-/* Estilos para los anuncios */
-.anuncio {
-    background-color: #ffffff;
-    border-radius: 10px;
+/* Nuevos estilos para los anuncios */
+.anuncio-interaccion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+.like-button {
+    background: none;
+    border: none;
+    color: #ff4757;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.like-button:hover {
+    background-color: #ffe0e3;
+}
+
+.like-button i {
+    font-size: 1.2em;
+}
+
+.likes-count {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.fecha-publicacion {
+    color: #666;
+    font-size: 0.8em;
+    font-style: italic;
+}
+
+.anuncios-seccion {
+    margin-top: 20px;
     padding: 20px;
-    margin: 20px 0;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Mantener los estilos existentes y agregar mejoras */
+.anuncio {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
     transition: transform 0.3s ease;
 }
 
 .anuncio:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .anuncio h3 {
@@ -167,13 +216,19 @@
 }
 
 /* Estilos para el formulario */
+.slide#slide-registro {
+    background-color: #f9f9f9;
+    padding: 20px;
+    min-height: 500px;
+}
+
 .formulario-container {
-    background-color: #ffffff;
-    border-radius: 10px;
-    padding: 30px;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-    max-width: 800px;
+    max-width: 600px;
     margin: 0 auto;
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
 .form-group {
@@ -182,9 +237,8 @@
 
 .form-group label {
     display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #333;
+    margin-bottom: 8px;
+    font-weight: 500;
 }
 
 .form-group input,
@@ -193,43 +247,74 @@
     width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 1em;
+    border-radius: 4px;
+    font-size: 16px;
 }
 
 .form-group textarea {
     resize: vertical;
 }
 
-.boton-guardar {
-    background-color: #35a9aa;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 1em;
-    cursor: pointer;
-    margin-right: 10px;
-    transition: background-color 0.3s ease;
+.form-buttons {
+    margin-top: 30px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
 }
 
-.boton-guardar:hover {
-    background-color: #0249aa;
+.boton-guardar,
+.boton-cancelar {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+.boton-guardar {
+    background-color: #4CAF50;
+    color: white;
 }
 
 .boton-cancelar {
     background-color: #f44336;
     color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 1em;
+}
+
+.slide {
+    display: none;
+}
+
+.slide.active {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.email-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.email-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.boton-email {
+    padding: 5px 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
     cursor: pointer;
+    font-size: 0.9em;
     transition: background-color 0.3s ease;
 }
 
-.boton-cancelar:hover {
-    background-color: #d32f2f;
+.boton-email:hover {
+    background-color: #e0e0e0;
 }
 
 /* Ocultar los botones de navegación prev/next y los dots */
@@ -262,3 +347,7 @@
         font-size: 16px;
     }
 }
+
+
+
+

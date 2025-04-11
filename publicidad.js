@@ -176,101 +176,77 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Manejar el envío del formulario
-    if (formulario) {
-        formulario.addEventListener('submit', function(event) {
+    // Función para inicializar el formulario de publicidad
+    function inicializarFormularioPublicidad() {
+        const formulario = document.getElementById('formulario-publicidad');
+        const emailInput = document.getElementById('email');
+        const btnEmailPerfil = document.getElementById('usar-email-perfil');
+        const btnCancelar = document.getElementById('btn-cancelar');
+        const btnCerrar = document.getElementById('btn-cerrar');
+
+        // Manejar el envío del formulario
+        formulario.addEventListener('submit', async (event) => {
             event.preventDefault();
 
             // Mostrar indicador de carga
-            const submitBtn = formulario.querySelector('.boton-guardar');
-            const originalBtnText = submitBtn.textContent;
-            submitBtn.textContent = 'Enviando...';
+            const submitBtn = document.getElementById('btn-guardar');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
             submitBtn.disabled = true;
 
-            // Recopilar datos del formulario
-            const formData = new FormData(formulario);
-            const formDataObj = {};
+            try {
+                // Recopilar datos del formulario
+                const formData = new FormData(formulario);
+                const formDataObj = {};
 
-            // Procesar todos los campos excepto la imagen
-            formData.forEach((value, key) => {
-                if (key !== 'imagen') {
-                    formDataObj[key] = value;
-                }
-            });
-            
-            // Asignar el nombre del usuario autenticado
-            const nombreUsuario = localStorage.getItem("nombre");
-            if (nombreUsuario) {
-                formDataObj["nombre"] = nombreUsuario;
-                console.log("🔍 Usando nombre del perfil:", nombreUsuario);
-            }
-            
-            // Usar el email guardado en localStorage
-            const emailGuardado = localStorage.getItem("email") || localStorage.getItem("correo");
-            if (emailGuardado && (!formDataObj.email || formDataObj.email.trim() === "")) {
-                formDataObj.email = emailGuardado;
-                document.getElementById('email').value = emailGuardado;
-                console.log("🔍 Usando email del perfil:", emailGuardado);
-            }
-            
-            // Verificar si el usuario tiene foto de perfil
-            const fotoRuta = localStorage.getItem("foto_ruta");
-            if (fotoRuta) {
-                console.log("🔍 El usuario tiene foto de perfil guardada:", fotoRuta);
-                formDataObj["usuario_foto"] = fotoRuta;
-            }
+                // Procesar todos los campos excepto la imagen
+                formData.forEach((value, key) => {
+                    if (key !== 'imagen') {
+                        formDataObj[key] = value;
+                    }
+                });
 
-            // Procesar la imagen si existe
-            const imagenInput = document.getElementById('imagen');
-            if (imagenInput.files && imagenInput.files[0]) {
-                try {
+                // Agregar el nombre del usuario desde el localStorage
+                formDataObj.nombre = localStorage.getItem("nombre");
+
+                // Procesar la imagen si existe
+                const imagenInput = document.getElementById('imagen');
+                if (imagenInput.files && imagenInput.files[0]) {
                     const reader = new FileReader();
-
-                    reader.onload = function(e) {
-                        try {
-                            // Verificar que el resultado sea una cadena válida
-                            if (typeof e.target.result !== 'string') {
-                                throw new Error("Formato de imagen no válido");
-                            }
-                            
-                            // Asegurarse de que la cadena base64 esté bien formada
-                            const base64String = e.target.result;
-                            if (!base64String.startsWith('data:image/')) {
-                                throw new Error("Formato base64 no válido");
-                            }
-                            
-                            console.log("📷 Imagen cargada correctamente");
-                            console.log("📷 Longitud de la imagen en base64:", base64String.length);
-                            
-                            // Agregar la imagen como base64
-                            formDataObj['imagen_base64'] = base64String;
-
-                            // Enviar datos al backend
-                            enviarDatosAlBackend(formDataObj, submitBtn, originalBtnText);
-                        } catch (err) {
-                            console.error('Error procesando imagen:', err);
-                            alert('Error procesando la imagen. Por favor, intenta con otra imagen o sin imagen.');
-                            submitBtn.textContent = originalBtnText;
-                            submitBtn.disabled = false;
-                        }
+                    reader.onload = async (e) => {
+                        formDataObj.imagen_base64 = e.target.result;
+                        await enviarPublicidad(formDataObj);
                     };
-
-                    reader.onerror = function() {
-                        console.error('Error leyendo el archivo de imagen');
-                        alert('Error al leer la imagen. Por favor, intenta con otra imagen o sin imagen.');
-                        submitBtn.textContent = originalBtnText;
-                        submitBtn.disabled = false;
-                    };
-
                     reader.readAsDataURL(imagenInput.files[0]);
-                } catch (err) {
-                    console.error('Error general procesando imagen:', err);
-                    alert('Error general al procesar la imagen. Enviando formulario sin imagen.');
-                    enviarDatosAlBackend(formDataObj, submitBtn, originalBtnText);
+                } else {
+                    await enviarPublicidad(formDataObj);
                 }
-            } else {
-                // Enviar datos sin imagen
-                enviarDatosAlBackend(formDataObj, submitBtn, originalBtnText);
+            } catch (error) {
+                console.error('Error al procesar el formulario:', error);
+                mostrarNotificacion('error', 'Error al procesar el formulario');
+            } finally {
+                submitBtn.innerHTML = originalBtnText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Manejar el botón de cancelar
+        btnCancelar.addEventListener('click', () => {
+            limpiarFormulario();
+            document.getElementById('formulario-container').style.display = 'none';
+        });
+
+        // Manejar el botón de cerrar
+        btnCerrar.addEventListener('click', () => {
+            limpiarFormulario();
+            document.getElementById('formulario-container').style.display = 'none';
+        });
+
+        // Usar email del perfil
+        btnEmailPerfil.addEventListener('click', () => {
+            const emailPerfil = localStorage.getItem("email");
+            if (emailPerfil) {
+                emailInput.value = emailPerfil;
             }
         });
     }
@@ -303,74 +279,105 @@ document.addEventListener('DOMContentLoaded', function() {
                 submitButton.textContent = originalButtonText;
             });
     }
-    
-    // Nueva función separada para enviar datos de publicidad
-    function enviarPublicidad(datos, backendUrl, submitButton, originalButtonText) {
-        // Mostrar los datos que se van a enviar
-        console.log("📤 Datos a enviar:", Object.fromEntries(datos));
-        
-        // Realizar la petición fetch
-        fetch(backendUrl, {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(datos)
-        })
-        .then(response => {
-            console.log("📡 Estado respuesta:", response.status, response.statusText);
-            console.log("📡 Tipo de contenido:", response.headers.get('content-type'));
-            
-            if (!response.ok) {
-                throw new Error(`Error HTTP ${response.status}: ${response.statusText}`);
-            }
-            
-            // Verificar que la respuesta sea JSON
-            const contentType = response.headers.get('content-type');
-            if (!contentType || !contentType.includes('application/json')) {
-                console.error("⚠️ Respuesta no es JSON:", contentType);
-                return response.text().then(text => {
-                    console.error("Contenido de la respuesta:", text.substring(0, 500) + "...");
-                    throw new Error('La respuesta no es JSON. Recibido: ' + contentType);
-                });
-            }
-            
-            return response.json();
-        })
-        .then(data => {
-            console.log("✅ Respuesta del servidor:", data);
-            
-            // Restaurar el botón
-            submitButton.disabled = false;
-            submitButton.textContent = originalButtonText;
-            
-            if (data.error) {
-                console.error("❌ Error reportado por el servidor:", data.error);
-                alert("Error: " + data.error);
-                return;
-            }
-            
-            if (data.success) {
-                // Guardar el ID del anuncio en sessionStorage
-                if (data.id) {
-                    sessionStorage.setItem("ultimoAnuncioId", data.id);
-                    console.log("📝 ID de anuncio guardado:", data.id);
+
+    // Función para enviar la publicidad al servidor
+    async function enviarPublicidad(datos, backendUrl, submitButton, originalButtonText) {
+        try {
+            // Preparar los datos para el envío
+            const datosParaEnviar = {
+                nombre: datos.nombre,
+                descripcion: datos.descripcion,
+                fecha: new Date().toISOString(),
+                estado: "pendiente",
+                imagen_base64: datos.imagen_base64 || null,
+                contacto: {
+                    email: datos.email,
+                    telefono: datos.telefono
                 }
-                
-                // Redireccionar a la página de éxito
-                window.location.href = "confirmacion.html";
-            } else {
-                alert("Error desconocido al procesar la solicitud");
+            };
+
+            // Realizar la petición POST
+            const response = await fetch(backendUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(datosParaEnviar)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status}`);
             }
-        })
-        .catch(error => {
-            console.error("❌ Error en el envío:", error);
-            alert("Error al enviar la publicidad: " + error.message);
-            
+
+            const responseData = await response.json();
+
+            if (responseData.success) {
+                console.log("✅ Publicidad enviada correctamente:", responseData);
+                mostrarMensajeExito();
+                limpiarFormulario();
+            } else {
+                throw new Error(responseData.mensaje || "Error al procesar la solicitud");
+            }
+        } catch (error) {
+            console.error("🚨 Error al enviar publicidad:", error);
+            mostrarMensajeError(error.message);
+        } finally {
             // Restaurar el botón
-            submitButton.disabled = false;
-            submitButton.textContent = originalButtonText;
-        });
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+            }
+        }
+    }
+
+    // Función para mostrar mensaje de éxito
+    function mostrarMensajeExito() {
+        const mensajeExito = document.createElement('div');
+        mensajeExito.className = 'mensaje-exito';
+        mensajeExito.innerHTML = `
+            <h3>✅ ¡Solicitud enviada correctamente!</h3>
+            <p>Tu solicitud de publicidad ha sido recibida y está pendiente de aprobación.</p>
+            <p>Te notificaremos cuando sea revisada.</p>
+        `;
+        
+        document.querySelector('.formulario-container').appendChild(mensajeExito);
+        
+        // Remover el mensaje después de 5 segundos
+        setTimeout(() => {
+            mensajeExito.remove();
+        }, 5000);
+    }
+
+    // Función para mostrar mensaje de error
+    function mostrarMensajeError(mensaje) {
+        const mensajeError = document.createElement('div');
+        mensajeError.className = 'mensaje-error';
+        mensajeError.innerHTML = `
+            <h3>❌ Error al enviar la solicitud</h3>
+            <p>${mensaje}</p>
+            <p>Por favor, intenta nuevamente más tarde.</p>
+        `;
+        
+        document.querySelector('.formulario-container').appendChild(mensajeError);
+        
+        // Remover el mensaje después de 5 segundos
+        setTimeout(() => {
+            mensajeError.remove();
+        }, 5000);
+    }
+
+    // Función para limpiar el formulario
+    function limpiarFormulario() {
+        const formulario = document.querySelector('#formulario-publicidad');
+        if (formulario) {
+            formulario.reset();
+            // Limpiar la vista previa de la imagen si existe
+            const previewContainer = document.querySelector('#imagen-preview-container');
+            if (previewContainer) {
+                previewContainer.innerHTML = '';
+            }
+        }
     }
 
     // Configurar los enlaces de navegación
@@ -446,6 +453,46 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Función para dar like a un anuncio
+    async function darLike(anuncioId) {
+        try {
+            const button = document.querySelector(`.anuncio-card[data-id="${anuncioId}"] .like-button`);
+            const likesCount = button.querySelector('.likes-count');
+            
+            // Deshabilitar el botón temporalmente
+            button.disabled = true;
+            
+            const response = await fetch(`${backendUrl}/like/${anuncioId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al dar like');
+            }
+
+            const data = await response.json();
+            
+            // Actualizar el contador de likes
+            likesCount.textContent = data.likes;
+            
+            // Añadir clase para animación
+            button.classList.add('liked');
+            
+            // Remover la clase después de la animación
+            setTimeout(() => {
+                button.classList.remove('liked');
+                button.disabled = false;
+            }, 1000);
+
+        } catch (error) {
+            console.error('Error al dar like:', error);
+            alert('No se pudo registrar el like');
+        }
+    }
+
     // Inicializar la página
     initPage();
     
@@ -463,3 +510,129 @@ document.addEventListener('DOMContentLoaded', function() {
     // Exponer configurarBotonRegistro globalmente para que auth-popup.js pueda llamarla
     window.configurarBotonRegistro = configurarBotonRegistro;
 });
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', () => {
+    inicializarFormularioPublicidad();
+});
+
+// Configuración de la URL del backend
+const backendUrl = window.API_ENDPOINTS ? window.API_ENDPOINTS.publicidad : "http://localhost:8000/api/publicidad";
+
+// Función para enviar la publicidad al backend
+async function enviarPublicidad(datos) {
+    try {
+        const submitButton = document.getElementById('btn-guardar');
+        const originalButtonText = submitButton.innerHTML;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+        submitButton.disabled = true;
+
+        console.log("✅ Enviando datos al servidor:", datos);
+        
+        const response = await fetch(backendUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datos)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        
+        if (responseData.success) {
+            console.log("✅ Publicidad registrada exitosamente");
+            alert("¡Publicidad registrada exitosamente!");
+            
+            // Limpiar formulario y cerrar
+            limpiarFormulario();
+            document.getElementById('formulario-container').style.display = 'none';
+            
+            // Recargar los anuncios para mostrar el nuevo
+            cargarAnuncios();
+        } else {
+            throw new Error(responseData.error || 'Error al registrar la publicidad');
+        }
+
+    } catch (error) {
+        console.error("🚨 Error al enviar publicidad:", error);
+        alert("Error al registrar la publicidad. Por favor, intenta nuevamente.");
+    } finally {
+        // Restaurar el botón
+        submitButton.innerHTML = originalButtonText;
+        submitButton.disabled = false;
+    }
+}
+
+// Función para limpiar el formulario
+function limpiarFormulario() {
+    const formulario = document.getElementById('formulario-publicidad');
+    formulario.reset();
+    
+    // Limpiar la vista previa de la imagen
+    const preview = document.getElementById('preview');
+    if (preview) {
+        preview.style.display = 'none';
+        preview.src = '';
+    }
+    
+    // Mostrar el placeholder de la imagen
+    const placeholder = document.querySelector('.imagen-placeholder');
+    if (placeholder) {
+        placeholder.style.display = 'block';
+    }
+}
+
+// Función para cargar los anuncios existentes
+async function cargarAnuncios() {
+    try {
+        const response = await fetch(backendUrl);
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        actualizarVistaAnuncios(data.anuncios);
+    } catch (error) {
+        console.error("🚨 Error al cargar anuncios:", error);
+    }
+}
+
+// Función para actualizar la vista de anuncios
+function actualizarVistaAnuncios(anuncios) {
+    const contenedorAnuncios = document.querySelector('.anuncios-container');
+    if (!contenedorAnuncios) return;
+
+    contenedorAnuncios.innerHTML = anuncios.map(anuncio => `
+        <div class="anuncio-card" data-id="${anuncio.id}">
+            <img src="${anuncio.imagen_base64 || 'placeholder.jpg'}" alt="${anuncio.titulo}">
+            <div class="anuncio-content">
+                <h3>${anuncio.titulo}</h3>
+                <p>${anuncio.descripcion}</p>
+                <div class="anuncio-footer">
+                    <span class="categoria">${anuncio.categoria}</span>
+                    <button class="like-button" onclick="darLike('${anuncio.id}')">
+                        <i class="fas fa-thumbs-up"></i>
+                        <span class="likes-count">${anuncio.likes || 0}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', () => {
+    // Inicializar el formulario
+    inicializarFormularioPublicidad();
+    
+    // Cargar anuncios existentes
+    cargarAnuncios();
+    
+    // Verificar autenticación y configurar botón de registro
+    configurarBotonRegistro();
+});
+
