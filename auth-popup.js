@@ -315,12 +315,11 @@ function verificarPerfilUsuario() {
     }
     
     // Obtener datos del perfil del usuario desde el backend
-    fetch(`${getBackendUrl()}/obtener_perfil`, {
-        method: 'POST',
+    fetch(`${getBackendUrl()}/obtener_perfil/${cedula}`, {
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ cedula: cedula })
+        }
     })
     .then(response => {
         console.log(" Status respuesta obtención perfil:", response.status, response.statusText);
@@ -335,7 +334,7 @@ function verificarPerfilUsuario() {
             return response.text().then(text => {
                 console.error(" Respuesta no es JSON:", contentType);
                 console.error("Contenido recibido (primeros 500 caracteres):", text.substring(0, 500) + "...");
-                console.error("URL completa de la solicitud:", `${getBackendUrl()}/obtener_perfil`);
+                console.error("URL completa de la solicitud:", `${getBackendUrl()}/obtener_perfil/${cedula}`);
                 throw new Error('La respuesta del servidor no es JSON válido');
             });
         }
@@ -1156,20 +1155,29 @@ function getBackendUrl() {
 function comprobarPerfilUsuarioEnBackground(cedula) {
     console.log(" Comprobando perfil en background para cédula:", cedula);
     
-    // Obtener datos del perfil del usuario desde el backend
-    fetch(`${getBackendUrl()}/obtener_perfil`, {
-        method: 'POST',
+    if (!cedula) {
+        console.error("No se proporcionó cédula para comprobar perfil en background.");
+        return; 
+    }
+    
+    // Obtener datos del perfil del usuario desde el backend (USAR GET y la cédula en la URL)
+    fetch(`${getBackendUrl()}/obtener_perfil/${cedula}`, { // <-- Añadir cédula a la URL
+        method: 'GET', // <-- Cambiar a GET
         headers: {
             'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ cedula: cedula })
+            // No se necesita 'body' para GET
+        }
     })
     .then(response => {
-        if (!response.ok) return null;
+        if (!response.ok) {
+             // Si hay error (ej. 404), no continuar
+             console.warn(`Error al obtener perfil en background (${response.status}):`, response.statusText);
+             return null;
+        }
         return response.json();
     })
     .then(data => {
-        if (!data) return;
+        if (!data) return; // Si hubo error en el paso anterior
         
         console.log(" Datos de perfil recibidos en background:", data);
         
