@@ -98,12 +98,10 @@ function closeAuthPopup() {
 // Función separada para verificar la cédula una vez confirmado que el servidor está activo
 async function verificarCedulaEnServidor(cedula) {
     try {
-        // URL por defecto si API_ENDPOINTS no está definido
-        const baseUrl = (typeof API_ENDPOINTS !== 'undefined' && API_ENDPOINTS.verificarCedula) 
-            ? API_ENDPOINTS.verificarCedula 
-            : 'http://localhost:8000/api/verificar_cedula';
-
-        const url = `${baseUrl}/${cedula}`;
+        // Usar la URL del API de publicidad 
+        const backendUrl = window.API_ENDPOINTS ? window.API_ENDPOINTS.verificarCedula : "http://localhost:8000/api/verificar_cedula";
+        
+        const url = `${backendUrl}/${cedula}`;
         console.log("🔄 Intentando verificar cédula en:", url);
 
         const response = await fetch(url, {
@@ -111,7 +109,10 @@ async function verificarCedulaEnServidor(cedula) {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
-            }
+            },
+            // Añadir estas opciones para CORS
+            mode: 'cors',
+            credentials: 'same-origin'
         });
         
         // Verificar el tipo de contenido
@@ -1236,6 +1237,8 @@ function comprobarPerfilUsuarioEnBackground(cedula) {
         console.error('Error al comprobar perfil en background:', error);
     });
 }
+
+
 
 
 
