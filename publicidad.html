@@ -4,15 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SINEPUB - Publicidad</title>
+
+    <!-- FontAwesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Tus Estilos (Asegúrate que las rutas sean correctas) -->
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="publicidad.css">
     <link rel="stylesheet" href="android.css">
-    <script src="config.js"></script>
+
+    <!-- React (Descomenta si realmente lo necesitas en esta página) -->
+    <!--
     <script src="https://unpkg.com/react@17.0.2/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js" crossorigin></script>
+    -->
+
+    <!-- Tu configuración JS (si es necesaria antes que otros scripts) -->
+    <!-- <script src="config.js"></script> -->
 </head>
-<body class="fade-out">
-    <!-- Encabezado Principal (Franja azul delgada con títulos) -->
+<body> <!-- La clase fade-out la manejará tu JS -->
+
+    <!-- Encabezado Principal -->
     <header>
         <div class="container header-titles-container">
             <nav class="header-titles-nav">
@@ -27,27 +39,24 @@
                             <a href="#" class="dropdown-toggle">Redes Sociales</a>
                             <div class="dropdown-menu dropdown-menu-redes-sociales">
                                 <h2>Redes Sociales</h2>
-                                <p>Síguenos en nuestras redes sociales para estar al día con las últimas noticias y novedades del sindicato:</p>
+                                <p>Síguenos en nuestras redes sociales:</p>
                                 <div class="redes-sociales-header">
-                                    <a href="https://www.facebook.com/people/Sindicato-de-Empleados-P%25C3%25BAblicos-Sinepub-HUV/100064330442393/" target="_blank">
+                                    <a href="https://www.facebook.com/people/Sindicato-de-Empleados-P%25C3%25BAblicos-Sinepub-HUV/100064330442393/" target="_blank" aria-label="Facebook de SINEPUB">
                                         <img src="images/icono.facebook.jpg" alt="Facebook" width="40" height="40">
                                     </a>
-                                    <a href="https://web.whatsapp.com/send/?phone=%2B573163218579&context=ARA_Q_pzjXz8Xc1JNzpw6upSuHE9w825NQlneatdpHwu0FO26cq6ivICcbMORKR3pT_4HzmNl_Aky2IRu_neaai7HKXVwhT1CacJzpFOFANuNKjQwbhTfwQdfhk1G2rnGTY71RB49Bl3Z1bkuaivHvfxoQ&source=FB_Page&app=facebook&entry_point=page_cta&fbclid=IwY2xjawH62IxleHRuA2FlbQIxMAABHaz7Q3eybwVxMxtEi601LIJaVaPH6ttX5OI1SOxoXrV8GD8D5at1P_aksg_aem_fRKBzcZnA3IH1JogroXN_g" target="_blank">
+                                    <a href="https://web.whatsapp.com/send/?phone=%2B573163218579&context=ARA_Q_pzjXz8Xc1JNzpw6upSuHE9w825NQlneatdpHwu0FO26cq6ivICcbMORKR3pT_4HzmNl_Aky2IRu_neaai7HKXVwhT1CacJzpFOFANuNKjQwbhTfwQdfhk1G2rnGTY71RB49Bl3Z1bkuaivHvfxoQ&source=FB_Page&app=facebook&entry_point=page_cta&fbclid=IwY2xjawH62IxleHRuA2FlbQIxMAABHaz7Q3eybwVxMxtEi601LIJaVaPH6ttX5OI1SOxoXrV8GD8D5at1P_aksg_aem_fRKBzcZnA3IH1JogroXN_g" target="_blank" aria-label="WhatsApp de SINEPUB">
                                         <img src="images/icono.whatsapp.png" alt="WhatsApp" width="40" height="40">
                                     </a>
                                 </div>
                             </div>
                         </div>
                     </li>
-                    <!-- Nueva sección de Colaboradores -->
                     <li class="menu-item-colaboradores">
                         <div class="dropdown-container-colaboradores">
                             <a href="#" class="dropdown-toggle">Colaboradores</a>
                             <div class="dropdown-menu dropdown-menu-colaboradores">
                                 <h2>Colaboradores</h2>
                                 <p>Conoce a nuestros aliados estratégicos:</p>
-
-                                <!-- JURARKO SAS -->
                                 <div class="colaborador">
                                     <img src="images/jurarko_logo.jpg" alt="JURARKO SAS">
                                     <div class="info-colaborador">
@@ -57,7 +66,6 @@
                                         <p>Contacto: <a href="mailto:jurarkosas@gmail.com" style="color: #0249aa;">jurarkosas@gmail.com</a></p>
                                     </div>
                                 </div>
-                                <!-- María Alejandra Cruz -->
                                 <div class="colaborador">
                                     <img src="images/maria_cruz.jpg" alt="María Alejandra Cruz">
                                     <div class="info-colaborador">
@@ -78,7 +86,7 @@
         </div>
     </header>
 
-    <!-- Imágenes del Encabezado (Debajo de la franja azul) -->
+    <!-- Imágenes del Encabezado -->
     <section class="header-logos">
         <div class="logo-container">
             <img src="images/logo.png" alt="SINEPUB Logo" class="logo-sinepub">
@@ -86,7 +94,7 @@
         </div>
     </section>
 
-    <!-- Sección de encabezado con el botón -->
+    <!-- Sección de Título y Botón Registrar -->
     <div class="publicidad-header">
         <div class="publicidad-title-container">
             <h1 class="titulo-publicidad">Publicidad</h1>
@@ -96,36 +104,42 @@
         </div>
     </div>
 
-    <!-- Formulario mejorado de publicidad (inicialmente oculto) -->
+    <!-- Formulario Modal (inicialmente oculto) -->
     <div id="formulario-container" class="formulario-publicidad modal-overlay" style="display: none;">
         <div class="modal-content">
             <div class="formulario-header">
                 <h2>Registrar Nueva Publicidad</h2>
-                <button type="button" class="btn-cerrar" id="btn-cerrar">&times;</button>
+                <button type="button" class="btn-cerrar" id="btn-cerrar-form" aria-label="Cerrar formulario">×</button> <!-- ID corregido y consistente -->
             </div>
 
             <form id="formulario-publicidad" class="formulario-registro">
                 <div class="form-grid">
-                    <!-- Email con opción de usar el del perfil -->
+                    <!-- Email -->
                     <div class="form-group">
                         <label for="email">Correo electrónico:</label>
                         <div class="input-with-icon">
                             <i class="fas fa-envelope"></i>
-                            <input type="email" id="email" name="email" required>
+                            <input type="email" id="email" name="email" required placeholder="tu.correo@ejemplo.com">
                         </div>
-                        <button type="button" id="usar-email-perfil" class="btn-link">
-                            <i class="fas fa-user"></i> Usar email del perfil
-                        </button>
+                        <!-- Botón para usar email del perfil (requiere JS) -->
+                        <!-- <button type="button" id="usar-email-perfil" class="btn-link"><i class="fas fa-user"></i> Usar email del perfil</button> -->
                     </div>
-                    
+
                     <!-- Teléfono -->
                     <div class="form-group">
                         <label for="telefono">Teléfono de contacto:</label>
                         <div class="input-with-icon">
                             <i class="fas fa-phone"></i>
-                            <input type="tel" id="telefono" name="telefono" required 
-                                   pattern="[0-9]{10}" 
-                                   title="Por favor ingrese un número de teléfono válido de 10 dígitos">
+                            <input type="tel" id="telefono" name="telefono" required pattern="[0-9]{10}" title="Ingrese 10 dígitos numéricos (ej: 3101234567)" placeholder="Ej: 3101234567">
+                        </div>
+                    </div>
+
+                    <!-- Nombre -->
+                    <div class="form-group">
+                        <label for="nombre">Nombre del Contacto:</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre completo">
                         </div>
                     </div>
 
@@ -135,7 +149,7 @@
                         <div class="input-with-icon">
                             <i class="fas fa-tag"></i>
                             <select id="categoria" name="categoria" required>
-                                <option value="">Seleccione una categoría</option>
+                                <option value="" disabled selected>Seleccione una categoría</option>
                                 <option value="asistencia">Asistencia</option>
                                 <option value="comercio">Comercio</option>
                                 <option value="servicios">Servicios</option>
@@ -145,13 +159,11 @@
                     </div>
 
                     <!-- Título -->
-                    <div class="form-group">
+                    <div class="form-group full-width">
                         <label for="titulo">Título del anuncio:</label>
                         <div class="input-with-icon">
                             <i class="fas fa-heading"></i>
-                            <input type="text" id="titulo" name="titulo" required 
-                                   maxlength="100"
-                                   placeholder="Ingrese un título descriptivo">
+                            <input type="text" id="titulo" name="titulo" required maxlength="100" placeholder="Ej: Venta de Artesanías Locales">
                         </div>
                     </div>
 
@@ -160,44 +172,45 @@
                         <label for="descripcion">Descripción:</label>
                         <div class="input-with-icon">
                             <i class="fas fa-align-left"></i>
-                            <textarea id="descripcion" name="descripcion" required 
-                                      rows="4" maxlength="500"
-                                      placeholder="Describe tu anuncio (máximo 500 caracteres)"></textarea>
+                            <textarea id="descripcion" name="descripcion" required rows="4" maxlength="500" placeholder="Describe tu producto o servicio (máximo 500 caracteres)"></textarea>
                         </div>
                         <span class="caracteres-restantes" id="descripcion-contador">500 caracteres restantes</span>
                     </div>
 
                     <!-- Imagen -->
                     <div class="form-group full-width">
-                        <label for="imagen">Imagen del anuncio:</label>
+                        <label for="imagen">Imagen del anuncio (Opcional):</label>
                         <div class="imagen-upload-container">
                             <div class="imagen-preview" id="imagen-preview">
-                                <img id="preview" src="" alt="" style="display: none;">
-                                <span class="imagen-placeholder">
-                                    <i class="fas fa-cloud-upload-alt"></i>
+                                <img id="preview" src="#" alt="Vista previa de imagen" style="display: none; max-width: 100%; max-height: 150px;">
+                                <span class="imagen-placeholder" id="imagen-placeholder-text">
+                                    <i class="fas fa-cloud-upload-alt fa-3x"></i>
                                     <br>Click o arrastra una imagen aquí
                                 </span>
                             </div>
-                            <input type="file" id="imagen" name="imagen" 
-                                   accept="image/*"
-                                   class="imagen-input"
-                                   required>
+                            <input type="file" id="imagen" name="imagen" accept="image/jpeg, image/png, image/gif" class="imagen-input">
+                             <button type="button" id="eliminar-imagen" class="btn-link btn-eliminar-imagen" style="display: none;">
+                                <i class="fas fa-trash-alt"></i> Eliminar imagen
+                            </button>
                         </div>
-                        <span class="imagen-help">Formato: JPG, PNG. Tamaño máximo: 5MB</span>
+                        <span class="imagen-help">Formatos: JPG, PNG, GIF. Tamaño máximo: 5MB</span>
                     </div>
                 </div>
 
-                <!-- Botones -->
+                <!-- Botones del Formulario -->
                 <div class="form-buttons">
                     <button type="submit" id="btn-guardar" class="btn-primario">
-                        <i class="fas fa-paper-plane"></i> Publicar anuncio
+                        <i class="fas fa-paper-plane"></i> Enviar Anuncio para Aprobación
+                    </button>
+                    <button type="button" id="btn-cancelar-form-interno" class="btn-secundario"> <!-- ID único para cancelar dentro del form -->
+                         <i class="fas fa-times"></i> Cancelar
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Navegación Secundaria para tipos de publicidad -->
+    <!-- Navegación Secundaria (Tabs del Slider) -->
     <section class="below-header-nav">
         <div class="container below-header-nav-container">
             <nav class="slider-nav">
@@ -212,111 +225,217 @@
         </div>
     </section>
 
-    <!-- Slider de contenido -->
+    <!-- Slider de Contenido -->
     <section id="publicidad-content">
         <div class="slider-container">
             <div class="slider">
+
                 <!-- Slide 1: Inicio/Bienvenida -->
-                <div class="slide active" id="slide-1" style="background-color: #f8f9fa;">
-                    <div class="imagen-y-texto">
-                        <div class="texto-banner">
-                            <h1>Anuncios Automatizados para Afiliados</h1>
-                            <p>Bienvenido a la sección de publicidad de SINEPUB HUV. Aquí encontrarás anuncios y ofertas especiales de nuestros afiliados, organizados por categorías para facilitar tu búsqueda.</p>
-                            <p>Esta plataforma permite a nuestros afiliados publicar sus propios anuncios, los cuales pasan por un proceso de validación por correo electrónico y aprobación automatizada por la Junta Directiva.</p>
-                            <p>Actualmente no hay anuncios publicados. Sé el primero en compartir tus servicios o productos con la comunidad SINEPUB utilizando el botón "Registrar Publicidad".</p>
-                            <div class="publicidad-info">
-                                <h3>¿Cómo funciona?</h3>
-                                <ol>
-                                    <li>Haz clic en "Registrar Publicidad" en la parte superior.</li>
-                                    <li>Completa el formulario con los detalles de tu anuncio.</li>
-                                    <li>Recibirás un correo electrónico de confirmación.</li>
-                                    <li>Tu anuncio será revisado y aprobado automáticamente.</li>
-                                    <li>Una vez aprobado, aparecerá en la categoría correspondiente.</li>
-                                </ol>
-                            </div>
+                <div class="slide active" id="slide-1">
+                    <div class="slide-content-wrapper">
+                        <h1>Anuncios Automatizados para Afiliados</h1>
+                        <p>Bienvenido a la sección de publicidad de SINEPUB HUV. Aquí encontrarás anuncios y ofertas especiales de nuestros afiliados, organizados por categorías.</p>
+                        <p>Esta plataforma permite a nuestros afiliados registrar sus propios anuncios. Cada anuncio enviado pasa por un proceso de revisión y aprobación por parte de la Junta Directiva a través de correo electrónico.</p>
+
+                        <div class="publicidad-info">
+                            <h3>¿Cómo funciona el registro?</h3>
+                            <ol>
+                                <li>Haz clic en "Registrar Publicidad".</li>
+                                <li>Completa y envía el formulario.</li>
+                                <li>La Junta Directiva recibirá tu solicitud por correo para revisarla.</li>
+                                <li>Se te notificará por correo si tu anuncio es aprobado o rechazado.</li>
+                                <li>Los anuncios aprobados aparecerán en la categoría correspondiente.</li>
+                            </ol>
                         </div>
+                        <hr>
+                         <!-- No necesita marcadores aquí, es informativo -->
+                         <p>Explora las categorías usando la navegación de arriba o deslizando.</p>
                     </div>
-                </div>
+                </div> <!-- Fin Slide 1 -->
 
                 <!-- Slide 2: Asistencia -->
-                <div class="slide" id="slide-2" style="background-color: #e6f7ff;">
-                    <div class="imagen-y-texto">
-                        <div class="texto-banner">
-                            <h1>Asistencia</h1>
-                            <p>En esta sección encontrarás anuncios relacionados con servicios de asistencia, como:</p>
-                            <ul>
-                                <li>Servicios de salud</li>
-                                <li>Asistencia legal</li>
-                                <li>Asesoría financiera</li>
-                                <li>Servicios de cuidado</li>
-                            </ul>
+                <div class="slide" id="slide-2">
+                    <div class="slide-content-wrapper">
+                        <h1>Asistencia</h1>
+                        <p>Servicios de salud, legales, financieros, cuidado, etc.</p>
+                        <hr>
+                        <!-- ================== CONTENEDOR DE ANUNCIOS ASISTENCIA ================== -->
+                        <div class="anuncios-container" id="anuncios-asistencia">
+                            <!-- ANUNCIOS-ASISTENCIA-START -->
 <p>Actualmente no hay anuncios en esta categoría.</p>
+<!-- ANUNCIOS-ASISTENCIA-END -->
                         </div>
+                        <!-- ======================================================================= -->
                     </div>
-                </div></div>
+                </div> <!-- Fin Slide 2 -->
 
                 <!-- Slide 3: Comercio -->
-                <div class="slide" id="slide-3" style="background-color: #fff0f6;">
-                    <div class="imagen-y-texto">
-                        <div class="texto-banner">
-                            <h1>Comercio</h1>
-                            <p>En esta sección encontrarás anuncios relacionados con productos y comercio, como:</p>
-                            <ul>
-                                <li>Venta de productos</li>
-                                <li>Tiendas y comercios</li>
-                                <li>Artículos nuevos y usados</li>
-                                <li>Ofertas especiales</li>
-                            </ul>
-<p>Actualmente no hay anuncios en esta categoría.</p>
+                <div class="slide" id="slide-3">
+                     <div class="slide-content-wrapper">
+                        <h1>Comercio</h1>
+                        <p>Venta de productos, tiendas, artículos, ofertas, etc.</p>
+                        <hr>
+                        <!-- ================== CONTENEDOR DE ANUNCIOS COMERCIO ==================== -->
+                        <div class="anuncios-container" id="anuncios-comercio">
+                            <!-- ANUNCIOS-COMERCIO-START -->
+
+                 <div class="anuncio" data-id="pub-1744436722">
+                     <h3>Negocio de comida</h3>
+                     <p>Un negocio espectacular un sistema inteligente para captar clientes y seguir propuestas de mejora continua.</p>
+                     <div class="anuncio-imagen"><img src="../backend/data/images/img_20250412004522_c83d5150.jpg" alt="Negocio de comida" style="max-width: 100%; height: auto;"></div>
+                     <div class="anuncio-contacto">
+                         <span><strong>Contacto:</strong> Jenny Patricia Ricaurte Zuluaga</span> |
+                         <span><strong>Tel:</strong> 3163218579</span> |
+                         <span><strong>Email:</strong> daniel.rr93g@gmail.com</span>
+                     </div>
+                     <div class="anuncio-meta">
+                         <span>Publicado: 12/04/2025</span>
+                         <!-- Si usas likes:
+                         <button class="like-button" onclick="darLike('pub-1744436722')">
+                             <i class="fas fa-heart"></i> 0
+                         </button>
+                         -->
+                     </div>
+                 </div>
+                 <hr>
+             
+<!-- ANUNCIOS-COMERCIO-END -->
                         </div>
+                        <!-- ======================================================================= -->
                     </div>
-                </div></div>
+                </div> <!-- Fin Slide 3 -->
 
                 <!-- Slide 4: Servicios -->
-                <div class="slide" id="slide-4" style="background-color: #f0f9eb;">
-                    <div class="imagen-y-texto">
-                        <div class="texto-banner">
-                            <h1>Servicios</h1>
-                            <p>En esta sección encontrarás anuncios relacionados con servicios generales, como:</p>
-                            <ul>
-                                <li>Servicios profesionales</li>
-                                <li>Reparaciones y mantenimiento</li>
-                                <li>Servicios a domicilio</li>
-                                <li>Transporte y mudanzas</li>
-                            </ul>
-<p>Actualmente no hay anuncios en esta categoría.</p>
+                <div class="slide" id="slide-4">
+                     <div class="slide-content-wrapper">
+                        <h1>Servicios</h1>
+                        <p>Profesionales, reparaciones, domicilio, transporte, etc.</p>
+                        <hr>
+                        <!-- ================== CONTENEDOR DE ANUNCIOS SERVICIOS =================== -->
+                        <div class="anuncios-container" id="anuncios-servicios">
+                            <!-- ANUNCIOS-SERVICIOS-START -->
+
+                 <div class="anuncio" data-id="pub-1744437435">
+                     <h3>Negocio de comida</h3>
+                     <p>31233131</p>
+                     <div class="anuncio-imagen"><img src="../backend/data/images/img_20250412005715_64e0cc85.jpg" alt="Negocio de comida" style="max-width: 100%; height: auto;"></div>
+                     <div class="anuncio-contacto">
+                         <span><strong>Contacto:</strong> Jenny Patricia Ricaurte Zuluaga</span> |
+                         <span><strong>Tel:</strong> 3163218579</span> |
+                         <span><strong>Email:</strong> daniel.rr93g@gmail.com</span>
+                     </div>
+                     <div class="anuncio-meta">
+                         <span>Publicado: 12/04/2025</span>
+                         <!-- Si usas likes:
+                         <button class="like-button" onclick="darLike('pub-1744437435')">
+                             <i class="fas fa-heart"></i> 0
+                         </button>
+                         -->
+                     </div>
+                 </div>
+                 <hr>
+             
+
+                 <div class="anuncio" data-id="pub-1744438158">
+                     <h3>Negocio de comida</h3>
+                     <p>12321312</p>
+                     <div class="anuncio-imagen"><img src="../backend/data/images/img_20250412010918_98114e80.jpg" alt="Negocio de comida" style="max-width: 100%; height: auto;"></div>
+                     <div class="anuncio-contacto">
+                         <span><strong>Contacto:</strong> Jenny Patricia Ricaurte Zuluaga</span> |
+                         <span><strong>Tel:</strong> 3163218579</span> |
+                         <span><strong>Email:</strong> daniel.rr93g@gmail.com</span>
+                     </div>
+                     <div class="anuncio-meta">
+                         <span>Publicado: 12/04/2025</span>
+                         <!-- Si usas likes:
+                         <button class="like-button" onclick="darLike('pub-1744438158')">
+                             <i class="fas fa-heart"></i> 0
+                         </button>
+                         -->
+                     </div>
+                 </div>
+                 <hr>
+             
+
+                 <div class="anuncio" data-id="pub-1744438569">
+                     <h3>Negocio de comida</h3>
+                     <p>sadadasd</p>
+                     <div class="anuncio-imagen"><img src="../backend/data/images/img_20250412011609_2d9d95f0.jpg" alt="Negocio de comida" style="max-width: 100%; height: auto;"></div>
+                     <div class="anuncio-contacto">
+                         <span><strong>Contacto:</strong> Jenny Patricia Ricaurte Zuluaga</span> |
+                         <span><strong>Tel:</strong> 3163218579</span> |
+                         <span><strong>Email:</strong> daniel.rr93@hotmail.com</span>
+                     </div>
+                     <div class="anuncio-meta">
+                         <span>Publicado: 12/04/2025</span>
+                         <!-- Si usas likes:
+                         <button class="like-button" onclick="darLike('pub-1744438569')">
+                             <i class="fas fa-heart"></i> 0
+                         </button>
+                         -->
+                     </div>
+                 </div>
+                 <hr>
+             
+
+                 <div class="anuncio" data-id="pub-1744438943">
+                     <h3>pepepe</h3>
+                     <p>EWEWQQ</p>
+                     <div class="anuncio-imagen"><img src="../backend/data/images/img_20250412012223_ef7845c1.jpg" alt="pepepe" style="max-width: 100%; height: auto;"></div>
+                     <div class="anuncio-contacto">
+                         <span><strong>Contacto:</strong> Jenny Patricia Ricaurte Zuluaga</span> |
+                         <span><strong>Tel:</strong> 3163218579</span> |
+                         <span><strong>Email:</strong> daniel.rr93g@gmail.com</span>
+                     </div>
+                     <div class="anuncio-meta">
+                         <span>Publicado: 12/04/2025</span>
+                         <!-- Si usas likes:
+                         <button class="like-button" onclick="darLike('pub-1744438943')">
+                             <i class="fas fa-heart"></i> 0
+                         </button>
+                         -->
+                     </div>
+                 </div>
+                 <hr>
+             
+<!-- ANUNCIOS-SERVICIOS-END -->
                         </div>
+                        <!-- ======================================================================= -->
                     </div>
-                </div></div>
+                </div> <!-- Fin Slide 4 -->
 
                 <!-- Slide 5: Educación -->
-                <div class="slide" id="slide-5" style="background-color: #f4f4ff;">
-                    <div class="imagen-y-texto">
-                        <div class="texto-banner">
-                            <h1>Educación</h1>
-                            <p>En esta sección encontrarás anuncios relacionados con educación y formación, como:</p>
-                            <ul>
-                                <li>Cursos y talleres</li>
-                                <li>Clases particulares</li>
-                                <li>Material educativo</li>
-                                <li>Asesoría académica</li>
-                            </ul>
+                <div class="slide" id="slide-5">
+                     <div class="slide-content-wrapper">
+                        <h1>Educación</h1>
+                        <p>Cursos, talleres, clases, material educativo, asesoría, etc.</p>
+                        <hr>
+                        <!-- ================== CONTENEDOR DE ANUNCIOS EDUCACIÓN =================== -->
+                        <div class="anuncios-container" id="anuncios-educacion">
+                            <!-- ANUNCIOS-EDUCACION-START -->
+<p>Actualmente no hay anuncios en esta categoría.</p>
+<!-- ANUNCIOS-EDUCACION-END -->
                         </div>
+                        <!-- ======================================================================= -->
                     </div>
-                </div></div>
-            </div>
+                </div> <!-- Fin Slide 5 -->
+
+            </div> <!-- Fin .slider -->
+
+            <!-- Controles del Slider -->
             <div class="slider-dots">
-                <!-- Los circulitos se generarán aquí con JavaScript -->
+                <!-- Los puntos se generan con JS (slider.js) -->
             </div>
-            <button class="prev-slide" aria-label="Anterior">&#10094;</button>
-            <button class="next-slide" aria-label="Siguiente">&#10095;</button>
-        </div>
-    </section>
+            <button class="prev-slide" aria-label="Anterior">❮</button>
+            <button class="next-slide" aria-label="Siguiente">❯</button>
+
+        </div> <!-- Fin .slider-container -->
+    </section> <!-- Fin #publicidad-content -->
 
     <!-- Pie de página -->
     <footer>
         <div class="container">
-            <p>&copy; 2025 SINEPUB. Todos los derechos reservados.</p>
+            <p>© 2025 SINEPUB. Todos los derechos reservados.</p>
             <div class="footer-logos">
                 <img src="images/confederacion.jpg" alt="Logo Confederacion">
                 <img src="images/propais.png" alt="Logo Propais">
@@ -325,39 +444,42 @@
             <div class="contacto">
                 <div class="informacion-y-mapa">
                     <div class="informacion">
-                        <h1 class="titulo-contacto">Contacto</h1>
-                        <p>¿Tienes dudas o necesitas más información? Contáctanos a traves de nuestros medios digitales:</p>
+                        <h2 class="titulo-contacto">Contacto</h2>
+                        <p>¿Tienes dudas o necesitas más información? Contáctanos:</p>
                         <ul>
-                            <li>Email: sinepubhuv@gmail.com</li>
-                            <li>Dirección: Calle 5 No. 36 - 08 Piso 7°. Cali, Valle del Cauca</li>
+                            <li><i class="fas fa-envelope"></i> Email: sinepubhuv@gmail.com</li>
+                            <li><i class="fas fa-map-marker-alt"></i> Dirección: Calle 5 No. 36 - 08 Piso 7°. Cali, Valle del Cauca</li>
                         </ul>
                         <div class="footer-redes-sociales">
-                            <a href="https://www.facebook.com/people/Sindicato-de-Empleados-P%25C3%25BAblicos-Sinepub-HUV/100064330442393/" target="_blank">
+                           <a href="https://www.facebook.com/people/Sindicato-de-Empleados-P%25C3%25BAblicos-Sinepub-HUV/100064330442393/" target="_blank" aria-label="Facebook SINEPUB">
                                 <img src="images/icono.facebook.jpg" alt="Facebook">
                             </a>
-                            <a href="https://web.whatsapp.com/send/?phone=%2B573163218579&context=ARA_Q_pzjXz8Xc1JNzpw6upSuHE9w825NQlneatdpHwu0FO26cq6ivICcbMORKR3pT_4HzmNl_Aky2IRu_neaai7HKXVwhT1CacJzpFOFANuNKjQwbhTfwQdfhk1G2rnGTY71RB49Bl3Z1bkuaivHvfxoQ&source=FB_Page&app=facebook&entry_point=page_cta&fbclid=IwY2xjawH62IxleHRuA2FlbQIxMAABHaz7Q3eybwVxMxtEi601LIJaVaPH6ttX5OI1SOxoXrV8GD8D5at1P_aksg_aem_fRKBzcZnA3IH1JogroXN_g" target="_blank">
+                            <a href="https://web.whatsapp.com/send/?phone=%2B573163218579&context=ARA_Q_pzjXz8Xc1JNzpw6upSuHE9w825NQlneatdpHwu0FO26cq6ivICcbMORKR3pT_4HzmNl_Aky2IRu_neaai7HKXVwhT1CacJzpFOFANuNKjQwbhTfwQdfhk1G2rnGTY71RB49Bl3Z1bkuaivHvfxoQ&source=FB_Page&app=facebook&entry_point=page_cta&fbclid=IwY2xjawH62IxleHRuA2FlbQIxMAABHaz7Q3eybwVxMxtEi601LIJaVaPH6ttX5OI1SOxoXrV8GD8D5at1P_aksg_aem_fRKBzcZnA3IH1JogroXN_g" target="_blank" aria-label="WhatsApp SINEPUB">
                                 <img src="images/icono.whatsapp.png" alt="WhatsApp">
                             </a>
                         </div>
                     </div>
                     <div class="mapa">
-                        <div class="mapa-titulo">
-                            <h1 class="titulo-como-llegar">Cómo llegar</h1>
-                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3979.755111111111!2d-76.5473703!3d3.4306492!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e30a69c440a28bb%3A0xca12ae041f48a3b8!2sCl.+5+%2336%2C+El+Sindicato%2C+Cali%2C+Valle+del+Cauca!5e0!3m2!1ses-419!2sco!4v1667243455555!5m2!1ses-419!2sco" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>
-                        </div>
+                        <h2 class="titulo-como-llegar">Cómo llegar</h2>
+                         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3982.662087651617!2d-76.5494180887902!3d3.430612051479834!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e30a7d8c0b6e8cf%3A0x3725c34f0b93a1b9!2sCra.%2036%20%26%20Cl.%205%2C%20Cali%2C%20Valle%20del%20Cauca!5e0!3m2!1ses!2sco!4v1715111801165!5m2!1ses!2sco" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa de ubicación de SINEPUB"></iframe>
                     </div>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- CONTENEDOR DEL MENÚ MÓVIL LATERAL -->
+    <!-- Contenedor Menú Móvil Lateral -->
     <div id="mobile-menu-container" class="mobile-menu" aria-hidden="true">
-        <!-- El contenido (la lista ul) será clonado aquí por JavaScript -->
+        <!-- Contenido clonado por JS (menu-mobile.js) -->
     </div>
     <script src="config.js"> defer</script>
+    <!-- Tus Scripts (asegúrate que las rutas sean correctas y el orden sea adecuado) -->
     <script src="slider.js" defer></script>
     <script src="menu-mobile.js" defer></script>
+    <!-- publicidad.js maneja el formulario y potencialmente la carga inicial si no usas Python para eso -->
     <script src="publicidad.js" defer></script>
+    <!-- Tu config.js (si lo necesitas al final) -->
+    <!-- <script src="config.js" defer></script> -->
+
 </body>
 </html>
