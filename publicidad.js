@@ -790,3 +790,52 @@ document.addEventListener('DOMContentLoaded', function() {
 // tendría que ser expuesta explícitamente (ej: window.limpiarFormularioPublicidad = limpiarFormulario;)
 // pero es preferible refactorizar para no depender de globales.
 // Ya no definimos limpiarFormularioGlobal() aquí.
+
+// Exponer la función de verificación globalmente
+window.verificarCedulaPublicidad = async function(cedula, callback) {
+    try {
+        const backendUrl = window.API_ENDPOINTS?.verificarCedula || 
+            "http://localhost:8000/api/verificar_cedula";
+        
+        const url = `${backendUrl}/${cedula}`;
+        console.log("🔍 Intentando verificar cédula en:", url);
+
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("✅ Respuesta del servidor:", data);
+
+        // Guardar datos en localStorage
+        if (data.valid) {
+            localStorage.setItem("afiliado", "yes");
+            localStorage.setItem("nombre", data.nombre);
+            localStorage.setItem("cargo", data.cargo);
+            localStorage.setItem("codigo_secreto", data.codigo_secreto);
+        } else {
+            localStorage.setItem("afiliado", "no");
+        }
+
+        // Ejecutar el callback con el resultado
+        if (callback) {
+            callback(data);
+        }
+
+        return data;
+    } catch (error) {
+        console.error("❌ Error al verificar cédula:", error);
+        if (callback) {
+            callback({ valid: false, error: error.message });
+        }
+        throw error;
+    }
+};

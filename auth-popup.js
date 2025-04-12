@@ -67,24 +67,35 @@ function verifyCedula(cedula) {
         return;
     }
 
-    // NUEVO: Guardar cédula en localStorage
+    // Guardar cédula en localStorage para que publicidad.js pueda accederla
     localStorage.setItem("cedula", cedula);
 
-    // Usar la URL del API de publicidad 
-    const backendUrl = window.API_ENDPOINTS ? window.API_ENDPOINTS.publicidad : "http://localhost:8000/api/publicidad";
-    
-    console.log(" Verificando cédula en:", backendUrl);
-    
-    // Verificar si el servidor está activo antes de hacer la solicitud
-    fetch(backendUrl, { method: 'OPTIONS' })
-        .then(response => {
-            console.log(" Servidor backend disponible. Verificando cédula.");
-            return verificarCedulaEnServidor(cedula);
-        })
-        .catch(error => {
-            console.error(" Error de conexión con el servidor:", error);
-            alert("El servidor no está respondiendo. Verifica tu conexión a internet y que el servidor esté activo.");
-        });
+    // Verificar si el módulo de publicidad está disponible
+    if (typeof window.verificarCedulaPublicidad === 'undefined') {
+        // Si no está cargado, cargar dinámicamente el script
+        const script = document.createElement('script');
+        script.src = 'publicidad.js';
+        script.onload = function() {
+            // Una vez cargado, ejecutar la verificación
+            window.verificarCedulaPublicidad(cedula, handleVerificacionResult);
+        };
+        document.head.appendChild(script);
+    } else {
+        // Si ya está cargado, ejecutar directamente
+        window.verificarCedulaPublicidad(cedula, handleVerificacionResult);
+    }
+}
+
+// Callback para manejar el resultado de la verificación
+function handleVerificacionResult(result) {
+    if (result.valid) {
+        let mensajeBienvenida = `<h2>Bienvenido al Sindicato</h2>
+                                <p>Nombre: ${result.nombre}</p>
+                                <p>Cargo: ${result.cargo}</p>`;
+        mostrarPopupContrasena(result.nombre, result.cargo, mensajeBienvenida);
+    } else {
+        mostrarPopupError();
+    }
 }
 
 // Función para cerrar el popup de autenticación
@@ -1104,6 +1115,7 @@ function enviarDatosPerfil(datos) {
         alert("Error actualizando perfil: " + error.message);
     });
 }
+
 
 
 
