@@ -794,8 +794,16 @@ document.addEventListener('DOMContentLoaded', function() {
 // Exponer la función de verificación globalmente
 window.verificarCedulaPublicidad = async function(cedula, callback) {
     try {
-        const backendUrl = window.API_ENDPOINTS?.verificarCedula || 
-            "http://localhost:8000/api/verificar_cedula";
+        // Determinar la URL base del API según el ambiente
+        let backendUrl;
+        if (window.API_ENDPOINTS?.verificarCedula) {
+            backendUrl = window.API_ENDPOINTS.verificarCedula;
+        } else {
+            // Si estamos en producción, usar la URL de producción
+            backendUrl = window.location.hostname === 'localhost' 
+                ? "http://localhost:8000/api/verificar_cedula"
+                : "https://tudominio.com/api/verificar_cedula"; // Reemplaza con tu URL de producción
+        }
         
         const url = `${backendUrl}/${cedula}`;
         console.log("🔍 Intentando verificar cédula en:", url);
@@ -805,8 +813,17 @@ window.verificarCedulaPublicidad = async function(cedula, callback) {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
-            }
+            },
+            credentials: 'include' // Incluir cookies si es necesario
         });
+
+        // Verificar el tipo de contenido antes de intentar parsear JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            console.error('Respuesta no es JSON:', contentType);
+            console.error('URL utilizada:', url);
+            throw new Error('El servidor no respondió con JSON válido');
+        }
 
         if (!response.ok) {
             throw new Error(`Error HTTP ${response.status}`);
@@ -833,9 +850,17 @@ window.verificarCedulaPublicidad = async function(cedula, callback) {
         return data;
     } catch (error) {
         console.error("❌ Error al verificar cédula:", error);
+        console.error("URL completa:", url);
+        console.error("Ambiente:", window.location.hostname);
+        
         if (callback) {
-            callback({ valid: false, error: error.message });
+            callback({ 
+                valid: false, 
+                error: error.message,
+                details: "Error de conexión con el servidor. Por favor, intente más tarde."
+            });
         }
         throw error;
     }
 };
+
