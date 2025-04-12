@@ -794,8 +794,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Exponer la función de verificación globalmente
 window.verificarCedulaPublicidad = async function(cedula, callback) {
     try {
-        const backendUrl = window.API_ENDPOINTS?.verificarCedula || 
-            "http://localhost:8000/api/verificar_cedula";
+        const backendUrl = window.API_ENDPOINTS?.verificarCedula 
         
         const url = `${backendUrl}/${cedula}`;
         console.log("🔍 Intentando verificar cédula en:", url);
