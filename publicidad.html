@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="publicidad.css">
     <link rel="stylesheet" href="android.css">
+    <script src="config.js"></script>
     <script src="https://unpkg.com/react@17.0.2/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js" crossorigin></script>
 </head>
@@ -85,15 +86,116 @@
         </div>
     </section>
 
-    <!-- Título y botón de registro -->
-    <section class="publicidad-header">
-        <div class="container">
-            <div class="publicidad-title-container">
-                <h1 class="titulo-publicidad">Publicidad</h1>
-                <button id="registrar-publicidad" class="boton-registrar">Registrar Publicidad</button>
-            </div>
+    <!-- Sección de encabezado con el botón -->
+    <div class="publicidad-header">
+        <div class="publicidad-title-container">
+            <h1 class="titulo-publicidad">Publicidad</h1>
+            <button id="registrar-publicidad" class="boton-registrar">
+                <i class="fas fa-plus"></i> Registrar Publicidad
+            </button>
         </div>
-    </section>
+    </div>
+
+    <!-- Formulario mejorado de publicidad (inicialmente oculto) -->
+    <div id="formulario-container" class="formulario-publicidad modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="formulario-header">
+                <h2>Registrar Nueva Publicidad</h2>
+                <button type="button" class="btn-cerrar" id="btn-cerrar">&times;</button>
+            </div>
+
+            <form id="formulario-publicidad" class="formulario-registro">
+                <div class="form-grid">
+                    <!-- Email con opción de usar el del perfil -->
+                    <div class="form-group">
+                        <label for="email">Correo electrónico:</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <button type="button" id="usar-email-perfil" class="btn-link">
+                            <i class="fas fa-user"></i> Usar email del perfil
+                        </button>
+                    </div>
+                    
+                    <!-- Teléfono -->
+                    <div class="form-group">
+                        <label for="telefono">Teléfono de contacto:</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-phone"></i>
+                            <input type="tel" id="telefono" name="telefono" required 
+                                   pattern="[0-9]{10}" 
+                                   title="Por favor ingrese un número de teléfono válido de 10 dígitos">
+                        </div>
+                    </div>
+
+                    <!-- Categoría -->
+                    <div class="form-group">
+                        <label for="categoria">Categoría:</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-tag"></i>
+                            <select id="categoria" name="categoria" required>
+                                <option value="">Seleccione una categoría</option>
+                                <option value="asistencia">Asistencia</option>
+                                <option value="comercio">Comercio</option>
+                                <option value="servicios">Servicios</option>
+                                <option value="educacion">Educación</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Título -->
+                    <div class="form-group">
+                        <label for="titulo">Título del anuncio:</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-heading"></i>
+                            <input type="text" id="titulo" name="titulo" required 
+                                   maxlength="100"
+                                   placeholder="Ingrese un título descriptivo">
+                        </div>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="form-group full-width">
+                        <label for="descripcion">Descripción:</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-align-left"></i>
+                            <textarea id="descripcion" name="descripcion" required 
+                                      rows="4" maxlength="500"
+                                      placeholder="Describe tu anuncio (máximo 500 caracteres)"></textarea>
+                        </div>
+                        <span class="caracteres-restantes" id="descripcion-contador">500 caracteres restantes</span>
+                    </div>
+
+                    <!-- Imagen -->
+                    <div class="form-group full-width">
+                        <label for="imagen">Imagen del anuncio:</label>
+                        <div class="imagen-upload-container">
+                            <div class="imagen-preview" id="imagen-preview">
+                                <img id="preview" src="" alt="" style="display: none;">
+                                <span class="imagen-placeholder">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <br>Click o arrastra una imagen aquí
+                                </span>
+                            </div>
+                            <input type="file" id="imagen" name="imagen" 
+                                   accept="image/*"
+                                   class="imagen-input"
+                                   required>
+                        </div>
+                        <span class="imagen-help">Formato: JPG, PNG. Tamaño máximo: 5MB</span>
+                    </div>
+                </div>
+
+                <!-- Botones -->
+                <div class="form-buttons">
+                    <button type="submit" id="btn-guardar" class="btn-primario">
+                        <i class="fas fa-paper-plane"></i> Publicar anuncio
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Navegación Secundaria para tipos de publicidad -->
     <section class="below-header-nav">
@@ -156,7 +258,29 @@
                             <p><strong>Contacto:</strong> Daniel fernando restrepo ricaurte</p>
                             <p><strong>Email:</strong> sinepubhuv@gmail.com</p>
                             <p><strong>Teléfono:</strong> 3173988094</p>
-                        </div>
+                        
+<div class="anuncios-seccion">
+
+                <div class="anuncio" data-id="pub-1744429043">
+                    <h3>sdasdsadsad</h3>
+                    <p>awaw</p>
+                    <div class="anuncio-contacto">
+                        <p><strong>Contacto:</strong> Jenny Patricia Ricaurte Zuluaga</p>
+                        <p><strong>Email:</strong> daniel.rr93g@gmail.com</p>
+                        <p><strong>Teléfono:</strong> 3163218579</p>
+                    </div>
+                    <div class="anuncio-imagen"><img src="../backend/data/images/img_20250411223722_ba6bd48a.jpg" alt="sdasdsadsad"></div>
+                    <div class="anuncio-interaccion">
+                        <button class="like-button" onclick="darLike('pub-1744429043')" data-likes="0">
+                            <i class="fas fa-heart"></i>
+                            <span class="likes-count">0 Me gusta</span>
+                        </button>
+                        <span class="fecha-publicacion">Publicado: 11/04/2025 22:37</span>
+                    </div>
+                </div>
+            
+</div>
+</div>
                     
                         <div class="anuncio-imagen">
                             <img src="backend\data\images\img_1744180892.png" alt="PEPE">
@@ -212,97 +336,6 @@
                                 <li>Material educativo</li>
                                 <li>Asesoría académica</li>
                             </ul>
-
-                            <!-- Formulario mejorado de publicidad -->
-                            <div id="formulario-container" class="formulario-publicidad" style="display: none;">
-                                <div class="formulario-header">
-                                    <h2>Registrar Nueva Publicidad</h2>
-                                    <button type="button" class="btn-cerrar" id="btn-cerrar">&times;</button>
-                                </div>
-
-                                <form id="formulario-publicidad" class="formulario-registro">
-                                    <div class="form-grid">
-                                        <div class="form-group">
-                                            <label for="email">Correo electrónico:</label>
-                                            <div class="input-with-icon">
-                                                <i class="fas fa-envelope"></i>
-                                                <input type="email" id="email" name="email" required>
-                                            </div>
-                                            <button type="button" id="usar-email-perfil" class="btn-link">Usar email del perfil</button>
-                                        </div>
-                                        
-                                        <div class="form-group">
-                                            <label for="telefono">Teléfono de contacto:</label>
-                                            <div class="input-with-icon">
-                                                <i class="fas fa-phone"></i>
-                                                <input type="tel" id="telefono" name="telefono" required 
-                                                       pattern="[0-9]{10}" 
-                                                       title="Por favor ingrese un número de teléfono válido de 10 dígitos">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="categoria">Categoría:</label>
-                                            <select id="categoria" name="categoria" required>
-                                                <option value="">Seleccione una categoría</option>
-                                                <option value="asistencia">Asistencia</option>
-                                                <option value="comercio">Comercio</option>
-                                                <option value="servicios">Servicios</option>
-                                                <option value="educacion">Educación</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="form-group full-width">
-                                            <label for="titulo">Título del anuncio:</label>
-                                            <div class="input-with-icon">
-                                                <i class="fas fa-heading"></i>
-                                                <input type="text" id="titulo" name="titulo" required
-                                                       maxlength="100" 
-                                                       placeholder="Ej: Clases particulares de matemáticas">
-                                            </div>
-                                            <span class="caracteres-restantes">100 caracteres restantes</span>
-                                        </div>
-
-                                        <div class="form-group full-width">
-                                            <label for="descripcion">Descripción detallada:</label>
-                                            <div class="textarea-with-icon">
-                                                <i class="fas fa-align-left"></i>
-                                                <textarea id="descripcion" name="descripcion" rows="4" required
-                                                          maxlength="500" 
-                                                          placeholder="Describe tu servicio o producto..."></textarea>
-                                            </div>
-                                            <span class="caracteres-restantes">500 caracteres restantes</span>
-                                        </div>
-
-                                        <div class="form-group full-width">
-                                            <label for="imagen">Imagen del anuncio:</label>
-                                            <div class="imagen-upload-container">
-                                                <div class="imagen-preview" id="imagen-preview">
-                                                    <img id="preview" src="" alt="" style="display: none;">
-                                                    <span class="imagen-placeholder">
-                                                        <i class="fas fa-cloud-upload-alt"></i>
-                                                        <br>Click o arrastra una imagen aquí
-                                                    </span>
-                                                </div>
-                                                <input type="file" id="imagen" name="imagen" 
-                                                       accept="image/*"
-                                                       class="imagen-input">
-                                            </div>
-                                            <span class="imagen-help">Formato: JPG, PNG. Tamaño máximo: 5MB</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-buttons">
-                                        <button type="button" id="btn-cancelar" class="btn-secundario">
-                                            <i class="fas fa-times"></i> Cancelar
-                                        </button>
-                                        <button type="submit" id="btn-guardar" class="btn-primario boton-guardar">
-                                            <i class="fas fa-save"></i> Publicar anuncio
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-
                             <!-- Contenedor de anuncios existente -->
                             <div class="anuncio">
                                 <h3>Negocio de comida</h3>
@@ -320,57 +353,6 @@
                         </div>
                     </div>
                 </div></div>
-
-                <!-- Slide para el formulario (inicialmente oculto) -->
-                <div class="slide" id="slide-registro" style="display: none;">
-                    <div class="imagen-y-texto">
-                        <div class="texto-banner">
-                            <h1>Registrar Nueva Publicidad</h1>
-                            <div class="formulario-container">
-                                <form id="formulario-publicidad">
-                                    <div class="form-group">
-                                        <label for="nombre">Nombre completo:</label>
-                                        <input type="text" id="nombre" name="nombre" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="email">Correo electrónico:</label>
-                                        <input type="email" id="email" name="email" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="telefono">Teléfono de contacto:</label>
-                                        <input type="tel" id="telefono" name="telefono" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="categoria">Categoría:</label>
-                                        <select id="categoria" name="categoria" required>
-                                            <option value="">Seleccione una categoría</option>
-                                            <option value="asistencia">Asistencia</option>
-                                            <option value="comercio">Comercio</option>
-                                            <option value="servicios">Servicios</option>
-                                            <option value="educacion">Educación</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="titulo">Título del anuncio:</label>
-                                        <input type="text" id="titulo" name="titulo" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="descripcion">Descripción:</label>
-                                        <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="imagen">Imagen (opcional):</label>
-                                        <input type="file" id="imagen" name="imagen" accept="image/*">
-                                    </div>
-                                    <div class="form-group">
-                                        <button type="submit" class="boton-guardar">Guardar</button>
-                                        <button type="button" id="cancelar-registro" class="boton-cancelar">Cancelar</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
             <div class="slider-dots">
                 <!-- Los circulitos se generarán aquí con JavaScript -->
@@ -422,7 +404,7 @@
     <div id="mobile-menu-container" class="mobile-menu" aria-hidden="true">
         <!-- El contenido (la lista ul) será clonado aquí por JavaScript -->
     </div>
-
+    <script src="config.js"> defer</script>
     <script src="slider.js" defer></script>
     <script src="menu-mobile.js" defer></script>
     <script src="publicidad.js" defer></script>
