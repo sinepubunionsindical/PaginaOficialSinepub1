@@ -212,7 +212,7 @@ function activateChatAfterAuth(nombre, cargo) {
     const chatButton = createChatButton();
 
     // Ocultar el botón de acceso original
-    const originalButton = document.getElementById('chatbot-button');
+    const originalButton = document.getElementById('chatbot-container');
     if (originalButton) {
         originalButton.style.display = 'none';
     }
