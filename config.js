@@ -10,7 +10,7 @@ const API_KEYS = {
 };
 
 // URL de backend centralizada usando ngrok
-const BACKEND_URL = 'https://e784-2800-484-8786-7d00-bd7e-12fa-195d-a987.ngrok-free.app';
+const BACKEND_URL = 'https://0d64-2800-484-8786-7d00-13f-b8b6-7ace-e152.ngrok-free.app';
 
 // Modo de depuración - cambia a true para usar localhost en lugar de ngrok
 // Si hay problemas con ngrok, cambiar a true
@@ -18,20 +18,18 @@ const DEBUG_MODE = false;
 const LOCAL_URL = 'http://localhost:8000';
 
 // URL efectiva a usar
-const EFFECTIVE_URL = DEBUG_MODE ? LOCAL_URL : BACKEND_URL;
-console.log("🔧 Configuración:", DEBUG_MODE ? "Modo depuración (localhost)" : "Modo producción (ngrok)");
-console.log("🌐 URL del backend:", EFFECTIVE_URL);
+const EFFECTIVE_URL = window.DEBUG_MODE ? window.LOCAL_URL : window.BACKEND_URL;
 
 // Funciones para APIs específicas
-window.API_ENDPOINTS = {
+const API_ENDPOINTS = {
     base: EFFECTIVE_URL,
     publicidad: `${EFFECTIVE_URL}/api/publicidad`,
-    usuario: `${EFFECTIVE_URL}/api/usuario`,
+    verificarCedula: `${EFFECTIVE_URL}/api/verificar_cedula`,
     meGusta: `${EFFECTIVE_URL}/api/me-gusta`,
     afiliacion: `${EFFECTIVE_URL}/api/afiliacion`,
     afiliados: `${EFFECTIVE_URL}/api/afiliados`,
     validarCodigo: `${EFFECTIVE_URL}/api/validar-codigo`,
-    verificarCedula: `${EFFECTIVE_URL}/api/verificar_cedula`
+    verificarCedula: `${EFFECTIVE_URL}/api/verificar_cedula` // Sin slash al final
 };
 
 // Función para enviar formulario de afiliación por correo
