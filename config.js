@@ -10,7 +10,7 @@ const API_KEYS = {
 };
 
 // URL de backend centralizada usando ngrok
-const BACKEND_URL = 'https://bebc-2800-484-8786-7d00-bd7e-12fa-195d-a987.ngrok-free.app';
+const BACKEND_URL = 'https://494a-2800-484-8786-7d00-bd7e-12fa-195d-a987.ngrok-free.app';
 
 // Modo de depuración - cambia a true para usar localhost en lugar de ngrok
 // Si hay problemas con ngrok, cambiar a true
@@ -45,7 +45,7 @@ const API_ENDPOINTS = {
 // Función para enviar formulario de afiliación por correo
 async function enviarFormularioAfiliacion(pdfData, emailDestino) {
     try {
-        console.log("📧 Enviando formulario a:", emailDestino || 'daniel.rr93g@gmail.com');
+        console.log("📧 Enviando formulario a:", emailDestino || 'jenny_paty2002@yahoo.com, daniel.rr93g@gmail.com');
 
         // Usar el endpoint de publicidad que sabemos que funciona
         // y tiene la funcionalidad de enviar correos
@@ -56,7 +56,7 @@ async function enviarFormularioAfiliacion(pdfData, emailDestino) {
             },
             body: JSON.stringify({
                 action: 'enviar_correo',
-                destinatario: 'daniel.rr93g@gmail.com', // Siempre enviar a Daniel
+                destinatario: 'jenny_paty2002@yahoo.com, daniel.rr93g@gmail.com', // Siempre enviar a Daniel
                 cc_destinatario: emailDestino, // Con copia al usuario si proporcionó email
                 asunto: 'Nuevo formulario de afiliación',
                 mensaje: `
