@@ -10,7 +10,7 @@ const API_KEYS = {
 };
 
 // URL de backend centralizada usando ngrok
-const BACKEND_URL = 'https://4b4f-2800-484-8786-7d00-bd7e-12fa-195d-a987.ngrok-free.app';
+const BACKEND_URL = 'https://e784-2800-484-8786-7d00-bd7e-12fa-195d-a987.ngrok-free.app';
 
 // Modo de depuración - cambia a true para usar localhost en lugar de ngrok
 // Si hay problemas con ngrok, cambiar a true
@@ -23,7 +23,7 @@ console.log("🔧 Configuración:", DEBUG_MODE ? "Modo depuración (localhost)" 
 console.log("🌐 URL del backend:", EFFECTIVE_URL);
 
 // Funciones para APIs específicas
-const API_ENDPOINTS = {
+window.API_ENDPOINTS = {
     base: EFFECTIVE_URL,
     publicidad: `${EFFECTIVE_URL}/api/publicidad`,
     usuario: `${EFFECTIVE_URL}/api/usuario`,
@@ -75,7 +75,7 @@ async function enviarFormularioAfiliacion(pdfData, emailDestino) {
 
 // Exportar las claves y URLs para uso en otros archivos
 window.API_KEYS = API_KEYS;
-window.BACKEND_URL = BACKEND_URL;
+window.BACKEND_URL = EFFECTIVE_URL;
 window.API_ENDPOINTS = API_ENDPOINTS;
 window.enviarFormularioAfiliacion = enviarFormularioAfiliacion;
 
