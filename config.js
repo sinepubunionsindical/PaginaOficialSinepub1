@@ -10,7 +10,7 @@ const API_KEYS = {
 };
 
 // URL de backend centralizada usando ngrok
-const BACKEND_URL = 'https://6995-2800-484-8786-7d00-bd7e-12fa-195d-a987.ngrok-free.app';
+const BACKEND_URL = 'https://92ff-2800-484-8786-7d00-bd7e-12fa-195d-a987.ngrok-free.app';
 
 // Modo de depuración - cambia a true para usar localhost en lugar de ngrok
 // Si hay problemas con ngrok, cambiar a true
@@ -22,14 +22,15 @@ const EFFECTIVE_URL = DEBUG_MODE ? LOCAL_URL : BACKEND_URL;
 
 // Funciones para APIs específicas
 const API_ENDPOINTS = {
-    base: EFFECTIVE_URL,
-    publicidad: `${EFFECTIVE_URL}/api/publicidad`,
-    usuario: `${EFFECTIVE_URL}/api/usuario`,
-    meGusta: `${EFFECTIVE_URL}/api/me-gusta`,
-    afiliacion: `${EFFECTIVE_URL}/api/afiliacion`,
-    afiliados: `${EFFECTIVE_URL}/api/afiliados`,
-    validarCodigo: `${EFFECTIVE_URL}/api/validar-codigo`,
-    verificarCedula: `${EFFECTIVE_URL}/api/verificar_cedula`
+    base: BACKEND_URL,
+    publicidad: `${BACKEND_URL}/api/publicidad`,
+    usuario: `${BACKEND_URL}/api/usuario`,
+    meGusta: `${BACKEND_URL}/api/me-gusta`,
+    afiliacion: `${BACKEND_URL}/api/afiliacion`,
+    afiliados: `${BACKEND_URL}/api/afiliados`,
+    validarCodigo: `${BACKEND_URL}/api/validar-codigo`,
+    verificarCedula: `${BACKEND_URL}/api/verificar_cedula`,
+    verificarPerfil: `${BACKEND_URL}/api/validar_perfil`
 };
 
 // Función para enviar formulario de afiliación por correo
