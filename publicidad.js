@@ -1,5 +1,3 @@
-// JavaScript para la página de publicidad (Versión Fusionada - Base: CORREGIDO ENVÍO + Slider Funcional)
-
 document.addEventListener('DOMContentLoaded', function() {
     // --- Elementos del DOM (Combinados y verificados) ---
     const backendApiUrl = window.API_ENDPOINTS?.publicidad; // URL para cargar/enviar anuncios
@@ -806,7 +804,9 @@ async function verificarCedulaPublicidad(cedula, callback) {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'ngrok-skip-browser-warning': 'true',
+                'User-Agent': 'sinepub-client'
             }
         });
 
@@ -841,6 +841,3 @@ async function verificarCedulaPublicidad(cedula, callback) {
         throw error;
     }
 }
-
-
-

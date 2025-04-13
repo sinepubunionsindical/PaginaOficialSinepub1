@@ -18,18 +18,18 @@ const DEBUG_MODE = false;
 const LOCAL_URL = 'http://localhost:8000';
 
 // URL efectiva a usar
-const EFFECTIVE_URL = window.DEBUG_MODE ? window.LOCAL_URL : window.BACKEND_URL;
+const EFFECTIVE_URL = DEBUG_MODE ? LOCAL_URL : BACKEND_URL;
 
 // Funciones para APIs específicas
 const API_ENDPOINTS = {
     base: EFFECTIVE_URL,
     publicidad: `${EFFECTIVE_URL}/api/publicidad`,
-    verificarCedula: `${EFFECTIVE_URL}/api/verificar_cedula`,
+    usuario: `${EFFECTIVE_URL}/api/usuario`,
     meGusta: `${EFFECTIVE_URL}/api/me-gusta`,
     afiliacion: `${EFFECTIVE_URL}/api/afiliacion`,
     afiliados: `${EFFECTIVE_URL}/api/afiliados`,
     validarCodigo: `${EFFECTIVE_URL}/api/validar-codigo`,
-    verificarCedula: `${EFFECTIVE_URL}/api/verificar_cedula` // Sin slash al final
+    verificarCedula: `${EFFECTIVE_URL}/api/verificar_cedula`
 };
 
 // Función para enviar formulario de afiliación por correo
