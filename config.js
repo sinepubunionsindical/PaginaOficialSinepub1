@@ -10,7 +10,7 @@ const API_KEYS = {
 };
 
 // URL de backend centralizada usando ngrok
-const BACKEND_URL = 'https://8611-2800-484-8786-7d00-bd7e-12fa-195d-a987.ngrok-free.app';
+const BACKEND_URL = 'https://dd65-2800-484-8786-7d00-bd7e-12fa-195d-a987.ngrok-free.app';
 
 // Modo de depuración - cambia a true para usar localhost en lugar de ngrok
 // Si hay problemas con ngrok, cambiar a true
@@ -28,7 +28,7 @@ const API_ENDPOINTS = {
     meGusta: `${EFFECTIVE_URL}/api/me-gusta`,
     afiliacion: `${EFFECTIVE_URL}/api/afiliacion`,
     afiliados: `${EFFECTIVE_URL}/api/afiliados`,
-    validarCodigo: `${EFFECTIVE_URL}/api/validar-codigo`,
+    validarCodigo: `${EFFECTIVE_URL}/api/validar_codigo`, // Cambiado de validar-codigo a validar_codigo
     verificarCedula: `${EFFECTIVE_URL}/api/verificar_cedula`
 };
 
