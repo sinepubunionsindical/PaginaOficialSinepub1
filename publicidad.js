@@ -791,11 +791,13 @@ document.addEventListener('DOMContentLoaded', function() {
 // pero es preferible refactorizar para no depender de globales.
 // Ya no definimos limpiarFormularioGlobal() aquí.
 
-// Exponer la función de verificación globalmente
-window.verificarCedulaPublicidad = async function(cedula, callback) {
+// Función para verificar cédula
+async function verificarCedulaPublicidad(cedula, callback) {
     try {
-        const backendUrl = window.API_ENDPOINTS?.verificarCedula || 
-            "http://localhost:8000/api/verificar_cedula";
+        const backendUrl = window.API_ENDPOINTS?.verificarCedula;
+        if (!backendUrl) {
+            throw new Error("URL del backend no configurada");
+        }
         
         const url = `${backendUrl}/${cedula}`;
         console.log("🔍 Intentando verificar cédula en:", url);
@@ -838,6 +840,7 @@ window.verificarCedulaPublicidad = async function(cedula, callback) {
         }
         throw error;
     }
-};
+}
+
 
 

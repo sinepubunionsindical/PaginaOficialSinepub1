@@ -70,18 +70,31 @@ function verifyCedula(cedula) {
     // Guardar cédula en localStorage para que publicidad.js pueda accederla
     localStorage.setItem("cedula", cedula);
 
-    // Verificar si el módulo de publicidad está disponible
-    if (typeof window.verificarCedulaPublicidad === 'undefined') {
-        // Si no está cargado, cargar dinámicamente el script
+    // Verificar si config.js está cargado
+    if (!window.API_ENDPOINTS) {
+        // Cargar config.js primero
+        const configScript = document.createElement('script');
+        configScript.src = 'config.js';
+        configScript.onload = function() {
+            // Después cargar publicidad.js
+            const script = document.createElement('script');
+            script.src = 'publicidad.js';
+            script.onload = function() {
+                window.verificarCedulaPublicidad(cedula, handleVerificacionResult);
+            };
+            document.head.appendChild(script);
+        };
+        document.head.appendChild(configScript);
+    } else if (typeof window.verificarCedulaPublicidad === 'undefined') {
+        // Si config.js ya está cargado pero publicidad.js no
         const script = document.createElement('script');
         script.src = 'publicidad.js';
         script.onload = function() {
-            // Una vez cargado, ejecutar la verificación
             window.verificarCedulaPublicidad(cedula, handleVerificacionResult);
         };
         document.head.appendChild(script);
     } else {
-        // Si ya está cargado, ejecutar directamente
+        // Si ambos scripts ya están cargados
         window.verificarCedulaPublicidad(cedula, handleVerificacionResult);
     }
 }
@@ -1115,6 +1128,7 @@ function enviarDatosPerfil(datos) {
         alert("Error actualizando perfil: " + error.message);
     });
 }
+
 
 
 

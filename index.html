@@ -371,14 +371,18 @@
                 </video>
             </div>
         </div>
-        <script type="module" src="config.js"></script>
-        <script src="profile-checker.js"></script>
+        <!-- Scripts críticos que deben cargarse inmediatamente y en orden -->
+        <script src="config.js"></script>
+        <script src="publicidad.js"></script>
+        <script src="auth-popup.js"></script>
+
+        <!-- Scripts no críticos que pueden cargarse después -->
+        <script src="profile-checker.js" defer></script>
         <script src="elektra-chat.js" defer></script>
         <script src="slider.js" defer></script>
         <script src="pdf.js" defer></script>
         <script src="chat-integration.js" defer></script>
         <script src="chat-button.js" defer></script>
-        <script src="auth-popup.js" defer></script>
         <script src="chatbot-access.js" defer></script>
         <script src="afiliacion.js" defer></script>
         <script src="menu-mobile.js" defer></script>
