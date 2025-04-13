@@ -1,527 +1,572 @@
-// Función para mostrar el Popup de autenticación
+// --- START OF FILE auth-popup.js ---
+// Combined Authentication, Profile, Chat Activation, and Floating Button Logic
+
+// --- Global Variables ---
+let aiChatInstance = null; // For AIChat
+let chatInitialized = false; // Track if chat UI/listeners are set up
+let intentosRestantesPassword = 3; // Password attempts counter
+let cedulaVerificada = null; // Store verified cedula temporarily
+
+// --- Configuration & API ---
+
+// Function to safely get Backend URL
+function getBackendUrl() {
+    if (window.API_ENDPOINTS && window.API_ENDPOINTS.base) {
+        // console.log(" Using URL from API_ENDPOINTS:", window.API_ENDPOINTS.base);
+        return window.API_ENDPOINTS.base;
+    }
+    if (window.BACKEND_URL) {
+        // console.log(" Using BACKEND_URL global:", window.BACKEND_URL);
+        return window.BACKEND_URL;
+    }
+    const localUrl = "http://localhost:8000"; // Default fallback
+    // console.warn(" Using default fallback URL:", localUrl);
+    return localUrl;
+}
+
+// Placeholder for API Endpoints if config.js isn't loaded yet
+if (typeof window.API_ENDPOINTS === 'undefined') {
+    console.warn("API_ENDPOINTS not defined. Using default structure.");
+    window.API_ENDPOINTS = {
+        base: getBackendUrl(), // Use the function to determine base
+        verificarCedula: `${getBackendUrl()}/api/verificar_cedula`,
+        validarCodigo: `${getBackendUrl()}/api/validar_codigo`, // Endpoint from chatbot-access.js logic
+        obtenerPerfil: `${getBackendUrl()}/obtener_perfil`,
+        actualizarPerfil: `${getBackendUrl()}/actualizar_perfil`,
+        validarPerfil: `${getBackendUrl()}/validar_perfil`
+        // Add other endpoints as needed
+    };
+} else {
+    // Ensure base URL is consistent if API_ENDPOINTS exists
+    window.API_ENDPOINTS.base = getBackendUrl();
+}
+
+
+// --- Authentication Flow ---
+
+// 1. Show Initial Cedula Popup
 function showAuthPopup() {
-    console.log(" Intentando mostrar el popup...");
-    console.trace('Traza de la llamada a showAuthPopup');
+    console.log(" Attempting to show authentication popup...");
+    closeExistingPopups(); // Close any lingering popups first
 
-    try {
-        const existingPopup = document.getElementById("auth-popup");
-        if (existingPopup) {
-            console.log(" Popup ya está abierto.");
-            return;
-        }
-
-        console.log('Creando nuevo popup de autenticación...');
-
-        const popup = document.createElement("div");
-        popup.id = "auth-popup";
-        popup.style.position = "fixed";
-        popup.style.top = "50%";
-        popup.style.left = "50%";
-        popup.style.transform = "translate(-50%, -50%)";
-        popup.style.background = "white";
-        popup.style.padding = "20px";
-        popup.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
-        popup.style.zIndex = "10000";
-        popup.style.borderRadius = "8px";
-        popup.style.textAlign = "center";
-
-        popup.innerHTML = `
-            <h3>Acceso Restringido, Solo Afiliados</h3>
-            <p>Ingrese su número de cédula para continuar</p>
-            <input type="text" id="cedula-input" placeholder="Cédula">
-            <button id="verificar-cedula-btn">Verificar</button>
-            <button id="cerrar-popup-btn">Cerrar</button>
-        `;
-
-        document.body.appendChild(popup);
-        console.log(" Popup de autenticación añadido al DOM.");
-
-        // Agregar event listeners a los botones
-        document.getElementById('verificar-cedula-btn').addEventListener('click', function() {
-            const cedula = document.getElementById('cedula-input').value;
-            verifyCedula(cedula);
-        });
-
-        document.getElementById('cerrar-popup-btn').addEventListener('click', function() {
-            document.getElementById('auth-popup').remove();
-        });
-
-        // Permitir enviar con Enter
-        document.getElementById('cedula-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const cedula = document.getElementById('cedula-input').value;
-                verifyCedula(cedula);
-            }
-        });
-    } catch (error) {
-        console.error('Error al crear el popup:', error);
-    }
-}
-
-// Verificación de cédula
-function verifyCedula(cedula) {
-    console.log("Verificando cédula:", cedula);
-
-    if (!cedula) {
-        alert("Por favor ingrese un número de cédula válido");
-        return;
-    }
-
-    // Guardar cédula en localStorage para que publicidad.js pueda accederla
-    localStorage.setItem("cedula", cedula);
-
-    // Verificar si config.js está cargado
-    if (!window.API_ENDPOINTS) {
-        // Cargar config.js primero
-        const configScript = document.createElement('script');
-        configScript.src = 'config.js';
-        configScript.onload = function() {
-            // Después cargar publicidad.js
-            const script = document.createElement('script');
-            script.src = 'publicidad.js';
-            script.onload = function() {
-                window.verificarCedulaPublicidad(cedula, handleVerificacionResult);
-            };
-            document.head.appendChild(script);
-        };
-        document.head.appendChild(configScript);
-    } else if (typeof window.verificarCedulaPublicidad === 'undefined') {
-        // Si config.js ya está cargado pero publicidad.js no
-        const script = document.createElement('script');
-        script.src = 'publicidad.js';
-        script.onload = function() {
-            window.verificarCedulaPublicidad(cedula, handleVerificacionResult);
-        };
-        document.head.appendChild(script);
-    } else {
-        // Si ambos scripts ya están cargados
-        window.verificarCedulaPublicidad(cedula, handleVerificacionResult);
-    }
-}
-
-// Callback para manejar el resultado de la verificación
-function handleVerificacionResult(result) {
-    if (result.valid) {
-        let mensajeBienvenida = `<h2>Bienvenido al Sindicato</h2>
-                                <p>Nombre: ${result.nombre}</p>
-                                <p>Cargo: ${result.cargo}</p>`;
-        mostrarPopupContrasena(result.nombre, result.cargo, mensajeBienvenida);
-    } else {
-        mostrarPopupError();
-    }
-}
-
-// Función para cerrar el popup de autenticación
-function closeAuthPopup() {
-    const authPopup = document.getElementById("auth-popup");
-    if (authPopup) {
-        authPopup.remove();
-    }
-}
-
-// Función separada para verificar la cédula una vez confirmado que el servidor está activo
-async function verificarCedulaEnServidor(cedula) {
-    try {
-        const backendUrl = window.API_ENDPOINTS ? 
-            window.API_ENDPOINTS.verificarCedula : 
-            "http://localhost:8000/api/verificar_cedula";
-        
-        const url = `${backendUrl}/${cedula}`;
-        console.log(" Intentando verificar cédula en:", url);
-
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            mode: 'cors'
-        });
-
-        const data = await response.json();
-        console.log(" Respuesta del servidor:", data);
-
-        if (data.valid) {
-            // Guardar datos del usuario
-            localStorage.setItem("afiliado", "si");
-            localStorage.setItem("nombre", data.nombre);
-            localStorage.setItem("cargo", data.cargo);
-            localStorage.setItem("codigo_secreto", data.codigo_secreto);
-            
-            // Mostrar mensaje de bienvenida y solicitar código
-            let mensajeBienvenida = `<h2>Bienvenido al Sindicato</h2>
-                                    <p>Nombre: ${data.nombre}</p>
-                                    <p>Cargo: ${data.cargo}</p>`;
-            mostrarPopupContrasena(data.nombre, data.cargo, mensajeBienvenida);
-        } else {
-            localStorage.setItem("afiliado", "no");
-            mostrarPopupError();
-        }
-    } catch (error) {
-        console.error(" Error al verificar cédula:", error);
-        mostrarPopupError();
-    }
-}
-
-// Función para mostrar el popup de contraseña
-function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
-    const popupContrasena = document.createElement("div");
-    popupContrasena.id = "popup-contrasena";
-    popupContrasena.style.position = "fixed";
-    popupContrasena.style.top = "50%";
-    popupContrasena.style.left = "50%";
-    popupContrasena.style.transform = "translate(-50%, -50%)";
-    popupContrasena.style.background = "#ffffff";
-    popupContrasena.style.color = "#000000";
-    popupContrasena.style.padding = "25px";
-    popupContrasena.style.borderRadius = "10px";
-    popupContrasena.style.textAlign = "center";
-    popupContrasena.style.width = "400px";
-    popupContrasena.style.boxShadow = "0 5px 15px rgba(0,0,0,0.3)";
-    popupContrasena.style.zIndex = "10000";
-
-    popupContrasena.innerHTML = `
-        <h3> Verificación Adicional</h3>
-        <p>${nombre}, por favor ingresa la contraseña maestra para continuar.</p>
-        <input type="password" id="input-contrasena" placeholder="Contraseña">
-        <br><br>
-        <button id="verificar-contrasena">Verificar</button>
-        <button id="cancelar-contrasena">Cancelar</button>
-    `;
-
-    document.body.appendChild(popupContrasena);
-
-    let intentosRestantes = 2;
-
-    document.getElementById("verificar-contrasena").addEventListener("click", () => {
-        const contrasena = document.getElementById("input-contrasena").value;
-        const codigoSecreto = localStorage.getItem("codigo_secreto");
-        
-        if (contrasena === codigoSecreto) {
-            popupContrasena.remove();
-            localStorage.setItem("afiliado_autenticado", "true");
-            mostrarPopupBienvenida(mensajeBienvenida);
-            // Comprobar el perfil en background
-            comprobarPerfilUsuarioEnBackground(cedula);
-        } else {
-            intentosRestantes--;
-            popupContrasena.remove();
-
-            if (intentosRestantes > 0) {
-                alert(` Contraseña incorrecta. Te queda ${intentosRestantes} intento.`);
-                mostrarPopupContrasena(nombre, cargo, mensajeBienvenida);
-            } else {
-                alert(" No eres afiliado al sindicato. Recuerda que la suplantación de identidad tiene consecuencias penales.");
-                mostrarPopupError();
-                bloquearBoton();
-            }
-        }
-    });
-
-    document.getElementById("cancelar-contrasena").addEventListener("click", function() {
-        popupContrasena.remove();
-    });
-}
-
-// Función para mostrar el popup de bienvenida
-function mostrarPopupBienvenida(mensaje) {
-    console.log("Mostrando popup de bienvenida con mensaje:", mensaje);
-    const popupBienvenida = document.createElement("div");
-    popupBienvenida.id = "popup-bienvenida";
-    popupBienvenida.style.position = "fixed";
-    popupBienvenida.style.top = "50%";
-    popupBienvenida.style.left = "50%";
-    popupBienvenida.style.transform = "translate(-50%, -50%)";
-    popupBienvenida.style.background = "#35a9aa"; // Verde aguamarina
-    popupBienvenida.style.color = "#0249aa"; // Azul para el texto
-    popupBienvenida.style.padding = "30px";
-    popupBienvenida.style.borderRadius = "10px";
-    popupBienvenida.style.textAlign = "center";
-    popupBienvenida.style.width = "500px";
-    popupBienvenida.style.boxShadow = "0 5px 15px rgba(0,0,0,0.3)";
-    popupBienvenida.style.zIndex = "10000";
-
-    popupBienvenida.innerHTML = `
-        <h2> Verificación Exitosa</h2>
-        <p>${mensaje}</p> 
-        <p>¡Como afiliado, también puedes publicar tu publicidad en nuestro sitio web sin costo!</p>
-        <p>¿Deseas completar tu perfil ahora para personalizar tu experiencia?</p>
-        <button id="completar-perfil-btn">Completar Perfil</button>
-        <button id="omitir-perfil-btn">Omitir</button>
-    `;
-
-    document.body.appendChild(popupBienvenida);
-    // --- NUEVOS LISTENERS PARA LOS BOTONES ACTUALES ---
-    const completarBtn = document.getElementById("completar-perfil-btn");
-    const omitirBtn = document.getElementById("omitir-perfil-btn");
-    
-    if (completarBtn) {
-        completarBtn.addEventListener("click", function () {
-            popupBienvenida.remove();
-            // Llamar a la función que verifica si el perfil necesita ser completado
-            verificarPerfilUsuario(); 
-        });
-    }
-    
-    if (omitirBtn) {
-        omitirBtn.addEventListener("click", function () {
-            popupBienvenida.remove();
-            // Asegurarse de que el botón flotante para el chat esté visible
-            crearBotonFlotante(); 
-            console.log("Usuario omitió completar perfil. Botón flotante asegurado.");
-        });
-    }
-
-    // Alineación a la izquierda de los ítems de la lista
-    const lista = popupBienvenida.querySelector("ul");
-    if (lista) {
-        lista.style.textAlign = "left";
-        lista.style.marginLeft = "20px";
-        lista.style.paddingLeft = "15px";
-    }
-
-    // Ocultar el popup de autenticación si aún existe
-    const authPopup = document.getElementById("auth-popup");
-    if (authPopup) {
-        authPopup.remove();
-    }
-}
-
-// NUEVA FUNCIÓN: Verificar si el usuario necesita completar su perfil
-function verificarPerfilUsuario() {
-    const cedula = localStorage.getItem("cedula");
-    const nombre = localStorage.getItem("nombre");
-    const correo = localStorage.getItem("correo");
-    const email = localStorage.getItem("email");
-    const perfilCompleto = localStorage.getItem("perfil_completo");
-    
-    console.log(" Verificando perfil de usuario:");
-    console.log("- Cédula:", cedula);
-    console.log("- Nombre:", nombre);
-    console.log("- Correo:", correo);
-    console.log("- Email:", email);
-    console.log("- Perfil completo:", perfilCompleto);
-    
-    // Comprobar primero si el perfil ya está marcado como completo en localStorage
-    if (perfilCompleto === "true") {
-        console.log(" Perfil ya marcado como completo en localStorage");
-        
-        // Si estamos en la página de publicidad, primero configurar el botón de registro
-        if (window.configurarBotonRegistro) {
-            console.log(" Reconfigurando botón de registro después de verificar perfil completo");
-            window.configurarBotonRegistro();
-        }
-        
-        // --- MODIFICADO: Solo crear el botón flotante, no activar el chat --- 
-        console.log(" Perfil completo (LocalStorage). Asegurando botón flotante.");
-        crearBotonFlotante();
-        return; 
-    }
-    
-    // Obtener datos del perfil del usuario desde el backend
-    fetch(`${getBackendUrl()}/obtener_perfil/${cedula}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => {
-        console.log(" Status respuesta obtención perfil:", response.status, response.statusText);
-        
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
-        }
-        
-        // Verificar que la respuesta sea JSON
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            return response.text().then(text => {
-                console.error(" Respuesta no es JSON:", contentType);
-                console.error("Contenido recibido (primeros 500 caracteres):", text.substring(0, 500) + "...");
-                console.error("URL completa de la solicitud:", `${getBackendUrl()}/obtener_perfil/${cedula}`);
-                throw new Error('La respuesta del servidor no es JSON válido');
-            });
-        }
-        
-        return response.json();
-    })
-    .then(data => {
-        console.log(" Datos de perfil del usuario:", data);
-        
-        if (data.perfil_completo) {
-            // El perfil ya está completo, guardar esta información en localStorage
-            localStorage.setItem('perfil_completo', 'true');
-            
-            // Guardar los datos del usuario en localStorage
-            if (data.datos) {
-                if (data.datos.nombre) localStorage.setItem('nombre', data.datos.nombre);
-                if (data.datos.correo) {
-                    localStorage.setItem('correo', data.datos.correo);
-                    localStorage.setItem('email', data.datos.correo);
-                }
-                if (data.datos.foto_ruta) localStorage.setItem('foto_ruta', data.datos.foto_ruta);
-            }
-            
-            // Si estamos en la página de publicidad, configurar el botón de registro
-            if (window.configurarBotonRegistro) {
-                console.log(" Reconfigurando botón de registro después de obtener datos completos");
-                window.configurarBotonRegistro();
-            }
-            
-            // --- MODIFICADO: Solo crear el botón flotante, no activar el chat --- 
-            console.log(" Perfil completo (Backend). Asegurando botón flotante.");
-            crearBotonFlotante(); 
-            // Ya no se llama a activarChatbot aquí.
-            
-        } else {
-            // Mostrar formulario para completar perfil
-            mostrarFormularioCompletarPerfil(cedula, nombre);
-        }
-    })
-    .catch(error => {
-        console.error('Error al obtener datos del perfil:', error);
-        // Si hay error, mostrar formulario por defecto
-        mostrarFormularioCompletarPerfil(cedula, nombre);
-    });
-}
-
-// Función para mostrar el formulario de completar perfil
-function mostrarFormularioCompletarPerfil(cedula, nombre) {
-    console.log(" Mostrando formulario para completar perfil");
-    
-    const existingPopup = document.getElementById("auth-popup");
-    if (existingPopup) {
-        existingPopup.remove();
-    }
-    
     const popup = document.createElement("div");
-    popup.id = "auth-popup";
-    popup.style.position = "fixed";
-    popup.style.top = "50%";
-    popup.style.left = "50%";
-    popup.style.transform = "translate(-50%, -50%)";
-    popup.style.background = "white";
-    popup.style.padding = "20px";
-    popup.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
-    popup.style.zIndex = "10000";
-    popup.style.borderRadius = "8px";
-    popup.style.width = "400px";
-    popup.style.textAlign = "center";
+    popup.id = "auth-popup"; // Use a consistent ID
+    popup.className = "auth-popup-common"; // Common style class
+    popup.style.display = 'block'; // Ensure it's visible
 
     popup.innerHTML = `
-        <h3>Completa tu perfil</h3>
-        <p>Por favor completa la siguiente información para continuar:</p>
-        
-        <div id="profile-panel">
-            <div style="margin-bottom: 15px;">
-                <label for="nombre">Nombre completo:</label>
-                <input type="text" id="nombre" value="${nombre || ''}" placeholder="Tu nombre completo">
-            </div>
-            
-            <div style="margin-bottom: 15px;">
-                <label for="correo">Correo electrónico:</label>
-                <input type="email" id="correo" placeholder="tu@correo.com">
-            </div>
-            
-            <div style="margin-bottom: 15px;">
-                <label>Foto de perfil:</label>
-                <div style="display: flex; align-items: center; justify-content: center; margin-top: 10px;">
-                    <img id="user-photo-preview" src="" alt="Foto de perfil" style="width: 100px; height: 100px; border-radius: 50%; border: 1px solid #ccc; object-fit: cover; display: none;">
-                    <input type="file" id="user-photo" accept="image/*" style="display: block; margin: 10px auto;">
-                </div>
-            </div>
-            
-            <button id="guardar-perfil-btn">Guardar Perfil</button>
-            <button id="cancelar-perfil-btn">Cancelar</button>
+        <h3>Acceso Restringido, Solo Afiliados</h3>
+        <p>Ingrese su número de cédula para verificar</p>
+        <input type="text" id="cedula-input" placeholder="Número de Cédula" style="width: 80%; padding: 10px; margin-bottom: 10px;">
+        <div style="margin-top: 15px;">
+            <button id="verificar-cedula-btn" class="popup-button primary">Verificar</button>
+            <button id="cerrar-popup-btn" class="popup-button secondary">Cerrar</button>
         </div>
     `;
 
     document.body.appendChild(popup);
-    
-    // Obtener correo de localStorage si existe
-    const correo = localStorage.getItem("correo");
-    if (correo) {
-        document.getElementById('correo').value = correo;
-    }
-    
-    // Evento para previsualizar la imagen seleccionada
-    document.getElementById('user-photo').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const preview = document.getElementById('user-photo-preview');
-                preview.src = event.target.result;
-                preview.style.display = 'block';
-            };
-            reader.readAsDataURL(file);
+    console.log(" Authentication popup added to DOM.");
+    applyPopupStyles(popup); // Apply common styles
+
+    // Add event listeners
+    document.getElementById('verificar-cedula-btn').addEventListener('click', () => {
+        const cedula = document.getElementById('cedula-input').value;
+        verifyCedula(cedula);
+    });
+
+    document.getElementById('cerrar-popup-btn').addEventListener('click', closeAuthPopup);
+
+    document.getElementById('cedula-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const cedula = document.getElementById('cedula-input').value;
+            verifyCedula(cedula);
         }
     });
-    
-    // Evento para guardar el perfil
-    let guardarBtn = document.getElementById('guardar-perfil-btn');
-    let cancelarBtn = document.getElementById('cancelar-perfil-btn');
-    
-    if (guardarBtn) {
-        // --- CLONAR PARA LIMPIAR LISTENERS ---
-        const newGuardarBtn = guardarBtn.cloneNode(true);
-        guardarBtn.parentNode.replaceChild(newGuardarBtn, guardarBtn);
-        guardarBtn = newGuardarBtn; // Actualizar la referencia
-        // --- FIN CLONADO ---
-        
-        guardarBtn.addEventListener('click', function() {
-            // Deshabilitar botones
-            guardarBtn.disabled = true;
-            guardarBtn.textContent = 'Guardando...';
-            if(cancelarBtn) cancelarBtn.disabled = true;
-            
-            const nombreValue = document.getElementById('nombre').value;
-            const correoValue = document.getElementById('correo').value;
-            const fotoPreview = document.getElementById('user-photo-preview');
-            const fotoValue = fotoPreview.style.display !== 'none' ? fotoPreview.src : '';
-            
-            // Pasar la referencia correcta del botón
-            guardarPerfilUsuario(cedula, nombreValue, correoValue, fotoValue, guardarBtn, cancelarBtn);
-        });
+}
+
+// 2. Verify Cedula (Handles potential dynamic loading of publicidad.js)
+function verifyCedula(cedula) {
+    console.log("Verifying cedula:", cedula);
+    if (!cedula || !/^\d+$/.test(cedula)) {
+        mostrarError("Por favor ingrese un número de cédula válido.");
+        return;
     }
-    
-    // Evento para cancelar (podría necesitar clonado similar si la función se llama múltiples veces)
-    if (cancelarBtn) {
-        // Opcional: Clonar y reemplazar cancelarBtn si es necesario
-        // const newCancelarBtn = cancelarBtn.cloneNode(true);
-        // cancelarBtn.parentNode.replaceChild(newCancelarBtn, cancelarBtn);
-        // cancelarBtn = newCancelarBtn;
-        
-        cancelarBtn.addEventListener('click', function() {
-            closeAuthPopup();
+
+    cedulaVerificada = cedula; // Store cedula for later use
+    localStorage.setItem("cedula", cedula); // Keep storing for potential use by publicidad.js
+
+    // --- Logic to call publicidad.js ---
+    // This part assumes publicidad.js defines window.verificarCedulaPublicidad
+    // and potentially loads config.js if needed.
+    if (typeof window.verificarCedulaPublicidad === 'function') {
+        console.log("Calling window.verificarCedulaPublicidad...");
+        // The callback 'handleVerificacionResult' will be called by verificarCedulaPublicidad
+        window.verificarCedulaPublicidad(cedula, handleVerificacionResult);
+    } else {
+        console.warn("window.verificarCedulaPublicidad not found. Attempting to load publicidad.js");
+        // Attempt to load config.js first (optional, if needed by publicidad.js)
+        const loadConfigIfNeeded = new Promise((resolve, reject) => {
+            if (!window.API_ENDPOINTS) {
+                const configScript = document.createElement('script');
+                configScript.src = 'config.js';
+                configScript.onload = resolve;
+                configScript.onerror = reject;
+                document.head.appendChild(configScript);
+            } else {
+                resolve();
+            }
+        });
+
+        loadConfigIfNeeded.then(() => {
+            // Then load publicidad.js
+            const script = document.createElement('script');
+            script.src = 'publicidad.js';
+            script.onload = function() {
+                if (typeof window.verificarCedulaPublicidad === 'function') {
+                    console.log("publicidad.js loaded, calling window.verificarCedulaPublicidad...");
+                    window.verificarCedulaPublicidad(cedula, handleVerificacionResult);
+                } else {
+                    console.error("Failed to load or find verificarCedulaPublicidad function in publicidad.js");
+                    mostrarError("Error interno al verificar la cédula (P01). Contacte soporte.");
+                    // Fallback: Try direct server verification if publicidad.js fails
+                    // verificarCedulaEnServidor(cedula); // Removed as per original flow relying on publicidad.js
+                }
+            };
+            script.onerror = function() {
+                 console.error("Error loading publicidad.js");
+                 mostrarError("Error interno al verificar la cédula (P02). Contacte soporte.");
+                 // Fallback: Try direct server verification if publicidad.js fails
+                 // verificarCedulaEnServidor(cedula); // Removed as per original flow relying on publicidad.js
+            };
+            document.head.appendChild(script);
+        }).catch(() => {
+             console.error("Error loading config.js (dependency for publicidad.js?)");
+             mostrarError("Error interno al verificar la cédula (C01). Contacte soporte.");
         });
     }
 }
 
-// Función para guardar el perfil del usuario
-function guardarPerfilUsuario(cedula, nombre, correo, foto, guardarBtn, cancelarBtn) {
-    const originalBtnText = 'Guardar Perfil';
-    
-    if (!cedula || !nombre || !correo) {
-        alert('Por favor completa todos los campos obligatorios');
-        if (guardarBtn) {
-            guardarBtn.disabled = false;
-            guardarBtn.textContent = originalBtnText;
+// 3. Handle Result from Cedula Verification (Callback for publicidad.js)
+function handleVerificacionResult(result) {
+    console.log("Handling verification result:", result);
+    closeAuthPopup(); // Close cedula input popup
+
+    if (result && result.valid) {
+        console.log("Cedula valid. Storing user data and showing password popup.");
+        // Store basic info received from publicidad.js verification
+        localStorage.setItem("afiliado", "si"); // Mark as potentially affiliated
+        localStorage.setItem("nombre", result.nombre || '');
+        localStorage.setItem("cargo", result.cargo || '');
+        // If a secret code is passed, store it (though password check uses backend now)
+        if(result.codigo_secreto) {
+            localStorage.setItem("codigo_secreto", result.codigo_secreto);
         }
-        if (cancelarBtn) cancelarBtn.disabled = false;
+
+        // Proceed to password verification step
+        mostrarPopupContrasena(result.nombre, result.cargo);
+    } else {
+        console.log("Cedula invalid or not affiliated.");
+        localStorage.setItem("afiliado", "no");
+        mostrarPopupErrorCedula(); // Show specific error for cedula failure
+    }
+}
+
+// 4. Show Password Popup
+async function mostrarPopupContrasena(nombre, cargo) {
+    console.log(`Showing password popup for ${nombre}`);
+    closeExistingPopups();
+    intentosRestantesPassword = 3; // Reset attempts counter
+
+    const popup = document.createElement("div");
+    popup.id = "auth-popup"; // Re-use the ID
+    popup.className = "auth-popup-common";
+    popup.style.display = 'block';
+
+    popup.innerHTML = `
+        <h3>Verificación Adicional</h3>
+        <p>${nombre || 'Usuario'}, por favor ingresa tu contraseña maestra para continuar.</p>
+        <input type="password" id="input-contrasena" placeholder="Contraseña Maestra" style="width: 80%; padding: 10px; margin-bottom: 10px;">
+        <p id="password-error-msg" style="color: red; font-size: 0.9em; min-height: 1.2em;"></p>
+        <div style="margin-top: 15px;">
+            <button id="verificar-contrasena-btn" class="popup-button primary">Verificar</button>
+            <button id="cancelar-contrasena-btn" class="popup-button secondary">Cancelar</button>
+        </div>
+    `;
+
+    document.body.appendChild(popup);
+    applyPopupStyles(popup);
+
+    const verifyBtn = document.getElementById("verificar-contrasena-btn");
+    const cancelBtn = document.getElementById("cancelar-contrasena-btn");
+    const passwordInput = document.getElementById("input-contrasena");
+    const errorMsgElement = document.getElementById("password-error-msg");
+
+    const handleVerification = async () => {
+        const contrasena = passwordInput.value;
+        const cedula = cedulaVerificada || localStorage.getItem("cedula"); // Use stored cedula
+
+        if (!contrasena) {
+            errorMsgElement.textContent = "Por favor ingresa la contraseña.";
+            return;
+        }
+        if (!cedula) {
+            console.error("No cedula available for password verification!");
+            mostrarError("Error interno (C02). No se pudo verificar la contraseña. Recarga la página.");
+            closeAuthPopup();
+            return;
+        }
+
+        verifyBtn.disabled = true;
+        cancelBtn.disabled = true;
+        verifyBtn.textContent = "Verificando...";
+        errorMsgElement.textContent = ""; // Clear previous errors
+
+        try {
+            const response = await fetch(`${window.API_ENDPOINTS.validarCodigo}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cedula: cedula, codigo: contrasena }) // Send cedula and password
+            });
+
+            // Check if response is JSON
+            const contentType = response.headers.get("content-type");
+            if (!contentType || !contentType.includes("application/json")) {
+                 const textResponse = await response.text();
+                 console.error("Password validation response not JSON:", textResponse);
+                 throw new Error(`Respuesta inesperada del servidor (${response.status})`);
+            }
+
+            const data = await response.json();
+
+            if (data.valid) {
+                console.log("Password correct.");
+                closeAuthPopup();
+                localStorage.setItem("afiliado_autenticado", "true"); // Mark as fully authenticated
+                // Proceed to Welcome/Profile check
+                mostrarPopupBienvenida(nombre, cargo);
+                 // Run profile check in background *after* showing welcome
+                comprobarPerfilUsuarioEnBackground(cedula);
+            } else {
+                console.log("Password incorrect.");
+                manejarIntentoFallidoPassword(errorMsgElement);
+                 // Re-enable buttons after failure
+                 verifyBtn.disabled = false;
+                 cancelBtn.disabled = false;
+                 verifyBtn.textContent = "Verificar";
+            }
+        } catch (error) {
+            console.error("Error verifying password:", error);
+            errorMsgElement.textContent = `Error de conexión: ${error.message}. Intenta de nuevo.`;
+            // Re-enable buttons after error
+            verifyBtn.disabled = false;
+            cancelBtn.disabled = false;
+            verifyBtn.textContent = "Verificar";
+        }
+    };
+
+    verifyBtn.addEventListener("click", handleVerification);
+    cancelBtn.addEventListener("click", closeAuthPopup);
+    passwordInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleVerification();
+    });
+}
+
+// 4b. Handle Incorrect Password Attempts
+function manejarIntentoFallidoPassword(errorMsgElement) {
+    intentosRestantesPassword--;
+    if (intentosRestantesPassword <= 0) {
+        console.log("Max password attempts reached. Blocking access.");
+        localStorage.setItem("acceso_bloqueado", "true"); // Mark as blocked
+        localStorage.setItem("afiliado", "no"); // Ensure treated as non-affiliated
+        closeAuthPopup();
+        mostrarError("Acceso bloqueado por múltiples intentos fallidos de contraseña. Contacta al administrador.");
+        bloquearBotonInicial(); // Block the initial "Acceder" button
+    } else {
+         errorMsgElement.textContent = `Contraseña incorrecta. ${intentosRestantesPassword} ${intentosRestantesPassword > 1 ? 'intentos restantes' : 'intento restante'}.`;
+    }
+}
+
+// 5. Show Welcome Popup (After successful password)
+function mostrarPopupBienvenida(nombre, cargo) {
+    console.log("Showing Welcome Popup");
+    closeExistingPopups();
+
+    const popup = document.createElement("div");
+    popup.id = "popup-bienvenida"; // Specific ID for welcome
+    popup.className = "auth-popup-common"; // Use common style class
+    popup.style.background = "#d4edda"; // Light green background
+    popup.style.color = "#155724"; // Dark green text
+    popup.style.border = "1px solid #c3e6cb";
+    popup.style.width = "500px";
+    popup.style.display = 'block';
+
+    // Construct message carefully
+    let mensajeHTML = `
+        <h2 style="color: #155724; font-size: 24px;">¡Verificación Exitosa!</h2>
+        <p style="font-size: 1.1em;">Bienvenido/a, <strong>${nombre || 'Afiliado'}</strong> (${cargo || 'Miembro'})</p>
+        <hr style="border-top: 1px solid #c3e6cb; margin: 15px 0;">
+        <p>Como afiliado autenticado, ahora tienes acceso completo a las funciones, incluyendo el asistente virtual Elektra.</p>
+        <p>Además, ¡puedes publicar tu publicidad en nuestro sitio web sin costo!</p>
+        <div style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 5px; border: 1px solid #dee2e6;">
+            <p style="margin-bottom: 10px; font-weight: bold;">¿Deseas completar o revisar tu perfil ahora?</p>
+            <p style="font-size: 0.9em; margin-bottom: 15px;">Mantener tu perfil actualizado mejora tu experiencia y nos ayuda a comunicarnos mejor.</p>
+            <button id="completar-perfil-btn" class="popup-button primary" style="margin-right: 10px;">Sí, revisar perfil</button>
+            <button id="omitir-perfil-btn" class="popup-button secondary">No, continuar</button>
+        </div>
+    `;
+
+
+    popup.innerHTML = mensajeHTML;
+
+    document.body.appendChild(popup);
+    applyPopupStyles(popup); // Apply common styles
+
+    // Add listeners for profile options
+    document.getElementById("completar-perfil-btn").addEventListener("click", () => {
+        console.log("User chose to complete/review profile.");
+        closeAuthPopup(); // Close welcome popup
+        verificarPerfilUsuario(); // Start profile check/completion flow
+    });
+
+    document.getElementById("omitir-perfil-btn").addEventListener("click", () => {
+        console.log("User chose to skip profile review.");
+        closeAuthPopup(); // Close welcome popup
+        finalizarAutenticacionYMostrarBotonFlotante(); // Directly show the floating button
+    });
+}
+
+// --- Profile Management ---
+
+// 6. Check Profile Status (Called after Welcome Popup choice or background check)
+function verificarPerfilUsuario() {
+    const cedula = cedulaVerificada || localStorage.getItem("cedula");
+    const nombre = localStorage.getItem("nombre");
+    const perfilCompletoLocal = localStorage.getItem("perfil_completo") === "true";
+
+    console.log(" Verifying user profile status for cedula:", cedula);
+    console.log(" Local profile complete status:", perfilCompletoLocal);
+
+    if (!cedula) {
+        console.error("Cannot verify profile without cedula.");
+        mostrarError("Error interno (P03). No se pudo verificar el perfil.");
+        finalizarAutenticacionYMostrarBotonFlotante(); // Fallback: show button anyway
         return;
     }
+
+    // If localStorage says complete, trust it for now and show button.
+    // Background check might update details later.
+    if (perfilCompletoLocal) {
+        console.log(" Profile marked complete in localStorage. Proceeding.");
+        finalizarAutenticacionYMostrarBotonFlotante();
+        // Optional: could still trigger a silent background check here if needed
+        // comprobarPerfilUsuarioEnBackground(cedula);
+        return;
+    }
+
+    // If not marked complete locally, check the backend definitively
+    console.log(" Checking profile status with backend...");
+    fetch(`${window.API_ENDPOINTS.obtenerPerfil}/${cedula}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }
+    })
+    .then(response => {
+        console.log(" Profile fetch response status:", response.status);
+        if (!response.ok) {
+            throw new Error(`Error HTTP ${response.status}: ${response.statusText}`);
+        }
+        // Check content type before parsing
+         const contentType = response.headers.get('content-type');
+         if (!contentType || !contentType.includes('application/json')) {
+             return response.text().then(text => {
+                 console.error(" Response for profile fetch is not JSON:", contentType);
+                 console.error(" Content:", text.substring(0, 500));
+                 throw new Error('Respuesta del servidor no es JSON válida');
+             });
+         }
+        return response.json();
+    })
+    .then(data => {
+        console.log(" Profile data from backend:", data);
+        if (data.perfil_completo) {
+            console.log(" Backend confirms profile is complete.");
+            localStorage.setItem('perfil_completo', 'true');
+            // Update local storage with potentially newer data
+            if (data.datos) {
+                if (data.datos.nombre) localStorage.setItem('nombre', data.datos.nombre);
+                if (data.datos.correo) {
+                    localStorage.setItem('correo', data.datos.correo);
+                    localStorage.setItem('email', data.datos.correo); // Keep email consistent
+                }
+                if (data.datos.foto_ruta) localStorage.setItem('foto_ruta', data.datos.foto_ruta);
+            }
+            finalizarAutenticacionYMostrarBotonFlotante(); // Show float button
+        } else {
+            console.log(" Backend indicates profile is incomplete. Showing form.");
+            // Get potentially updated name from backend data if available
+            const currentName = (data.datos && data.datos.nombre) ? data.datos.nombre : nombre;
+            mostrarFormularioCompletarPerfil(cedula, currentName);
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching profile data:', error);
+        mostrarError(`Error al verificar tu perfil: ${error.message}. Se mostrará el formulario por defecto.`);
+        // Fallback: Show the form anyway if backend check fails
+        mostrarFormularioCompletarPerfil(cedula, nombre);
+    });
+}
+
+// 7. Show Profile Completion Form
+function mostrarFormularioCompletarPerfil(cedula, nombre) {
+    console.log(" Displaying profile completion form.");
+    closeExistingPopups();
+
+    const popup = document.createElement("div");
+    popup.id = "auth-popup"; // Re-use ID
+    popup.className = "auth-popup-common";
+    popup.style.width = "450px"; // Slightly wider for form
+    popup.style.maxHeight = "80vh"; // Prevent excessive height
+    popup.style.overflowY = "auto"; // Add scroll if needed
+    popup.style.display = 'block';
+
+    // Retrieve existing data from localStorage if available
+    const correoLocal = localStorage.getItem("correo") || localStorage.getItem("email") || '';
+    const nombreLocal = nombre || localStorage.getItem("nombre") || '';
+    const fotoLocal = localStorage.getItem("foto_ruta") || ''; // Get existing photo path
+
+    popup.innerHTML = `
+        <h3>Completa Tu Perfil</h3>
+        <p>Por favor, verifica o completa la siguiente información:</p>
+
+        <div id="profile-form-content" style="text-align: left; padding: 0 20px;">
+            <div style="margin-bottom: 15px;">
+                <label for="profile-nombre" style="display: block; margin-bottom: 5px; font-weight: bold;">Nombre completo:</label>
+                <input type="text" id="profile-nombre" value="${nombreLocal}" placeholder="Tu nombre completo" required style="width: 100%; padding: 8px;">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label for="profile-correo" style="display: block; margin-bottom: 5px; font-weight: bold;">Correo electrónico:</label>
+                <input type="email" id="profile-correo" value="${correoLocal}" placeholder="tu@correo.com" required style="width: 100%; padding: 8px;">
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Foto de perfil (Opcional):</label>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 15px;">
+                     <img id="user-photo-preview" src="${fotoLocal}" alt="Vista previa" style="width: 80px; height: 80px; border-radius: 50%; border: 1px solid #ccc; object-fit: cover; ${fotoLocal ? '' : 'display: none;'}">
+                    <input type="file" id="user-photo-input" accept="image/*" style="display: block; flex-grow: 1;">
+                </div>
+                <small style="display: block; margin-top: 5px; color: #6c757d;">Sube una nueva foto si deseas cambiarla.</small>
+            </div>
+
+             <p id="profile-save-error-msg" style="color: red; font-size: 0.9em; min-height: 1.2em; text-align: center;"></p>
+
+            <div style="text-align: center; margin-top: 25px;">
+                <button id="guardar-perfil-btn" class="popup-button primary" style="margin-right: 10px;">Guardar Perfil</button>
+                <button id="cancelar-perfil-btn" class="popup-button secondary">Cancelar</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(popup);
+    applyPopupStyles(popup);
+
+    const guardarBtn = document.getElementById('guardar-perfil-btn');
+    const cancelarBtn = document.getElementById('cancelar-perfil-btn');
+    const fotoInput = document.getElementById('user-photo-input');
+    const fotoPreview = document.getElementById('user-photo-preview');
+    const errorMsgElement = document.getElementById('profile-save-error-msg');
+
+    // Event listener for photo preview
+    fotoInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            // Basic validation (optional: add size check)
+            if (!file.type.startsWith('image/')) {
+                errorMsgElement.textContent = 'Por favor selecciona un archivo de imagen válido.';
+                fotoInput.value = ''; // Clear the invalid file
+                return;
+            }
+            errorMsgElement.textContent = ''; // Clear error
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                fotoPreview.src = event.target.result;
+                fotoPreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Event listener for saving profile
+    guardarBtn.addEventListener('click', () => {
+        const nombreValue = document.getElementById('profile-nombre').value.trim();
+        const correoValue = document.getElementById('profile-correo').value.trim();
+        const fotoFile = fotoInput.files[0]; // Get the file object if a new one was selected
+        let fotoBase64 = null; // Will hold base64 data if new photo is uploaded
+
+        errorMsgElement.textContent = ''; // Clear previous errors
+
+        if (!nombreValue || !correoValue) {
+            errorMsgElement.textContent = 'Nombre y correo son obligatorios.';
+            return;
+        }
+        // Basic email format validation
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correoValue)) {
+             errorMsgElement.textContent = 'Formato de correo electrónico inválido.';
+             return;
+        }
+
+        // Disable buttons during save
+        guardarBtn.disabled = true;
+        cancelarBtn.disabled = true;
+        guardarBtn.textContent = 'Guardando...';
+
+        // Process photo if a new one was selected
+        const processPhotoPromise = new Promise((resolve) => {
+            if (fotoFile) {
+                 const reader = new FileReader();
+                 reader.onloadend = function() {
+                     fotoBase64 = reader.result; // Get base64 string
+                     resolve();
+                 };
+                 reader.onerror = function() {
+                     console.error("Error reading file for profile photo.");
+                     errorMsgElement.textContent = 'Error al procesar la imagen.';
+                     resolve(); // Resolve anyway to proceed without photo
+                 };
+                 reader.readAsDataURL(fotoFile);
+            } else {
+                resolve(); // No new photo selected
+            }
+        });
+
+        // After photo is processed (or if none), save data
+        processPhotoPromise.then(() => {
+            guardarPerfilUsuario(cedula, nombreValue, correoValue, fotoBase64, guardarBtn, cancelarBtn, errorMsgElement);
+        });
+    });
+
+    // Event listener for cancel
+    cancelarBtn.addEventListener('click', () => {
+        console.log("User cancelled profile completion.");
+        closeAuthPopup();
+        finalizarAutenticacionYMostrarBotonFlotante(); // Show float button as they cancelled
+    });
+}
+
+// 8. Save Profile Data to Backend
+function guardarPerfilUsuario(cedula, nombre, correo, fotoBase64, guardarBtn, cancelarBtn, errorMsgElement) {
+    const originalBtnText = 'Guardar Perfil';
 
     const datos = {
         cedula: cedula,
         nombre: nombre,
         correo: correo,
-        foto: foto
+        // Send base64 string only if a new photo was successfully read
+        foto: fotoBase64
     };
 
-    console.log(" Enviando datos de perfil:", {...datos, foto: foto ? '(Base64 imagen)' : null});
+    console.log(" Sending profile data to backend:", { ...datos, foto: fotoBase64 ? '(Base64 Image Data)' : null });
 
-    fetch(`${getBackendUrl()}/actualizar_perfil`, {
+    fetch(`${window.API_ENDPOINTS.actualizarPerfil}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -530,606 +575,931 @@ function guardarPerfilUsuario(cedula, nombre, correo, foto, guardarBtn, cancelar
         body: JSON.stringify(datos)
     })
     .then(response => {
+        // Check for non-OK status first
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+             // Try to parse error from backend if JSON, otherwise use status text
+             return response.json().catch(() => null).then(errorData => {
+                 const errorMsg = (errorData && errorData.error) ? errorData.error : `Error HTTP ${response.status}: ${response.statusText}`;
+                 throw new Error(errorMsg);
+             });
         }
+        // Check content type for OK response
+         const contentType = response.headers.get('content-type');
+         if (!contentType || !contentType.includes('application/json')) {
+              return response.text().then(text => {
+                  console.error(" Response for profile update is not JSON:", contentType);
+                  console.error(" Content:", text.substring(0, 500));
+                  throw new Error('Respuesta del servidor no es JSON válida tras guardar perfil');
+              });
+         }
         return response.json();
     })
     .then(data => {
+        console.log("Profile update response:", data);
         if (data.success) {
+            console.log("Profile updated successfully!");
+            // Update localStorage with saved data
             localStorage.setItem('nombre', nombre);
             localStorage.setItem('correo', correo);
-            localStorage.setItem('email', correo);
-            localStorage.setItem('perfil_completo', 'true');
-            if (data.foto_url) {
+            localStorage.setItem('email', correo); // Consistent key
+            localStorage.setItem('perfil_completo', 'true'); // Mark as complete
+            if (data.foto_url) { // Backend should return the *URL* of the saved photo
                 localStorage.setItem('foto_ruta', data.foto_url);
+                 console.log("Stored new photo URL:", data.foto_url);
             }
-            
-            closeAuthPopup();
-            
-            if (!window.location.pathname.includes('publicidad.html')) {
-                const initialContainer = document.getElementById('boton-flotante');
-                if (initialContainer) {
-                    initialContainer.style.display = 'none';
-                }
-            }
-            
-            crearBotonFlotante();
+
+            closeAuthPopup(); // Close the form
+            finalizarAutenticacionYMostrarBotonFlotante(); // Show the float button
         } else {
-            throw new Error(data.error || 'Error al actualizar el perfil');
+            // Handle specific error message from backend if provided
+            throw new Error(data.error || data.mensaje || 'Error desconocido al guardar el perfil.');
         }
     })
     .catch(error => {
-        console.error('Error al actualizar perfil:', error);
-        alert('Ha ocurrido un error al actualizar tu perfil. Por favor intenta nuevamente.');
+        console.error('Error saving profile:', error);
+        errorMsgElement.textContent = `Error al guardar: ${error.message}`;
+        // Re-enable buttons on error
         if (guardarBtn) {
             guardarBtn.disabled = false;
             guardarBtn.textContent = originalBtnText;
         }
-        if (cancelarBtn) cancelarBtn.disabled = false;
+        if (cancelarBtn) {
+            cancelarBtn.disabled = false;
+        }
     });
 }
 
-// Función para mostrar el popup de error
-function mostrarPopupError() {
-    const mensaje = "Cédula no válida o no registrada en el sistema.";
-    alert(mensaje);
-}
+// 9. Final Step After Auth/Profile: Show Floating Button
+function finalizarAutenticacionYMostrarBotonFlotante() {
+    console.log("Authentication and profile check complete. Displaying floating chat button.");
 
-// Función para bloquear el botón en caso de acceso denegado
-function bloquearBoton() {
-    const chatButton = document.getElementById("chatbot-button");
-    if (chatButton) {
-        chatButton.style.backgroundColor = "red";
-        chatButton.style.color = "white";
-        chatButton.style.cursor = "not-allowed";
-        chatButton.innerText = " No eres afiliado al sindicato";
-        chatButton.disabled = true;
-
-        // Guardar en LocalStorage que falló la validación
-        localStorage.setItem("afiliado", "no");
-    }
-}
-
-// Función para activar el chatbot después de cerrar el popup
-function activarChatbot() {
-    // --- Añadir verificación de página ---
-    if (window.location.pathname.includes('publicidad.html')) {
-        console.log(" Chatbot no se activa en publicidad.html");
-        return; // Salir de la función
-    }
-    // --- Fin verificación ---
-
-    console.log(" Activando chatbot con IA...");
-
-    // Primero, asegurarse de que cualquier popup de autenticación sea removido
-    const authPopup = document.getElementById("auth-popup");
-    if (authPopup) {
-        authPopup.remove();
-        console.log(" Popup de autenticación removido correctamente");
+    // Hide the initial large access button if it's still somehow visible
+    const initialAccessButton = document.getElementById("chatbot-button"); // Assuming this is the ID
+    if (initialAccessButton) {
+        initialAccessButton.style.display = "none";
     }
 
-    const popupContrasena = document.getElementById("popup-contrasena");
-    if (popupContrasena) {
-        popupContrasena.remove();
-        console.log(" Popup de contraseña removido correctamente");
-    }
-
-    const popupBienvenida = document.getElementById("popup-bienvenida");
-    if (popupBienvenida) {
-        popupBienvenida.remove();
-        console.log(" Popup de bienvenida removido correctamente");
-    }
-
-    const botonChat = document.getElementById("chatbot-button");
+    // Show relevant links (if they exist)
     const linkEstatutos = document.getElementById("estatutos-link");
     const linkEstatutosMobile = document.getElementById("estatutos-link-mobile");
     const linkModulos = document.getElementById("modulos-link");
     const linkAfiliacion = document.getElementById("afiliacion-link");
-    const botonFlotante = document.getElementById("boton-flotante");
-    const contenedorChatbot = document.getElementById("chatbot-container");
-    const registrarBtn = document.getElementById("registrar-publicidad");
-    const videoContainer = document.getElementById("ai-video-container"); // <-- Contenedor del video
 
-    // Ocultar botón y mostrar/ocultar enlaces
-    if (botonChat) {
-        botonChat.style.display = "none";
-        console.log(" Botón de chat original ocultado");
-    }
-    
     if (linkEstatutos) linkEstatutos.style.display = "inline";
     if (linkEstatutosMobile) linkEstatutosMobile.style.display = "block";
     if (linkModulos) linkModulos.style.display = "inline";
-    if (linkAfiliacion) linkAfiliacion.style.display = "none";
+    if (linkAfiliacion) linkAfiliacion.style.display = "none"; // Hide affiliation link for logged-in users
 
-    // Mostrar y configurar el contenedor del chatbot Y EL VIDEO
-    if (contenedorChatbot) {
-        contenedorChatbot.style.display = "block"; // <-- Mostrar contenedor del chat
-        contenedorChatbot.innerHTML = `
-            <div class="elektra-chat-interface">
-                <div class="chat-header">
-                    <img src="images/HUV.jpg" alt="Elektra Avatar" class="elektra-avatar">
-                    <h3>ELEKTRA - Asistente Virtual</h3>
-                    <button class="minimize-chat">_</button>
-                    <button class="close-chat">×</button>
-                </div>
-                <div id="chat-messages" class="chat-messages"></div>
-                <div class="chat-input-container">
-                    <input type="text" id="user-input" placeholder="Escribe tu mensaje aquí...">
-                    <button id="send-message">
-                        Enviar
-                    </button>
-                </div>
-            </div>
-        `;
+    // Create or ensure the floating button is visible
+    crearBotonFlotante();
 
-        // Inicializar el chat
-        if (window.inicializarChatIA) {
-            window.inicializarChatIA();
-        } else {
-            console.error("La función inicializarChatIA no está disponible");
-            const chatMessages = document.getElementById('chat-messages');
-            if (chatMessages) {
-                const errorMsg = document.createElement('div');
-                errorMsg.className = 'message ai-message';
-                errorMsg.textContent = 'Lo siento, hubo un error al inicializar el chat. Por favor, recarga la página.';
-                chatMessages.appendChild(errorMsg);
-            }
-        }
-
-        // Agregar funcionalidad al botón de cerrar
-        const closeButton = contenedorChatbot.querySelector('.close-chat');
-        if (closeButton) {
-            closeButton.addEventListener('click', () => {
-                contenedorChatbot.style.display = "none";
-                if (videoContainer) {
-                    videoContainer.style.display = "none";
-                }
-                if (botonFlotante) {
-                    botonFlotante.style.display = "block";
-                } else {
-                    crearBotonFlotante();
-                }
-            });
-        }
-
-        // Agregar funcionalidad al botón de minimizar
-        const minimizeButton = contenedorChatbot.querySelector('.minimize-chat');
-        if (minimizeButton) {
-            minimizeButton.addEventListener('click', () => {
-                // Ocultar el contenedor del chatbot
-                contenedorChatbot.style.display = "none";
-                
-                // Ocultar también el contenedor de video
-                if (videoContainer) {
-                    videoContainer.style.display = "none";
-                }
-                
-                // Mostrar el botón flotante
-                if (botonFlotante) {
-                    botonFlotante.style.display = "block";
-                } else {
-                    // Si no existe el botón flotante, crearlo
-                    crearBotonFlotante();
-                }
-            });
-        }
-
-        // Mostrar también el contenedor del video
-        if (videoContainer) {
-            console.log(" Mostrando contenedor de video AI.");
-            videoContainer.style.display = "block"; // O 'flex' o lo que corresponda
-            // Aquí podrías añadir lógica para iniciar la reproducción si es necesario
-        } else {
-            console.warn(" Contenedor de video AI (#ai-video-container) no encontrado.");
-        }
-
-    } else {
-        console.error("No se encontró el contenedor del chatbot (#chatbot-container)");
-    }
+    // Optional: Show a temporary success notification near the button
+    showTemporaryNotification(`¡Hola ${localStorage.getItem('nombre') || 'Afiliado'}! Haz clic aquí para chatear.`);
 }
 
-// Función para crear el botón flotante de chat si no existe
+// --- Floating Chat Button & Chat Interface Management ---
+
+// 10. Create/Show Floating Chat Button
 function crearBotonFlotante() {
-    // --- Añadir verificación de página ---
+    // Do not create/show on publicidad.html
     if (window.location.pathname.includes('publicidad.html')) {
-        console.log(" No se crea/muestra botón flotante en publicidad.html");
-        // Asegurar que esté oculto si ya existe
-        let botonExistente = document.getElementById("boton-flotante");
-        if (botonExistente) botonExistente.style.display = 'none';
-        return; // Salir de la función
+        console.log("Not creating floating button on publicidad.html");
+        let existingButton = document.getElementById("boton-flotante");
+        if (existingButton) existingButton.style.display = 'none'; // Ensure it's hidden
+        return null;
     }
-    // --- Fin verificación ---
-    
-    // Verificar si ya existe
+
     let botonFlotante = document.getElementById("boton-flotante");
-    
+
     if (!botonFlotante) {
+        console.log("Creating floating chat button (#boton-flotante)...");
         botonFlotante = document.createElement("div");
         botonFlotante.id = "boton-flotante";
-        botonFlotante.className = "chat-flotante";
+        // Add class for styling and state management (e.g., 'minimized')
+        botonFlotante.className = "chat-flotante minimized";
         botonFlotante.innerHTML = `
-            <div class="chat-icon">
-                <img src="images/chat-icon.png" alt="Chat" width="40">
+            <div class="chat-icon" style="line-height: 0;">
+                <img src="images/chat-icon.png" alt="Chat" width="35" height="35">
             </div>
-            <span>Hablar con Elektra</span>
+            <span class="chat-text">Elektra</span>
         `;
-        
-        // Estilos básicos
-        botonFlotante.style.position = "fixed";
-        botonFlotante.style.bottom = "20px";
-        botonFlotante.style.right = "20px";
-        botonFlotante.style.backgroundColor = "#35a9aa";
-        botonFlotante.style.color = "white";
-        botonFlotante.style.padding = "10px 15px";
-        botonFlotante.style.borderRadius = "25px";
-        botonFlotante.style.display = "flex";
-        botonFlotante.style.alignItems = "center";
-        botonFlotante.style.gap = "10px";
-        botonFlotante.style.cursor = "pointer";
-        botonFlotante.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
-        botonFlotante.style.zIndex = "9999";
-        
-        document.body.appendChild(botonFlotante);
-        
-        // Agregar evento para reabrir el chat
-        botonFlotante.addEventListener('click', () => {
-            console.log(" Botón flotante real clickeado, activando chatbot...");
-            // Ocultar ESTE botón flotante real
-            botonFlotante.style.display = "none"; 
-            // Llamar a activarChatbot para mostrar el contenedor del chat y el video
-            activarChatbot(); 
+        botonFlotante.title = 'Abrir chat con Elektra';
+
+        // Apply styles directly (or use CSS)
+        Object.assign(botonFlotante.style, {
+            position: "fixed",
+            bottom: "25px",
+            right: "25px",
+            backgroundColor: "#35a9aa", // Teal color
+            color: "white",
+            padding: "8px 15px",
+            borderRadius: "25px",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            cursor: "pointer",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+            zIndex: "9998", // Below popups but above content
+            transition: "transform 0.2s ease-out, box-shadow 0.2s ease",
         });
+
+         // Hover effect (optional)
+         botonFlotante.addEventListener('mouseenter', () => {
+             botonFlotante.style.transform = 'scale(1.05)';
+             botonFlotante.style.boxShadow = '0 6px 16px rgba(0,0,0,0.3)';
+         });
+         botonFlotante.addEventListener('mouseleave', () => {
+              botonFlotante.style.transform = 'scale(1)';
+              botonFlotante.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+         });
+
+
+        document.body.appendChild(botonFlotante);
+
+        // Add the crucial click listener to toggle the chat interface
+        botonFlotante.addEventListener('click', toggleChat);
+
+    } else {
+         console.log("Floating button already exists.");
     }
-    
-    // Asegurarse de que el botón esté visible si se acaba de crear o ya existía
+
+    // Ensure it's visible
     botonFlotante.style.display = "flex";
+    // Ensure it starts minimized visually
+    updateFloatingButtonVisualState(true); // true = minimized
+
     return botonFlotante;
 }
 
-// Inicializar el botón de chat cuando el DOM esté listo
-document.addEventListener("DOMContentLoaded", function() {
-    console.log('Inicializando botón de chat desde auth-popup.js...');
-    const chatButton = document.getElementById("chatbot-button");
+// 11. Toggle Chat Interface Visibility (Called by floating button click)
+function toggleChat() {
+    const chatContainer = document.getElementById("chatbot-container");
+    const videoContainer = document.getElementById("ai-video-container");
+    const floatButton = document.getElementById("boton-flotante");
 
-    // Revisar si el usuario ya falló antes y bloquear botón
-    if (localStorage.getItem("afiliado") === "no") {
-        console.log('Usuario bloqueado por intentos previos');
-        bloquearBoton();
-    }
-
-    if (chatButton) {
-        console.log('Agregando event listener al botón de chat');
-        chatButton.addEventListener("click", function() {
-            console.log('Botón de chat clickeado');
-            showAuthPopup();
-        });
-    } else {
-        console.error('Botón de chat no encontrado en el DOM');
-    }
-});
-
-// También intentar inicializar inmediatamente por si el DOM ya está cargado
-if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    console.log('DOM ya cargado, inicializando inmediatamente desde auth-popup.js');
-    setTimeout(function() {
-        const chatButton = document.getElementById("chatbot-button");
-        if (chatButton) {
-            console.log('Botón de chat encontrado, agregando event listener');
-            chatButton.addEventListener("click", showAuthPopup);
-        } else {
-            console.error('Botón de chat no encontrado en el DOM (inicialización inmediata)');
-        }
-
-        // Comprobar si tenemos cédula guardada pero no perfil completo
-        const cedula = localStorage.getItem("cedula");
-        const perfilCompleto = localStorage.getItem("perfil_completo");
-        
-        if (cedula && perfilCompleto !== "true") {
-            console.log(" Cédula encontrada pero perfil no marcado como completo, verificando con el backend...");
-            // Verificar si el perfil ya existe en el backend
-            comprobarPerfilUsuarioEnBackground(cedula);
-        }
-    }, 100);
-}
-
-// Función para verificar y restaurar el chatbot si es necesario
-function verificarYRestaurarChatbot() {
-    // Verificar si el usuario está autenticado
-    const isAuth = localStorage.getItem("afiliado") === "yes" || localStorage.getItem("perfil_completo") === "true";
-    
-    if (!isAuth) {
-        console.log(" Usuario no autenticado, no se restaura el chatbot");
+    if (!chatContainer) {
+        console.error("Chat container #chatbot-container not found!");
+        // Attempt to create it dynamically? Or just error out.
+        // For now, error out. It should exist in the HTML.
+        mostrarError("Error: No se encontró el contenedor del chat (CH01).");
         return;
     }
-    
-    console.log(" Verificando estado del chatbot...");
-    
-    // Buscar elementos relacionados con el chatbot
-    const botonFlotante = document.getElementById("boton-flotante");
-    const contenedorChatbot = document.getElementById("chatbot-container");
-    
-    // Si no hay botón flotante ni contenedor de chatbot visibles, hay que restaurarlos
-    const restaurarNecesario = (!botonFlotante || botonFlotante.style.display === "none") && 
-                              (!contenedorChatbot || contenedorChatbot.style.display === "none");
-                              
-    if (restaurarNecesario) {
-        console.log(" Restaurando botón flotante del chatbot...");
-        // Crear el botón flotante
-        crearBotonFlotante();
+    if (!floatButton) {
+         console.error("Floating button #boton-flotante not found!");
+         return; // Should not happen if called from the button itself
+    }
+
+    const isCurrentlyHidden = chatContainer.style.display === 'none' || chatContainer.style.display === '';
+
+    if (isCurrentlyHidden) {
+        console.log("Opening chat...");
+        // Show chat and video
+        chatContainer.style.display = 'block';
+        if (videoContainer) {
+            videoContainer.style.display = 'block'; // Or 'flex' depending on its CSS
+             console.log("Showing video container.");
+             // Attempt to play video if exists
+             const videoElement = document.getElementById('ai-avatar'); // Assuming this ID for the video tag
+             if (videoElement && typeof videoElement.play === 'function') {
+                 videoElement.play().catch(error => console.warn('Video autoplay prevented:', error));
+             }
+        } else {
+            console.warn("#ai-video-container not found.");
+        }
+
+        // Update floating button appearance to 'minimize' state
+        updateFloatingButtonVisualState(false); // false = not minimized (open)
+
+        // Initialize chat UI and AI Instance IF NOT ALREADY INITIALIZED
+        if (!chatInitialized) {
+            activarChatbot(); // This will set up the UI *and* call inicializarChatIA
+        }
+
     } else {
-        console.log(" Chatbot en estado correcto, no es necesario restaurar");
+        console.log("Closing chat...");
+        // Hide chat and video
+        chatContainer.style.display = 'none';
+        if (videoContainer) {
+            videoContainer.style.display = 'none';
+             console.log("Hiding video container.");
+        }
+
+        // Update floating button appearance back to 'minimized' state
+        updateFloatingButtonVisualState(true); // true = minimized
     }
 }
 
-// Ejecutar verificación periódica para asegurar que el botón del chatbot esté disponible
-setInterval(verificarYRestaurarChatbot, 2000);
+// Helper to update floating button text/icon
+function updateFloatingButtonVisualState(minimized) {
+     const floatButton = document.getElementById("boton-flotante");
+     if (!floatButton) return;
 
-// Exponer funciones globalmente
-window.showAuthPopup = showAuthPopup;
-window.verifyCedula = verifyCedula;
-window.verificarCedulaEnServidor = verificarCedulaEnServidor;
-window.mostrarPopupContrasena = mostrarPopupContrasena;
-window.mostrarPopupBienvenida = mostrarPopupBienvenida;
-window.mostrarPopupError = mostrarPopupError;
-window.bloquearBoton = bloquearBoton;
-window.activarChatbot = activarChatbot;
-window.verificarPerfilUsuario = verificarPerfilUsuario;
+     const iconDiv = floatButton.querySelector('.chat-icon');
+     const textSpan = floatButton.querySelector('.chat-text');
 
-// Función para mostrar el formulario de perfil
-function mostrarFormularioPerfil(cedula, nombre) {
-    console.log(" Mostrando formulario de perfil para cédula:", cedula);
-    
-    // Guardar datos en localStorage
-    localStorage.setItem("cedula", cedula);
-    if (nombre) {
-        localStorage.setItem("nombre", nombre);
+     if (minimized) {
+         if (iconDiv) iconDiv.innerHTML = '<img src="images/chat-icon.png" alt="Chat" width="35" height="35">';
+         if (textSpan) textSpan.textContent = "Elektra";
+         floatButton.title = 'Abrir chat con Elektra';
+         floatButton.classList.add('minimized');
+         floatButton.classList.remove('open');
+     } else {
+         // Use a minimize icon (e.g., underscore or down arrow)
+         if (iconDiv) iconDiv.innerHTML = '🔽'; // Example minimize icon
+         if (textSpan) textSpan.textContent = "Minimizar";
+         floatButton.title = 'Minimizar chat';
+         floatButton.classList.remove('minimized');
+         floatButton.classList.add('open');
+     }
+}
+
+
+// 12. Activate Chatbot Interface (Called by toggleChat when opening)
+async function activarChatbot() {
+    console.log("🎙️ Activating chatbot interface elements...");
+
+    const contenedorChatbot = document.getElementById("chatbot-container");
+
+    if (!contenedorChatbot) {
+        console.error("CRITICAL: #chatbot-container not found during activation!");
+        return;
     }
-    
-    // Cerrar el popup actual si existe
-    const existingPopup = document.getElementById("auth-popup");
-    if (existingPopup) {
-        existingPopup.remove();
+
+    // Check if UI is already populated (to avoid rebuilding unnecessarily)
+    if (contenedorChatbot.querySelector('.elektra-chat-interface')) {
+        console.log("Chat interface already exists.");
+        // Ensure AI is initialized if it wasn't
+        if (!aiChatInstance) {
+            await inicializarChatIA();
+        }
+        chatInitialized = true; // Mark as initialized
+        return;
     }
-    
-    // Crear el nuevo popup de perfil
+
+    // --- Build the Chat UI inside #chatbot-container ---
+    contenedorChatbot.innerHTML = `
+        <div class="elektra-chat-interface">
+            <div class="chat-header">
+                <img src="images/HUV.jpg" alt="Elektra Avatar" class="elektra-avatar">
+                <h3>ELEKTRA - Asistente Virtual</h3>
+                <!-- Minimize button now handled by the main floating button -->
+                <button class="close-chat" title="Cerrar Chat">×</button>
+            </div>
+            <div id="chat-messages" class="chat-messages">
+                <!-- Messages will be added here -->
+            </div>
+            <div class="chat-input-container">
+                <input type="text" id="user-input" placeholder="Escribe tu mensaje..." autocomplete="off">
+                <button id="send-message" title="Enviar Mensaje">
+                    <img src="images/send-icon.png" alt="Enviar" width="20"> <!-- Example using an icon -->
+                </button>
+            </div>
+        </div>
+    `;
+    console.log("Chat UI injected into #chatbot-container.");
+
+    // --- Add Event Listeners for the new UI elements ---
+    const closeButton = contenedorChatbot.querySelector('.close-chat');
+    if (closeButton) {
+        closeButton.addEventListener('click', toggleChat); // Use toggleChat to close/minimize
+    } else {
+        console.error("Close button not found in chat UI!");
+    }
+
+    // Initialize AI and message handling
+    try {
+        await inicializarChatIA(); // This function now handles message listeners too
+        console.log('Chat AI and listeners initialized successfully.');
+        chatInitialized = true; // Mark as fully initialized
+    } catch (error) {
+        console.error('Error during AI initialization:', error);
+        mostrarMensajeIA('Lo siento, hubo un error al inicializar el chat. Por favor, intenta recargar la página.');
+    }
+}
+
+
+// 13. Initialize AI Instance and Message Handling (Called by activarChatbot)
+async function inicializarChatIA() {
+    console.log("Initializing AIChat instance and message listeners...");
+    const userInput = document.getElementById('user-input');
+    const sendButton = document.getElementById('send-message');
+    const chatMessages = document.getElementById('chat-messages'); // Get message container reference
+
+    if (!userInput || !sendButton || !chatMessages) {
+        console.error("Chat input/button/messages container not found during AI init!");
+        chatInitialized = false; // Mark as not initialized
+        return; // Stop initialization
+    }
+
+    // Create AIChat instance if it doesn't exist
+    if (!aiChatInstance) {
+        try {
+            // Ensure AIChat class is available (assuming it's loaded globally or via import)
+            if (typeof AIChat === 'undefined') {
+                 throw new Error("AIChat class is not defined. Make sure aichat.js is loaded.");
+            }
+
+            aiChatInstance = new AIChat();
+            console.log("AIChat instance created.");
+
+            // --- Determine User Role ---
+            const nombreUsuario = localStorage.getItem('nombre');
+            const cargoUsuario = localStorage.getItem('cargo');
+            console.log(`Determining chat role for: Name=${nombreUsuario}, Cargo=${cargoUsuario}`);
+
+            let roleType = 'Afiliado'; // Default to 'Afiliado' for authenticated users
+            if (cargoUsuario) {
+                if (cargoUsuario.toLowerCase().includes('presidente')) {
+                    roleType = 'Presidenciales';
+                } else if (cargoUsuario.toLowerCase().includes('directiv')) { // Catches 'Directivo', 'Directiva'
+                    roleType = 'JuntaDirectiva';
+                }
+                // No 'NoAfiliado' needed here as this runs post-authentication
+            } else {
+                console.warn("No specific cargo found in localStorage, using default 'Afiliado' role.");
+            }
+            console.log(`Assigned chat role: ${roleType}`);
+            // --- End Role Determination ---
+
+            // Initialize the AIChat instance with the determined role
+            await aiChatInstance.initialize(roleType);
+            console.log("AIChat initialized with role:", roleType);
+
+        } catch (error) {
+            console.error('FATAL: Error initializing AIChat:', error);
+            mostrarMensajeIA(`Error crítico al iniciar el asistente (${error.message}). Intenta recargar.`);
+            // Prevent further interaction if core AI fails
+            if (userInput) userInput.disabled = true;
+            if (sendButton) sendButton.disabled = true;
+            chatInitialized = false; // Mark initialization failed
+            aiChatInstance = null; // Discard faulty instance
+            return; // Stop further setup
+        }
+    } else {
+        console.log("AIChat instance already exists.");
+    }
+
+    // --- Add Message Sending Logic and Listeners ---
+    async function enviarMensajeUsuario() {
+        const mensaje = userInput.value.trim();
+        if (!mensaje) return; // Ignore empty messages
+
+        // Disable input while processing
+        userInput.disabled = true;
+        sendButton.disabled = true;
+
+        mostrarMensajeUsuario(mensaje); // Display user's message
+        userInput.value = ''; // Clear input field immediately
+
+        try {
+            // Ensure AI instance is ready
+            if (!aiChatInstance) {
+                 throw new Error("AI instance is not available.");
+            }
+            // Process message using the AIChat instance
+            const respuesta = await aiChatInstance.processMessage(mensaje);
+
+            // Display AI's response
+            mostrarMensajeIA(respuesta);
+
+        } catch (error) {
+            console.error("Error processing message:", error);
+            mostrarMensajeIA(`Lo siento, hubo un error al procesar tu mensaje: ${error.message}. Por favor, intenta de nuevo.`);
+        } finally {
+             // Re-enable input
+             userInput.disabled = false;
+             sendButton.disabled = false;
+             userInput.focus(); // Focus back on input
+        }
+    }
+
+    // Remove existing listeners before adding new ones (safety measure)
+    const newSendButton = sendButton.cloneNode(true);
+    sendButton.parentNode.replaceChild(newSendButton, sendButton);
+    newSendButton.addEventListener('click', enviarMensajeUsuario);
+
+    const newUserInput = userInput.cloneNode(true);
+    userInput.parentNode.replaceChild(newUserInput, userInput);
+    newUserInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) { // Send on Enter (not Shift+Enter)
+             e.preventDefault(); // Prevent newline in input
+             enviarMensajeUsuario();
+        }
+    });
+
+    console.log("Message listeners attached.");
+
+    // --- Display Initial Welcome Message (only if messages are empty) ---
+    if (chatMessages.children.length === 0) {
+         mostrarMensajeIA("¡Hola! Soy Elektra, tu asistente virtual sindical. ¿En qué puedo ayudarte hoy?");
+    }
+}
+
+// 14a. Display User Message in Chat
+function mostrarMensajeUsuario(mensaje) {
+    const chatMessages = document.getElementById('chat-messages');
+    if (!chatMessages) return;
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message user-message'; // Use CSS classes
+    messageDiv.textContent = mensaje;
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll
+}
+
+// 14b. Display AI Message in Chat
+function mostrarMensajeIA(mensaje) {
+    const chatMessages = document.getElementById('chat-messages');
+    if (!chatMessages) return;
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message ai-message'; // Use CSS classes
+
+    // Basic Markdown interpretation (optional, enhance as needed)
+    // Replace **text** with <strong>text</strong>
+    mensaje = mensaje.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    // Replace *text* with <em>text</em>
+    mensaje = mensaje.replace(/\*(.*?)\*/g, '<em>$1</em>');
+     // Replace ```text``` with <code>text</code> (simple code block)
+    mensaje = mensaje.replace(/```(.*?)```/gs, '<pre><code>$1</code></pre>');
+    // Replace `text` with <code>text</code> (inline code)
+    mensaje = mensaje.replace(/`(.*?)`/g, '<code>$1</code>');
+    // Convert newlines to <br> tags
+    mensaje = mensaje.replace(/\n/g, '<br>');
+
+    messageDiv.innerHTML = mensaje; // Use innerHTML to render formatting
+
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll
+}
+
+
+// --- Error Handling & Blocking ---
+
+// General Error Alert
+function mostrarError(mensaje) {
+    console.error("Displaying Error:", mensaje);
+    // Avoid alert() if possible, maybe use a dedicated error div?
+    // For now, using alert as per original structure.
+    alert(`❌ Error: ${mensaje}`);
+}
+
+// Specific Error Popup for Incorrect Cedula
+function mostrarPopupErrorCedula() {
+    console.log("🚨 Showing specific Cedula Error Popup...");
+    closeExistingPopups();
+
     const popup = document.createElement("div");
-    popup.id = "auth-popup";
-    popup.style.position = "fixed";
-    popup.style.top = "50%";
-    popup.style.left = "50%";
-    popup.style.transform = "translate(-50%, -50%)";
-    popup.style.background = "white";
-    popup.style.padding = "20px";
-    popup.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
-    popup.style.zIndex = "10000";
-    popup.style.borderRadius = "8px";
-    popup.style.width = "400px";
-    popup.style.textAlign = "center";
+    popup.id = "auth-popup"; // Reuse ID
+    popup.className = "auth-popup-common error-popup"; // Add error class
+    popup.style.background = "#f8d7da"; // Light red
+    popup.style.color = "#721c24"; // Dark red
+    popup.style.border = "1px solid #f5c6cb";
+    popup.style.width = "420px";
+    popup.style.display = 'block';
 
     popup.innerHTML = `
-        <h3>Completa tu perfil</h3>
-        <p>Por favor completa la siguiente información para continuar:</p>
-        
-        <div id="profile-panel">
-            <div style="margin-bottom: 15px;">
-                <label for="nombre-perfil">Nombre:</label>
-                <input type="text" id="nombre-perfil" name="nombre" required value="${nombre}"> 
-            </div>
-            <div>
-                <label for="correo-perfil">Correo Electrónico:</label>
-                <input type="email" id="correo-perfil" name="correo" required>
-            </div>
-            <div style="margin-bottom: 15px;">
-                <label>Foto de perfil:</label>
-                <div style="display: flex; align-items: center; justify-content: center; margin-top: 10px;">
-                    <img id="user-photo-preview" src="" alt="Foto de perfil" style="width: 100px; height: 100px; border-radius: 50%; border: 1px solid #ccc; object-fit: cover; display: none;">
-                    <input type="file" id="user-photo" accept="image/*" style="display: block; margin: 10px auto;">
-                </div>
-            </div>
-            <button id="guardar-perfil-btn">Guardar Perfil</button>
-            <button id="cancelar-perfil-btn">Cancelar</button>
+        <h2 style="color: #721c24; font-size: 22px; margin-bottom: 15px;">❌ Cédula Incorrecta o No Afiliado</h2>
+        <p>El número de cédula ingresado no se encuentra registrado en nuestro sistema de afiliados.</p>
+        <p><strong>Si aún no eres afiliado:</strong></p>
+        <ol style="text-align: left; margin-left: 30px; margin-bottom: 15px;">
+            <li>Visita la sección de 'Afiliación' en nuestro sitio web.</li>
+            <li>Completa el formulario en línea.</li>
+            <li>Descárgalo, imprime, añade tu huella y firma.</li>
+            <li>Entrégalo personalmente en la oficina del sindicato (usualmente 7mo piso).</li>
+        </ol>
+        <p><strong>Si crees que esto es un error, por favor contacta al sindicato.</strong></p>
+        <div style="margin-top: 20px;">
+            <button id="cerrar-popup-error-btn" class="popup-button secondary">Aceptar</button>
         </div>
     `;
 
     document.body.appendChild(popup);
-    
-    // Obtener correo de localStorage si existe
-    const correo = localStorage.getItem("correo");
-    if (correo) {
-        document.getElementById('correo-perfil').value = correo;
+    applyPopupStyles(popup);
+
+    document.getElementById("cerrar-popup-error-btn").addEventListener("click", closeAuthPopup);
+
+    // Also block the initial button just in case
+    bloquearBotonInicial();
+}
+
+// Block Initial Access Button (e.g., #chatbot-button)
+function bloquearBotonInicial() {
+    const chatButton = document.getElementById("chatbot-button"); // ID of the initial large button
+    if (chatButton) {
+        console.warn("Blocking initial access button.");
+        chatButton.style.backgroundColor = "#dc3545"; // Red
+        chatButton.style.color = "white";
+        chatButton.style.cursor = "not-allowed";
+        chatButton.innerHTML = "❌ Acceso Denegado"; // Update text
+        chatButton.disabled = true;
+        chatButton.onclick = null; // Remove listener
+
+        // Persist block decision
+        localStorage.setItem("afiliado", "no");
+        localStorage.removeItem("afiliado_autenticado"); // Ensure not marked authenticated
+    } else {
+         console.warn("Could not find initial access button (#chatbot-button) to block.");
     }
-    
-    // Evento para previsualizar la imagen seleccionada
-    document.getElementById('user-photo').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const preview = document.getElementById('user-photo-preview');
-                preview.src = event.target.result;
-                preview.style.display = 'block';
-            };
-            reader.readAsDataURL(file);
+}
+
+
+// --- Utility Functions ---
+
+// Close any existing popup with the common ID or specific IDs
+function closeExistingPopups() {
+    const idsToRemove = ["auth-popup", "popup-bienvenida", "popup-error"]; // Add any other popup IDs used
+    idsToRemove.forEach(id => {
+        const popup = document.getElementById(id);
+        if (popup) {
+            console.log(`Removing existing popup: #${id}`);
+            popup.remove();
         }
     });
-    
-    // Evento para guardar el perfil
-    let guardarBtn = document.getElementById('guardar-perfil-btn');
-    let cancelarBtn = document.getElementById('cancelar-perfil-btn');
-    
-    if (guardarBtn) {
-        // --- CLONAR PARA LIMPIAR LISTENERS ---
-        const newGuardarBtn = guardarBtn.cloneNode(true);
-        guardarBtn.parentNode.replaceChild(newGuardarBtn, guardarBtn);
-        guardarBtn = newGuardarBtn; // Actualizar la referencia
-        // --- FIN CLONADO ---
-        
-        guardarBtn.addEventListener('click', function() {
-            // Deshabilitar botones
-            guardarBtn.disabled = true;
-            guardarBtn.textContent = 'Guardando...';
-            if(cancelarBtn) cancelarBtn.disabled = true;
-            
-            const nombreValue = document.getElementById('nombre-perfil').value;
-            const correoValue = document.getElementById('correo-perfil').value;
-            const fotoPreview = document.getElementById('user-photo-preview');
-            const fotoValue = fotoPreview.style.display !== 'none' ? fotoPreview.src : '';
-            
-            // Pasar la referencia correcta del botón
-            guardarPerfilUsuario(cedula, nombreValue, correoValue, fotoValue, guardarBtn, cancelarBtn);
-        });
-    }
-    
-    // Evento para cancelar (podría necesitar clonado similar si la función se llama múltiples veces)
-    if (cancelarBtn) {
-        // Opcional: Clonar y reemplazar cancelarBtn si es necesario
-        // const newCancelarBtn = cancelarBtn.cloneNode(true);
-        // cancelarBtn.parentNode.replaceChild(newCancelarBtn, cancelarBtn);
-        // cancelarBtn = newCancelarBtn;
-        
-        cancelarBtn.addEventListener('click', function() {
-            closeAuthPopup();
-        });
-    }
 }
 
-// Función para mostrar mensajes de error
-function mostrarError(mensaje) {
-    console.error(" Error:", mensaje);
-    alert(mensaje);
+// Close only the main auth/profile/error popup
+function closeAuthPopup() {
+    const popup = document.getElementById("auth-popup");
+    if (popup) {
+        console.log("Closing auth/profile/error popup.");
+        popup.remove();
+    }
+     const welcomePopup = document.getElementById("popup-bienvenida");
+     if (welcomePopup) {
+          console.log("Closing welcome popup.");
+          welcomePopup.remove();
+     }
 }
 
-// Función auxiliar para obtener la URL del backend
-function getBackendUrl() {
-    // Primero intentar usar la URL de config.js
-    if (window.API_ENDPOINTS && window.API_ENDPOINTS.base) {
-        console.log(" Usando URL desde API_ENDPOINTS:", window.API_ENDPOINTS.base);
-        return window.API_ENDPOINTS.base;
-    }
-    
-    // Segundo intento: usar BACKEND_URL global
-    if (window.BACKEND_URL) {
-        console.log(" Usando BACKEND_URL global:", window.BACKEND_URL);
-        return window.BACKEND_URL;
-    }
-    
-    // Si nada funciona, usar localhost como última opción
-    const localUrl = "http://localhost:8000";
-    console.log(" Usando URL local:", localUrl);
-    return localUrl;
+// Apply Common Styles to Popups
+function applyPopupStyles(element) {
+     // Base styles - apply more via CSS class 'auth-popup-common'
+     Object.assign(element.style, {
+        position: "fixed",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        background: "white",
+        color: "#333",
+        padding: "25px",
+        borderRadius: "10px",
+        textAlign: "center",
+        boxShadow: "0 8px 25px rgba(0,0,0,0.2)",
+        zIndex: "10000", // Ensure popups are on top
+        border: "1px solid #ddd",
+        maxWidth: "90vw", // Prevent popup from being too wide on small screens
+     });
+
+     // Add common class for CSS targeting
+     element.classList.add("auth-popup-common");
 }
 
-// Nueva función para comprobar el perfil en el backend sin mostrar UI
+// Show Temporary Notification (e.g., after login near float button)
+function showTemporaryNotification(message, duration = 5000) {
+    const notification = document.createElement('div');
+    notification.id = "temp-notification";
+    // Style it to appear near the float button area
+    Object.assign(notification.style, {
+        position: 'fixed',
+        bottom: '90px', // Above the float button
+        right: '25px',
+        backgroundColor: 'rgba(53, 169, 170, 0.9)', // Semi-transparent teal
+        color: 'white',
+        padding: '10px 15px',
+        borderRadius: '5px',
+        boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+        zIndex: '9999', // Above float button, below popups
+        fontSize: '0.9em',
+        opacity: '0',
+        transition: 'opacity 0.5s ease-in-out',
+    });
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    // Fade in
+    setTimeout(() => { notification.style.opacity = '1'; }, 100);
+
+    // Fade out and remove
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => { notification.remove(); }, 500); // Remove after fade out
+    }, duration);
+}
+
+
+// Check profile status silently in the background (e.g., on page load if cedula exists)
 function comprobarPerfilUsuarioEnBackground(cedula) {
-    const validarUrl = `${getBackendUrl()}/validar_perfil/${cedula}`;
-    
-    fetch(validarUrl)
-        .then(response => response.json())
-        .then(data => {
-            if (data.perfil_completo) {
-                // El perfil ya está completo, guardar esta información
-                localStorage.setItem('perfil_completo', 'true');
-                
-                // Guardar los datos del usuario en localStorage
-                if (data.datos) {
-                    if (data.datos.nombre) localStorage.setItem('nombre', data.datos.nombre);
-                    if (data.datos.correo) {
-                        localStorage.setItem('correo', data.datos.correo);
-                        localStorage.setItem('email', data.datos.correo);
-                    }
-                    if (data.datos.foto_ruta) localStorage.setItem('foto_ruta', data.datos.foto_ruta);
-                }
-                
-                // Si estamos en la página de publicidad, configurar el botón de registro
-                if (window.configurarBotonRegistro) {
-                    console.log(" Reconfigurando botón de registro después de obtener datos completos");
-                    window.configurarBotonRegistro();
-                }
-                
-                // Crear botón flotante
-                crearBotonFlotante();
-                return;
-            } else {
-                // Solo mostrar el formulario si realmente no está completo
-                mostrarFormularioCompletarPerfil(cedula, localStorage.getItem('nombre'));
-            }
-        })
-        .catch(error => {
-            console.error('Error al obtener datos del perfil:', error);
-        });
-}
+    if (!cedula) return; // Need cedula to check
 
-function verificarPerfilEnBackend() {
-    const backendUrl = getBackendUrl();
-    const cedula = window.cedulaAutenticada;
-    
-    if (!cedula) {
-        console.error("❌ No hay cédula autenticada en memoria");
-        mostrarUIInicial();
-        return;
-    }
-    
-    console.log("🔍 Verificando perfil para cédula en memoria");
-    
-    fetch(`${backendUrl}/obtener_perfil/${cedula}`)
+    console.log("Performing background profile check for cedula:", cedula);
+    const validarUrl = `${getBackendUrl()}/validar_perfil/${cedula}`; // Use specific validation endpoint if available
+
+    fetch(validarUrl, { headers: { 'Accept': 'application/json' }})
         .then(response => {
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
             return response.json();
         })
         .then(data => {
-            if (data.error) {
-                throw new Error(data.error);
-            }
-            
             if (data.perfil_completo) {
-                console.log("✅ Perfil completo confirmado por backend");
-                actualizarUIParaPerfilCompleto();
+                console.log("Background check: Profile is complete.");
+                localStorage.setItem('perfil_completo', 'true');
+                // Optionally update other stored data like name, email, photo URL if returned
+                 if (data.datos) {
+                     if (data.datos.nombre) localStorage.setItem('nombre', data.datos.nombre);
+                     if (data.datos.correo) {
+                         localStorage.setItem('correo', data.datos.correo);
+                         localStorage.setItem('email', data.datos.correo);
+                     }
+                     if (data.datos.foto_ruta) localStorage.setItem('foto_ruta', data.datos.foto_ruta);
+                 }
+                 // If on publicidad page, maybe reconfigure button
+                 if (window.configurarBotonRegistro && window.location.pathname.includes('publicidad.html')) {
+                    console.log("Background check: Reconfiguring ad registration button.");
+                    window.configurarBotonRegistro();
+                 }
             } else {
-                console.log("⚠️ Perfil incompleto, mostrando formulario");
-                mostrarFormularioCompletarPerfil();
+                console.log("Background check: Profile is incomplete.");
+                localStorage.setItem('perfil_completo', 'false');
+                // Maybe prompt user later or show a notification?
             }
         })
         .catch(error => {
-            console.error("❌ Error verificando perfil:", error);
-            mostrarUIInicial();
+            console.warn('Background profile check failed:', error);
+            // Don't necessarily mark profile as incomplete on error, just couldn't verify
         });
 }
 
-function enviarDatosPerfil(datos) {
-    const backendUrl = getBackendUrl();
-    
-    console.log(" Enviando datos de perfil:", {...datos, foto: datos.foto ? '(Base64 imagen)' : null});
+// Check and Restore Floating Button (Periodic Check)
+function verificarYRestaurarChatbot() {
+     // Only run if user is considered authenticated
+     const isAuthenticated = localStorage.getItem("afiliado_autenticado") === "true";
+     if (!isAuthenticated) return;
 
-    fetch(`${backendUrl}/actualizar_perfil`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify(datos)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            console.log("✅ Perfil actualizado correctamente");
-            actualizarUIParaPerfilCompleto();
-        } else {
-            throw new Error(data.mensaje || "Error actualizando perfil");
-        }
-    })
-    .catch(error => {
-        console.error("❌ Error:", error);
-        alert("Error actualizando perfil: " + error.message);
-    });
+     // If on publicidad page, do nothing regarding the chat button
+     if (window.location.pathname.includes('publicidad.html')) {
+         return;
+     }
+
+     const floatButton = document.getElementById("boton-flotante");
+     const chatContainer = document.getElementById("chatbot-container");
+
+     // If neither the button nor the open chat window is visible, restore the button
+     const isChatVisible = chatContainer && chatContainer.style.display !== 'none' && chatContainer.style.display !== '';
+     const isButtonVisible = floatButton && floatButton.style.display !== 'none' && floatButton.style.display !== '';
+
+     if (!isChatVisible && !isButtonVisible) {
+          console.log("Chat elements missing/hidden. Restoring floating button.");
+          crearBotonFlotante(); // This will create or ensure visibility
+     }
 }
 
 
+// --- Initialization and Global Exports ---
 
+// Initial Setup on DOM Load
+document.addEventListener("DOMContentLoaded", function() {
+    console.log('DOM fully loaded. Initializing auth/chat logic...');
+    const initialChatButton = document.getElementById("chatbot-button"); // The large initial button
 
+    // 1. Check for existing block/failed state
+    if (localStorage.getItem("acceso_bloqueado") === "true" || localStorage.getItem("afiliado") === "no") {
+        console.log('User blocked or marked as non-affiliated from previous session.');
+        bloquearBotonInicial();
+    }
+    // 2. Check if already authenticated (e.g., page refresh)
+    else if (localStorage.getItem("afiliado_autenticado") === "true") {
+        console.log("User already authenticated in this session. Showing floating button.");
+        finalizarAutenticacionYMostrarBotonFlotante();
+        // Perform background check to ensure profile status is up-to-date
+        const cedula = localStorage.getItem("cedula");
+        if(cedula) {
+            comprobarPerfilUsuarioEnBackground(cedula);
+        }
+    }
+    // 3. Otherwise, attach listener to the initial button
+    else if (initialChatButton) {
+        console.log('Attaching click listener to initial access button (#chatbot-button).');
+        // Clear existing listeners first to be safe
+        const newButton = initialChatButton.cloneNode(true);
+        initialChatButton.parentNode.replaceChild(newButton, initialChatButton);
+        newButton.addEventListener("click", showAuthPopup);
+    } else {
+         console.warn('Initial access button (#chatbot-button) not found in the DOM.');
+    }
 
+    // 4. Start periodic check to ensure float button doesn't disappear
+    setInterval(verificarYRestaurarChatbot, 5000); // Check every 5 seconds
+});
+
+// Add CSS Styles dynamically (or include them in your main CSS file)
+function addGlobalStyles() {
+     const style = document.createElement('style');
+     style.textContent = `
+         .auth-popup-common {
+             /* Styles defined in applyPopupStyles are base */
+             font-family: sans-serif;
+         }
+         .popup-button {
+             padding: 10px 20px;
+             border: none;
+             border-radius: 5px;
+             cursor: pointer;
+             font-size: 1em;
+             transition: background-color 0.2s ease, transform 0.1s ease;
+         }
+         .popup-button:active {
+             transform: scale(0.98);
+         }
+         .popup-button.primary {
+             background-color: #007bff; /* Blue */
+             color: white;
+         }
+         .popup-button.primary:hover {
+             background-color: #0056b3;
+         }
+         .popup-button.secondary {
+             background-color: #6c757d; /* Gray */
+             color: white;
+         }
+          .popup-button.secondary:hover {
+             background-color: #5a6268;
+         }
+         .popup-button:disabled {
+             background-color: #cccccc;
+             cursor: not-allowed;
+         }
+
+         /* Chat Interface Specific Styles */
+         #chatbot-container {
+             position: fixed;
+             bottom: 20px;
+             right: 20px;
+             width: 380px; /* Adjust width as needed */
+             max-width: 90vw;
+             height: 550px; /* Adjust height */
+             max-height: 75vh;
+             background-color: #ffffff;
+             border-radius: 10px;
+             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+             display: none; /* Initially hidden */
+             flex-direction: column;
+             overflow: hidden;
+             z-index: 9999; /* Above float button, below popups */
+             border: 1px solid #ccc;
+         }
+        #ai-video-container { /* Style the video container */
+            position: fixed;
+            bottom: 20px; /* Adjust position relative to chat */
+            right: calc(20px + 380px + 10px); /* Position left of chat */
+            width: 200px; /* Example size */
+            height: 200px;
+            background-color: black; /* Placeholder background */
+            border-radius: 50%; /* Circular maybe? */
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            display: none; /* Initially hidden */
+            z-index: 9999;
+        }
+        #ai-video-container video { /* Style the video element itself */
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+         .elektra-chat-interface {
+             display: flex;
+             flex-direction: column;
+             height: 100%;
+             background-color: #f9f9f9;
+         }
+         .chat-header {
+             background-color: #35a9aa; /* Teal */
+             color: white;
+             padding: 10px 15px;
+             display: flex;
+             align-items: center;
+             justify-content: space-between;
+             border-top-left-radius: 10px;
+             border-top-right-radius: 10px;
+         }
+          .chat-header h3 {
+              margin: 0;
+              font-size: 1.1em;
+              flex-grow: 1;
+              text-align: center;
+              margin-left: 10px; /* Space after avatar */
+          }
+         .elektra-avatar {
+             width: 40px;
+             height: 40px;
+             border-radius: 50%;
+             border: 2px solid white;
+         }
+         .close-chat {
+             background: none;
+             border: none;
+             color: white;
+             font-size: 24px;
+             font-weight: bold;
+             cursor: pointer;
+             padding: 0 5px;
+             line-height: 1;
+         }
+         .chat-messages {
+             flex-grow: 1;
+             overflow-y: auto;
+             padding: 15px;
+             background-color: #ffffff;
+             display: flex;
+             flex-direction: column;
+             gap: 10px;
+         }
+         .message {
+             padding: 8px 12px;
+             border-radius: 15px;
+             max-width: 80%;
+             word-wrap: break-word;
+             line-height: 1.4;
+         }
+         .user-message {
+             background-color: #007bff; /* Blue */
+             color: white;
+             border-bottom-right-radius: 5px;
+             align-self: flex-end; /* Align user messages to the right */
+             margin-left: auto; /* Push to right */
+         }
+         .ai-message {
+             background-color: #e9ecef; /* Light gray */
+             color: #333;
+             border-bottom-left-radius: 5px;
+             align-self: flex-start; /* Align AI messages to the left */
+             margin-right: auto; /* Push to left */
+         }
+          .ai-message strong { font-weight: bold; }
+          .ai-message em { font-style: italic; }
+          .ai-message code {
+              background-color: #f1f1f1;
+              padding: 0.1em 0.4em;
+              border-radius: 3px;
+              font-family: monospace;
+              font-size: 0.9em;
+          }
+           .ai-message pre code {
+              display: block;
+              padding: 10px;
+              overflow-x: auto;
+           }
+
+         .chat-input-container {
+             display: flex;
+             padding: 10px;
+             border-top: 1px solid #ccc;
+             background-color: #f1f1f1;
+         }
+         #user-input {
+             flex-grow: 1;
+             padding: 10px;
+             border: 1px solid #ccc;
+             border-radius: 20px;
+             margin-right: 10px;
+             resize: none; /* Prevent manual resize */
+         }
+         #send-message {
+             background-color: #35a9aa; /* Teal */
+             color: white;
+             border: none;
+             border-radius: 50%; /* Circular button */
+             width: 40px;
+             height: 40px;
+             cursor: pointer;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             padding: 0; /* Remove padding for icon */
+         }
+         #send-message:hover {
+             background-color: #2a8a8b;
+         }
+         #send-message:disabled {
+             background-color: #cccccc;
+             cursor: not-allowed;
+         }
+         #send-message img {
+             width: 20px; /* Adjust icon size */
+             height: auto;
+         }
+     `;
+     document.head.appendChild(style);
+     console.log("Global styles added for popups and chat.");
+}
+addGlobalStyles(); // Add styles when script loads
+
+// Expose functions needed globally (e.g., called from HTML onclick)
+window.showAuthPopup = showAuthPopup;
+window.verifyCedula = verifyCedula; // May not be needed globally if only called internally
+// Expose others if necessary, but internal calls don't need exposure.
+window.activarChatbot = activarChatbot; // Might be needed if called externally? Keep for now.
+window.inicializarChatIA = inicializarChatIA; // Keep for potential external re-init?
+
+console.log("auth-popup.js combined script loaded and initialized.");
+
+// --- END OF FILE auth-popup.js ---
