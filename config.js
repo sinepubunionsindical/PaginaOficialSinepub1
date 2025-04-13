@@ -10,7 +10,7 @@ const API_KEYS = {
 };
 
 // URL de backend centralizada usando ngrok
-const BACKEND_URL = 'https://1f78-2800-484-8786-7d00-bd7e-12fa-195d-a987.ngrok-free.app';
+const BACKEND_URL = 'https://e680-2800-484-8786-7d00-bd7e-12fa-195d-a987.ngrok-free.app';
 
 // Modo de depuración - cambia a true para usar localhost en lugar de ngrok
 // Si hay problemas con ngrok, cambiar a true
@@ -30,14 +30,16 @@ const API_ENDPOINTS = {
     afiliados: `${BACKEND_URL}/api/afiliados`,
     validarCodigo: `${BACKEND_URL}/api/validar-codigo`,
     verificarCedula: `${BACKEND_URL}/api/verificar_cedula`,
-    verificarPerfil: `${BACKEND_URL}/api/validar_perfil`
+    verificarPerfil: `${BACKEND_URL}/api/validar_perfil`,
+    actualizarPerfil: `${BACKEND_URL}/api/actualizar_perfil`,
+    obtenerPerfil: `${BACKEND_URL}/api/obtener_perfil`
 };
 
 // Función para enviar formulario de afiliación por correo
 async function enviarFormularioAfiliacion(pdfData, emailDestino) {
     try {
         console.log("📧 Enviando formulario a:", emailDestino || 'daniel.rr93g@gmail.com');
-        
+
         // Usar el endpoint de publicidad que sabemos que funciona
         // y tiene la funcionalidad de enviar correos
         const response = await fetch(API_ENDPOINTS.publicidad, {
@@ -58,11 +60,11 @@ async function enviarFormularioAfiliacion(pdfData, emailDestino) {
                 `
             })
         });
-        
+
         if (!response.ok) {
             throw new Error(`Error HTTP: ${response.status}`);
         }
-        
+
         const result = await response.json();
         console.log("✅ Resultado del envío:", result);
         return result;
