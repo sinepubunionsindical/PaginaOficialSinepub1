@@ -35,7 +35,7 @@ const API_ENDPOINTS = {
 // Función para enviar formulario de afiliación por correo
 async function enviarFormularioAfiliacion(pdfData, emailDestino) {
     try {
-        console.log("📧 Enviando formulario a:", emailDestino || 'jenny_paty2002@yahoo.com' || 'daniel.rr93g@gmail.com');
+        console.log("📧 Enviando formulario a:", emailDestino ||  'daniel.rr93g@gmail.com');
         
         // Usar el endpoint de publicidad que sabemos que funciona
         // y tiene la funcionalidad de enviar correos
