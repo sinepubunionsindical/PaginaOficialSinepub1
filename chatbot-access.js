@@ -201,8 +201,6 @@ async function activarChatbot() {
     const linkEstatutosMobile = document.getElementById("estatutos-link-mobile");
     const linkModulos = document.getElementById("modulos-link");
     const linkAfiliacion = document.getElementById("afiliacion-link");
-    const botonFlotante = document.getElementById("boton-flotante");
-    const contenedorChatbot = document.getElementById("chatbot-container");
 
     // Ocultar botón y mostrar/ocultar enlaces
     if (botonChat) botonChat.style.display = "none";
@@ -211,53 +209,12 @@ async function activarChatbot() {
     if (linkModulos) linkModulos.style.display = "inline";
     if (linkAfiliacion) linkAfiliacion.style.display = "none";
 
-    // Mostrar y configurar el contenedor del chatbot
-    if (contenedorChatbot) {
-        contenedorChatbot.style.display = "block";
-        contenedorChatbot.innerHTML = `
-            <div class="elektra-chat-interface">
-                <div class="chat-header">
-                    <img src="images/HUV.jpg" alt="Elektra Avatar" class="elektra-avatar">
-                    <h3>ELEKTRA - Asistente Virtual</h3>
-                    <button class="close-chat">×</button>
-                </div>
-                <div id="chat-messages" class="chat-messages"></div>
-                <div class="chat-input-container">
-                    <input type="text" id="user-input" placeholder="Escribe tu mensaje aquí...">
-                    <button id="send-message">
-                        Enviar
-                    </button>
-                </div>
-            </div>
-        `;
-
-        try {
-            // Inicializar el chat
-            await inicializarChatIA();
-            console.log('Chat inicializado correctamente');
-        } catch (error) {
-            console.error('Error al inicializar el chat:', error);
-            const chatMessages = document.getElementById('chat-messages');
-            if (chatMessages) {
-                const errorMsg = document.createElement('div');
-                errorMsg.className = 'message ai-message';
-                errorMsg.textContent = 'Lo siento, hubo un error al inicializar el chat. Por favor, recarga la página.';
-                chatMessages.appendChild(errorMsg);
-            }
-        }
-
-        // Agregar funcionalidad al botón de cerrar
-        const closeButton = contenedorChatbot.querySelector('.close-chat');
-        if (closeButton) {
-            closeButton.addEventListener('click', () => {
-                contenedorChatbot.style.display = "none";
-                if (botonFlotante) {
-                    botonFlotante.style.display = "block";
-                }
-            });
-        }
-    } else {
-        console.error("No se encontró el contenedor del chatbot");
+    try {
+        // En lugar de inicializarChatIA, usamos createChatButton
+        createChatButton();
+        console.log('Botón de chat creado correctamente');
+    } catch (error) {
+        console.error('Error al crear el botón de chat:', error);
     }
 }
 
