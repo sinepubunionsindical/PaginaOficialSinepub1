@@ -939,43 +939,16 @@ function bloquearBoton() {
 
 // Función para activar el chatbot después de cerrar el popup
 function activarChatbot() {
-    // --- Añadir verificación de página ---
-    if (window.location.pathname.includes('publicidad.html')) {
-        console.log(" Chatbot no se activa en publicidad.html");
-        return; // Salir de la función
-    }
-    // --- Fin verificación ---
-
-    console.log(" Activando chatbot con IA...");
-
-    // Primero, asegurarse de que cualquier popup de autenticación sea removido
-    const authPopup = document.getElementById("auth-popup");
-    if (authPopup) {
-        authPopup.remove();
-        console.log(" Popup de autenticación removido correctamente");
-    }
-
-    const popupContrasena = document.getElementById("popup-contrasena");
-    if (popupContrasena) {
-        popupContrasena.remove();
-        console.log(" Popup de contraseña removido correctamente");
-    }
-
-    const popupBienvenida = document.getElementById("popup-bienvenida");
-    if (popupBienvenida) {
-        popupBienvenida.remove();
-        console.log(" Popup de bienvenida removido correctamente");
-    }
+    console.log(" 🎙️ Activando chatbot con IA desde auth-popup.js...");
 
     const botonChat = document.getElementById("chatbot-button");
     const linkEstatutos = document.getElementById("estatutos-link");
     const linkEstatutosMobile = document.getElementById("estatutos-link-mobile");
     const linkModulos = document.getElementById("modulos-link");
     const linkAfiliacion = document.getElementById("afiliacion-link");
-    const botonFlotante = document.getElementById("boton-flotante");
+    const videoContainer = document.getElementById("ai-video-container");
     const contenedorChatbot = document.getElementById("chatbot-container");
-    const registrarBtn = document.getElementById("registrar-publicidad");
-    const videoContainer = document.getElementById("ai-video-container"); // <-- Contenedor del video
+    const botonFlotante = document.getElementById("boton-flotante");
 
     // Ocultar botón y mostrar/ocultar enlaces
     if (botonChat) {
@@ -988,90 +961,22 @@ function activarChatbot() {
     if (linkModulos) linkModulos.style.display = "inline";
     if (linkAfiliacion) linkAfiliacion.style.display = "none";
 
-    // Mostrar y configurar el contenedor del chatbot Y EL VIDEO
-    if (contenedorChatbot) {
-        contenedorChatbot.style.display = "block"; // <-- Mostrar contenedor del chat
-        contenedorChatbot.innerHTML = `
-            <div class="elektra-chat-interface">
-                <div class="chat-header">
-                    <img src="images/HUV.jpg" alt="Elektra Avatar" class="elektra-avatar">
-                    <h3>ELEKTRA - Asistente Virtual</h3>
-                    <button class="minimize-chat">_</button>
-                    <button class="close-chat">×</button>
-                </div>
-                <div id="chat-messages" class="chat-messages"></div>
-                <div class="chat-input-container">
-                    <input type="text" id="user-input" placeholder="Escribe tu mensaje aquí...">
-                    <button id="send-message">
-                        Enviar
-                    </button>
-                </div>
-            </div>
-        `;
-
-        // Inicializar el chat
-        if (window.inicializarChatIA) {
-            window.inicializarChatIA();
+    // En lugar de configurar el contenedor chatbot directamente, usamos createChatButton
+    try {
+        console.log(" Creando botón flotante de chat con createChatButton()...");
+        // Verificar si la función existe en el ámbito global
+        if (typeof window.createChatButton === 'function') {
+            window.createChatButton();
+            console.log(" Botón de chat creado correctamente");
         } else {
-            console.error("La función inicializarChatIA no está disponible");
-            const chatMessages = document.getElementById('chat-messages');
-            if (chatMessages) {
-                const errorMsg = document.createElement('div');
-                errorMsg.className = 'message ai-message';
-                errorMsg.textContent = 'Lo siento, hubo un error al inicializar el chat. Por favor, recarga la página.';
-                chatMessages.appendChild(errorMsg);
-            }
+            console.error(" La función createChatButton no está disponible globalmente");
+            // Fallback a crearBotonFlotante nativo
+            crearBotonFlotante();
         }
-
-        // Agregar funcionalidad al botón de cerrar
-        const closeButton = contenedorChatbot.querySelector('.close-chat');
-        if (closeButton) {
-            closeButton.addEventListener('click', () => {
-                contenedorChatbot.style.display = "none";
-                if (videoContainer) {
-                    videoContainer.style.display = "none";
-                }
-                if (botonFlotante) {
-                    botonFlotante.style.display = "block";
-                } else {
-                    crearBotonFlotante();
-                }
-            });
-        }
-
-        // Agregar funcionalidad al botón de minimizar
-        const minimizeButton = contenedorChatbot.querySelector('.minimize-chat');
-        if (minimizeButton) {
-            minimizeButton.addEventListener('click', () => {
-                // Ocultar el contenedor del chatbot
-                contenedorChatbot.style.display = "none";
-                
-                // Ocultar también el contenedor de video
-                if (videoContainer) {
-                    videoContainer.style.display = "none";
-                }
-                
-                // Mostrar el botón flotante
-                if (botonFlotante) {
-                    botonFlotante.style.display = "block";
-                } else {
-                    // Si no existe el botón flotante, crearlo
-                    crearBotonFlotante();
-                }
-            });
-        }
-
-        // Mostrar también el contenedor del video
-        if (videoContainer) {
-            console.log(" Mostrando contenedor de video AI.");
-            videoContainer.style.display = "block"; // O 'flex' o lo que corresponda
-            // Aquí podrías añadir lógica para iniciar la reproducción si es necesario
-        } else {
-            console.warn(" Contenedor de video AI (#ai-video-container) no encontrado.");
-        }
-
-    } else {
-        console.error("No se encontró el contenedor del chatbot (#chatbot-container)");
+    } catch (error) {
+        console.error(" Error al crear el botón de chat:", error);
+        // Fallback a crearBotonFlotante nativo
+        crearBotonFlotante();
     }
 }
 
