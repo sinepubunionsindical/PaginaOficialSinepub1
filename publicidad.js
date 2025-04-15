@@ -56,6 +56,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Si está autenticado y tiene perfil completo, mostrar y habilitar el botón
         if (estaAutenticado && perfilCompleto) {
             registrarBtn.style.display = "block";
+            registrarBtn.style.backgroundColor = "#35a9aa"; // Color normal
+            registrarBtn.style.cursor = "pointer";
+            registrarBtn.disabled = false;
             
             // Limpiar eventos anteriores para evitar duplicados
             registrarBtn.removeEventListener('click', mostrarFormularioRegistro);
@@ -65,8 +68,11 @@ document.addEventListener('DOMContentLoaded', function() {
             registrarBtn.addEventListener('click', mostrarFormularioRegistro);
             console.log("✅ Botón de registro habilitado y configurado");
         } else {
-            // Si no está autenticado o no tiene perfil completo, mostrar mensaje
-            registrarBtn.style.display = "block"; // Lo mostramos igual
+            // Si no está autenticado o no tiene perfil completo, mostrar como deshabilitado
+            registrarBtn.style.display = "block"; 
+            registrarBtn.style.backgroundColor = "#cccccc"; // Gris para indicar deshabilitado
+            registrarBtn.style.cursor = "not-allowed";
+            registrarBtn.disabled = false; // Mantener habilitado para mostrar mensaje de error
             
             // Limpiar eventos anteriores
             registrarBtn.removeEventListener('click', mostrarFormularioRegistro);
@@ -791,33 +797,235 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Generar HTML para cada anuncio
+        // Generar HTML para cada anuncio con diseño mejorado
         anunciosContainer.innerHTML = anunciosAprobados.map(anuncio => {
             // Proporcionar valores por defecto si alguna propiedad falta
             const id = anuncio.id || `temp_${Math.random().toString(36).substring(2)}`;
-            const imagenSrc = anuncio.imagen_base64 || 'images/placeholder-anuncio.png'; // Placeholder local
+            
+            // Verificar y preparar la URL de la imagen
+            let imagenSrc = '';
+            if (anuncio.imagen_ruta) {
+                // Si tenemos una ruta específica, usarla
+                imagenSrc = anuncio.imagen_ruta;
+            } else if (anuncio.imagen_base64) {
+                // Si tenemos datos base64, usarlos directamente
+                imagenSrc = anuncio.imagen_base64;
+            } else {
+                // Si no hay imagen, usar un placeholder
+                imagenSrc = 'images/placeholder-anuncio.png';
+            }
+            
             const titulo = anuncio.titulo || 'Anuncio';
             const descripcion = anuncio.descripcion || 'Sin descripción.';
             const categoria = anuncio.categoria || 'General';
             const likes = anuncio.likes || 0;
+            const nombre = anuncio.nombre || 'Anónimo';
+            
+            // Buscar la imagen de perfil en localStorage o usar un placeholder
+            let fotoPerfil = 'images/avatar-placeholder.png'; // Placeholder por defecto
+            const fotoRuta = localStorage.getItem('foto_ruta');
+            if (fotoRuta) {
+                fotoPerfil = fotoRuta;
+            }
+            
+            // Fecha de publicación formateada
+            const fechaPublicacion = anuncio.fecha_creacion ? 
+                new Date(anuncio.fecha_creacion).toLocaleDateString('es-ES', {
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric'
+                }) : 
+                'Fecha no disponible';
 
             return `
             <div class="anuncio-card" data-id="${id}">
-                <img src="${imagenSrc}" alt="Imagen de ${titulo}" class="anuncio-imagen" onerror="this.onerror=null; this.src='images/placeholder-anuncio.png';">
+                <div class="anuncio-header">
+                    <div class="anuncio-perfil">
+                        <img src="${fotoPerfil}" alt="Foto de ${nombre}" class="anuncio-perfil-imagen" onerror="this.onerror=null; this.src='images/avatar-placeholder.png';">
+                        <div class="anuncio-perfil-info">
+                            <h4>${nombre}</h4>
+                            <span class="anuncio-fecha">${fechaPublicacion}</span>
+                        </div>
+                    </div>
+                    <span class="categoria-badge"><i class="fas fa-tag"></i> ${categoria}</span>
+                </div>
+                
+                <h3 class="anuncio-titulo">${titulo}</h3>
+                
+                <div class="anuncio-imagen-container">
+                    <img src="${imagenSrc}" alt="Imagen de ${titulo}" class="anuncio-imagen" onerror="this.onerror=null; this.src='images/placeholder-anuncio.png';">
+                </div>
+                
                 <div class="anuncio-content">
-                    <h3>${titulo}</h3>
-                    <p>${descripcion}</p>
+                    <p class="anuncio-descripcion">${descripcion}</p>
+                    
                     <div class="anuncio-footer">
-                        <span class="categoria"><i class="fas fa-tag"></i> ${categoria}</span>
                         <button class="like-button" data-anuncio-id="${id}" title="Me gusta">
                             <i class="fas fa-thumbs-up"></i>
                             <span class="likes-count">${likes}</span>
                         </button>
+                        
+                        <div class="anuncio-contacto">
+                            ${anuncio.telefono ? `<a href="tel:${anuncio.telefono}" class="contacto-link"><i class="fas fa-phone"></i></a>` : ''}
+                            ${anuncio.email ? `<a href="mailto:${anuncio.email}" class="contacto-link"><i class="fas fa-envelope"></i></a>` : ''}
+                        </div>
                     </div>
                 </div>
             </div>
-        `;
+            `;
         }).join('');
+
+        // Añadir estilos CSS inline para los nuevos elementos
+        const style = document.createElement('style');
+        style.textContent = `
+            .anuncio-card {
+                border-radius: 10px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                margin-bottom: 30px;
+                overflow: hidden;
+                background: white;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            
+            .anuncio-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            }
+            
+            .anuncio-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 15px;
+                border-bottom: 1px solid #f0f0f0;
+            }
+            
+            .anuncio-perfil {
+                display: flex;
+                align-items: center;
+            }
+            
+            .anuncio-perfil-imagen {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 2px solid #35a9aa;
+                margin-right: 10px;
+            }
+            
+            .anuncio-perfil-info h4 {
+                margin: 0;
+                font-size: 16px;
+                color: #333;
+            }
+            
+            .anuncio-fecha {
+                font-size: 12px;
+                color: #888;
+            }
+            
+            .categoria-badge {
+                background: #f0f8ff;
+                padding: 5px 10px;
+                border-radius: 15px;
+                font-size: 12px;
+                color: #0249aa;
+            }
+            
+            .anuncio-titulo {
+                padding: 15px 15px 10px;
+                margin: 0;
+                color: #0249aa;
+                font-size: 18px;
+            }
+            
+            .anuncio-imagen-container {
+                width: 100%;
+                height: 250px;
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .anuncio-imagen {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            
+            .anuncio-content {
+                padding: 15px;
+            }
+            
+            .anuncio-descripcion {
+                margin-top: 0;
+                margin-bottom: 15px;
+                color: #555;
+                line-height: 1.5;
+            }
+            
+            .anuncio-footer {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding-top: 10px;
+                border-top: 1px solid #f0f0f0;
+            }
+            
+            .like-button {
+                background: transparent;
+                border: none;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                color: #35a9aa;
+                cursor: pointer;
+                padding: 5px 10px;
+                border-radius: 5px;
+                transition: background 0.2s ease;
+            }
+            
+            .like-button:hover {
+                background: #f0f8ff;
+            }
+            
+            .liked-animation {
+                animation: likeEffect 1s ease;
+            }
+            
+            @keyframes likeEffect {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.2); }
+                100% { transform: scale(1); }
+            }
+            
+            .anuncio-contacto {
+                display: flex;
+                gap: 10px;
+            }
+            
+            .contacto-link {
+                color: #666;
+                font-size: 16px;
+                transition: color 0.2s ease;
+            }
+            
+            .contacto-link:hover {
+                color: #35a9aa;
+            }
+        `;
+        
+        // Eliminar estilo anterior si existe
+        const existingStyle = document.getElementById('anuncios-style');
+        if (existingStyle) {
+            existingStyle.remove();
+        }
+        
+        // Añadir id al estilo nuevo y agregarlo al documento
+        style.id = 'anuncios-style';
+        document.head.appendChild(style);
 
         // Añadir listeners a los botones de like DESPUÉS de crear el HTML
         setupLikeButtonListeners();
