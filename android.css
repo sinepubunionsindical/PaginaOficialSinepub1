@@ -1,0 +1,783 @@
+/* Estilos específicos para móviles - aplicar solo en pantallas pequeñas */
+@media (max-width: 768px) {
+    /* Ajustes para el contenedor de video en móvil */
+    .video-container {
+        width: 90%; /* Ancho relativo a la pantalla */
+        max-width: 400px; /* Máximo ancho en móviles */
+        right: -100%;
+        left: 50%; /* Centrar horizontalmente */
+        transform: translate(-50%, -50%); /* Centrado perfecto */
+        padding: 15px; /* Menos padding */
+    }
+
+    .video-container.active {
+        right: auto; /* Anular el right de escritorio */
+        left: 50%; /* Mantener centrado */
+    }
+
+    .titulo-bienvenida {
+        font-size: 18px; /* Título más pequeño */
+        margin-bottom: 15px;
+    }
+
+    .video-wrapper {
+        margin-top: 10px;
+    }
+
+    /* Botón de cerrar más grande para mejor tap target */
+    .cerrar-video {
+        width: 35px;
+        height: 35px;
+        font-size: 24px;
+        top: 5px;
+        right: 5px;
+    }
+
+    /* Asegurar que el video no sobrepase los límites */
+    #video-intro {
+        width: 100%;
+        height: auto;
+        max-height: 60vh; /* Máximo 60% del alto de la ventana */
+    }
+    .play-button {
+        font-size: 2rem;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+        animation: fadeIn 0.4s ease;
+        z-index: 1001;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.8) translate(-50%, -50%); }
+        to { opacity: 1; transform: scale(1) translate(-50%, -50%); }
+      }
+
+    /* --- Ajustes Generales --- */
+    body {
+        font-size: 16px; /* Reducir tamaño de fuente base */
+    }
+
+    .container {
+        padding-left: 15px;
+        padding-right: 15px; /* Menos padding lateral */
+    }
+
+    h1 { font-size: 1.8em; }
+    h2 { font-size: 1.5em; }
+    h3 { font-size: 1.2em; }
+
+    /* --- Header Principal (Títulos -> Hamburguesa) --- */
+    header .header-titles-nav ul {
+        display: none; /* Ocultar la navegación original en línea */
+    }
+
+    #hamburger-button {
+        display: block;
+        position: absolute;
+        top: 10px; /* Ajustar si es necesario */
+        right: 10px; /* Ajustar si es necesario */
+        font-size: 28px; /* Reducir un poco si se ve muy grande */
+        line-height: 1;
+        cursor: pointer;
+        z-index: 1100;
+        padding: 8px 10px; /* Ajustar padding para tamaño deseado */
+        border: none;
+        border-radius: 4px; /* Opcional: redondear esquinas */
+        /* Estado inicial (Menú cerrado) */
+        background-color: #35a9aa; /* Verde azulado */
+        color: white;
+        transition: background-color 0.3s ease, color 0.3s ease; /* Transición suave */
+    }
+
+    #hamburger-button.menu-open { /* Estilo cuando el menú está abierto (✕) */
+        background-color: red;
+        color: black;
+    }
+    /* Menú Móvil Desplegable (ANIMADO) */
+    .mobile-menu {
+        /* display: none;  QUITAR ESTO */
+        visibility: hidden; /* Ocultar sin afectar layout */
+        opacity: 0; /* Hacerlo transparente */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 80%;
+        max-width: 300px;
+        height: 100%;
+        background-color: #023b88;
+        padding-top: 60px;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+        z-index: 1090;
+        overflow-y: auto;
+        transform: translateX(-100%); /* Estado inicial: fuera a la izquierda */
+        transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; /* AÑADIR TRANSICIÓN */
+        display: flex; /* Usar Flexbox */
+        flex-direction: column; /* Apilar verticalmente */
+    }
+
+    .mobile-menu.open {
+        /* display: block; QUITAR ESTO */
+        visibility: visible; /* Hacer visible */
+        opacity: 1; /* Hacer opaco */
+        transform: translateX(0); /* Estado final: deslizado adentro */
+    }
+    .mobile-menu ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        width: 100%; /* Ocupar ancho */
+        flex-shrink: 0; /* Evitar que se encoja si hay mucho contenido abajo */
+    }
+
+    .mobile-menu li {
+        margin: 0;
+        border-bottom: 1px solid #0249aa; /* Separador */
+    }
+
+    .mobile-menu ul li:last-child {
+        border-bottom: none; /* Quitar borde del último item */
+    }
+    .mobile-menu li a,
+    .mobile-menu .dropdown-toggle-mobile { /* Estilo para toggles dentro del menú */
+        display: block;
+        padding: 15px 20px;
+        color: white;
+        text-decoration: none;
+        font-size: 1.1em;
+        transition: background-color 0.2s ease;
+    }
+
+        /* Estilo del toggle específico como botón */
+        .mobile-menu ul li .dropdown-toggle-mobile {
+        background: none;
+        border: none;
+        width: 100%;
+        text-align: left;
+        font-family: inherit;
+    }
+    .mobile-menu li a:hover,
+    .mobile-menu .dropdown-toggle-mobile:hover {
+        background-color: #35a9aa; /* Resaltar al pasar el mouse */
+    }
+
+    /* --- NUEVO: Estilo para el enlace activo en menú hamburguesa --- */
+    .mobile-menu li a.active-mobile {
+        background-color: #35a9aa; /* Mismo color que hover/subtítulo activo */
+        font-weight: bold; /* Opcional: hacerlo negrita */
+    }
+
+    /* Estilos para los sub-menús desplegables dentro del menú hamburguesa */
+    .mobile-submenu {
+        display: none; /* Ocultos por defecto */
+        background-color: #022b6d; /* Fondo ligeramente más oscuro */
+        padding-left: 20px; /* Indentación */
+    }
+
+    /* Estilos específicos para el contenido del submenú Redes Sociales */
+    .redes-sociales-header-mobile {
+        display: flex;
+        gap: 55px;
+        align-items: center;
+    }
+
+    .redes-sociales-header-mobile a img {
+        width: 30px;
+        height: 30px;
+        display: block;
+    }
+
+    .redes-sociales-header-mobile a {
+        padding: 0 !important;
+        display: inline-block !important;
+    }
+    .redes-sociales-header-mobile a:hover {
+         background-color: transparent !important;
+    }
+
+    .mobile-submenu.open {
+        display: block; /* Mostrar submenú */
+    }
+
+    .mobile-submenu a {
+        font-size: 1em !important; /* Texto ligeramente más pequeño */
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+    }
+
+     /* Estilos específicos para Redes Sociales y Colaboradores en móvil */
+    .mobile-menu .dropdown-menu-redes-sociales-mobile,
+    .mobile-menu .dropdown-menu-colaboradores-mobile {
+        display: none; /* Ocultos hasta hacer clic */
+        background-color: #022b6d;
+        padding-left: 20px;
+    }
+    .mobile-menu .dropdown-menu-redes-sociales-mobile.open,
+    .mobile-menu .dropdown-menu-colaboradores-mobile.open {
+        display: block;
+    }
+    .mobile-menu .redes-sociales-header-mobile,
+    .mobile-menu .colaborador-mobile {
+        padding: 10px 0;
+        text-align: left;
+    }
+    .mobile-menu .colaborador-mobile img {
+         width: 40px;
+         height: 40px;
+         border-radius: 50%;
+         margin-right: 10px;
+         vertical-align: middle;
+     }
+    .mobile-menu .info-colaborador-mobile {
+        display: inline-block;
+        vertical-align: middle;
+        color: #ccc;
+        font-size: 0.9em;
+     }
+     .mobile-menu .info-colaborador-mobile p {
+         margin: 2px 0;
+         color: #ccc;
+         text-align: left;
+         font-size: 0.9em;
+     }
+      .mobile-menu .info-colaborador-mobile a {
+         padding: 0 !important; /* Reset padding for inline links */
+         display: inline !important;
+         color: #6bbade !important;
+      }
+
+    /* --- Logos Header --- */
+    .header-logos {
+        padding: 15px 0;
+    }
+
+    .logo-container {
+        flex-direction: column; /* Apilar logos */
+        align-items: center;
+        gap: 15px; /* Espacio entre logos */
+    }
+
+    .logo-sinepub {
+        height: 220px; /* Logo principal más grande */
+        order: 1; /* Asegurar que SINEPUB esté primero */
+    }
+
+    .logo-huv {
+        height: 60px; /* Logo HUV más pequeño */
+        position: static; /* Quitar posicionamiento absoluto */
+        transform: none; /* Resetear transformación */
+        order: 2; /* Poner HUV después */
+        display: none;
+    }
+
+
+    /* --- Navegación Secundaria (Inicio, Noticias -> Dropdown) --- */
+    .below-header-nav {
+        padding: 5px 0; /* Menos padding */
+    }
+
+    .below-header-nav .slider-nav ul {
+        display: none; /* Ocultar navegación original */
+    }
+
+    /* Contenedor para el dropdown móvil */
+    #secondary-nav-mobile {
+        display: flex; /* Usar flexbox */
+        align-items: center; /* Centrar verticalmente */
+        justify-content: space-between; /* Espaciar botón y flecha */
+        background-color: #0249aa; /* Mismo fondo que la barra */
+        padding: 10px 15px; /* Padding interno */
+        position: relative; /* Para posicionar el menú desplegable */
+    }
+
+    /* Botón que muestra la opción actual */
+    #secondary-nav-button {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.2em; /* Tamaño similar al original */
+        font-weight: bold;
+        text-align: left;
+        flex-grow: 1; /* Ocupar espacio disponible */
+        cursor: pointer;
+    }
+
+    /* Flecha indicadora del dropdown */
+    #secondary-nav-button::after {
+        content: ' ▼'; /* Flecha hacia abajo */
+        font-size: 0.8em;
+        margin-left: 10px;
+        display: inline-block; /* Para que la transición funcione */
+        transition: transform 0.2s ease-out; /* Animar la flecha */
+    }
+     #secondary-nav-button.open::after {
+        content: ' ▼'; /* Mantener flecha abajo */
+        transform: rotate(180deg); /* Girarla */
+    }
+
+    /* Menú desplegable secundario (ANIMADO) */
+    .secondary-nav-dropdown {
+        /* display: none; QUITAR ESTO */
+        visibility: hidden; /* Ocultar */
+        opacity: 0; /* Transparente */
+        transform: scaleY(0.9) translateY(-10px); /* Encoger y subir un poco */
+        transform-origin: top; /* Pivotar desde arriba */
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: #023b88;
+        border: 1px solid #0249aa;
+        z-index: 1050;
+        max-height: 250px;
+        overflow-y: auto;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        transition: transform 0.2s ease-out, opacity 0.2s ease-out, visibility 0.2s ease-out; /* AÑADIR TRANSICIÓN */
+    }
+
+    .secondary-nav-dropdown.open {
+        /* display: block; QUITAR ESTO */
+        visibility: visible; /* Mostrar */
+        opacity: 1; /* Opaco */
+        transform: scaleY(1) translateY(0); /* Estado normal */
+    }
+
+    .secondary-nav-dropdown a {
+        display: block;
+        padding: 12px 15px;
+        color: white;
+        text-decoration: none;
+        border-bottom: 1px solid #0249aa;
+        transition: background-color 0.2s ease;
+    }
+     .secondary-nav-dropdown a:last-child {
+        border-bottom: none;
+     }
+
+    .secondary-nav-dropdown a:hover,
+    .secondary-nav-dropdown a.active-mobile { /* Estilo para el activo */
+        background-color: #35a9aa; /* Resaltar */
+    }
+
+    /* --- Slider --- */
+    .slider-container {
+        /* Ajustes si son necesarios, por ejemplo, padding */
+    }
+
+    .imagen-y-texto {
+        flex-direction: column; /* Apilar imagen y texto */
+        align-items: center; /* Centrar elementos */
+    }
+
+    .imagen-banner {
+        width: 95%; /* Imagen ocupa casi todo el ancho */
+        max-width: 400px; /* Limitar tamaño máximo de imagen */
+        margin-right: 0; /* Quitar margen derecho */
+        margin-bottom: 20px; /* Espacio debajo de la imagen */
+        height: auto; /* Altura automática */
+    }
+
+    .texto-banner {
+        width: 100%; /* Texto ocupa todo el ancho */
+        padding: 0 10px; /* Añadir un poco de padding lateral al texto */
+        text-align: left; /* Alinear texto a la izquierda puede ser mejor en móvil */
+        font-size: 1em; /* Ajustar tamaño de fuente */
+    }
+     .texto-banner h1, .texto-banner h3 {
+        text-align: center; /* Centrar títulos dentro del texto */
+        margin-bottom: 15px;
+     }
+
+    /* Ajustes específicos para Misión/Visión en móvil */
+    .mision-vision {
+        flex-direction: column; /* Apilar misión y visión */
+        align-items: center;
+        gap: 15px;
+    }
+    .mision, .vision {
+        max-width: 90%; /* Hacerlos más anchos */
+    }
+     .mision:hover, .vision:hover {
+        transform: none; /* Desactivar hover de escala en móvil */
+    }
+
+    /* Ajustes para Afiliación en móvil */
+    .afiliacion-container {
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+    }
+    .pdf-container {
+        width: 100%;
+        height: 500px; /* Menor altura para el visor PDF */
+    }
+    .afiliacion-info {
+        width: 100%;
+        text-align: center;
+        padding: 15px 5px;
+    }
+    .boton-descargar {
+        width: 90%;
+        max-width: 300px;
+        font-size: 1em; /* Tamaño de fuente normal */
+    }
+
+    /* Ajustes Visor PDF.js en Módulos */
+     #pdf-viewer-slide7, #pdf-viewer-slide8 {
+        height: 500px; /* Menor altura también */
+     }
+
+
+    /* --- Footer --- */
+    footer .container {
+        padding: 15px;
+    }
+
+    .footer-logos {
+        justify-content: center; /* Centrar logos */
+        position: static; /* Quitar posicionamiento relativo */
+        margin-bottom: 20px; /* Espacio debajo de los logos */
+        gap: 15px;
+    }
+     .footer-logos img {
+        width: 50px; /* Logos más pequeños */
+     }
+     .footer-logos img:hover {
+         transform: none; /* Desactivar zoom en hover */
+     }
+
+    .informacion-y-mapa {
+        flex-direction: column; /* Apilar información y mapa */
+        align-items: center;
+    }
+
+    .informacion {
+        width: 100%; /* Ocupar todo el ancho */
+        text-align: center; /* Centrar texto de contacto */
+        margin-bottom: 20px;
+    }
+     .informacion ul {
+        padding-left: 0; /* Quitar padding de la lista */
+        list-style: none; /* Quitar viñetas */
+     }
+
+    .mapa {
+        width: 100%; /* Ocupar todo el ancho */
+        padding: 10px; /* Menos padding */
+        border-radius: 20px; /* Menos redondez */
+        border-width: 4px;
+    }
+
+    .mapa iframe {
+        height: 200px !important; /* Mapa MUY PEQUEÑO */
+        width: 100% !important; /* Ancho completo */
+    }
+
+    .titulo-como-llegar {
+        font-size: 1.3em; /* Título mapa más pequeño */
+        margin-bottom: 5px;
+    }
+
+    /* --- Botón Flotante --- */
+    #boton-flotante {
+        bottom: 15px; /* Un poco más arriba */
+        right: 15px;
+    }
+
+    #chatbot-button {
+        font-size: 14px; /* Texto más pequeño */
+        padding: 8px 12px; /* Botón más pequeño */
+    }
+    #chatbot-button:hover {
+        transform: none; /* Desactivar zoom */
+    }
+
+    /* --- Contenedor de Video de la IA --- */
+    .ai-video-container {
+        position: fixed;
+        bottom: 90px;
+        right: 20px !important; /* Posicionado a la derecha del chat */
+        width: 180px !important; /* Más pequeño en móvil */
+        height: 270px !important; /* Mantener proporción */
+        z-index: 10000 !important; /* Asegurar que esté por encima de todo */
+    }
+
+    /* Ajustes para la interfaz del chat */
+    .elektra-chat-interface {
+        width: 90% !important; /* Ancho relativo en móvil */
+        height: 80vh !important; /* Altura relativa en móvil */
+        max-height: 500px !important;
+        bottom: 70px !important;
+        right: 5% !important;
+        left: 5% !important;
+    }
+
+    /* Ajustes para los mensajes del chat */
+    .chat-messages {
+        max-height: calc(80vh - 120px) !important;
+    }
+
+    /* Ajustes para los videos de la IA */
+    .ai-avatar-video {
+        transition: opacity 0.3s ease-in-out !important; /* Transición más rápida en móvil */
+    }
+
+    /* Ajustes para el botón flotante del chat */
+    .chat-float-button {
+        width: 50px !important;
+        height: 50px !important;
+        bottom: 15px !important;
+        right: 15px !important;
+        font-size: 20px !important;
+    }
+
+    /* Ocultar elementos específicos de escritorio si es necesario */
+    .dropdown-container-redes-sociales .dropdown-menu, /* Ocultar menús desplegables originales */
+    .dropdown-container-colaboradores .dropdown-menu {
+        display: none !important;
+    }
+
+     /* Ajustar slider dots si es necesario */
+    .slider-dots {
+        bottom: 10px; /* Ajustar posición vertical */
+        /* top: auto; */ /* Asegurarse de que no esté fijado arriba */
+    }
+
+    /* Ocultar navegación de módulos si no se usa en móvil o adaptar */
+    .modulos-nav {
+        /* display: none; */ /* Descomentar si quieres ocultarla */
+        top: -25px; /* Ajustar posición si se mantiene */
+        gap: 8px;
+    }
+     .modulos-nav .modulo-dot {
+        width: 10px;
+        height: 10px;
+     }
+     .modulos-nav .modulo-dot.active {
+        width: 13px;
+        height: 13px;
+     }
+
+     .logros-section {
+        padding: 15px 0; /* Añadir algo de padding vertical si es necesario */
+    }
+
+    .logros-container {
+        /* Cambiar a layout de columna */
+        flex-direction: column;
+        align-items: center; /* Centrar elementos */
+        gap: 25px; /* Espacio entre imagen principal y rejilla */
+    }
+
+    .logros-imagen {
+        /* Hacer que la imagen principal ocupe casi todo el ancho */
+        width: 95%;
+        max-width: 500px; /* Limitar tamaño máximo si quieres */
+        margin-right: 0; /* Quitar margen derecho */
+        margin-bottom: 0; /* Quitar margen inferior si lo tenía */
+        height: auto; /* Altura automática */
+        order: 1; /* Asegurar orden si es necesario */
+    }
+
+    .grid-imagenes {
+        /* Hacer que la rejilla ocupe casi todo el ancho */
+        width: 95%;
+        max-width: none; /* Quitar max-width anterior */
+        /* grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); /* Columnas adaptables */
+        grid-template-columns: repeat(3, 1fr); /* Mantener 3 columnas si caben bien */
+        gap: 5px; /* Reducir espacio entre miniaturas */
+        padding: 8px; /* Reducir padding */
+        border-width: 1px; /* Borde más fino */
+        border-radius: 8px;
+        /* align-self: center;  Ya centrado por el flex container */
+        order: 2; /* Asegurar orden */
+        /* Quitar overflow: visible para contener las miniaturas */
+        overflow: hidden; /* Cambiado a hidden */
+    }
+
+    /* Contenedor de miniatura en móvil */
+    .img-wrapper {
+        height: 80px; /* Miniaturas un poco más pequeñas */
+        overflow: hidden; /* Cambiado a hidden */
+         /* Quitar position relative si no es necesario sin el hover */
+         /* position: relative; */
+    }
+
+    /* Imagen miniatura base en móvil */
+    .img-wrapper img {
+        /* Quitar posicionamiento absoluto si no hay hover */
+        /* position: absolute; */
+        /* top: 0; */
+        /* left: 0; */
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        pointer-events: none; /* Mantener esto */
+        border-radius: 4px; /* Menos redondez */
+        box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15); /* Sombra más sutil */
+
+        /* Resetear transformaciones y transiciones */
+        transform: none;
+        transform-origin: center center; /* Cambiar origen por si acaso */
+        transition: none; /* Desactivar transición */
+        z-index: 1; /* Resetear z-index */
+    }
+
+    /* --- DESACTIVAR EL EFECTO HOVER EN MÓVIL --- */
+    .img-wrapper:hover img,
+    .img-vertical:hover img {
+        transform: none; /* SIN ESCALA NI TRASLACIÓN */
+        z-index: 1; /* Mismo z-index que normal */
+        box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15); /* Misma sombra que normal */
+        border: none; /* SIN BORDE ESPECIAL */
+    }
+
+    /* Ajustes específicos para imágenes verticales en móvil (si aún son necesarios) */
+    .img-vertical img {
+        object-fit: contain !important; /* Mantener contain */
+        /* Quitar posicionamiento absoluto si no hay hover */
+        /* position: absolute; */
+        /* left: 50%; */
+        /* transform: translateX(-50%); */ /* Quitar traslación base */
+        width: 100%; /* Ocupar el wrapper */
+        height: 100%; /* Ocupar el wrapper */
+        transform: none; /* Asegurar que no hay transform base */
+    }
+}
+
+/* --- Estilos para Overlay Fullscreen --- */
+.fullscreen-overlay {
+    position: fixed; /* Fijo en la pantalla */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85); /* Fondo negro semi-transparente */
+    display: flex; /* Usar flex para centrar la imagen */
+    align-items: center;
+    justify-content: center;
+    z-index: 9999; /* Muy alto para estar por encima de todo */
+    cursor: pointer; /* Indicar que se puede hacer clic para cerrar */
+    opacity: 0; /* Inicialmente invisible */
+    visibility: hidden; /* Inicialmente oculto */
+    transition: opacity 0.3s ease, visibility 0.3s ease; /* Transición suave */
+}
+
+.fullscreen-overlay:not(.hidden) { /* Estilos cuando está visible */
+    opacity: 1;
+    visibility: visible;
+}
+
+/* La imagen dentro del overlay */
+#fullscreen-image {
+    display: block; /* Evitar espacio extra */
+    max-width: 90%; /* Máximo ancho */
+    max-height: 90%; /* Máximo alto */
+    object-fit: contain; /* Mostrar toda la imagen sin recortar */
+    cursor: default; /* Cursor normal sobre la imagen */
+    box-shadow: 0 0 25px rgba(0,0,0,0.5); /* Sombra opcional */
+}
+
+/* Botón de cierre (X) */
+.close-fullscreen {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 35px; /* Tamaño grande */
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    z-index: 10000; /* Encima de la imagen */
+    line-height: 1;
+    text-shadow: 0 0 5px rgba(0,0,0,0.7); /* Sombra de texto para legibilidad */
+}
+
+.close-fullscreen:hover {
+    color: #ccc; /* Cambiar color al pasar el mouse */
+}
+
+/* Ocultar el overlay usando la clase .hidden */
+.fullscreen-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+    /* --- Estilos para Junta Directiva en Móvil --- */
+
+    .junta-directiva-container {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    /* Ocultar la lista lateral de escritorio EN MÓVIL */
+    .junta-directiva-listado {
+        display: none !important; /* Usar !important si es necesario para sobreescribir */
+    }
+
+    /* Mostrar y Estilizar el contenedor del Select EN MÓVIL */
+    .junta-select-container-mobile {
+        display: block; /* Asegurar que sea visible */
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    /* Estilo del Select (igual que antes) */
+    #junta-directiva-select {
+        width: 100%;
+        padding: 12px 15px;
+        font-size: 1.1em;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: white;
+        cursor: pointer;
+        appearance: none;
+        background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007bff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+        background-repeat: no-repeat;
+        background-position: right 15px center;
+        background-size: 12px auto;
+    }
+     /* Label oculto (igual que antes) */
+     .sr-only { /* ... estilos sr-only ... */ }
+
+
+    /* Vista dinámica y grid (igual que antes) */
+    .junta-directiva-vista-dinamica {
+        width: 100%;
+        padding: 15px;
+    }
+    .miembro-detalle { /* ... grid 1 columna ... */ }
+    .miembro-foto-container, /* ... grid-column: 1 / -1; ... */
+    .miembro-foto { /* ... tamaño ajustado ... */ }
+
+/* Fundadores – mantener centrados */
+.prev-slide-fundadores, .next-slide-fundadores {
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    background-color: rgba(0, 0, 0, 0.5);
+    font-size: 2em;
+    padding: 10px;
+    z-index: 2;
+}
+
+/* Incorporación – subir un poco más los botones */
+.prev-slide-incorporacion, .next-slide-incorporacion {
+    top: -15% !important; /* MÁS ARRIBA que los de fundadores */
+    transform: translateY(-50%) !important;
+    background-color: rgba(0, 0, 0, 0.5);
+    font-size: 2em;
+    padding: 10px;
+    z-index: 2;
+}
+
+/* Posiciones laterales */
+.prev-slide-fundadores, .prev-slide-incorporacion { left: 10px !important; }
+.next-slide-fundadores, .next-slide-incorporacion { right: 10px !important; }
+
