@@ -658,19 +658,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: JSON.stringify(datos)
             });
 
-            // Si la respuesta no es 2xx
             if (!response.ok) {
-                // Intentar obtener el mensaje de error del cuerpo
-                let errorBody = {};
-                try {
-                    errorBody = await response.json();
-                } catch (e) {
-                    // Si no se puede parsear como JSON, usar el texto
-                    const errorText = await response.text();
-                    throw new Error(`Error HTTP ${response.status}: ${errorText.substring(0, 100)}`);
-                }
-                
-                throw new Error(errorBody.detail || errorBody.mensaje || `Error HTTP ${response.status}`);
+                throw new Error(`500: Error al procesar la solicitud de publicidad`);
             }
 
             // Parsear la respuesta como JSON
