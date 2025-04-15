@@ -10,7 +10,7 @@ const API_KEYS = {
 };
 
 // URL de backend centralizada usando ngrok
-const BACKEND_URL = 'https://0692-2800-484-8786-7d00-fda0-d6e0-5781-fd99.ngrok-free.app';
+const BACKEND_URL = 'https://05b4-2800-484-8786-7d00-fda0-d6e0-5781-fd99.ngrok-free.app';
 
 // Modo de depuración - cambia a true para usar localhost en lugar de ngrok
 // Si hay problemas con ngrok, cambiar a true
@@ -29,7 +29,9 @@ const API_ENDPOINTS = {
     afiliacion: `${EFFECTIVE_URL}/api/afiliacion`,
     afiliados: `${EFFECTIVE_URL}/api/afiliados`,
     validarCodigo: `${EFFECTIVE_URL}/api/validar-codigo`,
-    verificarCedula: `${EFFECTIVE_URL}/api/verificar_cedula`
+    verificarCedula: `${EFFECTIVE_URL}/api/verificar_cedula`,
+    saveImage: `${EFFECTIVE_URL}/api/save-image`,
+    like: `${EFFECTIVE_URL}/api/like`
 };
 
 // Función para enviar formulario de afiliación por correo

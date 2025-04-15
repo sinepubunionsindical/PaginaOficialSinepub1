@@ -726,27 +726,41 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Funciones de Carga y Like de Anuncios (Base: Versión 1 - ¡REVISAR URL LIKE!) ---
 
     /**
-     * Carga los anuncios desde el backend.
+     * Carga los anuncios desde el backend y los muestra en la página.
      */
     async function cargarAnuncios() {
         try {
-            // Obtener URL del API desde configuración global o usar un valor predeterminado
-            const backendApiUrl = window.API_ENDPOINTS?.publicidad || `${getBackendUrl()}/api/publicidad`;
-            console.log(`📞 Cargando anuncios desde GET ${backendApiUrl}...`);
-
+            if (!backendApiUrl) {
+                throw new Error("URL del backend no configurada");
+            }
+            
+            // Mostrar indicador de carga en los contenedores de anuncios
+            if (anunciosContainer) {
+                anunciosContainer.innerHTML = `<p class="cargando-anuncios"><i class="fas fa-spinner fa-spin"></i> Cargando anuncios...</p>`;
+            }
+            
+            // Contenedores por categoría (si existen)
+            const categorias = ['asistencia', 'comercio', 'servicios', 'educacion'];
+            const contenedoresCategorias = {};
+            
+            categorias.forEach(categoria => {
+                const container = document.getElementById(`anuncios-${categoria}`);
+                if (container) {
+                    contenedoresCategorias[categoria] = container;
+                    container.innerHTML = `<p class="cargando-anuncios"><i class="fas fa-spinner fa-spin"></i> Cargando anuncios de ${categoria}...</p>`;
+                }
+            });
+            
+            // Realizar la petición al backend
             const response = await fetch(backendApiUrl, {
                 method: 'GET',
                 headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'ngrok-skip-browser-warning': 'true', // Para evitar la página de advertencia de ngrok
-                    'User-Agent': 'sinepub-client' // Identificar la solicitud
+                    'Accept': 'application/json'
                 }
             });
-
-            // Manejar respuesta distinta a 200 OK
+            
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                throw new Error(`Error HTTP ${response.status}`);
             }
 
             // Convertir respuesta a JSON
@@ -758,36 +772,86 @@ document.addEventListener('DOMContentLoaded', function() {
             
             console.log(`✅ Anuncios cargados: ${anuncios.length} total, ${anunciosAprobados.length} aprobados.`);
             
-            // Actualizar la vista con los anuncios
-            actualizarVistaAnuncios(anunciosAprobados);
+            // Agrupar anuncios por categoría
+            const anunciosPorCategoria = {};
+            categorias.forEach(cat => { anunciosPorCategoria[cat] = []; });
+            
+            // Categoría por defecto si no está en nuestra lista
+            const categoriaDefault = 'servicios';
+            
+            // Clasificar anuncios por categoría
+            anunciosAprobados.forEach(anuncio => {
+                const categoria = anuncio.categoria ? anuncio.categoria.toLowerCase() : '';
+                
+                // Verificar si la categoría existe en nuestra lista, si no asignar a default
+                if (categorias.includes(categoria)) {
+                    anunciosPorCategoria[categoria].push(anuncio);
+                } else {
+                    anunciosPorCategoria[categoriaDefault].push(anuncio);
+                }
+            });
+            
+            // Actualizar contenedores por categoría si existen
+            let hayContenedoresCategorias = false;
+            
+            Object.keys(contenedoresCategorias).forEach(categoria => {
+                const container = contenedoresCategorias[categoria];
+                const anunciosCat = anunciosPorCategoria[categoria] || [];
+                
+                if (container) {
+                    hayContenedoresCategorias = true;
+                    if (anunciosCat.length > 0) {
+                        actualizarVistaAnuncios(anunciosCat, container);
+                    } else {
+                        container.innerHTML = `<p class="info-mensaje">No hay anuncios en la categoría ${categoria}.</p>`;
+                    }
+                }
+            });
+            
+            // Si no hay contenedores por categoría, usar el contenedor general
+            if (!hayContenedoresCategorias && anunciosContainer) {
+                actualizarVistaAnuncios(anunciosAprobados, anunciosContainer);
+            }
             
         } catch (error) {
             console.error(`🚨 Error al cargar anuncios:`, error);
             // Mostrar mensaje de error en los contenedores de anuncios
             const categorias = ['asistencia', 'comercio', 'servicios', 'educacion'];
+            
+            let mostradoError = false;
+            
             categorias.forEach(categoria => {
                 const container = document.getElementById(`anuncios-${categoria}`);
                 if (container) {
                     container.innerHTML = `<p class="anuncio-error">No se pudieron cargar los anuncios. Intente nuevamente más tarde.</p>`;
+                    mostradoError = true;
                 }
             });
+            
+            if (!mostradoError && anunciosContainer) {
+                anunciosContainer.innerHTML = `<p class="anuncio-error">No se pudieron cargar los anuncios. Intente nuevamente más tarde.</p>`;
+            }
         }
     }
 
     /**
-     * Renderiza los anuncios aprobados en el contenedor HTML.
+     * Renderiza los anuncios aprobados en el contenedor HTML especificado.
      * @param {Array} anunciosAprobados - Array de objetos de anuncio aprobados.
+     * @param {HTMLElement} container - Contenedor donde se mostrarán los anuncios (opcional).
      */
-    function actualizarVistaAnuncios(anunciosAprobados) {
-        if (!anunciosContainer) return;
+    function actualizarVistaAnuncios(anunciosAprobados, container = null) {
+        // Usar el contenedor especificado o el general si no se proporciona uno
+        const targetContainer = container || anunciosContainer;
+        
+        if (!targetContainer) return;
 
         if (!anunciosAprobados || anunciosAprobados.length === 0) {
-            anunciosContainer.innerHTML = `<p class="info-mensaje">✨ De momento no hay anuncios publicados. ¡Sé el primero en registrar uno! ✨</p>`;
+            targetContainer.innerHTML = `<p class="info-mensaje">✨ De momento no hay anuncios publicados. ¡Sé el primero en registrar uno! ✨</p>`;
             return;
         }
 
         // Generar HTML para cada anuncio con diseño mejorado
-        anunciosContainer.innerHTML = anunciosAprobados.map(anuncio => {
+        targetContainer.innerHTML = anunciosAprobados.map(anuncio => {
             // Proporcionar valores por defecto si alguna propiedad falta
             const id = anuncio.id || `temp_${Math.random().toString(36).substring(2)}`;
             
@@ -827,7 +891,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 'Fecha no disponible';
 
             return `
-            <div class="anuncio-card" data-id="${id}">
+            <div class="anuncio-card" data-id="${id}" data-categoria="${categoria.toLowerCase()}">
                 <div class="anuncio-header">
                     <div class="anuncio-perfil">
                         <img src="${fotoPerfil}" alt="Foto de ${nombre}" class="anuncio-perfil-imagen" onerror="this.onerror=null; this.src='images/avatar-placeholder.png';">
@@ -864,159 +928,172 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         }).join('');
 
-        // Añadir estilos CSS inline para los nuevos elementos
-        const style = document.createElement('style');
-        style.textContent = `
-            .anuncio-card {
-                border-radius: 10px;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-                margin-bottom: 30px;
-                overflow: hidden;
-                background: white;
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
-            }
-            
-            .anuncio-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-            }
-            
-            .anuncio-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 15px;
-                border-bottom: 1px solid #f0f0f0;
-            }
-            
-            .anuncio-perfil {
-                display: flex;
-                align-items: center;
-            }
-            
-            .anuncio-perfil-imagen {
-                width: 50px;
-                height: 50px;
-                border-radius: 50%;
-                object-fit: cover;
-                border: 2px solid #35a9aa;
-                margin-right: 10px;
-            }
-            
-            .anuncio-perfil-info h4 {
-                margin: 0;
-                font-size: 16px;
-                color: #333;
-            }
-            
-            .anuncio-fecha {
-                font-size: 12px;
-                color: #888;
-            }
-            
-            .categoria-badge {
-                background: #f0f8ff;
-                padding: 5px 10px;
-                border-radius: 15px;
-                font-size: 12px;
-                color: #0249aa;
-            }
-            
-            .anuncio-titulo {
-                padding: 15px 15px 10px;
-                margin: 0;
-                color: #0249aa;
-                font-size: 18px;
-            }
-            
-            .anuncio-imagen-container {
-                width: 100%;
-                height: 250px;
-                overflow: hidden;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            
-            .anuncio-imagen {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-            
-            .anuncio-content {
-                padding: 15px;
-            }
-            
-            .anuncio-descripcion {
-                margin-top: 0;
-                margin-bottom: 15px;
-                color: #555;
-                line-height: 1.5;
-            }
-            
-            .anuncio-footer {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding-top: 10px;
-                border-top: 1px solid #f0f0f0;
-            }
-            
-            .like-button {
-                background: transparent;
-                border: none;
-                display: flex;
-                align-items: center;
-                gap: 5px;
-                color: #35a9aa;
-                cursor: pointer;
-                padding: 5px 10px;
-                border-radius: 5px;
-                transition: background 0.2s ease;
-            }
-            
-            .like-button:hover {
-                background: #f0f8ff;
-            }
-            
-            .liked-animation {
-                animation: likeEffect 1s ease;
-            }
-            
-            @keyframes likeEffect {
-                0% { transform: scale(1); }
-                50% { transform: scale(1.2); }
-                100% { transform: scale(1); }
-            }
-            
-            .anuncio-contacto {
-                display: flex;
-                gap: 10px;
-            }
-            
-            .contacto-link {
-                color: #666;
-                font-size: 16px;
-                transition: color 0.2s ease;
-            }
-            
-            .contacto-link:hover {
-                color: #35a9aa;
-            }
-        `;
-        
-        // Eliminar estilo anterior si existe
-        const existingStyle = document.getElementById('anuncios-style');
-        if (existingStyle) {
-            existingStyle.remove();
+        // Añadir estilos CSS inline para los nuevos elementos si no existen ya
+        if (!document.getElementById('anuncios-style')) {
+            const style = document.createElement('style');
+            style.id = 'anuncios-style';
+            style.textContent = `
+                .anuncio-card {
+                    border-radius: 10px;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                    margin-bottom: 30px;
+                    overflow: hidden;
+                    background: white;
+                    transition: transform 0.3s ease, box-shadow 0.3s ease;
+                }
+                
+                .anuncio-card:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+                }
+                
+                .anuncio-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 15px;
+                    border-bottom: 1px solid #f0f0f0;
+                }
+                
+                .anuncio-perfil {
+                    display: flex;
+                    align-items: center;
+                }
+                
+                .anuncio-perfil-imagen {
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 50%;
+                    object-fit: cover;
+                    border: 2px solid #35a9aa;
+                    margin-right: 10px;
+                }
+                
+                .anuncio-perfil-info h4 {
+                    margin: 0;
+                    font-size: 16px;
+                    color: #333;
+                }
+                
+                .anuncio-fecha {
+                    font-size: 12px;
+                    color: #888;
+                }
+                
+                .categoria-badge {
+                    background: #f0f8ff;
+                    padding: 5px 10px;
+                    border-radius: 15px;
+                    font-size: 12px;
+                    color: #0249aa;
+                }
+                
+                .anuncio-titulo {
+                    padding: 15px 15px 10px;
+                    margin: 0;
+                    color: #0249aa;
+                    font-size: 18px;
+                }
+                
+                .anuncio-imagen-container {
+                    width: 100%;
+                    height: 250px;
+                    overflow: hidden;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                
+                .anuncio-imagen {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+                
+                .anuncio-content {
+                    padding: 15px;
+                }
+                
+                .anuncio-descripcion {
+                    margin-top: 0;
+                    margin-bottom: 15px;
+                    color: #555;
+                    line-height: 1.5;
+                }
+                
+                .anuncio-footer {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding-top: 10px;
+                    border-top: 1px solid #f0f0f0;
+                }
+                
+                .like-button {
+                    background: transparent;
+                    border: none;
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
+                    color: #35a9aa;
+                    cursor: pointer;
+                    padding: 5px 10px;
+                    border-radius: 5px;
+                    transition: background 0.2s ease;
+                }
+                
+                .like-button:hover {
+                    background: #f0f8ff;
+                }
+                
+                .liked-animation {
+                    animation: likeEffect 1s ease;
+                }
+                
+                @keyframes likeEffect {
+                    0% { transform: scale(1); }
+                    50% { transform: scale(1.2); }
+                    100% { transform: scale(1); }
+                }
+                
+                .anuncio-contacto {
+                    display: flex;
+                    gap: 10px;
+                }
+                
+                .contacto-link {
+                    color: #666;
+                    font-size: 16px;
+                    transition: color 0.2s ease;
+                }
+                
+                .contacto-link:hover {
+                    color: #35a9aa;
+                }
+                
+                .info-mensaje, .anuncio-error, .cargando-anuncios {
+                    text-align: center;
+                    padding: 20px;
+                    color: #666;
+                    background: #f9f9f9;
+                    border-radius: 10px;
+                    margin: 20px 0;
+                }
+                
+                .anuncio-error {
+                    color: #d32f2f;
+                    background: #ffebee;
+                }
+                
+                .cargando-anuncios {
+                    color: #0249aa;
+                    background: #e3f2fd;
+                }
+            `;
+            document.head.appendChild(style);
         }
-        
-        // Añadir id al estilo nuevo y agregarlo al documento
-        style.id = 'anuncios-style';
-        document.head.appendChild(style);
 
-        // Añadir listeners a los botones de like DESPUÉS de crear el HTML
+        // Añadir listeners a los botones de like
         setupLikeButtonListeners();
     }
 
@@ -1262,4 +1339,146 @@ function getBackendUrl() {
     
     // Por último, usar la URL de ngrok estática como fallback
     return 'https://61f8-2800-484-8786-7d00-5963-3db4-73c3-1a5c.ngrok-free.app';
+}
+
+/**
+ * Guarda una imagen en la carpeta local del servidor
+ * @param {string} base64String - La imagen en formato base64
+ * @param {string} categoria - La categoría del anuncio
+ * @param {string} id - ID único para el nombre del archivo
+ * @returns {string} - La ruta relativa donde se guardó la imagen
+ */
+async function guardarImagenLocal(base64String, categoria, id) {
+    if (!base64String) return null;
+    
+    try {
+        // Extraer la información del tipo de archivo de la cadena base64
+        const matches = base64String.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+        if (!matches || matches.length !== 3) {
+            throw new Error('El formato de la imagen base64 es inválido');
+        }
+        
+        const contentType = matches[1];
+        const base64Data = matches[2];
+        
+        // Determinar la extensión del archivo basado en el tipo de contenido
+        let extension = 'png';  // Valor predeterminado
+        if (contentType.includes('jpeg') || contentType.includes('jpg')) {
+            extension = 'jpg';
+        } else if (contentType.includes('png')) {
+            extension = 'png';
+        } else if (contentType.includes('gif')) {
+            extension = 'gif';
+        }
+        
+        // Crear un nombre de archivo único basado en categoría, id y timestamp
+        const timestamp = new Date().getTime();
+        const fileName = `${categoria}_${id}_${timestamp}.${extension}`;
+        
+        // Ruta donde se guardará la imagen (relativa a la raíz del proyecto)
+        const imagePath = `images/anuncios/${fileName}`;
+        
+        // Crear un objeto FormData para enviar la imagen al servidor
+        const formData = new FormData();
+        formData.append('image', base64String);
+        formData.append('path', imagePath);
+        
+        // Definir la URL del endpoint para guardar imágenes
+        const saveImageEndpoint = window.API_ENDPOINTS?.saveImage;
+        
+        if (!saveImageEndpoint) {
+            console.error('❌ Endpoint para guardar imágenes no configurado en config.js');
+            throw new Error('No se pudo guardar la imagen: configuración faltante');
+        }
+        
+        // Enviar la solicitud al servidor
+        const response = await fetch(saveImageEndpoint, {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || `Error ${response.status} al guardar imagen`);
+        }
+        
+        // Devolver la ruta donde se guardó la imagen
+        return imagePath;
+    } catch (error) {
+        console.error('❌ Error al guardar imagen localmente:', error);
+        // En caso de error, devolvemos null y usaremos el base64 directamente
+        return null;
+    }
+}
+
+/**
+ * Envía los datos del formulario al backend para registrar un nuevo anuncio.
+ * @param {Object} formularioData - Los datos del formulario a enviar.
+ */
+async function enviarPublicidadBackend(formularioData) {
+    // Mostrar mensaje de carga
+    mostrarMensajeCargando();
+
+    try {
+        // Validar que tenemos la URL del backend
+        if (!backendApiUrl) {
+            throw new Error("URL del backend no configurada");
+        }
+
+        // Si tenemos imagen en base64, intentar guardarla localmente primero
+        let rutaImagen = null;
+        if (formularioData.imagen_base64) {
+            try {
+                rutaImagen = await guardarImagenLocal(
+                    formularioData.imagen_base64, 
+                    formularioData.categoria || 'general',
+                    Math.random().toString(36).substring(2, 10) // ID único simple
+                );
+            } catch (imgError) {
+                console.warn('⚠️ No se pudo guardar la imagen localmente:', imgError);
+                // Continuamos con el base64 si no se pudo guardar localmente
+            }
+            
+            // Si se guardó correctamente la imagen, usamos la ruta en lugar del base64
+            if (rutaImagen) {
+                // Guardar la ruta de la imagen y eliminar el base64 para reducir el tamaño de la petición
+                formularioData.imagen_ruta = rutaImagen;
+                delete formularioData.imagen_base64;
+            }
+        }
+
+        // Enviar los datos al backend
+        const response = await fetch(backendApiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(formularioData)
+        });
+
+        // Manejar errores de respuesta
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.detail || errorData.message || `Error ${response.status}`);
+        }
+
+        // Procesar respuesta exitosa
+        const data = await response.json();
+        console.log("✅ Publicidad registrada con éxito:", data);
+
+        // Mostrar mensaje de éxito y cerrar el modal después de un tiempo
+        mostrarMensajeExito("Publicidad registrada correctamente. Será revisada antes de ser publicada.");
+        setTimeout(() => {
+            cerrarModal();
+            limpiarFormulario();
+        }, 3000);
+
+        // Recargar los anuncios para mostrar los cambios (si es necesario)
+        setTimeout(cargarAnuncios, 3500);
+
+    } catch (error) {
+        console.error("❌ Error al registrar publicidad:", error);
+        mostrarMensajeError(`No se pudo registrar la publicidad: ${error.message}`);
+    }
 }
