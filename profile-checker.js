@@ -37,22 +37,22 @@ function verificarEstadoUsuarioAlCargar() {
 
 function verificarPerfilEnBackend() {
     const backendUrl = getBackendUrl();
-    const cedula = window.cedulaAutenticada;
+    const cedula = localStorage.getItem("cedula") || window.cedulaAutenticada;
     
     if (!cedula) {
-        console.error("❌ No hay cédula autenticada en memoria");
+        console.error("❌ No hay cédula autenticada en memoria o localStorage");
         mostrarUIInicial();
         return;
     }
     
-    console.log("🔍 Verificando perfil para cédula en memoria");
+    console.log("🔍 Verificando perfil para cédula:", cedula);
     
-    fetch(`${backendUrl}/api/obtener_perfil`, {
-        method: 'POST',
+    // Corregir la URL para que apunte al endpoint correcto
+    fetch(`${backendUrl}/obtener_perfil/${cedula}`, {
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ cedula: cedula })
+        }
     })
     .then(response => {
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -63,11 +63,21 @@ function verificarPerfilEnBackend() {
             throw new Error(data.error);
         }
         
-        if (data.perfil_completo) {
-            console.log("✅ Perfil completo confirmado por backend");
+        if (data.success && data.perfil_completo) {
+            console.log("✅ Perfil completo confirmado por backend:", data);
+            
+            // Guardar información importante en localStorage
+            localStorage.setItem("perfil_completo", "true");
+            if (data.datos) {
+                if (data.datos.nombre) localStorage.setItem("nombre", data.datos.nombre);
+                if (data.datos.correo) localStorage.setItem("correo", data.datos.correo);
+                if (data.datos.foto) localStorage.setItem("foto", data.datos.foto);
+            }
+            
             actualizarUIParaPerfilCompleto();
         } else {
             console.log("⚠️ Perfil incompleto, mostrando formulario");
+            localStorage.setItem("perfil_completo", "false");
             mostrarFormularioCompletarPerfil();
         }
     })
@@ -120,9 +130,30 @@ function actualizarUIParaPerfilCompleto() {
     
     if (initialContainer) initialContainer.style.display = 'none';
     if (chatContainer) {
-        chatContainer.style.display = 'block';
+        // No mostramos el chatContainer directamente, mejor activamos el chatbot mediante el botón
+        const chatButton = document.getElementById("chatbot-button");
+        if (chatButton) {
+            console.log("🎙️ Activando chatbot mediante botón original");
+            setTimeout(() => chatButton.click(), 100); // Pequeño delay para asegurar que todo esté listo
+        } else {
+            console.warn("⚠️ Botón de chatbot no encontrado");
+            chatContainer.style.display = 'block';
+        }
+        
         // Asegurar que el botón flotante esté visible
         const floatingButton = document.querySelector('.chat-flotante');
         if (floatingButton) floatingButton.style.display = 'block';
     }
+}
+
+// Función para obtener URL del backend desde config.js
+function getBackendUrl() {
+    if (window.BACKEND_URL) {
+        return window.BACKEND_URL;
+    }
+    if (window.API_ENDPOINTS && window.API_ENDPOINTS.base) {
+        return window.API_ENDPOINTS.base;
+    }
+    // Fallback a la URL por defecto
+    return 'https://ffa8-2800-484-8786-7d00-5963-3db4-73c3-1a5c.ngrok-free.app';
 }
