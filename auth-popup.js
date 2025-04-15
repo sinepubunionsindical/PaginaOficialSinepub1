@@ -276,49 +276,140 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
             console.log("🔍 Verificando estado del perfil en el backend para cédula:", cedula);
             
             try {
-                const response = await fetch(`${getBackendUrl()}/obtener_perfil/${cedula}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
-                }
-                
-                const data = await response.json();
-                console.log("📊 Datos de perfil recibidos:", data);
-                
-                if (data.perfil_completo) {
-                    // El perfil ya está completo, guardar datos en localStorage
-                    localStorage.setItem('perfil_completo', 'true');
-                    localStorage.setItem('afiliado', 'yes');
-                    
-                    // Guardar los datos del usuario en localStorage
-                    if (data.datos) {
-                        if (data.datos.nombre) localStorage.setItem('nombre', data.datos.nombre);
-                        if (data.datos.correo) {
-                            localStorage.setItem('correo', data.datos.correo);
-                            localStorage.setItem('email', data.datos.correo);
+                // Mostrar indicador de carga
+                const loadingPopup = document.createElement("div");
+                loadingPopup.id = "loading-popup";
+                loadingPopup.style.position = "fixed";
+                loadingPopup.style.top = "50%";
+                loadingPopup.style.left = "50%";
+                loadingPopup.style.transform = "translate(-50%, -50%)";
+                loadingPopup.style.background = "rgba(255, 255, 255, 0.9)";
+                loadingPopup.style.padding = "20px";
+                loadingPopup.style.borderRadius = "10px";
+                loadingPopup.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
+                loadingPopup.style.zIndex = "10001";
+                loadingPopup.style.textAlign = "center";
+                loadingPopup.innerHTML = `
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div style="width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #35a9aa; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                        <p style="margin-top: 10px;">Verificando tu perfil...</p>
+                    </div>
+                    <style>
+                        @keyframes spin {
+                            0% { transform: rotate(0deg); }
+                            100% { transform: rotate(360deg); }
                         }
-                        if (data.datos.foto_ruta) localStorage.setItem('foto_ruta', data.datos.foto_ruta);
+                    </style>
+                `;
+                document.body.appendChild(loadingPopup);
+                
+                // Crear una función para manejar errores de forma más robusta
+                const verificarPerfil = async () => {
+                    try {
+                        // Primera verificación con endpoint /api/validar_perfil/
+                        const validationResponse = await fetch(`${getBackendUrl()}/api/validar_perfil/${cedula}`, {
+                            method: 'GET',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (validationResponse.ok) {
+                            const validationData = await validationResponse.json();
+                            console.log("📊 Datos de validación recibidos:", validationData);
+                            
+                            if (validationData.perfil_completo) {
+                                // El perfil ya está completo
+                                localStorage.setItem('perfil_completo', 'true');
+                                localStorage.setItem('afiliado', 'yes');
+                                
+                                // Guardar los datos del usuario en localStorage
+                                if (validationData.datos) {
+                                    if (validationData.datos.nombre) localStorage.setItem('nombre', validationData.datos.nombre);
+                                    if (validationData.datos.correo) {
+                                        localStorage.setItem('correo', validationData.datos.correo);
+                                        localStorage.setItem('email', validationData.datos.correo);
+                                    }
+                                    if (validationData.datos.foto_ruta) localStorage.setItem('foto_ruta', validationData.datos.foto_ruta);
+                                }
+                                
+                                // Eliminar el indicador de carga
+                                document.getElementById("loading-popup").remove();
+                                
+                                // Mostrar el popup de bienvenida personalizado
+                                mostrarPopupBienvenidaPersonalizado();
+                                return;
+                            }
+                        }
+                        
+                        // Si llegamos aquí, el perfil no está completo o hubo un error con validar_perfil
+                        // Intentar con el endpoint obtener_perfil como fallback
+                        const detailResponse = await fetch(`${getBackendUrl()}/obtener_perfil/${cedula}`, {
+                            method: 'GET',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        
+                        if (detailResponse.ok) {
+                            const detailData = await detailResponse.json();
+                            console.log("📊 Datos detallados de perfil recibidos:", detailData);
+                            
+                            if (detailData.perfil_completo) {
+                                // El perfil ya está completo
+                                localStorage.setItem('perfil_completo', 'true');
+                                localStorage.setItem('afiliado', 'yes');
+                                
+                                // Guardar los datos del usuario en localStorage
+                                if (detailData.datos) {
+                                    if (detailData.datos.nombre) localStorage.setItem('nombre', detailData.datos.nombre);
+                                    if (detailData.datos.correo) {
+                                        localStorage.setItem('correo', detailData.datos.correo);
+                                        localStorage.setItem('email', detailData.datos.correo);
+                                    }
+                                    if (detailData.datos.foto_ruta) localStorage.setItem('foto_ruta', detailData.datos.foto_ruta);
+                                }
+                                
+                                // Eliminar el indicador de carga
+                                document.getElementById("loading-popup").remove();
+                                
+                                // Mostrar el popup de bienvenida personalizado
+                                mostrarPopupBienvenidaPersonalizado();
+                                return;
+                            } else {
+                                // El perfil no está completo, mostrar formulario obligatorio
+                                document.getElementById("loading-popup").remove();
+                                mostrarFormularioCompletarPerfilObligatorio(cedula, nombre);
+                                return;
+                            }
+                        }
+                        
+                        // Si ambos métodos fallan, mostrar el formulario obligatorio por defecto
+                        document.getElementById("loading-popup").remove();
+                        mostrarFormularioCompletarPerfilObligatorio(cedula, nombre);
+                        
+                    } catch (error) {
+                        console.error("❌ Error al verificar el perfil:", error);
+                        // Eliminar el indicador de carga
+                        if (document.getElementById("loading-popup")) {
+                            document.getElementById("loading-popup").remove();
+                        }
+                        // En caso de error, mostramos el formulario de perfil obligatorio por seguridad
+                        mostrarFormularioCompletarPerfilObligatorio(cedula, nombre);
                     }
-                    
-                    // Mostrar el popup de bienvenida simple
-                    const mensajeSimple = `
-                        <h2>Bienvenido al Sindicato</h2>
-                        <p>Nombre: ${nombre}</p>
-                        <p>Cargo: ${cargo}</p>
-                    `;
-                    mostrarPopupBienvenidaSimple(mensajeSimple);
-                } else {
-                    // El perfil no está completo, mostrar formulario obligatorio
-                    mostrarFormularioCompletarPerfilObligatorio(cedula, nombre);
-                }
+                };
+                
+                // Ejecutar la verificación de perfil con ambos métodos
+                await verificarPerfil();
+                
             } catch (error) {
-                console.error("❌ Error al verificar el perfil:", error);
-                // En caso de error, mostramos el formulario de perfil obligatorio por seguridad
+                console.error("❌ Error crítico al verificar el perfil:", error);
+                // En caso de error crítico, mostramos el formulario de perfil obligatorio por seguridad
+                if (document.getElementById("loading-popup")) {
+                    document.getElementById("loading-popup").remove();
+                }
                 mostrarFormularioCompletarPerfilObligatorio(cedula, nombre);
             }
         } else {
