@@ -37,86 +37,140 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Verificar si el usuario está autenticado (localStorage) y configurar botón registro
     function configurarBotonRegistro() {
-        const registrarBtn = document.getElementById('registrar-publicidad');
-        if (registrarBtn) {
-            const isUserAuth = localStorage.getItem("afiliado") === "yes";
-            const isProfileComplete = localStorage.getItem("perfil_completo") === "true";
-            console.log("🔧 configurarBotonRegistro: Verificando estado (localStorage):");
-            console.log(`   - afiliado: ${localStorage.getItem("afiliado")}, perfil_completo: ${localStorage.getItem("perfil_completo")}`);
-            // Considerar si 'cedula' es un requisito estricto adicional
-            // const hasCedula = localStorage.getItem("cedula") !== null;
-            const isAuthenticated = isUserAuth || isProfileComplete; // Lógica mantenida de v1
-
-            // Limpiar listeners previos para evitar duplicados
+        console.log("🛠️ Configurando botón de registro de publicidad");
+        
+        // Obtener la referencia al botón
+        const registrarBtn = document.getElementById("registrar-publicidad");
+        
+        if (!registrarBtn) {
+            console.error("❌ No se encontró el botón de registro (#registrar-publicidad)");
+            return;
+        }
+        
+        // Verificar si el usuario está autenticado
+        const estaAutenticado = localStorage.getItem("afiliado_autenticado") === "true";
+        const perfilCompleto = localStorage.getItem("perfil_completo") === "true";
+        
+        console.log(`🔐 Estado de autenticación: ${estaAutenticado ? 'Autenticado' : 'No autenticado'}, Perfil completo: ${perfilCompleto ? 'Sí' : 'No'}`);
+        
+        // Si está autenticado y tiene perfil completo, mostrar y habilitar el botón
+        if (estaAutenticado && perfilCompleto) {
+            registrarBtn.style.display = "block";
+            
+            // Limpiar eventos anteriores para evitar duplicados
             registrarBtn.removeEventListener('click', mostrarFormularioRegistro);
             registrarBtn.removeEventListener('click', mostrarMensajeAutenticacion);
-
-            if (!isAuthenticated) {
-                registrarBtn.classList.add('boton-deshabilitado');
-                registrarBtn.disabled = true;
-                registrarBtn.title = "Debes ser afiliado al sindicato para registrar publicidad";
-                registrarBtn.innerHTML = "Registrar Publicidad (Solo Afiliados)";
-                registrarBtn.addEventListener('click', mostrarMensajeAutenticacion); // Asigna listener de alerta
-                console.log("🔒 Botón de registro deshabilitado (localStorage).");
-            } else {
-                registrarBtn.classList.remove('boton-deshabilitado');
-                registrarBtn.disabled = false;
-                registrarBtn.innerHTML = "Registrar Publicidad";
-                registrarBtn.title = ""; // Limpiar tooltip
-                registrarBtn.addEventListener('click', mostrarFormularioRegistro); // Asigna listener de mostrar form
-                console.log("🔓 Botón de registro habilitado (localStorage).");
-            }
+            
+            // Asignar el evento para mostrar el formulario
+            registrarBtn.addEventListener('click', mostrarFormularioRegistro);
+            console.log("✅ Botón de registro habilitado y configurado");
         } else {
-            console.error("❌ Botón de registro ('registrar-publicidad') no encontrado.");
+            // Si no está autenticado o no tiene perfil completo, mostrar mensaje
+            registrarBtn.style.display = "block"; // Lo mostramos igual
+            
+            // Limpiar eventos anteriores
+            registrarBtn.removeEventListener('click', mostrarFormularioRegistro);
+            registrarBtn.removeEventListener('click', mostrarMensajeAutenticacion);
+            
+            // Asignar el evento para mostrar mensaje de autenticación
+            registrarBtn.addEventListener('click', mostrarMensajeAutenticacion);
+            console.log("⚠️ Botón de registro configurado para mostrar mensaje de autenticación");
         }
     }
 
     // Muestra el modal del formulario
     function mostrarFormularioRegistro(e) {
-        e.preventDefault(); // Prevenir comportamiento por defecto del botón/enlace
-        console.log("📝 Mostrando formulario modal...");
-        if (formularioContainer) {
-            limpiarFormulario(); // Limpiar antes de mostrar
-            configurarBotonesEmail(); // Reconfigurar botones de email cada vez que se abre
-            formularioContainer.style.display = 'block'; // Mostrar el modal
-        } else {
-            console.error("❌ Contenedor del formulario ('formulario-container') no encontrado al intentar mostrar.");
+        if (e) e.preventDefault();
+        
+        console.log("📝 Mostrando formulario de registro de publicidad");
+        
+        // Obtener referencia al contenedor del formulario
+        const formularioContainer = document.getElementById("formulario-container");
+        
+        if (!formularioContainer) {
+            console.error("❌ No se encontró el contenedor del formulario (#formulario-container)");
+            return;
         }
+        
+        // Mostrar el formulario
+        formularioContainer.style.display = "flex";
+        
+        // Configurar estilos para permitir scroll dentro del modal pero no en el fondo
+        document.body.style.overflow = "hidden"; // Bloquear scroll en el fondo
+        
+        // Obtener el modal-content y permitir su scroll interno
+        const modalContent = formularioContainer.querySelector('.modal-content');
+        if (modalContent) {
+            modalContent.style.maxHeight = "80vh"; // altura máxima del 80% de la ventana
+            modalContent.style.overflowY = "auto"; // permitir scroll vertical
+        }
+        
+        // Configurar listeners de cierre
+        setupModalCloseListeners();
+        
+        console.log("✅ Formulario de registro mostrado correctamente");
     }
 
     // Muestra alerta si se intenta registrar sin ser afiliado/perfil completo
     function mostrarMensajeAutenticacion(e) {
-        e.preventDefault();
-        console.log("⚠️ Intento de registro sin autenticación (localStorage).");
-        alert("Debes ser afiliado al sindicato para registrar publicidad. Por favor, accede desde la página principal o completa tu perfil.");
-        return false;
+        if (e) e.preventDefault();
+        
+        console.log("🚫 Usuario no autenticado o perfil incompleto");
+        mostrarMensajeError("Debes iniciar sesión y completar tu perfil para poder publicar anuncios.");
     }
 
     // Cierra el modal del formulario
     function cerrarModalFormulario() {
+        const formularioContainer = document.getElementById("formulario-container");
         if (formularioContainer) {
-            formularioContainer.style.display = 'none';
+            formularioContainer.style.display = "none";
+            document.body.style.overflow = "auto"; // Restaurar scroll del body
+            
+            // Restaurar otros estilos si es necesario
+            const modalContent = formularioContainer.querySelector('.modal-content');
+            if (modalContent) {
+                // Limpiar estilos de scroll y altura que pudimos haber modificado
+                modalContent.style.maxHeight = "";
+                modalContent.style.overflowY = "";
+            }
         }
     }
 
     // Configura los listeners para cerrar el modal (Botón X y Cancelar)
     function setupModalCloseListeners() {
-        if (modalCerrarBtn) {
-            modalCerrarBtn.addEventListener('click', cerrarModalFormulario);
-        } else {
-             console.warn("⚠️ Botón de cierre del modal ('btn-cerrar') no encontrado.");
+        // Botón de cerrar
+        const btnCerrar = document.getElementById("btn-cerrar-form");
+        if (btnCerrar) {
+            btnCerrar.addEventListener("click", cerrarModalFormulario);
         }
-        if (cancelarBtn) {
-            cancelarBtn.addEventListener('click', cerrarModalFormulario);
-        } else {
-            console.warn("⚠️ Botón de cancelar registro ('cancelar-registro') no encontrado.");
+        
+        // Botón de cancelar dentro del formulario
+        const btnCancelar = document.getElementById("btn-cancelar-form-interno");
+        if (btnCancelar) {
+            btnCancelar.addEventListener("click", cerrarModalFormulario);
         }
-        // Opcional: cerrar al hacer clic fuera del modal
-        // window.addEventListener('click', (event) => {
-        //     if (event.target === formularioContainer) {
-        //         cerrarModalFormulario();
-        //     }
-        // });
+        
+        // Cerrar al hacer clic fuera del modal
+        const formularioContainer = document.getElementById("formulario-container");
+        if (formularioContainer) {
+            // Usamos la delegación de eventos para evitar cerrar cuando se hace clic en el contenido
+            formularioContainer.addEventListener("click", function(e) {
+                // Verificar si el clic fue directamente en el contenedor (fuera del modal-content)
+                if (e.target === formularioContainer) {
+                    cerrarModalFormulario();
+                }
+            });
+        }
+        
+        // Agregar manejador de tecla Escape para cerrar
+        document.addEventListener("keydown", function(e) {
+            if (e.key === "Escape") {
+                const formularioContainer = document.getElementById("formulario-container");
+                if (formularioContainer && formularioContainer.style.display !== "none") {
+                    cerrarModalFormulario();
+                }
+            }
+        });
     }
 
 
@@ -290,30 +344,47 @@ document.addEventListener('DOMContentLoaded', function() {
      * Limpia los campos del formulario y la vista previa de la imagen.
      */
     function limpiarFormulario() {
-        const formToReset = document.getElementById('formulario-publicidad');
-        if (formToReset) {
-            formToReset.reset(); // Resetea campos a sus valores por defecto HTML
-            // Limpiar específicamente campos que reset() podría no vaciar bien
-            const emailInput = document.getElementById('email');
-            const telefonoInput = document.getElementById('telefono');
-            if(emailInput) emailInput.value = '';
-            if(telefonoInput) telefonoInput.value = '';
-
-            // Limpiar la vista previa de la imagen (si existe)
-            const previewContainer = document.getElementById('imagen-preview-container');
-            const placeholder = document.querySelector('.imagen-placeholder'); // Asumiendo que existe
-            if (previewContainer) previewContainer.innerHTML = ''; // Limpiar contenedor
-            if (placeholder) placeholder.style.display = 'block'; // Mostrar placeholder de nuevo
-             // Resetear también el input file mismo
-            const imagenInput = document.getElementById('imagen');
-            if (imagenInput) imagenInput.value = null;
-
-             console.log("🧹 Formulario limpiado.");
-             // Reconfigurar botones de email por si el localStorage cambió mientras estaba abierto
-             // configurarBotonesEmail(); // Opcional, depende de si quieres que se actualice al limpiar
-        } else {
-             console.warn("⚠️ Formulario ('formulario-publicidad') no encontrado al intentar limpiar.");
+        // Limpiar la previsualización de imagen
+        const previewContainer = document.getElementById('imagen-preview-container');
+        if (previewContainer) {
+            previewContainer.style.display = 'none';
+            const previewImg = previewContainer.querySelector('img');
+            if (previewImg) {
+                previewImg.src = '';
+            }
         }
+        
+        // Restablecer elementos principales del formulario
+        document.getElementById('titulo-anuncio').value = '';
+        document.getElementById('texto-anuncio').value = '';
+        
+        // Conservar las opciones de selección de datos del usuario
+        // pero restablecer cualquier input visible alternativo
+        if (document.getElementById('usar-otro-nombre') && document.getElementById('usar-otro-nombre').checked) {
+            document.getElementById('nombre-anunciante').value = '';
+        }
+        
+        if (document.getElementById('usar-otro-correo') && document.getElementById('usar-otro-correo').checked) {
+            document.getElementById('correo-anunciante').value = '';
+        }
+        
+        if (document.getElementById('usar-otro-telefono') && document.getElementById('usar-otro-telefono').checked) {
+            document.getElementById('telefono-anunciante').value = '';
+        }
+        
+        // Restablecer selector de categoría si existe
+        const categoriaSelect = document.getElementById('categoria-anuncio');
+        if (categoriaSelect) {
+            categoriaSelect.selectedIndex = 0;
+        }
+        
+        // Restablecer input de archivo
+        const fileInput = document.getElementById('imagen-anuncio');
+        if (fileInput) {
+            fileInput.value = '';
+        }
+        
+        console.log("🧹 Formulario limpiado exitosamente, manteniendo datos de usuario");
     }
 
     /**
@@ -343,153 +414,269 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     /**
-     * Añade el listener para el envío del formulario. Prepara y envía los datos al backend.
+     * Inicializa el formulario de publicidad.
      */
     function inicializarFormularioPublicidad() {
-        if (!formulario) {
-            console.error('❌ Formulario ("formulario-publicidad") no encontrado. No se puede inicializar.');
-            return;
+        // Obtener elementos importantes
+        const formularioPublicidad = document.getElementById("formulario-publicidad");
+        
+        if (!formularioPublicidad) {
+            console.error("❌ No se encontró el formulario de publicidad");
+            return; // Salir temprano si no se encuentra el formulario
         }
-
-        formulario.addEventListener('submit', async (event) => {
-            event.preventDefault(); // Prevenir envío HTML normal
-            console.log('📨 Formulario enviado. Procesando...');
-
-            const submitBtn = document.getElementById('btn-guardar'); // Botón de Guardar/Enviar
-            const originalBtnText = submitBtn?.innerHTML || "Guardar Publicidad";
-            if(submitBtn) {
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
-                submitBtn.disabled = true;
+        
+        console.log("📝 Inicializando formulario de publicidad...");
+        
+        const descripcionTextarea = document.getElementById("descripcion");
+        const contadorCaracteres = document.getElementById("descripcion-contador");
+        const imagenInput = document.getElementById("imagen");
+        const imagenPreview = document.getElementById("preview");
+        const imagenPlaceholder = document.getElementById("imagen-placeholder-text");
+        const eliminarImagenBtn = document.getElementById("eliminar-imagen");
+        
+        // Configurar contador de caracteres para descripción
+        if (descripcionTextarea && contadorCaracteres) {
+            const maxCaracteres = parseInt(descripcionTextarea.getAttribute("maxlength") || "500");
+            
+            descripcionTextarea.addEventListener("input", function() {
+                const caracteresRestantes = maxCaracteres - this.value.length;
+                contadorCaracteres.textContent = `${caracteresRestantes} caracteres restantes`;
+                
+                // Cambiar color si queda poco espacio
+                if (caracteresRestantes < 50) {
+                    contadorCaracteres.style.color = "red";
+                } else {
+                    contadorCaracteres.style.color = "";
+                }
+            });
+        }
+        
+        // Configurar previsualización de imagen
+        if (imagenInput && imagenPreview && imagenPlaceholder) {
+            imagenInput.addEventListener("change", function(e) {
+                const file = this.files[0];
+                if (file) {
+                    // Validar tamaño (5MB máximo)
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert("La imagen es demasiado grande. El tamaño máximo es 5MB.");
+                        this.value = "";
+                        return;
+                    }
+                    
+                    // Validar tipo
+                    if (!file.type.match('image/jpeg') && 
+                        !file.type.match('image/png') && 
+                        !file.type.match('image/gif')) {
+                        alert("El archivo seleccionado no es una imagen válida. Use JPG, PNG o GIF.");
+                        this.value = "";
+                        return;
+                    }
+                    
+                    // Mostrar vista previa
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        imagenPreview.src = event.target.result;
+                        imagenPreview.style.display = "block";
+                        imagenPlaceholder.style.display = "none";
+                        if (eliminarImagenBtn) eliminarImagenBtn.style.display = "inline-block";
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Función para eliminar imagen
+            if (eliminarImagenBtn) {
+                eliminarImagenBtn.addEventListener("click", function() {
+                    imagenInput.value = "";
+                    imagenPreview.src = "#";
+                    imagenPreview.style.display = "none";
+                    imagenPlaceholder.style.display = "block";
+                    this.style.display = "none";
+                });
             }
-
-            // Remover mensajes previos de éxito/error
-            const prevMsg = formularioContainer?.querySelector('.mensaje-temporal');
-            if(prevMsg) prevMsg.remove();
-
-            try {
-                // 1. Validar Autenticación (localStorage) ANTES de procesar
-                const isUserAuth = localStorage.getItem("afiliado") === "yes";
-                const isProfileComplete = localStorage.getItem("perfil_completo") === "true";
-                 if (!isUserAuth && !isProfileComplete) {
-                    alert("Debes ser un afiliado para registrar publicidad.");
-                    throw new Error("Intento de envío sin autenticación (localStorage)");
-                 }
-
-                // 2. Recolectar Datos del Formulario
-                const formData = new FormData(formulario);
-                const nombreUsuario = localStorage.getItem("nombre") || 'Afiliado'; // Tomar de localStorage
-                const emailContacto = formData.get('email')?.trim();
-                const telefonoContacto = formData.get('telefono')?.trim();
-                const categoria = formData.get('categoria');
-                const titulo = formData.get('titulo')?.trim();
-                const descripcion = formData.get('descripcion')?.trim();
-
-                // 3. Validación de Campos Requeridos (Frontend)
-                 if (!titulo || !descripcion || !emailContacto || !categoria) {
-                    alert("Por favor, completa todos los campos obligatorios: Título, Descripción, Categoría y Email de contacto.");
-                    throw new Error("Campos obligatorios faltantes");
-                 }
-                 // Validación simple de email (opcional)
-                 if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailContacto)) {
-                    alert("Por favor, introduce un email de contacto válido.");
-                    throw new Error("Email inválido");
-                 }
-
-                // 4. Preparar Objeto de Datos para el Backend (estructura de v1 corregida)
-                const datosParaEnviar = {
-                    nombre: nombreUsuario,
-                    contacto: {
-                        email: emailContacto,
-                        telefono: telefonoContacto || null // Enviar null si está vacío
-                    },
-                    categoria: categoria,
-                    titulo: titulo,
-                    descripcion: descripcion,
-                    imagen_base64: null // Inicializar
-                };
-
-                // 5. Procesar Imagen (si existe)
-                const imagenInput = document.getElementById('imagen');
-                if (imagenInput?.files?.[0]) {
-                    try {
-                        datosParaEnviar.imagen_base64 = await leerImagenComoBase64(imagenInput.files[0]);
-                        console.log("🖼️ Imagen procesada a Base64.");
-                    } catch (imgError) {
-                        console.error("Error procesando imagen:", imgError);
-                        alert(`Error al procesar la imagen: ${imgError.message}. Intenta sin imagen o con otra.`);
-                        throw imgError; // Relanzar para que lo capture el catch principal
+            
+            // Configurar drag & drop
+            const imagenPreviewContainer = document.getElementById("imagen-preview");
+            if (imagenPreviewContainer) {
+                ["dragenter", "dragover", "dragleave", "drop"].forEach(eventName => {
+                    imagenPreviewContainer.addEventListener(eventName, preventDefaults, false);
+                });
+                
+                function preventDefaults(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                
+                // Highlight drop area when drag over
+                ["dragenter", "dragover"].forEach(eventName => {
+                    imagenPreviewContainer.addEventListener(eventName, highlight, false);
+                });
+                
+                ["dragleave", "drop"].forEach(eventName => {
+                    imagenPreviewContainer.addEventListener(eventName, unhighlight, false);
+                });
+                
+                function highlight() {
+                    imagenPreviewContainer.classList.add("drag-highlight");
+                }
+                
+                function unhighlight() {
+                    imagenPreviewContainer.classList.remove("drag-highlight");
+                }
+                
+                // Handle dropped files
+                imagenPreviewContainer.addEventListener("drop", handleDrop, false);
+                
+                function handleDrop(e) {
+                    const dt = e.dataTransfer;
+                    const files = dt.files;
+                    if (files.length > 0) {
+                        imagenInput.files = files; // Asignar los archivos al input
+                        // Disparar evento change manualmente
+                        imagenInput.dispatchEvent(new Event('change'));
                     }
                 }
-
-                // 6. Enviar Datos al Backend
-                console.log("➡️ Datos a enviar:", datosParaEnviar);
-                if (!backendApiUrl) throw new Error("URL del backend no configurada.");
-
-                await enviarPublicidadBackend(datosParaEnviar, backendApiUrl);
-
-                // 7. Éxito (si enviarPublicidadBackend no lanzó error)
-                mostrarMensajeExito("¡Solicitud enviada! Tu anuncio está pendiente de aprobación.");
-                cerrarModalFormulario(); // Cerrar modal en éxito
-
-            } catch (error) {
-                console.error('🚨 Error durante el procesamiento/envío del formulario:', error);
-                // Mostrar mensaje de error si no es una de las validaciones ya alertadas
-                if (error.message !== "Intento de envío sin autenticación (localStorage)" &&
-                    error.message !== "Campos obligatorios faltantes" &&
-                    error.message !== "Email inválido" &&
-                    !error.message.startsWith("La imagen supera"))
-                {
-                     mostrarMensajeError(error.message || 'Ocurrió un error inesperado.');
-                }
-            } finally {
-                // Siempre restaurar el botón de envío
-                if (submitBtn) {
-                    submitBtn.innerHTML = originalBtnText;
-                    submitBtn.disabled = false;
-                }
-                 console.log('✅ Procesamiento del formulario finalizado.');
             }
-        });
-         console.log("👍 Listener de envío del formulario inicializado.");
+        }
+        
+        // Configurar envío del formulario
+        if (formularioPublicidad) {
+            formularioPublicidad.addEventListener("submit", async function(e) {
+                e.preventDefault();
+                
+                // Validar campos obligatorios
+                const nombre = document.getElementById("nombre").value;
+                const email = document.getElementById("email").value;
+                const telefono = document.getElementById("telefono").value;
+                const categoria = document.getElementById("categoria").value;
+                const titulo = document.getElementById("titulo").value;
+                const descripcion = document.getElementById("descripcion").value;
+                
+                if (!nombre || !email || !telefono || !categoria || !titulo || !descripcion) {
+                    alert("Por favor completa todos los campos obligatorios");
+                    return;
+                }
+                
+                // Preparar datos
+                const datos = {
+                    nombre: nombre,
+                    correo: email,
+                    telefono: telefono,
+                    categoria: categoria,
+                    titulo: titulo,
+                    descripcion: descripcion
+                };
+                
+                // Obtener cédula del localStorage si existe
+                const cedulaGuardada = localStorage.getItem("cedula");
+                if (cedulaGuardada) {
+                    datos.cedula = cedulaGuardada;
+                }
+                
+                // Leer imagen como base64 si hay una seleccionada
+                if (imagenInput && imagenInput.files.length > 0) {
+                    try {
+                        datos.imagen_base64 = await leerImagenComoBase64(imagenInput.files[0]);
+                    } catch (error) {
+                        console.error("Error al leer la imagen:", error);
+                        alert("Error al procesar la imagen. Por favor, intenta con otra imagen.");
+                        return;
+                    }
+                }
+                
+                // Enviar datos al backend
+                const backendApiUrl = window.API_ENDPOINTS?.publicidad || `${getBackendUrl()}/api/publicidad`;
+                
+                // Deshabilitar formulario durante envío
+                const submitBtn = document.getElementById("btn-guardar");
+                const cancelBtn = document.getElementById("btn-cancelar-form-interno");
+                
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+                }
+                
+                if (cancelBtn) {
+                    cancelBtn.disabled = true;
+                }
+                
+                try {
+                    const resultado = await enviarPublicidadBackend(datos, backendApiUrl);
+                    
+                    if (resultado.success) {
+                        // Limpiar formulario y cerrar modal
+                        limpiarFormulario();
+                        cerrarModalFormulario();
+                        
+                        // Mostrar mensaje de éxito
+                        mostrarMensajeExito("Tu anuncio ha sido enviado y está pendiente de aprobación por la Junta Directiva.");
+                    } else {
+                        throw new Error(resultado.mensaje || "Error desconocido al enviar la publicidad");
+                    }
+                } catch (error) {
+                    console.error("Error al enviar publicidad:", error);
+                    mostrarMensajeError("Hubo un problema al enviar tu anuncio. Por favor intenta nuevamente.");
+                } finally {
+                    // Re-habilitar formulario
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Anuncio para Aprobación';
+                    }
+                    
+                    if (cancelBtn) {
+                        cancelBtn.disabled = false;
+                    }
+                }
+            });
+        }
     }
 
     /**
-     * Envía los datos de publicidad al endpoint del backend.
-     * @param {object} datos - El objeto con los datos estructurados para enviar.
-     * @param {string} urlDestino - La URL del endpoint POST /api/publicidad.
+     * Envía los datos de publicidad al backend.
+     * @param {Object} datos - Los datos a enviar.
+     * @param {string} urlDestino - La URL del endpoint.
+     * @returns {Promise<Object>} - La respuesta del servidor.
      */
     async function enviarPublicidadBackend(datos, urlDestino) {
+        console.log(`📤 Enviando datos de publicidad a ${urlDestino}...`);
+        
         try {
-            console.log(`📞 Enviando datos a POST ${urlDestino}`);
             const response = await fetch(urlDestino, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json' // Indicar que esperamos JSON
+                    'Accept': 'application/json',
+                    'ngrok-skip-browser-warning': 'true', // Para evitar la página de advertencia de ngrok
+                    'User-Agent': 'sinepub-client' // Identificar la solicitud
                 },
-                body: JSON.stringify(datos) // Enviar el objeto como JSON
+                body: JSON.stringify(datos)
             });
 
-            // Intentar leer la respuesta JSON incluso si no es OK, puede contener detalles del error
-            const responseData = await response.json().catch(() => ({})); // Objeto vacío si falla el parseo
-
+            // Si la respuesta no es 2xx
             if (!response.ok) {
-                console.error(`Error ${response.status} del backend:`, responseData);
-                // Usar el mensaje de error del backend si existe, si no, un mensaje genérico
-                const errorMessage = responseData.detail || responseData.message || `Error HTTP ${response.status} al guardar la publicidad.`;
-                throw new Error(errorMessage);
+                // Intentar obtener el mensaje de error del cuerpo
+                let errorBody = {};
+                try {
+                    errorBody = await response.json();
+                } catch (e) {
+                    // Si no se puede parsear como JSON, usar el texto
+                    const errorText = await response.text();
+                    throw new Error(`Error HTTP ${response.status}: ${errorText.substring(0, 100)}`);
+                }
+                
+                throw new Error(errorBody.detail || errorBody.mensaje || `Error HTTP ${response.status}`);
             }
 
-            // Éxito en la comunicación con el backend
-            console.log("✅ Respuesta exitosa del backend:", responseData);
-            // La lógica de éxito (mensaje, cerrar modal) se maneja fuera de esta función
-            // en el listener del formulario, después de que esta promesa se resuelva.
-
+            // Parsear la respuesta como JSON
+            const data = await response.json();
+            console.log(`✅ Publicidad enviada con éxito:`, data);
+            return data;
         } catch (error) {
-            console.error("🚨 Error en enviarPublicidadBackend:", error);
-            // Relanzar el error para que sea capturado por el listener del formulario
-            // y muestre el mensaje de error al usuario.
-            throw error;
+            console.error(`❌ Error al enviar publicidad:`, error);
+            return {
+                success: false,
+                mensaje: error.message || "Error al enviar la publicidad"
+            };
         }
     }
 
@@ -544,40 +731,51 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Funciones de Carga y Like de Anuncios (Base: Versión 1 - ¡REVISAR URL LIKE!) ---
 
     /**
-     * Carga los anuncios aprobados desde el backend y los muestra.
+     * Carga los anuncios desde el backend.
      */
     async function cargarAnuncios() {
-        console.log(`📞 Cargando anuncios desde GET ${backendApiUrl}...`);
-        if (!anunciosContainer) {
-             console.error("❌ No se encontró el contenedor '.anuncios-container'. No se pueden mostrar anuncios.");
-             return;
-        }
-        if (!backendApiUrl) {
-            anunciosContainer.innerHTML = '<p class="error-mensaje">Error: URL del backend no configurada para cargar anuncios.</p>';
-            return;
-        }
-
-        anunciosContainer.innerHTML = `<p class="cargando-mensaje"><i class="fas fa-spinner fa-spin"></i> Cargando anuncios...</p>`; // Feedback visual
-
         try {
-            const response = await fetch(backendApiUrl); // GET /api/publicidad
+            // Obtener URL del API desde configuración global o usar un valor predeterminado
+            const backendApiUrl = window.API_ENDPOINTS?.publicidad || `${getBackendUrl()}/api/publicidad`;
+            console.log(`📞 Cargando anuncios desde GET ${backendApiUrl}...`);
+
+            const response = await fetch(backendApiUrl, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'ngrok-skip-browser-warning': 'true', // Para evitar la página de advertencia de ngrok
+                    'User-Agent': 'sinepub-client' // Identificar la solicitud
+                }
+            });
+
+            // Manejar respuesta distinta a 200 OK
             if (!response.ok) {
-                throw new Error(`Error HTTP ${response.status} al obtener anuncios.`);
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
+
+            // Convertir respuesta a JSON
             const data = await response.json();
-
-            // Asumiendo que la respuesta es { anuncios: [...] } o similar
-            const anuncios = data.anuncios || (Array.isArray(data) ? data : []); // Ser flexible con la respuesta
-
-            // Filtrar para mostrar solo los aprobados
-            const anunciosAprobados = anuncios.filter(a => a.aprobado === true);
-            console.log(`✅ Anuncios recibidos: ${anuncios.length} total, ${anunciosAprobados.length} aprobados.`);
-
+            
+            // Extraer anuncios aprobados (si es que hay anuncios)
+            const anuncios = data.anuncios || [];
+            const anunciosAprobados = anuncios.filter(anuncio => anuncio.aprobado === true);
+            
+            console.log(`✅ Anuncios cargados: ${anuncios.length} total, ${anunciosAprobados.length} aprobados.`);
+            
+            // Actualizar la vista con los anuncios
             actualizarVistaAnuncios(anunciosAprobados);
-
+            
         } catch (error) {
-            console.error("🚨 Error al cargar anuncios:", error);
-            anunciosContainer.innerHTML = `<p class="error-mensaje">⚠️ No se pudieron cargar los anuncios. Intenta recargar la página.</p>`;
+            console.error(`🚨 Error al cargar anuncios:`, error);
+            // Mostrar mensaje de error en los contenedores de anuncios
+            const categorias = ['asistencia', 'comercio', 'servicios', 'educacion'];
+            categorias.forEach(categoria => {
+                const container = document.getElementById(`anuncios-${categoria}`);
+                if (container) {
+                    container.innerHTML = `<p class="anuncio-error">No se pudieron cargar los anuncios. Intente nuevamente más tarde.</p>`;
+                }
+            });
         }
     }
 
@@ -730,32 +928,43 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Inicialización de la Página y Listeners Globales ---
 
     function initPage() {
-        console.log("🚀 Inicializando página de publicidad (Versión Fusionada)...");
-        // Aplicar fade-in al cargar (si se usa CSS para ello)
-        document.body.classList.add('fade-in'); // Asegurar que esté visible
-
-        // Slider: Mostrar el primer slide y configurar navegación
-        if(slides.length > 0) {
-            updateSlide(0); // Mostrar slide inicial
-            setupSliderNavListeners(); // Configurar botones y enlaces
-        } else {
-            console.warn(" Módulo Slider no inicializado: no se encontraron slides.");
+        console.log("🚀 Inicializando página de publicidad");
+        
+        try {
+            // Configurar los listeners del slider si existe
+            if (document.querySelector('.slider-nav')) {
+                setupSliderNavListeners();
+                // Actualizar los indicadores del slider
+                updateSliderDots();
+            } else {
+                console.log("⚠️ No se encontró el elemento slider-nav");
+            }
+            
+            // Configurar el botón de registro si existe
+            if (typeof configurarBotonRegistro === 'function') {
+                configurarBotonRegistro();
+            } else {
+                console.log("⚠️ La función configurarBotonRegistro no está disponible");
+            }
+            
+            // Inicializar el formulario si existe
+            const formularioPublicidad = document.getElementById("formulario-publicidad");
+            if (formularioPublicidad) {
+                inicializarFormularioPublicidad();
+            } else {
+                console.log("⚠️ No se encontró el formulario de publicidad (#formulario-publicidad)");
+            }
+            
+            // Cargar anuncios
+            cargarAnuncios();
+            
+            // Configurar los botones de like después de cargar anuncios
+            setTimeout(setupLikeButtonListeners, 1500);
+            
+            console.log("✅ Página de publicidad inicializada correctamente");
+        } catch (error) {
+            console.error("❌ Error al inicializar la página:", error);
         }
-
-        // Formulario: Configurar listeners de envío y botones de email
-        inicializarFormularioPublicidad();
-        configurarBotonesEmail(); // Configurar inicialmente
-
-        // Modal: Configurar botones de cierre
-        setupModalCloseListeners();
-
-        // Autenticación: Configurar el botón de registro basado en localStorage
-        configurarBotonRegistro();
-
-        // Anuncios: Cargar los anuncios existentes del backend
-        cargarAnuncios();
-
-        console.log("👍 Página de publicidad inicializada.");
     }
 
     // Listener para cambios en localStorage (ej: login/logout en otra pestaña)
@@ -840,4 +1049,20 @@ async function verificarCedulaPublicidad(cedula, callback) {
         }
         throw error;
     }
+}
+
+// Función para obtener la URL del backend
+function getBackendUrl() {
+    // Primero intentar usar la URL desde config.js
+    if (window.API_ENDPOINTS && window.API_ENDPOINTS.base) {
+        return window.API_ENDPOINTS.base;
+    }
+    
+    // Luego intentar con BACKEND_URL si está definida
+    if (window.BACKEND_URL) {
+        return window.BACKEND_URL;
+    }
+    
+    // Por último, usar la URL de ngrok estática como fallback
+    return 'https://61f8-2800-484-8786-7d00-5963-3db4-73c3-1a5c.ngrok-free.app';
 }

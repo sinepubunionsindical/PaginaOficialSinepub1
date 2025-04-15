@@ -1,7 +1,70 @@
-// Función para mostrar el Popup de autenticación
-function showAuthPopup() {
-    console.log(" Intentando mostrar el popup...");
-    console.trace('Traza de la llamada a showAuthPopup');
+// Función para mostrar el Popup de consentimiento Habeas Data
+function showDataConsentPopup() {
+    console.log("📊 Mostrando popup de consentimiento de datos...");
+    
+    // Verificar si ya existe
+    const existingPopup = document.getElementById("data-consent-popup");
+    if (existingPopup) {
+        console.log("📊 Popup de consentimiento ya está abierto.");
+        return;
+    }
+
+    const popup = document.createElement("div");
+    popup.id = "data-consent-popup";
+    popup.style.position = "fixed";
+    popup.style.top = "50%";
+    popup.style.left = "50%";
+    popup.style.transform = "translate(-50%, -50%)";
+    popup.style.background = "white";
+    popup.style.padding = "30px";
+    popup.style.boxShadow = "0 4px 8px rgba(0,0,0,0.3)";
+    popup.style.zIndex = "10000";
+    popup.style.borderRadius = "8px";
+    popup.style.textAlign = "left";
+    popup.style.maxWidth = "600px";
+    popup.style.width = "90%";
+
+    popup.innerHTML = `
+        <h3 style="color: #0249aa; text-align: center;">Consentimiento para el Tratamiento de Datos Personales</h3>
+        <p>Estimado usuario, para acceder al servicio de chat y verificar su afiliación al sindicato SINEPUB HUV, necesitamos recopilar y procesar ciertos datos personales:</p>
+        <ul style="margin-left: 20px;">
+            <li>Número de cédula (para verificar su afiliación)</li>
+            <li>Nombre completo (proporcionado por nuestro sistema)</li>
+            <li>Correo electrónico (si decide completar su perfil)</li>
+            <li>Foto de perfil (opcional al completar su perfil)</li>
+        </ul>
+        <p>Estos datos serán utilizados exclusivamente para:</p>
+        <ul style="margin-left: 20px;">
+            <li>Verificar su afiliación al sindicato</li>
+            <li>Personalizar su experiencia en la plataforma</li>
+            <li>Brindarle acceso a servicios exclusivos para afiliados</li>
+        </ul>
+        <p>Sus datos serán tratados conforme a la Ley 1581 de 2012 (Habeas Data) y nuestras <a href="#" style="color: #0249aa;">Políticas de Privacidad</a>.</p>
+        <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px;">
+            <button id="consent-accept-btn" style="background-color: #35a9aa; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Aceptar y Continuar</button>
+            <button id="consent-cancel-btn" style="background-color: #f44336; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Cancelar</button>
+        </div>
+    `;
+
+    document.body.appendChild(popup);
+
+    // Agregar eventos a los botones
+    document.getElementById("consent-accept-btn").addEventListener("click", function() {
+        popup.remove();
+        // Solo después de aceptar mostramos el popup de autenticación
+        showAuthenticationPopup();
+    });
+
+    document.getElementById("consent-cancel-btn").addEventListener("click", function() {
+        popup.remove();
+        console.log("📊 Usuario canceló el consentimiento de datos");
+    });
+}
+
+// Función para mostrar el Popup de autenticación (renombrada la original)
+function showAuthenticationPopup() {
+    console.log(" Intentando mostrar el popup de autenticación...");
+    console.trace('Traza de la llamada a showAuthenticationPopup');
 
     try {
         const existingPopup = document.getElementById("auth-popup");
@@ -56,6 +119,12 @@ function showAuthPopup() {
     } catch (error) {
         console.error('Error al crear el popup:', error);
     }
+}
+
+// Función para mostrar el Popup de autenticación - punto de entrada original
+function showAuthPopup() {
+    // Ahora muestra primero el popup de consentimiento
+    showDataConsentPopup();
 }
 
 // Verificación de cédula
@@ -193,16 +262,65 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
 
     let intentosRestantes = 2;
 
-    document.getElementById("verificar-contrasena").addEventListener("click", () => {
+    document.getElementById("verificar-contrasena").addEventListener("click", async () => {
         const contrasena = document.getElementById("input-contrasena").value;
         const codigoSecreto = localStorage.getItem("codigo_secreto");
+        const cedula = localStorage.getItem("cedula");
         
         if (contrasena === codigoSecreto) {
             popupContrasena.remove();
             localStorage.setItem("afiliado_autenticado", "true");
-            mostrarPopupBienvenida(mensajeBienvenida);
-            // Comprobar el perfil en background
-            comprobarPerfilUsuarioEnBackground(cedula);
+            
+            // En lugar de mostrar el popup de bienvenida con opciones,
+            // verificamos inmediatamente si el perfil ya está completo
+            console.log("🔍 Verificando estado del perfil en el backend para cédula:", cedula);
+            
+            try {
+                const response = await fetch(`${getBackendUrl()}/obtener_perfil/${cedula}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log("📊 Datos de perfil recibidos:", data);
+                
+                if (data.perfil_completo) {
+                    // El perfil ya está completo, guardar datos en localStorage
+                    localStorage.setItem('perfil_completo', 'true');
+                    localStorage.setItem('afiliado', 'yes');
+                    
+                    // Guardar los datos del usuario en localStorage
+                    if (data.datos) {
+                        if (data.datos.nombre) localStorage.setItem('nombre', data.datos.nombre);
+                        if (data.datos.correo) {
+                            localStorage.setItem('correo', data.datos.correo);
+                            localStorage.setItem('email', data.datos.correo);
+                        }
+                        if (data.datos.foto_ruta) localStorage.setItem('foto_ruta', data.datos.foto_ruta);
+                    }
+                    
+                    // Mostrar el popup de bienvenida simple
+                    const mensajeSimple = `
+                        <h2>Bienvenido al Sindicato</h2>
+                        <p>Nombre: ${nombre}</p>
+                        <p>Cargo: ${cargo}</p>
+                    `;
+                    mostrarPopupBienvenidaSimple(mensajeSimple);
+                } else {
+                    // El perfil no está completo, mostrar formulario obligatorio
+                    mostrarFormularioCompletarPerfilObligatorio(cedula, nombre);
+                }
+            } catch (error) {
+                console.error("❌ Error al verificar el perfil:", error);
+                // En caso de error, mostramos el formulario de perfil obligatorio por seguridad
+                mostrarFormularioCompletarPerfilObligatorio(cedula, nombre);
+            }
         } else {
             intentosRestantes--;
             popupContrasena.remove();
@@ -221,6 +339,243 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
     document.getElementById("cancelar-contrasena").addEventListener("click", function() {
         popupContrasena.remove();
     });
+}
+
+// Nueva función para mostrar el popup de bienvenida simple (sin opciones de completar/omitir)
+function mostrarPopupBienvenidaSimple(mensaje) {
+    console.log("✅ Mostrando popup de bienvenida simple...");
+    
+    const popupBienvenida = document.createElement("div");
+    popupBienvenida.id = "popup-bienvenida";
+    popupBienvenida.style.position = "fixed";
+    popupBienvenida.style.top = "50%";
+    popupBienvenida.style.left = "50%";
+    popupBienvenida.style.transform = "translate(-50%, -50%)";
+    popupBienvenida.style.background = "#35a9aa"; // Verde aguamarina
+    popupBienvenida.style.color = "#0249aa"; // Azul para el texto
+    popupBienvenida.style.padding = "30px";
+    popupBienvenida.style.borderRadius = "10px";
+    popupBienvenida.style.textAlign = "center";
+    popupBienvenida.style.width = "500px";
+    popupBienvenida.style.boxShadow = "0 5px 15px rgba(0,0,0,0.3)";
+    popupBienvenida.style.zIndex = "10000";
+
+    popupBienvenida.innerHTML = `
+        <h2>Acceso Verificado</h2>
+        ${mensaje}
+        <p>¡Bienvenido de nuevo! Ahora puedes usar nuestro asistente virtual.</p>
+        <button id="aceptar-btn" style="
+            background-color: #0249aa;
+            color: white;
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;">
+            Aceptar
+        </button>
+    `;
+
+    document.body.appendChild(popupBienvenida);
+
+    // Evento para el botón de aceptar
+    const botonAceptar = document.getElementById("aceptar-btn");
+    botonAceptar.addEventListener("mouseenter", function() {
+        this.style.backgroundColor = "#03306b";
+    });
+    
+    botonAceptar.addEventListener("mouseleave", function() {
+        this.style.backgroundColor = "#0249aa";
+    });
+    
+    botonAceptar.addEventListener("click", function() {
+        popupBienvenida.remove();
+        // Activar el chatbot directamente
+        activarChatbot();
+    });
+
+    // Ocultar el popup de autenticación si aún existe
+    const authPopup = document.getElementById("auth-popup");
+    if (authPopup) {
+        authPopup.remove();
+    }
+}
+
+// Función para mostrar el formulario de completar perfil obligatorio (sin opción de omitir)
+function mostrarFormularioCompletarPerfilObligatorio(cedula, nombre) {
+    console.log("📝 Mostrando formulario obligatorio para completar perfil");
+    
+    const existingPopup = document.getElementById("auth-popup");
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+    
+    const popup = document.createElement("div");
+    popup.id = "auth-popup";
+    popup.style.position = "fixed";
+    popup.style.top = "50%";
+    popup.style.left = "50%";
+    popup.style.transform = "translate(-50%, -50%)";
+    popup.style.background = "white";
+    popup.style.padding = "20px";
+    popup.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
+    popup.style.zIndex = "10000";
+    popup.style.borderRadius = "8px";
+    popup.style.width = "400px";
+    popup.style.textAlign = "center";
+
+    popup.innerHTML = `
+        <h3>Completa tu perfil para continuar</h3>
+        <p>Para brindarte una mejor experiencia y un acceso completo, necesitamos que completes tu perfil. Estos datos se guardan de forma segura en nuestro servidor.</p>
+        
+        <div id="profile-panel">
+            <div style="margin-bottom: 15px;">
+                <label for="nombre">Nombre completo:</label>
+                <input type="text" id="nombre" value="${nombre || ''}" placeholder="Tu nombre completo" required>
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label for="correo">Correo electrónico:</label>
+                <input type="email" id="correo" placeholder="tu@correo.com" required>
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label for="telefono">Número de teléfono (opcional):</label>
+                <input type="tel" id="telefono" placeholder="Tu número de teléfono">
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label>Foto de perfil:</label>
+                <div style="display: flex; align-items: center; justify-content: center; margin-top: 10px;">
+                    <img id="user-photo-preview" src="" alt="Foto de perfil" style="width: 100px; height: 100px; border-radius: 50%; border: 1px solid #ccc; object-fit: cover; display: none;">
+                    <input type="file" id="user-photo" accept="image/*" style="display: block; margin: 10px auto;">
+                </div>
+            </div>
+            
+            <button id="guardar-perfil-btn">Guardar Perfil</button>
+        </div>
+    `;
+
+    document.body.appendChild(popup);
+    
+    // Obtener correo de localStorage si existe
+    const correo = localStorage.getItem("correo");
+    if (correo) {
+        document.getElementById('correo').value = correo;
+    }
+    
+    // Obtener teléfono de localStorage si existe
+    const telefono = localStorage.getItem("telefono");
+    if (telefono) {
+        document.getElementById('telefono').value = telefono;
+    }
+    
+    // Evento para previsualizar la imagen seleccionada
+    document.getElementById('user-photo').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const preview = document.getElementById('user-photo-preview');
+                preview.src = event.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    // Evento para guardar el perfil
+    let guardarBtn = document.getElementById('guardar-perfil-btn');
+    
+    if (guardarBtn) {
+        // Clonar para limpiar listeners
+        const newGuardarBtn = guardarBtn.cloneNode(true);
+        guardarBtn.parentNode.replaceChild(newGuardarBtn, guardarBtn);
+        guardarBtn = newGuardarBtn;
+        
+        guardarBtn.addEventListener('click', function() {
+            // Validación de campos obligatorios
+            const nombreValue = document.getElementById('nombre').value;
+            const correoValue = document.getElementById('correo').value;
+            
+            if (!nombreValue || !correoValue) {
+                alert('Por favor completa los campos obligatorios: Nombre y Correo electrónico');
+                return;
+            }
+            
+            // Deshabilitar botón mientras se guarda
+            guardarBtn.disabled = true;
+            guardarBtn.textContent = 'Guardando...';
+            
+            const telefonoValue = document.getElementById('telefono').value;
+            const fotoPreview = document.getElementById('user-photo-preview');
+            const fotoValue = fotoPreview.style.display !== 'none' ? fotoPreview.src : '';
+            
+            // Guardar en localStorage para uso temporal
+            if (telefonoValue) {
+                localStorage.setItem('telefono', telefonoValue);
+            }
+            
+            // Enviar datos al backend
+            const datos = {
+                cedula: cedula,
+                nombre: nombreValue,
+                correo: correoValue,
+                telefono: telefonoValue,
+                foto: fotoValue
+            };
+            
+            fetch(`${getBackendUrl()}/actualizar_perfil`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(datos)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Actualizar localStorage con todos los datos
+                    localStorage.setItem('nombre', nombreValue);
+                    localStorage.setItem('correo', correoValue);
+                    localStorage.setItem('email', correoValue);
+                    localStorage.setItem('perfil_completo', 'true');
+                    localStorage.setItem('afiliado', 'yes');
+                    if (telefonoValue) {
+                        localStorage.setItem('telefono', telefonoValue);
+                    }
+                    if (data.foto_url) {
+                        localStorage.setItem('foto_ruta', data.foto_url);
+                    }
+                    
+                    // Cerrar el popup del formulario
+                    popup.remove();
+                    
+                    // Mostrar mensaje de éxito y activar chatbot
+                    const mensajeExito = `
+                        <h2>¡Perfil Completado!</h2>
+                        <p>Gracias por completar tu perfil. Ahora puedes disfrutar de todos los beneficios.</p>
+                    `;
+                    mostrarPopupBienvenidaSimple(mensajeExito);
+                } else {
+                    throw new Error(data.error || 'Error al actualizar el perfil');
+                }
+            })
+            .catch(error => {
+                console.error('Error al actualizar perfil:', error);
+                alert('Ha ocurrido un error al actualizar tu perfil. Por favor intenta nuevamente.');
+                guardarBtn.disabled = false;
+                guardarBtn.textContent = 'Guardar Perfil';
+            });
+        });
+    }
 }
 
 // Función para mostrar el popup de bienvenida
@@ -302,20 +657,11 @@ function verificarPerfilUsuario() {
     console.log("- Email:", email);
     console.log("- Perfil completo:", perfilCompleto);
     
-    // Comprobar primero si el perfil ya está marcado como completo en localStorage
-    if (perfilCompleto === "true") {
-        console.log(" Perfil ya marcado como completo en localStorage");
-        
-        // Si estamos en la página de publicidad, primero configurar el botón de registro
-        if (window.configurarBotonRegistro) {
-            console.log(" Reconfigurando botón de registro después de verificar perfil completo");
-            window.configurarBotonRegistro();
-        }
-        
-        // --- MODIFICADO: Solo crear el botón flotante, no activar el chat --- 
-        console.log(" Perfil completo (LocalStorage). Asegurando botón flotante.");
-        crearBotonFlotante();
-        return; 
+    // Verificar si ya se completó el perfil previamente
+    if (localStorage.getItem("perfil_completo") === "true") {
+        console.log("✅ Perfil ya está completo según localStorage");
+        mostrarPopupBienvenidaPersonalizado();
+        return;
     }
     
     // Obtener datos del perfil del usuario desde el backend
@@ -871,6 +1217,8 @@ window.verifyCedula = verifyCedula;
 window.verificarCedulaEnServidor = verificarCedulaEnServidor;
 window.mostrarPopupContrasena = mostrarPopupContrasena;
 window.mostrarPopupBienvenida = mostrarPopupBienvenida;
+window.mostrarPopupBienvenidaSimple = mostrarPopupBienvenidaSimple;
+window.mostrarFormularioCompletarPerfilObligatorio = mostrarFormularioCompletarPerfilObligatorio;
 window.mostrarPopupError = mostrarPopupError;
 window.bloquearBoton = bloquearBoton;
 window.activarChatbot = activarChatbot;
@@ -1127,6 +1475,82 @@ function enviarDatosPerfil(datos) {
         console.error("❌ Error:", error);
         alert("Error actualizando perfil: " + error.message);
     });
+}
+
+// Nueva función para mostrar el popup de bienvenida personalizado con foto
+function mostrarPopupBienvenidaPersonalizado() {
+    console.log("👋 Mostrando popup de bienvenida personalizado");
+    
+    // Recuperar datos del localStorage
+    const nombre = localStorage.getItem("nombre") || "Usuario";
+    const foto = localStorage.getItem("foto") || "";
+    
+    // Crear el popup
+    const popupBienvenida = document.createElement("div");
+    popupBienvenida.id = "popup-bienvenida-personalizado";
+    popupBienvenida.style.position = "fixed";
+    popupBienvenida.style.top = "50%";
+    popupBienvenida.style.left = "50%";
+    popupBienvenida.style.transform = "translate(-50%, -50%)";
+    popupBienvenida.style.background = "#35a9aa"; // Verde aguamarina
+    popupBienvenida.style.color = "#0249aa"; // Azul para el texto
+    popupBienvenida.style.padding = "30px";
+    popupBienvenida.style.borderRadius = "10px";
+    popupBienvenida.style.textAlign = "center";
+    popupBienvenida.style.width = "400px";
+    popupBienvenida.style.boxShadow = "0 5px 15px rgba(0,0,0,0.3)";
+    popupBienvenida.style.zIndex = "10000";
+
+    // Contenido del popup
+    popupBienvenida.innerHTML = `
+        <h2 style="margin-top: 0; color: #0249aa;">¡Bienvenido de nuevo!</h2>
+        ${foto ? `<img src="${foto}" alt="Foto de perfil" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin: 10px auto; display: block; border: 3px solid #0249aa;">` : ''}
+        <h3 style="margin: 15px 0; color: #0249aa;">¡Hola ${nombre}!</h3>
+        <p style="margin-bottom: 20px; color: #0249aa;">Estamos contentos de verte nuevamente. ¿Deseas acceder al sistema?</p>
+        <button id="continuar-btn" style="
+            background-color: #0249aa;
+            color: white;
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;">
+            Sí, ingresar ahora
+        </button>
+    `;
+
+    // Añadir al body
+    document.body.appendChild(popupBienvenida);
+
+    // Hover effect para el botón
+    const continuarBtn = document.getElementById("continuar-btn");
+    if (continuarBtn) {
+        continuarBtn.addEventListener("mouseenter", function() {
+            this.style.backgroundColor = "#35a9aa";
+            this.style.color = "#0249aa";
+        });
+        
+        continuarBtn.addEventListener("mouseleave", function() {
+            this.style.backgroundColor = "#0249aa";
+            this.style.color = "white";
+        });
+        
+        // Acción al hacer clic en continuar
+        continuarBtn.addEventListener("click", function() {
+            popupBienvenida.remove();
+            
+            // Activar el chatbot usando el botón original
+            const chatButton = document.getElementById("chatbot-button");
+            if (chatButton) {
+                console.log("🎙️ Activando chatbot mediante botón original");
+                chatButton.click();
+            } else {
+                console.warn("⚠️ Botón de chatbot no encontrado");
+                activarChatbot(); // Fallback al método directo
+            }
+        });
+    }
 }
 
 
