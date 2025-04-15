@@ -768,7 +768,7 @@ document.addEventListener('DOMContentLoaded', function() {
             categorias.forEach(categoria => {
                 const container = document.getElementById(`anuncios-${categoria}`);
                 if (container) {
-                    container.innerHTML = `<p class="anuncio-error">No se pudieron cargar los anuncios. Intente nuevamente más tarde.</p>`;
+                    container.innerHTML = `<p class="anuncio-error">No se pudieron cargar los anuncios. Nuestro servidor no esta funcionando. Intente nuevamente más tarde.</p>`;
                 }
             });
         }
@@ -806,7 +806,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const titulo = anuncio.titulo || 'Anuncio';
             const descripcion = anuncio.descripcion || 'Sin descripción.';
-            const categoria = anuncio.categoria || 'General';
+            const categoriaOriginal = anuncio.categoria ? anuncio.categoria.toLowerCase().trim() : '';
+            const categoriasValidas = ["asistencia", "comercio", "servicios", "educacion"];
+            const categoria = categoriasValidas.includes(categoriaOriginal) ? categoriaOriginal : "asistencia";
             const likes = anuncio.likes || 0;
             const nombre = anuncio.nombre || 'Anónimo';
             
