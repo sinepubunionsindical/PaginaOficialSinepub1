@@ -1,0 +1,136 @@
+.elektra-chat-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    background-color: rgba(53, 169, 170, 0.9); /* Color base con ligera transparencia */
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    z-index: 9999; /* Asegura que esté sobre todos los elementos */
+}
+
+.elektra-chat-button:hover {
+    background-color: #001f3f; /* Azul oscuro */
+    color: #ff0000; /* Rojo */
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+
+.elektra-chat-window {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 450px;
+    height: 500px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1000;
+}
+
+.chat-header {
+    background: #35a9aa;
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close-chat {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.chat-messages {
+    flex-grow: 1;
+    padding: 15px;
+    overflow-y: auto;
+}
+
+.message {
+    margin-bottom: 15px;
+    max-width: 85%; /* Aumentado de 80% a 85% */
+    white-space: pre-wrap; /* Preserva los saltos de línea y espacios */
+    word-wrap: break-word; /* Evita que el texto se desborde */
+}
+
+/* Mejorar el espaciado de los mensajes */
+.message p {
+    margin: 0;
+    line-height: 1.4;
+    font-size: 14px;
+}
+
+.elektra-message {
+    margin-right: auto;
+    background: #f0f0f0;
+    border-radius: 15px 15px 15px 0;
+    padding: 10px;
+}
+
+.tú-message {
+    margin-left: auto;
+    background: #35a9aa;
+    color: white;
+    border-radius: 15px 15px 0 15px;
+    padding: 10px;
+}
+
+.sender {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.tú-message .sender {
+    color: #fff;
+}
+
+.chat-input {
+    padding: 15px;
+    display: flex;
+    gap: 10px;
+    border-top: 1px solid #eee;
+}
+
+.chat-input input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    outline: none;
+}
+
+.chat-input button {
+    padding: 10px 20px;
+    background: #35a9aa;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+/* Ajustar responsive para la nueva anchura */
+@media (max-width: 768px) {
+    .elektra-chat-window {
+        width: 95%; /* Aumentado de 90% a 95% */
+        height: 85vh; /* Aumentado de 80vh a 85vh */
+        bottom: 70px;
+        right: 2.5%;
+        left: 2.5%;
+    }
+}
