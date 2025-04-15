@@ -59,6 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
             registrarBtn.style.backgroundColor = "#35a9aa"; // Color normal
             registrarBtn.style.cursor = "pointer";
             registrarBtn.disabled = false;
+            registrarBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Publicar Anuncio <span style="display: inline-block; padding: 4px 8px; font-size: 12px; font-weight: bold; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; border-radius: 10px; margin-left: 5px; background-color: #28a745; color: white;">Disponible</span>';
             
             // Limpiar eventos anteriores para evitar duplicados
             registrarBtn.removeEventListener('click', mostrarFormularioRegistro);
@@ -73,6 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
             registrarBtn.style.backgroundColor = "#cccccc"; // Gris para indicar deshabilitado
             registrarBtn.style.cursor = "not-allowed";
             registrarBtn.disabled = false; // Mantener habilitado para mostrar mensaje de error
+            registrarBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Publicar Anuncio <span style="display: inline-block; padding: 4px 8px; font-size: 12px; font-weight: bold; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; border-radius: 10px; margin-left: 5px; background-color: #dc3545; color: white;">No Disponible</span>';
             
             // Limpiar eventos anteriores
             registrarBtn.removeEventListener('click', mostrarFormularioRegistro);
@@ -860,10 +862,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     <p class="anuncio-descripcion">${descripcion}</p>
                     
                     <div class="anuncio-footer">
-                        <button class="like-button" data-anuncio-id="${id}" title="Me gusta">
-                            <i class="fas fa-thumbs-up"></i>
-                            <span class="likes-count">${likes}</span>
-                        </button>
+                        <div class="anuncio-actions">
+                            <button class="like-button" data-anuncio-id="${id}" title="Me gusta">
+                                <i class="fas fa-thumbs-up"></i>
+                                <span class="likes-count">${likes}</span>
+                            </button>
+                            
+                            <button class="availability-button" data-anuncio-id="${id}" title="Disponibilidad">
+                                <i class="fas fa-check-circle"></i>
+                                <span class="btn-text">Disponible</span>
+                            </button>
+                        </div>
                         
                         <div class="anuncio-contacto">
                             ${anuncio.telefono ? `<a href="tel:${anuncio.telefono}" class="contacto-link"><i class="fas fa-phone"></i></a>` : ''}
@@ -974,21 +983,50 @@ document.addEventListener('DOMContentLoaded', function() {
                 border-top: 1px solid #f0f0f0;
             }
             
-            .like-button {
+            .anuncio-actions {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+            }
+            
+            .like-button, .availability-button {
                 background: transparent;
                 border: none;
                 display: flex;
                 align-items: center;
                 gap: 5px;
-                color: #35a9aa;
                 cursor: pointer;
                 padding: 5px 10px;
                 border-radius: 5px;
-                transition: background 0.2s ease;
+                transition: all 0.2s ease;
+            }
+            
+            .like-button {
+                color: #35a9aa;
             }
             
             .like-button:hover {
                 background: #f0f8ff;
+            }
+            
+            .availability-button {
+                color: #28a745;
+                font-weight: 500;
+            }
+            
+            .availability-button.no-disponible {
+                color: #dc3545;
+                cursor: not-allowed;
+                opacity: 0.8;
+            }
+            
+            .availability-button.disabled {
+                background-color: #f8f9fa;
+                border: 1px solid #e2e6ea;
+            }
+            
+            .availability-button:hover:not(.disabled) {
+                background: #e8f5e9;
             }
             
             .liked-animation {
@@ -1029,6 +1067,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Añadir listeners a los botones de like DESPUÉS de crear el HTML
         setupLikeButtonListeners();
+        
+        // Configurar botones de disponibilidad
+        setTimeout(configurarBotonesDisponibilidad, 100);
     }
 
     /**
@@ -1169,10 +1210,102 @@ document.addEventListener('DOMContentLoaded', function() {
             // Configurar los botones de like después de cargar anuncios
             setTimeout(setupLikeButtonListeners, 1500);
             
+            // Configurar botones de disponibilidad según estado de autenticación
+            setTimeout(configurarBotonesDisponibilidad, 1500);
+            
             console.log("✅ Página de publicidad inicializada correctamente");
         } catch (error) {
             console.error("❌ Error al inicializar la página:", error);
         }
+    }
+
+    /**
+     * Configura los botones de disponibilidad en los anuncios según el estado de autenticación
+     */
+    function configurarBotonesDisponibilidad() {
+        console.log("🔄 Configurando botones de disponibilidad en anuncios...");
+        
+        // Verificar estado de autenticación
+        const isUserAuth = localStorage.getItem("afiliado") === "yes";
+        const isProfileComplete = localStorage.getItem("perfil_completo") === "true";
+        const estaAutenticado = localStorage.getItem("afiliado_autenticado") === "true";
+        const isAuthenticated = isUserAuth || isProfileComplete || estaAutenticado;
+        
+        // Seleccionar todos los botones de disponibilidad
+        const availabilityButtons = document.querySelectorAll('.availability-button, .disponibilidad-button, .anuncio-footer button:not(.like-button)');
+        
+        if (availabilityButtons.length === 0) {
+            console.log("ℹ️ No se encontraron botones de disponibilidad en la página");
+            return;
+        }
+        
+        console.log(`🔍 Encontrados ${availabilityButtons.length} botones de disponibilidad. Estado autenticación: ${isAuthenticated ? 'Autenticado' : 'No autenticado'}`);
+        
+        // Configurar cada botón según el estado de autenticación
+        availabilityButtons.forEach(button => {
+            if (isAuthenticated) {
+                // Usuario autenticado - Botón disponible
+                button.classList.remove('disabled', 'no-disponible');
+                button.classList.add('disponible');
+                button.disabled = false;
+                
+                // Actualizar texto o ícono si es necesario
+                if (button.querySelector('.btn-text')) {
+                    button.querySelector('.btn-text').textContent = 'Disponible';
+                } else if (button.textContent.includes('disponible') || button.textContent.includes('Disponible')) {
+                    button.textContent = 'Disponible';
+                }
+                
+                // Eliminar evento anterior y agregar funcionalidad
+                button.replaceWith(button.cloneNode(true));
+                const newButton = document.querySelector(`[data-anuncio-id="${button.getAttribute('data-anuncio-id')}"]`) || button;
+                if (newButton) {
+                    newButton.addEventListener('click', handleAvailabilityClick);
+                }
+            } else {
+                // Usuario no autenticado - Botón no disponible
+                button.classList.remove('disponible');
+                button.classList.add('disabled', 'no-disponible');
+                button.disabled = true;
+                
+                // Actualizar texto o ícono
+                if (button.querySelector('.btn-text')) {
+                    button.querySelector('.btn-text').textContent = 'No Disponible';
+                } else if (button.textContent.includes('disponible') || button.textContent.includes('Disponible')) {
+                    button.textContent = 'No Disponible';
+                }
+                
+                // Actualizar el icono si existe
+                const icon = button.querySelector('i');
+                if (icon) {
+                    icon.className = 'fas fa-times-circle';
+                }
+                
+                // Eliminar evento anterior y agregar mensaje de autenticación
+                button.replaceWith(button.cloneNode(true));
+                const newButton = document.querySelector(`[data-anuncio-id="${button.getAttribute('data-anuncio-id')}"]`) || button;
+                if (newButton) {
+                    newButton.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        alert("Debes iniciar sesión para acceder a esta funcionalidad.");
+                    });
+                }
+            }
+        });
+        
+        console.log(`✅ Botones de disponibilidad configurados: estado = ${isAuthenticated ? 'Autenticado' : 'No autenticado'}`);
+    }
+    
+    /**
+     * Manejador de evento para el clic en el botón de disponibilidad
+     */
+    function handleAvailabilityClick(event) {
+        event.preventDefault();
+        console.log("🖱️ Clic en botón de disponibilidad");
+        
+        const anuncioId = this.getAttribute('data-anuncio-id');
+        // Aquí iría la lógica específica de tu aplicación para la disponibilidad
+        alert("Funcionalidad de disponibilidad activada para el anuncio: " + anuncioId);
     }
 
     // Listener para cambios en localStorage (ej: login/logout en otra pestaña)
@@ -1181,6 +1314,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.key === 'afiliado' || e.key === 'nombre' || e.key === 'perfil_completo' || e.key === 'email') {
             console.log(`📣 Storage cambió ('${e.key}'). Reconfigurando componentes...`);
             configurarBotonRegistro(); // Actualizar estado del botón principal
+            // Actualizar botones de disponibilidad
+            configurarBotonesDisponibilidad();
             // Si el modal está abierto, podríamos querer actualizar los botones de email
             if (formularioContainer?.style.display === 'block') {
                  configurarBotonesEmail(); // Reconfigurar botones de email dentro del modal
