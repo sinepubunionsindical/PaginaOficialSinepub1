@@ -807,15 +807,20 @@ document.addEventListener('DOMContentLoaded', function() {
             const descripcion = anuncio.descripcion || 'Sin descripción.';
             const categoriaOriginal = anuncio.categoria ? anuncio.categoria.toLowerCase().trim() : '';
             const categoriasValidas = ["asistencia", "comercio", "servicios", "educacion"];
-            const categoria = categoriasValidas.includes(categoriaOriginal)
+            const categoria = categoriasValidas.includes(categoriaOriginal) ? categoriaOriginal : 'educacion';
             const likes = anuncio.likes || 0;
             const nombre = anuncio.nombre || 'Anónimo';
             
-            // Buscar la imagen de perfil en localStorage o usar un placeholder
-            let fotoPerfil = 'images/avatar-placeholder.png'; // Placeholder por defecto
-            const fotoRuta = localStorage.getItem('foto_ruta');
-            if (fotoRuta) {
-                fotoPerfil = fotoRuta;
+            // Buscar la foto de perfil o usar un placeholder
+            let fotoPerfil = '/images/avatar-placeholder.png'; // Placeholder por defecto
+            
+            // Si hay foto de perfil en el anuncio, usar la ruta de GitHub
+            if (anuncio.foto_perfil) {
+                if (typeof anuncio.foto_perfil === 'object' && anuncio.foto_perfil.github_path) {
+                    fotoPerfil = anuncio.foto_perfil.github_path;
+                } else if (typeof anuncio.foto_perfil === 'string') {
+                    fotoPerfil = anuncio.foto_perfil;
+                }
             }
             
             // Fecha de publicación formateada
