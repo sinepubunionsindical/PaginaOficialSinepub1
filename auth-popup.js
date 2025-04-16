@@ -312,7 +312,9 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
                             method: 'GET',
                             headers: {
                                 'Accept': 'application/json',
-                                'Content-Type': 'application/json'
+                                'Content-Type': 'application/json',
+                                'ngrok-skip-browser-warning': 'true', // Para evitar la página de advertencia de ngrok
+                                'User-Agent': 'sinepub-client' // Identificar la solicitud
                             }
                         });
                 
@@ -390,6 +392,68 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
     document.getElementById("cancelar-contrasena").addEventListener("click", function () {
         popupContrasena.remove();
     });
+}
+
+
+// Nueva función para mostrar el popup de bienvenida simple (sin opciones de completar/omitir)
+function mostrarPopupBienvenidaSimple(mensaje) {
+    console.log("✅ Mostrando popup de bienvenida simple...");
+    
+    const popupBienvenida = document.createElement("div");
+    popupBienvenida.id = "popup-bienvenida";
+    popupBienvenida.style.position = "fixed";
+    popupBienvenida.style.top = "50%";
+    popupBienvenida.style.left = "50%";
+    popupBienvenida.style.transform = "translate(-50%, -50%)";
+    popupBienvenida.style.background = "#35a9aa"; // Verde aguamarina
+    popupBienvenida.style.color = "#0249aa"; // Azul para el texto
+    popupBienvenida.style.padding = "30px";
+    popupBienvenida.style.borderRadius = "10px";
+    popupBienvenida.style.textAlign = "center";
+    popupBienvenida.style.width = "500px";
+    popupBienvenida.style.boxShadow = "0 5px 15px rgba(0,0,0,0.3)";
+    popupBienvenida.style.zIndex = "10000";
+
+    popupBienvenida.innerHTML = `
+        <h2>Acceso Verificado</h2>
+        ${mensaje}
+        <p>¡Bienvenido de nuevo! Ahora puedes usar nuestro asistente virtual.</p>
+        <button id="aceptar-btn" style="
+            background-color: #0249aa;
+            color: white;
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;">
+            Aceptar
+        </button>
+    `;
+
+    document.body.appendChild(popupBienvenida);
+
+    // Evento para el botón de aceptar
+    const botonAceptar = document.getElementById("aceptar-btn");
+    botonAceptar.addEventListener("mouseenter", function() {
+        this.style.backgroundColor = "#03306b";
+    });
+    
+    botonAceptar.addEventListener("mouseleave", function() {
+        this.style.backgroundColor = "#0249aa";
+    });
+    
+    botonAceptar.addEventListener("click", function() {
+        popupBienvenida.remove();
+        // Activar el chatbot directamente
+        activarChatbot();
+    });
+
+    // Ocultar el popup de autenticación si aún existe
+    const authPopup = document.getElementById("auth-popup");
+    if (authPopup) {
+        authPopup.remove();
+    }
 }
 
 // Función para mostrar el formulario de completar perfil obligatorio (sin opción de omitir)
@@ -635,6 +699,7 @@ function mostrarPopupBienvenida(mensaje) {
         authPopup.remove();
     }
 }
+
 
 // Función para mostrar el formulario de completar perfil
 function mostrarFormularioCompletarPerfil(cedula, nombre) {
@@ -1237,12 +1302,14 @@ function mostrarPopupBienvenidaPersonalizado() {
         // Acción al hacer clic en continuar
         continuarBtn.addEventListener("click", function() {
             popupBienvenida.remove();
-            
+            const authPopup = document.getElementById("auth-popup");
+            if (authPopup) authPopup.remove();
+
             // Activar el chatbot usando el botón original
             const chatButton = document.getElementById("chatbot-button");
             if (chatButton) {
                 console.log("🎙️ Activando chatbot mediante botón original");
-                chatButton.click();
+                activarChatbot(); 
             } else {
                 console.warn("⚠️ Botón de chatbot no encontrado");
                 activarChatbot(); // Fallback al método directo

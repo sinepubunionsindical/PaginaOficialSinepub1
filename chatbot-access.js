@@ -171,6 +171,9 @@ async function activarChatbot() {
     const linkEstatutosMobile = document.getElementById("estatutos-link-mobile");
     const linkModulos = document.getElementById("modulos-link");
     const linkAfiliacion = document.getElementById("afiliacion-link");
+    // Asegurar que se cierre cualquier ventana de autenticación residual
+    cerrarTodosLosPopups(); // 🔥🔥🔥
+
 
     // Ocultar botón y mostrar/ocultar enlaces
     if (botonChat) botonChat.style.display = "none";
@@ -205,4 +208,25 @@ function bloquearBoton() {
         localStorage.setItem("afiliado", "no");
     }
 }
+
+function cerrarTodosLosPopups() {
+    console.log("🧹 Cerrando todos los popups de autenticación...");
+
+    const ids = [
+        "auth-popup",
+        "popup-contrasena",
+        "data-consent-popup",
+        "popup-bienvenida",
+        "popup-error",
+        "popup-bienvenida-personalizado",
+        "popup-verificacion",
+        "loading-popup"
+    ];
+
+    ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+    });
+}
+
 
