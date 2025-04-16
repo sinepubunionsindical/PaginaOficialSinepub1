@@ -303,11 +303,6 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
 
                 const verificarPerfil = async () => {
                     try {
-                        if (localStorage.getItem("perfil_completo") === "true") {
-                            console.log("⚠️ Perfil ya está completo, no se llama al backend.");
-                            mostrarPopupBienvenidaPersonalizado();
-                            return;
-                        }
                         const perfilResponse = await fetch(`${getBackendUrl()}/api/perfil/${cedula}`, {
                             method: 'GET',
                             headers: {
@@ -459,10 +454,6 @@ function mostrarPopupBienvenidaSimple(mensaje) {
 // Función para mostrar el formulario de completar perfil obligatorio (sin opción de omitir)
 function mostrarFormularioCompletarPerfilObligatorio(cedula, nombre) {
     console.log("📝 Mostrando formulario obligatorio para completar perfil");
-    if (localStorage.getItem("perfil_completo") === "true") {
-        console.warn("⛔ El perfil ya está marcado como completo, no se debe mostrar el formulario.");
-        return;
-    }
     
     const existingPopup = document.getElementById("auth-popup");
     if (existingPopup) {
