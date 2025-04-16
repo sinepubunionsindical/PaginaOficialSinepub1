@@ -303,6 +303,11 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
 
                 const verificarPerfil = async () => {
                     try {
+                        if (localStorage.getItem("perfil_completo") === "true") {
+                            console.log("⚠️ Perfil ya está completo, no se llama al backend.");
+                            mostrarPopupBienvenidaPersonalizado();
+                            return;
+                        }
                         const perfilResponse = await fetch(`${getBackendUrl()}/api/perfil/${cedula}`, {
                             method: 'GET',
                             headers: {
@@ -316,10 +321,14 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
                         const perfilData = await perfilResponse.json();
                         console.log("📊 Datos recibidos de /api/perfil:", perfilData);
                 
-                        if (perfilData.perfil_completo || localStorage.getItem("perfil_completo") === "true") {
+                        const perfilCompletoBackend = perfilData.perfil_completo === true;
+                        const perfilCompletoLocal = localStorage.getItem("perfil_completo") === "true";
+                        
+                        if (perfilCompletoBackend || perfilCompletoLocal) {
+                            console.log("✅ Perfil marcado como completo en backend o localStorage.");
                             localStorage.setItem('perfil_completo', 'true');
                             localStorage.setItem('afiliado', 'yes');
-                
+                        
                             const datos = perfilData.datos || {};
                             if (datos.nombre) localStorage.setItem('nombre', datos.nombre);
                             if (datos.correo) {
@@ -329,14 +338,15 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
                             if (datos.foto && datos.foto.backend_path) {
                                 localStorage.setItem('foto_ruta', datos.foto.backend_path);
                             }
-                
+                        
                             document.getElementById("loading-popup")?.remove();
                             mostrarPopupBienvenidaPersonalizado();
                             return;
                         }
-                
+                        
+                        // Si no está completo ni en backend ni en localStorage
                         document.getElementById("loading-popup")?.remove();
-                        mostrarFormularioCompletarPerfilObligatorio(cedula, nombre);
+                        mostrarFormularioCompletarPerfilObligatorio(cedula, nombre);                   
                 
                     } catch (error) {
                         console.error("❌ Error al verificar el perfil:", error);
@@ -380,68 +390,6 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
     document.getElementById("cancelar-contrasena").addEventListener("click", function () {
         popupContrasena.remove();
     });
-}
-
-
-// Nueva función para mostrar el popup de bienvenida simple (sin opciones de completar/omitir)
-function mostrarPopupBienvenidaSimple(mensaje) {
-    console.log("✅ Mostrando popup de bienvenida simple...");
-    
-    const popupBienvenida = document.createElement("div");
-    popupBienvenida.id = "popup-bienvenida";
-    popupBienvenida.style.position = "fixed";
-    popupBienvenida.style.top = "50%";
-    popupBienvenida.style.left = "50%";
-    popupBienvenida.style.transform = "translate(-50%, -50%)";
-    popupBienvenida.style.background = "#35a9aa"; // Verde aguamarina
-    popupBienvenida.style.color = "#0249aa"; // Azul para el texto
-    popupBienvenida.style.padding = "30px";
-    popupBienvenida.style.borderRadius = "10px";
-    popupBienvenida.style.textAlign = "center";
-    popupBienvenida.style.width = "500px";
-    popupBienvenida.style.boxShadow = "0 5px 15px rgba(0,0,0,0.3)";
-    popupBienvenida.style.zIndex = "10000";
-
-    popupBienvenida.innerHTML = `
-        <h2>Acceso Verificado</h2>
-        ${mensaje}
-        <p>¡Bienvenido de nuevo! Ahora puedes usar nuestro asistente virtual.</p>
-        <button id="aceptar-btn" style="
-            background-color: #0249aa;
-            color: white;
-            font-size: 16px;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s ease-in-out;">
-            Aceptar
-        </button>
-    `;
-
-    document.body.appendChild(popupBienvenida);
-
-    // Evento para el botón de aceptar
-    const botonAceptar = document.getElementById("aceptar-btn");
-    botonAceptar.addEventListener("mouseenter", function() {
-        this.style.backgroundColor = "#03306b";
-    });
-    
-    botonAceptar.addEventListener("mouseleave", function() {
-        this.style.backgroundColor = "#0249aa";
-    });
-    
-    botonAceptar.addEventListener("click", function() {
-        popupBienvenida.remove();
-        // Activar el chatbot directamente
-        activarChatbot();
-    });
-
-    // Ocultar el popup de autenticación si aún existe
-    const authPopup = document.getElementById("auth-popup");
-    if (authPopup) {
-        authPopup.remove();
-    }
 }
 
 // Función para mostrar el formulario de completar perfil obligatorio (sin opción de omitir)
@@ -688,99 +636,6 @@ function mostrarPopupBienvenida(mensaje) {
     }
 }
 
-// NUEVA FUNCIÓN: Verificar si el usuario necesita completar su perfil
-function verificarPerfilUsuario() {
-    if (localStorage.getItem("perfil_completo") === "true") {
-        console.warn("⛔ El perfil ya está marcado como completo, no se debe mostrar el formulario.");
-        return;
-    }
-    const cedula = localStorage.getItem("cedula");
-    const nombre = localStorage.getItem("nombre");
-    const correo = localStorage.getItem("correo");
-    const email = localStorage.getItem("email");
-    const perfilCompleto = localStorage.getItem("perfil_completo");
-    
-    console.log(" Verificando perfil de usuario:");
-    console.log("- Cédula:", cedula);
-    console.log("- Nombre:", nombre);
-    console.log("- Correo:", correo);
-    console.log("- Email:", email);
-    console.log("- Perfil completo:", perfilCompleto);
-    
-    // Verificar si ya se completó el perfil previamente
-    if (localStorage.getItem("perfil_completo") === "true") {
-        console.log("✅ Perfil ya está completo según localStorage");
-        mostrarPopupBienvenidaPersonalizado();
-        return;
-    }
-    
-    // Obtener datos del perfil del usuario desde el backend
-    fetch(`${getBackendUrl()}/obtener_perfil/${cedula}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => {
-        console.log(" Status respuesta obtención perfil:", response.status, response.statusText);
-        
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
-        }
-        
-        // Verificar que la respuesta sea JSON
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            return response.text().then(text => {
-                console.error(" Respuesta no es JSON:", contentType);
-                console.error("Contenido recibido (primeros 500 caracteres):", text.substring(0, 500) + "...");
-                console.error("URL completa de la solicitud:", `${getBackendUrl()}/obtener_perfil/${cedula}`);
-                throw new Error('La respuesta del servidor no es JSON válido');
-            });
-        }
-        
-        return response.json();
-    })
-    .then(data => {
-        console.log(" Datos de perfil del usuario:", data);
-        
-        if (data.perfil_completo) {
-            // El perfil ya está completo, guardar esta información en localStorage
-            localStorage.setItem('perfil_completo', 'true');
-            
-            // Guardar los datos del usuario en localStorage
-            if (data.datos) {
-                if (data.datos.nombre) localStorage.setItem('nombre', data.datos.nombre);
-                if (data.datos.correo) {
-                    localStorage.setItem('correo', data.datos.correo);
-                    localStorage.setItem('email', data.datos.correo);
-                }
-                if (data.datos.foto_ruta) localStorage.setItem('foto_ruta', data.datos.foto_ruta);
-            }
-            
-            // Si estamos en la página de publicidad, configurar el botón de registro
-            if (window.configurarBotonRegistro) {
-                console.log(" Reconfigurando botón de registro después de obtener datos completos");
-                window.configurarBotonRegistro();
-            }
-            
-            // --- MODIFICADO: Solo crear el botón flotante, no activar el chat --- 
-            console.log(" Perfil completo (Backend). Asegurando botón flotante.");
-            crearBotonFlotante(); 
-            // Ya no se llama a activarChatbot aquí.
-            
-        } else {
-            // Mostrar formulario para completar perfil
-            mostrarFormularioCompletarPerfil(cedula, nombre);
-        }
-    })
-    .catch(error => {
-        console.error('Error al obtener datos del perfil:', error);
-        // Si hay error, mostrar formulario por defecto
-        mostrarFormularioCompletarPerfil(cedula, nombre);
-    });
-}
-
 // Función para mostrar el formulario de completar perfil
 function mostrarFormularioCompletarPerfil(cedula, nombre) {
     console.log(" Mostrando formulario para completar perfil");
@@ -892,78 +747,6 @@ function mostrarFormularioCompletarPerfil(cedula, nombre) {
             closeAuthPopup();
         });
     }
-}
-
-// Función para guardar el perfil del usuario
-function guardarPerfilUsuario(cedula, nombre, correo, foto, guardarBtn, cancelarBtn) {
-    const originalBtnText = 'Guardar Perfil';
-    
-    if (!cedula || !nombre || !correo) {
-        alert('Por favor completa todos los campos obligatorios');
-        if (guardarBtn) {
-            guardarBtn.disabled = false;
-            guardarBtn.textContent = originalBtnText;
-        }
-        if (cancelarBtn) cancelarBtn.disabled = false;
-        return;
-    }
-
-    const datos = {
-        cedula: cedula,
-        nombre: nombre,
-        correo: correo,
-        foto: foto
-    };
-
-    console.log(" Enviando datos de perfil:", {...datos, foto: foto ? '(Base64 imagen)' : null});
-
-    fetch(`${getBackendUrl()}/actualizar_perfil`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify(datos)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            localStorage.setItem('nombre', nombre);
-            localStorage.setItem('correo', correo);
-            localStorage.setItem('email', correo);
-            localStorage.setItem('perfil_completo', 'true');
-            if (data.foto_url) {
-                localStorage.setItem('foto_ruta', data.foto_url);
-            }
-            
-            closeAuthPopup();
-            
-            if (!window.location.pathname.includes('publicidad.html')) {
-                const initialContainer = document.getElementById('boton-flotante');
-                if (initialContainer) {
-                    initialContainer.style.display = 'none';
-                }
-            }
-            
-            crearBotonFlotante();
-        } else {
-            throw new Error(data.error || 'Error al actualizar el perfil');
-        }
-    })
-    .catch(error => {
-        console.error('Error al actualizar perfil:', error);
-        alert('Ha ocurrido un error al actualizar tu perfil. Por favor intenta nuevamente.');
-        if (guardarBtn) {
-            guardarBtn.disabled = false;
-            guardarBtn.textContent = originalBtnText;
-        }
-        if (cancelarBtn) cancelarBtn.disabled = false;
-    });
 }
 
 // Función para mostrar el popup de error
@@ -1323,46 +1106,6 @@ function getBackendUrl() {
     return localUrl;
 }
 
-// Nueva función para comprobar el perfil en el backend sin mostrar UI
-function comprobarPerfilUsuarioEnBackground(cedula) {
-    const validarUrl = `${getBackendUrl()}/validar_perfil/${cedula}`;
-    
-    fetch(validarUrl)
-        .then(response => response.json())
-        .then(data => {
-            if (data.perfil_completo) {
-                // El perfil ya está completo, guardar esta información
-                localStorage.setItem('perfil_completo', 'true');
-                
-                // Guardar los datos del usuario en localStorage
-                if (data.datos) {
-                    if (data.datos.nombre) localStorage.setItem('nombre', data.datos.nombre);
-                    if (data.datos.correo) {
-                        localStorage.setItem('correo', data.datos.correo);
-                        localStorage.setItem('email', data.datos.correo);
-                    }
-                    if (data.datos.foto_ruta) localStorage.setItem('foto_ruta', data.datos.foto_ruta);
-                }
-                
-                // Si estamos en la página de publicidad, configurar el botón de registro
-                if (window.configurarBotonRegistro) {
-                    console.log(" Reconfigurando botón de registro después de obtener datos completos");
-                    window.configurarBotonRegistro();
-                }
-                
-                // Crear botón flotante
-                crearBotonFlotante();
-                return;
-            } else {
-                // Solo mostrar el formulario si realmente no está completo
-                mostrarFormularioCompletarPerfil(cedula, localStorage.getItem('nombre'));
-            }
-        })
-        .catch(error => {
-            console.error('Error al obtener datos del perfil:', error);
-        });
-}
-
 function verificarPerfilEnBackend() {
     const backendUrl = getBackendUrl();
     const cedula = window.cedulaAutenticada;
@@ -1387,7 +1130,7 @@ function verificarPerfilEnBackend() {
             
             if (data.perfil_completo) {
                 console.log("✅ Perfil completo confirmado por backend");
-                actualizarUIParaPerfilCompleto();
+                mostrarPopupBienvenidaPersonalizado(); // O activarChatbot()
             } else {
                 console.log("⚠️ Perfil incompleto, mostrando formulario");
                 mostrarFormularioCompletarPerfil();
