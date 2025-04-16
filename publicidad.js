@@ -83,7 +83,33 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log("⚠️ Botón de registro configurado para mostrar mensaje de autenticación");
         }
     }
-
+    function mostrarAnuncio(anuncio) {
+        // Usar siempre la ruta de GitHub para las imágenes
+        const imagenSrc = anuncio.imagen_github || '/images/placeholder-anuncio.png';
+        const fotoPerfil = anuncio.foto_perfil_github || '/images/avatar-placeholder.png';
+        
+        return `
+            <div class="anuncio-card">
+                <div class="anuncio-header">
+                    <img src="${fotoPerfil}" alt="Foto de perfil" class="perfil-imagen">
+                    <div class="anuncio-meta">
+                        <h3>${anuncio.titulo}</h3>
+                        <p class="anuncio-autor">${anuncio.nombre}</p>
+                    </div>
+                </div>
+                <div class="anuncio-imagen-container">
+                    <img 
+                        src="${imagenSrc}" 
+                        alt="${anuncio.titulo}" 
+                        class="anuncio-imagen"
+                        onerror="this.onerror=null; this.src='/images/placeholder-anuncio.png';"
+                    >
+                </div>
+                <!-- resto del código... -->
+            </div>
+        `;
+    }
+    
     // Muestra el modal del formulario
     function mostrarFormularioRegistro(e) {
         if (e) e.preventDefault();
