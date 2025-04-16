@@ -730,7 +730,6 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     async function cargarAnuncios() {
         try {
-            // Obtener URL del API desde configuración global o usar un valor predeterminado
             const backendApiUrl = window.API_ENDPOINTS?.publicidad || `${getBackendUrl()}/api/publicidad`;
             console.log(`📞 Cargando anuncios desde GET ${backendApiUrl}...`);
 
@@ -739,36 +738,286 @@ document.addEventListener('DOMContentLoaded', function() {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    'ngrok-skip-browser-warning': 'true', // Para evitar la página de advertencia de ngrok
-                    'User-Agent': 'sinepub-client' // Identificar la solicitud
+                    'ngrok-skip-browser-warning': 'true',
+                    'User-Agent': 'sinepub-client'
                 }
             });
 
-            // Manejar respuesta distinta a 200 OK
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            // Convertir respuesta a JSON
             const data = await response.json();
-            
-            // Extraer anuncios aprobados (si es que hay anuncios)
             const anuncios = data.anuncios || [];
-            const anunciosAprobados = anuncios.filter(anuncio => anuncio.aprobado === true);
             
-            console.log(`✅ Anuncios cargados: ${anuncios.length} total, ${anunciosAprobados.length} aprobados.`);
-            
-            // Actualizar la vista con los anuncios
-            actualizarVistaAnuncios(anunciosAprobados);
-            
+            // Agrupar anuncios por categoría
+            const anunciosPorCategoria = {
+                asistencia: [],
+                comercio: [],
+                servicios: [],
+                educacion: []
+            };
+
+            // Filtrar anuncios aprobados y agruparlos por categoría
+            anuncios.forEach(anuncio => {
+                if (anuncio.aprobado) {
+                    const categoria = anuncio.categoria?.toLowerCase().trim() || 'asistencia';
+                    if (categoria in anunciosPorCategoria) {
+                        anunciosPorCategoria[categoria].push(anuncio);
+                    }
+                }
+            });
+
+            // Actualizar cada sección con sus anuncios correspondientes
+            Object.entries(anunciosPorCategoria).forEach(([categoria, anunciosCategoria]) => {
+                const container = document.getElementById(`anuncios-${categoria}`);
+                if (container) {
+                    if (anunciosCategoria.length > 0) {
+                        container.innerHTML = anunciosCategoria.map(anuncio => {
+                            // Preparar la URL de la imagen
+                            let imagenSrc = '';
+                            if (anuncio.imagen_ruta) {
+                                imagenSrc = anuncio.imagen_ruta.startsWith('/') ? anuncio.imagen_ruta : '/' + anuncio.imagen_ruta;
+                            } else {
+                                imagenSrc = '/images/placeholder-anuncio.png';
+                            }
+
+                            // Formatear la fecha
+                            const fecha = new Date(anuncio.fecha_creacion);
+                            const fechaFormateada = fecha.toLocaleDateString('es-ES', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            });
+
+                            // Preparar la foto de perfil
+                            const fotoPerfil = anuncio.foto_perfil || '/images/avatar-placeholder.png';
+
+                            return `
+                                <div class="anuncio-card">
+                                    <div class="anuncio-header">
+                                        <div class="anuncio-perfil">
+                                            <img src="${fotoPerfil}" alt="Foto de perfil" class="perfil-imagen"
+                                                 onerror="this.onerror=null; this.src='/images/avatar-placeholder.png';">
+                                            <div class="perfil-info">
+                                                <h4>${anuncio.nombre || 'Anónimo'}</h4>
+                                                <span class="fecha-publicacion">${fechaFormateada}</span>
+                                            </div>
+                                        </div>
+                                        <div class="categoria-badge ${categoria}">
+                                            <i class="fas fa-tag"></i> ${categoria.charAt(0).toUpperCase() + categoria.slice(1)}
+                                        </div>
+                                    </div>
+
+                                    <div class="anuncio-imagen-container">
+                                        <img src="${imagenSrc}" alt="${anuncio.titulo}" class="anuncio-imagen"
+                                             onerror="this.onerror=null; this.src='/images/placeholder-anuncio.png';">
+                                    </div>
+
+                                    <div class="anuncio-contenido">
+                                        <h3 class="anuncio-titulo">${anuncio.titulo}</h3>
+                                        <p class="anuncio-descripcion">${anuncio.descripcion}</p>
+                                        
+                                        <div class="anuncio-footer">
+                                            <div class="anuncio-stats">
+                                                <button class="like-button" onclick="darLike('${anuncio.id}')" title="Me gusta">
+                                                    <i class="fas fa-heart"></i>
+                                                    <span class="likes-count">${anuncio.likes || 0}</span>
+                                                </button>
+                                            </div>
+                                            <div class="anuncio-contacto">
+                                                ${anuncio.telefono ? `
+                                                    <a href="tel:${anuncio.telefono}" class="contacto-btn">
+                                                        <i class="fas fa-phone"></i> Llamar
+                                                    </a>` : ''
+                                                }
+                                                ${anuncio.email ? `
+                                                    <a href="mailto:${anuncio.email}" class="contacto-btn">
+                                                        <i class="fas fa-envelope"></i> Email
+                                                    </a>` : ''
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
+
+                        // Añadir estilos CSS
+                        if (!document.getElementById('anuncios-custom-styles')) {
+                            const styles = document.createElement('style');
+                            styles.id = 'anuncios-custom-styles';
+                            styles.textContent = `
+                                .anuncio-card {
+                                    background: white;
+                                    border-radius: 12px;
+                                    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                                    margin-bottom: 25px;
+                                    overflow: hidden;
+                                    transition: transform 0.3s ease, box-shadow 0.3s ease;
+                                }
+
+                                .anuncio-card:hover {
+                                    transform: translateY(-5px);
+                                    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+                                }
+
+                                .anuncio-header {
+                                    display: flex;
+                                    justify-content: space-between;
+                                    align-items: center;
+                                    padding: 15px;
+                                    border-bottom: 1px solid #f0f0f0;
+                                }
+
+                                .anuncio-perfil {
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 12px;
+                                }
+
+                                .perfil-imagen {
+                                    width: 45px;
+                                    height: 45px;
+                                    border-radius: 50%;
+                                    object-fit: cover;
+                                    border: 2px solid #35a9aa;
+                                }
+
+                                .perfil-info h4 {
+                                    margin: 0;
+                                    font-size: 16px;
+                                    color: #2c3e50;
+                                }
+
+                                .fecha-publicacion {
+                                    font-size: 12px;
+                                    color: #7f8c8d;
+                                }
+
+                                .categoria-badge {
+                                    padding: 6px 12px;
+                                    border-radius: 20px;
+                                    font-size: 13px;
+                                    font-weight: 500;
+                                }
+
+                                .categoria-badge.asistencia { background: #e8f5e9; color: #2e7d32; }
+                                .categoria-badge.comercio { background: #e3f2fd; color: #1565c0; }
+                                .categoria-badge.servicios { background: #fff3e0; color: #ef6c00; }
+                                .categoria-badge.educacion { background: #f3e5f5; color: #7b1fa2; }
+
+                                .anuncio-imagen-container {
+                                    position: relative;
+                                    width: 100%;
+                                    height: 250px;
+                                    overflow: hidden;
+                                }
+
+                                .anuncio-imagen {
+                                    width: 100%;
+                                    height: 100%;
+                                    object-fit: cover;
+                                    transition: transform 0.3s ease;
+                                }
+
+                                .anuncio-imagen:hover {
+                                    transform: scale(1.05);
+                                }
+
+                                .anuncio-contenido {
+                                    padding: 20px;
+                                }
+
+                                .anuncio-titulo {
+                                    margin: 0 0 15px 0;
+                                    font-size: 20px;
+                                    color: #2c3e50;
+                                }
+
+                                .anuncio-descripcion {
+                                    color: #34495e;
+                                    line-height: 1.6;
+                                    margin-bottom: 20px;
+                                }
+
+                                .anuncio-footer {
+                                    display: flex;
+                                    justify-content: space-between;
+                                    align-items: center;
+                                    margin-top: 20px;
+                                    padding-top: 15px;
+                                    border-top: 1px solid #f0f0f0;
+                                }
+
+                                .like-button {
+                                    background: none;
+                                    border: none;
+                                    color: #e74c3c;
+                                    cursor: pointer;
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 5px;
+                                    padding: 5px 10px;
+                                    transition: transform 0.2s ease;
+                                }
+
+                                .like-button:hover {
+                                    transform: scale(1.1);
+                                }
+
+                                .anuncio-contacto {
+                                    display: flex;
+                                    gap: 10px;
+                                }
+
+                                .contacto-btn {
+                                    display: inline-flex;
+                                    align-items: center;
+                                    gap: 5px;
+                                    padding: 8px 15px;
+                                    border-radius: 20px;
+                                    text-decoration: none;
+                                    font-size: 14px;
+                                    transition: all 0.3s ease;
+                                }
+
+                                .contacto-btn:first-child {
+                                    background: #35a9aa;
+                                    color: white;
+                                }
+
+                                .contacto-btn:last-child {
+                                    background: #f0f0f0;
+                                    color: #2c3e50;
+                                }
+
+                                .contacto-btn:hover {
+                                    transform: translateY(-2px);
+                                    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                                }
+                            `;
+                            document.head.appendChild(styles);
+                        }
+
+                    } else {
+                        container.innerHTML = `
+                            <div class="anuncio-vacio">
+                                <i class="fas fa-inbox"></i>
+                                <p>Actualmente no hay anuncios publicados en esta categoría.</p>
+                            </div>
+                        `;
+                    }
+                }
+            });
+
         } catch (error) {
             console.error(`🚨 Error al cargar anuncios:`, error);
-            // Mostrar mensaje de error en los contenedores de anuncios
             const categorias = ['asistencia', 'comercio', 'servicios', 'educacion'];
             categorias.forEach(categoria => {
                 const container = document.getElementById(`anuncios-${categoria}`);
                 if (container) {
-                    container.innerHTML = `<p class="anuncio-error">No se pudieron cargar los anuncios. Nuestro servidor no esta funcionando. Intente nuevamente más tarde.</p>`;
+                    container.innerHTML = `<p class="anuncio-error">No se pudieron cargar los anuncios. Servidor inactivo.</p>`;
                 }
             });
         }
@@ -793,16 +1042,69 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Verificar y preparar la URL de la imagen
             let imagenSrc = '';
-            if (anuncio.imagen_ruta) {
-                // Asegurarse de que la ruta comience con '/'
+            if (anuncio.imagen_github) {
+                // Usar la ruta de GitHub si está disponible
+                imagenSrc = anuncio.imagen_github;
+            } else if (anuncio.imagen_ruta) {
+                // Si no hay ruta de GitHub, usar la ruta del backend
                 imagenSrc = anuncio.imagen_ruta.startsWith('/') ? anuncio.imagen_ruta : '/' + anuncio.imagen_ruta;
             } else if (anuncio.imagen_base64) {
+                // Si hay datos base64, usarlos directamente
                 imagenSrc = anuncio.imagen_base64;
             } else {
-                // Asegurarse de que el placeholder también tenga la ruta correcta
+                // Usar imagen placeholder como último recurso
                 imagenSrc = '/images/placeholder-anuncio.png';
             }
-            
+
+            // Actualizar los estilos CSS para el contenedor de imagen
+            const styles = document.createElement('style');
+            styles.textContent = `
+                .anuncio-imagen-container {
+                    position: relative;
+                    width: 100%;
+                    padding-top: 56.25%; /* Aspect ratio 16:9 */
+                    overflow: hidden;
+                    background-color: #f8f9fa;
+                }
+
+                .anuncio-imagen {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    object-fit: contain; /* Cambiado de cover a contain */
+                    object-position: center;
+                    transition: transform 0.3s ease;
+                    background-color: #ffffff;
+                }
+
+                .anuncio-imagen:hover {
+                    transform: scale(1.05);
+                }
+
+                /* Añadir un fondo de carga */
+                .anuncio-imagen-container::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: linear-gradient(45deg, #f3f3f3 25%, #e6e6e6 25%, #e6e6e6 50%, #f3f3f3 50%, #f3f3f3 75%, #e6e6e6 75%, #e6e6e6);
+                    background-size: 20px 20px;
+                    opacity: 0.5;
+                }
+
+                /* Estilo para imágenes fallidas */
+                .anuncio-imagen.error {
+                    object-fit: contain;
+                    padding: 20px;
+                    background-color: #f8f9fa;
+                }
+            `;
+            document.head.appendChild(styles);
+
             const titulo = anuncio.titulo || 'Anuncio';
             const descripcion = anuncio.descripcion || 'Sin descripción.';
             const categoriaOriginal = anuncio.categoria ? anuncio.categoria.toLowerCase().trim() : '';
@@ -848,7 +1150,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 <h3 class="anuncio-titulo">${titulo}</h3>
                 
                 <div class="anuncio-imagen-container">
-                    <img src="${imagenSrc}" alt="Imagen de ${titulo}" class="anuncio-imagen" onerror="this.onerror=null; this.src='/images/placeholder-anuncio.png';">
+                    <img 
+                        src="${imagenSrc}" 
+                        alt="${anuncio.titulo || 'Imagen del anuncio'}" 
+                        class="anuncio-imagen"
+                        onerror="this.onerror=null; this.src='/images/placeholder-anuncio.png'; this.classList.add('error');"
+                        loading="lazy"
+                    >
                 </div>
                 
                 <div class="anuncio-content">
