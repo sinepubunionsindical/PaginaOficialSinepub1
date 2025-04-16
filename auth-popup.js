@@ -266,15 +266,13 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
         const contrasena = document.getElementById("input-contrasena").value;
         const codigoSecreto = localStorage.getItem("codigo_secreto");
         const cedula = localStorage.getItem("cedula");
-        
+
         if (contrasena === codigoSecreto) {
             popupContrasena.remove();
             localStorage.setItem("afiliado_autenticado", "true");
-            
-            // En lugar de mostrar el popup de bienvenida con opciones,
-            // verificamos inmediatamente si el perfil ya está completo
+
             console.log("🔍 Verificando estado del perfil en el backend para cédula:", cedula);
-            
+
             try {
                 // Mostrar indicador de carga
                 const loadingPopup = document.createElement("div");
@@ -302,116 +300,68 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
                     </style>
                 `;
                 document.body.appendChild(loadingPopup);
-                
-                // Crear una función para manejar errores de forma más robusta
+
                 const verificarPerfil = async () => {
                     try {
-                        // Primera verificación con endpoint /api/validar_perfil/
-                        const validationResponse = await fetch(`${getBackendUrl()}/api/validar_perfil/${cedula}`, {
+                        const perfilResponse = await fetch(`${getBackendUrl()}/api/perfil/${cedula}`, {
                             method: 'GET',
                             headers: {
                                 'Accept': 'application/json',
                                 'Content-Type': 'application/json'
                             }
                         });
-
-                        if (validationResponse.ok) {
-                            const validationData = await validationResponse.json();
-                            console.log("📊 Datos de validación recibidos:", validationData);
-                            
-                            if (validationData.perfil_completo) {
-                                // El perfil ya está completo
-                                localStorage.setItem('perfil_completo', 'true');
-                                localStorage.setItem('afiliado', 'yes');
-                                
-                                // Guardar los datos del usuario en localStorage
-                                if (validationData.datos) {
-                                    if (validationData.datos.nombre) localStorage.setItem('nombre', validationData.datos.nombre);
-                                    if (validationData.datos.correo) {
-                                        localStorage.setItem('correo', validationData.datos.correo);
-                                        localStorage.setItem('email', validationData.datos.correo);
-                                    }
-                                    if (validationData.datos.foto_ruta) localStorage.setItem('foto_ruta', validationData.datos.foto_ruta);
-                                }
-                                
-                                // Eliminar el indicador de carga
-                                document.getElementById("loading-popup").remove();
-                                
-                                // Mostrar el popup de bienvenida personalizado
-                                mostrarPopupBienvenidaPersonalizado();
-                                return;
+                
+                        if (!perfilResponse.ok) throw new Error("Error al obtener perfil");
+                
+                        const perfilData = await perfilResponse.json();
+                        console.log("📊 Datos recibidos de /api/perfil:", perfilData);
+                
+                        if (perfilData.perfil_completo || localStorage.getItem("perfil_completo") === "true") {
+                            localStorage.setItem('perfil_completo', 'true');
+                            localStorage.setItem('afiliado', 'yes');
+                
+                            const datos = perfilData.datos || {};
+                            if (datos.nombre) localStorage.setItem('nombre', datos.nombre);
+                            if (datos.correo) {
+                                localStorage.setItem('correo', datos.correo);
+                                localStorage.setItem('email', datos.correo);
                             }
+                            if (datos.foto && datos.foto.backend_path) {
+                                localStorage.setItem('foto_ruta', datos.foto.backend_path);
+                            }
+                
+                            document.getElementById("loading-popup")?.remove();
+                            mostrarPopupBienvenidaPersonalizado();
+                            return;
                         }
-                        
-                        // Si llegamos aquí, el perfil no está completo o hubo un error con validar_perfil
-                        // Intentar con el endpoint obtener_perfil como fallback
-                        const detailResponse = await fetch(`${getBackendUrl()}/obtener_perfil/${cedula}`, {
-                            method: 'GET',
-                            headers: {
-                                'Accept': 'application/json',
-                                'Content-Type': 'application/json'
-                            }
-                        });
-                        
-                        if (detailResponse.ok) {
-                            const detailData = await detailResponse.json();
-                            console.log("📊 Datos detallados de perfil recibidos:", detailData);
-                            
-                            if (detailData.perfil_completo) {
-                                // El perfil ya está completo
-                                localStorage.setItem('perfil_completo', 'true');
-                                localStorage.setItem('afiliado', 'yes');
-                                
-                                // Guardar los datos del usuario en localStorage
-                                if (detailData.datos) {
-                                    if (detailData.datos.nombre) localStorage.setItem('nombre', detailData.datos.nombre);
-                                    if (detailData.datos.correo) {
-                                        localStorage.setItem('correo', detailData.datos.correo);
-                                        localStorage.setItem('email', detailData.datos.correo);
-                                    }
-                                    if (detailData.datos.foto_ruta) localStorage.setItem('foto_ruta', detailData.datos.foto_ruta);
-                                }
-                                
-                                // Eliminar el indicador de carga
-                                document.getElementById("loading-popup").remove();
-                                
-                                // Mostrar el popup de bienvenida personalizado
-                                mostrarPopupBienvenidaPersonalizado();
-                                return;
-                            } else {
-                                // El perfil no está completo, mostrar formulario obligatorio
-                                document.getElementById("loading-popup").remove();
-                                mostrarFormularioCompletarPerfilObligatorio(cedula, nombre);
-                                return;
-                            }
-                        }
-                        
-                        // Si ambos métodos fallan, mostrar el formulario obligatorio por defecto
-                        document.getElementById("loading-popup").remove();
+                
+                        document.getElementById("loading-popup")?.remove();
                         mostrarFormularioCompletarPerfilObligatorio(cedula, nombre);
-                        
+                
                     } catch (error) {
                         console.error("❌ Error al verificar el perfil:", error);
-                        // Eliminar el indicador de carga
-                        if (document.getElementById("loading-popup")) {
-                            document.getElementById("loading-popup").remove();
+                
+                        // ✅ CRÍTICO: limpia el popup incluso en error
+                        document.getElementById("loading-popup")?.remove();
+                
+                        if (localStorage.getItem("perfil_completo") === "true") {
+                            mostrarPopupBienvenidaPersonalizado();
+                            return;
                         }
-                        // En caso de error, mostramos el formulario de perfil obligatorio por seguridad
+                
                         mostrarFormularioCompletarPerfilObligatorio(cedula, nombre);
                     }
                 };
                 
-                // Ejecutar la verificación de perfil con ambos métodos
+
                 await verificarPerfil();
-                
+
             } catch (error) {
                 console.error("❌ Error crítico al verificar el perfil:", error);
-                // En caso de error crítico, mostramos el formulario de perfil obligatorio por seguridad
-                if (document.getElementById("loading-popup")) {
-                    document.getElementById("loading-popup").remove();
-                }
+                document.getElementById("loading-popup")?.remove();
                 mostrarFormularioCompletarPerfilObligatorio(cedula, nombre);
             }
+
         } else {
             intentosRestantes--;
             popupContrasena.remove();
@@ -427,10 +377,11 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
         }
     });
 
-    document.getElementById("cancelar-contrasena").addEventListener("click", function() {
+    document.getElementById("cancelar-contrasena").addEventListener("click", function () {
         popupContrasena.remove();
     });
 }
+
 
 // Nueva función para mostrar el popup de bienvenida simple (sin opciones de completar/omitir)
 function mostrarPopupBienvenidaSimple(mensaje) {
@@ -496,6 +447,10 @@ function mostrarPopupBienvenidaSimple(mensaje) {
 // Función para mostrar el formulario de completar perfil obligatorio (sin opción de omitir)
 function mostrarFormularioCompletarPerfilObligatorio(cedula, nombre) {
     console.log("📝 Mostrando formulario obligatorio para completar perfil");
+    if (localStorage.getItem("perfil_completo") === "true") {
+        console.warn("⛔ El perfil ya está marcado como completo, no se debe mostrar el formulario.");
+        return;
+    }
     
     const existingPopup = document.getElementById("auth-popup");
     if (existingPopup) {
@@ -735,6 +690,10 @@ function mostrarPopupBienvenida(mensaje) {
 
 // NUEVA FUNCIÓN: Verificar si el usuario necesita completar su perfil
 function verificarPerfilUsuario() {
+    if (localStorage.getItem("perfil_completo") === "true") {
+        console.warn("⛔ El perfil ya está marcado como completo, no se debe mostrar el formulario.");
+        return;
+    }
     const cedula = localStorage.getItem("cedula");
     const nombre = localStorage.getItem("nombre");
     const correo = localStorage.getItem("correo");

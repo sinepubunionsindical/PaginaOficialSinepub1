@@ -150,36 +150,6 @@ function mostrarPopupError() {
 // 🔹 Función para activar la segunda verificación de contraseña maestra
 let intentosRestantes = 3;
 
-async function mostrarPopupContrasena(nombre, cargo, cedula) {
-    const popupContrasena = crearPopupContrasena();
-    
-    document.getElementById("verificar-contrasena").addEventListener("click", async () => {
-        const contrasena = document.getElementById("input-contrasena").value;
-        
-        try {
-            const response = await fetch(`${API_ENDPOINTS.validarCodigo}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ cedula, codigo: contrasena })
-            });
-            
-            const data = await response.json();
-            
-            if (data.valid) {
-                popupContrasena.remove();
-                localStorage.setItem("afiliado_autenticado", "true"); // Única excepción permitida
-                verificarEstadoPerfil(cedula);
-            } else {
-                manejarIntentoFallido();
-            }
-        } catch (error) {
-            console.error("Error:", error);
-            mostrarError("Error de conexión");
-        }
-    });
-}
 
 function manejarIntentoFallido() {
     intentosRestantes--;
@@ -220,97 +190,6 @@ async function activarChatbot() {
 
 // Variable global para la instancia de AIChat
 let aiChatInstance = null;
-
-async function inicializarChatIA() {
-    // Obtener referencias a los elementos del DOM
-    const userInput = document.getElementById('user-input');
-    const sendButton = document.getElementById('send-message');
-
-    // Crear instancia de AIChat si no existe
-    if (!aiChatInstance) {
-        try {
-            // Usar la clase AIChat global
-            aiChatInstance = new AIChat();
-
-            // --- MODIFICADO: Obtener nombre y cargo de localStorage --- 
-            const nombreUsuario = localStorage.getItem('nombre');
-            const cargoUsuario = localStorage.getItem('cargo');
-            console.log(`🤖 Obteniendo datos para rol del chat: Nombre=${nombreUsuario}, Cargo=${cargoUsuario}`);
-            
-            // Determinar el rol basado en el cargo del usuario
-            let roleType = 'NoAfiliado'; // Rol por defecto
-            if (cargoUsuario) {
-                if (cargoUsuario === 'Presidente') {
-                    roleType = 'Presidenciales';
-                } else if (cargoUsuario.includes('Directiv')) {
-                    roleType = 'JuntaDirectiva';
-                } else if (cargoUsuario === 'Afiliado') {
-                    roleType = 'Afiliado';
-                }
-            } else {
-                 console.warn("🤖 No se encontró cargo en localStorage, usando rol por defecto.");
-            }
-            console.log(`🤖 Rol asignado para el chat: ${roleType}`);
-            // --- FIN MODIFICACIÓN ---
-
-            // Inicializar el chat con el rol apropiado
-            await aiChatInstance.initialize(roleType);
-        } catch (error) {
-            console.error('Error al inicializar AIChat:', error);
-            mostrarMensajeIA('Lo siento, hubo un error al inicializar el chat. Por favor, recarga la página.');
-            return;
-        }
-    }
-
-    // Mensaje de bienvenida
-    mostrarMensajeIA("¡Hola! Soy Elektra, tu asistente virtual. ¿En qué puedo ayudarte hoy?");
-
-    // Manejar envío de mensajes
-    async function enviarMensaje() {
-        const mensaje = userInput.value.trim();
-        if (!mensaje) return;
-
-        // Mostrar mensaje del usuario
-        mostrarMensajeUsuario(mensaje);
-        userInput.value = '';
-
-        try {
-            // Usar la instancia de AIChat para procesar el mensaje
-            const respuesta = await aiChatInstance.processMessage(mensaje);
-
-            // Mostrar respuesta de la IA
-            mostrarMensajeIA(respuesta);
-
-        } catch (error) {
-            console.error("Error al procesar mensaje:", error);
-            mostrarMensajeIA("Lo siento, hubo un error al procesar tu mensaje. Por favor, intenta de nuevo.");
-        }
-    }
-
-    // Event listeners
-    sendButton.addEventListener('click', enviarMensaje);
-    userInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') enviarMensaje();
-    });
-}
-
-function mostrarMensajeUsuario(mensaje) {
-    const chatMessages = document.getElementById('chat-messages');
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'message user-message';
-    messageDiv.textContent = mensaje;
-    chatMessages.appendChild(messageDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-function mostrarMensajeIA(mensaje) {
-    const chatMessages = document.getElementById('chat-messages');
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'message ai-message';
-    messageDiv.textContent = mensaje;
-    chatMessages.appendChild(messageDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-}
 
 // 🔹 Función para bloquear el botón en caso de acceso denegado
 function bloquearBoton() {
