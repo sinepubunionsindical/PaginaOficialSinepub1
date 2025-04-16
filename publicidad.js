@@ -791,7 +791,20 @@ document.addEventListener('DOMContentLoaded', function() {
                             });
 
                             // Preparar la foto de perfil
-                            const fotoPerfil = anuncio.foto_perfil || '/images/avatar-placeholder.png';
+                            let fotoPerfil = '/images/avatar-placeholder.png'; // Valor por defecto
+
+                            // Usar foto de perfil pública si existe
+                            if (anuncio.foto_perfil_github) {
+                                fotoPerfil = anuncio.foto_perfil_github;
+                            } else if (anuncio.foto_perfil && typeof anuncio.foto_perfil === 'object') {
+                                // Fallback si aún no se ha migrado a foto_perfil_github
+                                if (anuncio.foto_perfil.github_path) {
+                                    fotoPerfil = `https://sinepub-huv.com${anuncio.foto_perfil.github_path}`;
+                                }
+                            } else if (typeof anuncio.foto_perfil === 'string') {
+                                // Si por alguna razón es un string (legacy), úsalo tal cual
+                                fotoPerfil = anuncio.foto_perfil;
+                            }
 
                             return `
                                 <div class="anuncio-card">
