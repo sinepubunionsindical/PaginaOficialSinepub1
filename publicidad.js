@@ -794,21 +794,20 @@ document.addEventListener('DOMContentLoaded', function() {
             // Verificar y preparar la URL de la imagen
             let imagenSrc = '';
             if (anuncio.imagen_ruta) {
-                // Si tenemos una ruta específica, usarla
-                imagenSrc = anuncio.imagen_ruta;
+                // Asegurarse de que la ruta comience con '/'
+                imagenSrc = anuncio.imagen_ruta.startsWith('/') ? anuncio.imagen_ruta : '/' + anuncio.imagen_ruta;
             } else if (anuncio.imagen_base64) {
-                // Si tenemos datos base64, usarlos directamente
                 imagenSrc = anuncio.imagen_base64;
             } else {
-                // Si no hay imagen, usar un placeholder
-                imagenSrc = 'images/placeholder-anuncio.png';
+                // Asegurarse de que el placeholder también tenga la ruta correcta
+                imagenSrc = '/images/placeholder-anuncio.png';
             }
             
             const titulo = anuncio.titulo || 'Anuncio';
             const descripcion = anuncio.descripcion || 'Sin descripción.';
             const categoriaOriginal = anuncio.categoria ? anuncio.categoria.toLowerCase().trim() : '';
             const categoriasValidas = ["asistencia", "comercio", "servicios", "educacion"];
-            const categoria = categoriasValidas.includes(categoriaOriginal) ? categoriaOriginal : "asistencia";
+            const categoria = categoriasValidas.includes(categoriaOriginal)
             const likes = anuncio.likes || 0;
             const nombre = anuncio.nombre || 'Anónimo';
             
@@ -844,7 +843,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <h3 class="anuncio-titulo">${titulo}</h3>
                 
                 <div class="anuncio-imagen-container">
-                    <img src="${imagenSrc}" alt="Imagen de ${titulo}" class="anuncio-imagen" onerror="this.onerror=null; this.src='images/placeholder-anuncio.png';">
+                    <img src="${imagenSrc}" alt="Imagen de ${titulo}" class="anuncio-imagen" onerror="this.onerror=null; this.src='/images/placeholder-anuncio.png';">
                 </div>
                 
                 <div class="anuncio-content">
