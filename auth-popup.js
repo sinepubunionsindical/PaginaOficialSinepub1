@@ -176,7 +176,7 @@ function handleVerificacionResult(result) {
                                 <p>Cargo: ${result.cargo}</p>`;
         mostrarPopupContrasena(result.nombre, result.cargo, mensajeBienvenida);
     } else {
-        mostrarPopupError();
+        
     }
 }
 
@@ -334,7 +334,6 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
                 mostrarPopupContrasena(nombre, cargo, mensajeBienvenida);
             } else {
                 alert(" No eres afiliado al sindicato. Recuerda que la suplantación de identidad tiene consecuencias penales.");
-                mostrarPopupError();
                 bloquearBoton();
             }
         }
@@ -583,12 +582,6 @@ function mostrarFormularioCompletarPerfilObligatorio(cedula, nombre) {
     }
 }
 
-// Función para mostrar el popup de error
-function mostrarPopupError() {
-    const mensaje = "Cédula no válida o no registrada en el sistema.";
-    alert(mensaje);
-}
-
 // Función para bloquear el botón en caso de acceso denegado
 function bloquearBoton() {
     const chatButton = document.getElementById("chatbot-button");
@@ -754,12 +747,9 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
 // Exponer funciones globalmente
 window.showAuthPopup = showAuthPopup;
 window.verifyCedula = verifyCedula;
-window.verificarCedulaEnServidor = verificarCedulaEnServidor;
 window.mostrarPopupContrasena = mostrarPopupContrasena;
-window.mostrarPopupBienvenida = mostrarPopupBienvenida;
 window.mostrarPopupBienvenidaSimple = mostrarPopupBienvenidaSimple;
 window.mostrarFormularioCompletarPerfilObligatorio = mostrarFormularioCompletarPerfilObligatorio;
-window.mostrarPopupError = mostrarPopupError;
 window.bloquearBoton = bloquearBoton;
 window.activarChatbot = activarChatbot;
 window.verificarPerfilUsuario = verificarPerfilUsuario;
@@ -935,7 +925,6 @@ function verificarPerfilEnBackend() {
                 mostrarPopupBienvenidaPersonalizado(); // O activarChatbot()
             } else {
                 console.log("⚠️ Perfil incompleto, mostrando formulario");
-                mostrarFormularioCompletarPerfil();
             }
         })
         .catch(error => {
