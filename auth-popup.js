@@ -967,13 +967,26 @@ function enviarDatosPerfil(datos) {
 }
 
 // Nueva función para mostrar el popup de bienvenida personalizado con foto
-function mostrarPopupBienvenidaPersonalizado() {
+async function mostrarPopupBienvenidaPersonalizado() {
     console.log("👋 Mostrando popup de bienvenida personalizado");
-    
-    // Recuperar datos del localStorage
-    const nombre = localStorage.getItem("nombre") || "Usuario";
-    const foto = localStorage.getItem("foto") || "";
-    
+
+    const cedula = localStorage.getItem("cedula");
+    let nombre = localStorage.getItem("nombre") || "Usuario";
+    let fotoPublica = "";
+
+    try {
+        const response = await fetch(`${getBackendUrl()}/api/perfil_foto_base64/${cedula}`);
+        if (response.ok) {
+            const data = await response.json();
+            fotoPublica = data.foto_base64;
+            localStorage.setItem("foto", fotoPublica); // opcional
+        } else {
+            console.warn("⚠️ No se pudo cargar la foto desde el backend");
+        }
+    } catch (error) {
+        console.error("❌ Error al obtener la foto base64:", error);
+    }
+
     // Crear el popup
     const popupBienvenida = document.createElement("div");
     popupBienvenida.id = "popup-bienvenida-personalizado";
@@ -981,19 +994,19 @@ function mostrarPopupBienvenidaPersonalizado() {
     popupBienvenida.style.top = "50%";
     popupBienvenida.style.left = "50%";
     popupBienvenida.style.transform = "translate(-50%, -50%)";
-    popupBienvenida.style.background = "#35a9aa"; // Verde aguamarina
-    popupBienvenida.style.color = "#0249aa"; // Azul para el texto
+    popupBienvenida.style.background = "#35a9aa";
+    popupBienvenida.style.color = "#0249aa";
     popupBienvenida.style.padding = "30px";
     popupBienvenida.style.borderRadius = "10px";
     popupBienvenida.style.textAlign = "center";
-    popupBienvenida.style.width = "400px";
-    popupBienvenida.style.boxShadow = "0 5px 15px rgba(0,0,0,0.3)";
+    popupBienvenida.style.width = "420px";
+    popupBienvenida.style.boxShadow = "0 8px 20px rgba(0,0,0,0.4)";
     popupBienvenida.style.zIndex = "10000";
 
     // Contenido del popup
     popupBienvenida.innerHTML = `
         <h2 style="margin-top: 0; color: #0249aa;">¡Bienvenido de nuevo!</h2>
-        ${foto ? `<img src="${foto}" alt="Foto de perfil" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin: 10px auto; display: block; border: 3px solid #0249aa;">` : ''}
+        ${fotoPublica ? `<img src="${fotoPublica}" alt="Foto de perfil" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin: 10px auto; display: block; border: 3px solid #0249aa;">` : ''}
         <h3 style="margin: 15px 0; color: #0249aa;">¡Hola ${nombre}!</h3>
         <p style="margin-bottom: 20px; color: #0249aa;">Estamos contentos de verte nuevamente. ¿Deseas acceder al sistema?</p>
         <button id="continuar-btn" style="
@@ -1009,37 +1022,21 @@ function mostrarPopupBienvenidaPersonalizado() {
         </button>
     `;
 
-    // Añadir al body
     document.body.appendChild(popupBienvenida);
 
-    // Hover effect para el botón
     const continuarBtn = document.getElementById("continuar-btn");
-    if (continuarBtn) {
-        continuarBtn.addEventListener("mouseenter", function() {
-            this.style.backgroundColor = "#35a9aa";
-            this.style.color = "#0249aa";
-        });
-        
-        continuarBtn.addEventListener("mouseleave", function() {
-            this.style.backgroundColor = "#0249aa";
-            this.style.color = "white";
-        });
-        
-        // Acción al hacer clic en continuar
-        continuarBtn.addEventListener("click", function() {
-            popupBienvenida.remove();
-            const authPopup = document.getElementById("auth-popup");
-            if (authPopup) authPopup.remove();
-
-            // Activar el chatbot usando el botón original
-            const chatButton = document.getElementById("chatbot-button");
-            if (chatButton) {
-                console.log("🎙️ Activando chatbot mediante botón original");
-                activarChatbot(); 
-            } else {
-                console.warn("⚠️ Botón de chatbot no encontrado");
-                activarChatbot(); // Fallback al método directo
-            }
-        });
-    }
+    continuarBtn.addEventListener("mouseenter", () => {
+        continuarBtn.style.backgroundColor = "#35a9aa";
+        continuarBtn.style.color = "#0249aa";
+    });
+    continuarBtn.addEventListener("mouseleave", () => {
+        continuarBtn.style.backgroundColor = "#0249aa";
+        continuarBtn.style.color = "white";
+    });
+    continuarBtn.addEventListener("click", () => {
+        popupBienvenida.remove();
+        document.getElementById("auth-popup")?.remove();
+        activarChatbot();
+    });
 }
+
