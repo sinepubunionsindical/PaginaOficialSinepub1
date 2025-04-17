@@ -25,6 +25,8 @@ function createChatButton() {
     console.log('Botón flotante de chat creado');
     // 👇 Mostrar panel al crear el botón (inicia abierto)
     mostrarPanelEstadisticasUsuario();
+    const linkAfiliacion = document.getElementById("afiliacion-link");
+    if (linkAfiliacion) linkAfiliacion.style.display = "none";
     return chatButton;
 }
 
@@ -263,66 +265,128 @@ function activateChatAfterAuth(nombre, cargo) {
 }
 
 function mostrarPanelEstadisticasUsuario() {
-    if (document.getElementById('user-stats-panel')) return; // evitar duplicados
+    // Evitar duplicados
+    if (document.getElementById('user-stats-panel')) return;
 
     const nombre = localStorage.getItem('nombre') || 'Usuario';
+    const cargo = localStorage.getItem('cargo') || 'Afiliado';
     const foto = localStorage.getItem('foto') || '';
-    
+
     const panel = document.createElement('div');
     panel.id = 'user-stats-panel';
     panel.style.position = 'fixed';
-    panel.style.top = '0';
-    panel.style.left = '0';
-    panel.style.height = '100%';
-    panel.style.width = '280px';
-    panel.style.backgroundColor = '#f7f9fa';
-    panel.style.boxShadow = '2px 0 10px rgba(0,0,0,0.2)';
-    panel.style.zIndex = '9999';
+    panel.style.top = '20px';
+    panel.style.left = '20px';
+    panel.style.width = '300px';
+    panel.style.background = 'white';
+    panel.style.borderRadius = '20px';
+    panel.style.boxShadow = '0 8px 20px rgba(0,0,0,0.3)';
     panel.style.padding = '20px';
-    panel.style.display = 'flex';
-    panel.style.flexDirection = 'column';
-    panel.style.gap = '15px';
+    panel.style.zIndex = '9999';
     panel.style.transition = 'transform 0.5s ease-in-out';
-    panel.style.transform = 'translateX(-100%)';
+    panel.style.transform = 'translateX(-120%)';
 
-    setTimeout(() => {
-        panel.style.transform = 'translateX(0)';
-    }, 100);
+    // Solo animar apertura si nunca ha sido abierto
+    const haSidoAbierto = localStorage.getItem('statsPanelAbierto') === 'true';
 
+    // HTML interno del panel
     panel.innerHTML = `
         <div style="text-align: center;">
-            ${foto ? `<img src="${foto}" alt="Foto de perfil" style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid #0249aa; object-fit: cover;">` : ''}
-            <h3 style="margin: 10px 0; color: #0249aa;">${nombre}</h3>
+            ${foto ? `<img src="${foto}" alt="Foto de perfil" style="width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 4px solid #0249aa;">` : ''}
+            <h3 style="margin: 10px 0 0; color: #0249aa;">${nombre}</h3>
+            <p style="margin: 0; font-weight: bold; color: #35a9aa;">${cargo}</p>
         </div>
-        <div style="font-size: 16px; line-height: 1.6;">
-            <p><strong>Publicidades:</strong> <span id="contador-publicidades">0</span></p>
-            <p><strong>Solicitudes:</strong> <span id="contador-solicitudes">0</span></p>
-            <p><strong>Comentarios:</strong> <span id="contador-comentarios">0</span></p>
+
+        <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
+
+        <h4 style="text-align: center; color: #0249aa;">📊 Actividad en nuestro portal</h4>
+
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+            <div style="background: #e0ecff; padding: 10px 15px; border-radius: 8px; color: #0249aa; font-weight: bold;">
+                Publicidades: <span id="contador-publicidades">0</span>
+            </div>
+            <div style="background: #f1e0ff; padding: 10px 15px; border-radius: 8px; color: #6b1e87; font-weight: bold;">
+                Solicitudes: <span id="contador-solicitudes">0</span>
+            </div>
+            <div style="background: #fff4de; padding: 10px 15px; border-radius: 8px; color: #b06c00; font-weight: bold;">
+                Comentarios: <span id="contador-comentarios">0</span>
+            </div>
         </div>
+
         <button id="minimizar-panel-btn" style="
             position: absolute;
-            top: 10px;
-            right: -35px;
-            width: 30px;
-            height: 30px;
+            top: -10px;
+            right: -10px;
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
-            background-color: #0249aa;
+            background: #0249aa;
             color: white;
+            font-size: 20px;
             border: none;
             cursor: pointer;
-            font-size: 18px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-        " title="Minimizar">👤</button>
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        " title="Minimizar stats">−</button>
     `;
 
     document.body.appendChild(panel);
 
+    // Botón flotante para restaurar
+    let toggleStatsBtn = document.getElementById('stats-float-button');
+    if (!toggleStatsBtn) {
+        toggleStatsBtn = document.createElement('div');
+        toggleStatsBtn.id = 'stats-float-button';
+        toggleStatsBtn.innerHTML = '👤';
+        toggleStatsBtn.style.position = 'fixed';
+        toggleStatsBtn.style.top = '100px';
+        toggleStatsBtn.style.left = '20px';
+        toggleStatsBtn.style.width = '45px';
+        toggleStatsBtn.style.height = '45px';
+        toggleStatsBtn.style.borderRadius = '50%';
+        toggleStatsBtn.style.background = '#35a9aa';
+        toggleStatsBtn.style.color = 'white';
+        toggleStatsBtn.style.display = 'none';
+        toggleStatsBtn.style.alignItems = 'center';
+        toggleStatsBtn.style.justifyContent = 'center';
+        toggleStatsBtn.style.textAlign = 'center';
+        toggleStatsBtn.style.fontSize = '24px';
+        toggleStatsBtn.style.cursor = 'pointer';
+        toggleStatsBtn.style.zIndex = '9999';
+        toggleStatsBtn.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
+        toggleStatsBtn.title = 'Mostrar estadísticas';
+
+        document.body.appendChild(toggleStatsBtn);
+
+        toggleStatsBtn.addEventListener('click', () => {
+            localStorage.setItem('statsPanelMinimizado', 'false'); // Reset al mostrar
+            localStorage.setItem('statsPanelAbierto', 'true');
+            mostrarPanelEstadisticasUsuario();
+            toggleStatsBtn.style.display = 'none';
+        });
+    }
+
     document.getElementById('minimizar-panel-btn').addEventListener('click', () => {
-        panel.style.transform = 'translateX(-100%)';
+        panel.style.transform = 'translateX(-120%)';
+        localStorage.setItem('statsPanelAbierto', 'true');
+        localStorage.setItem('statsPanelMinimizado', 'true');
+
         setTimeout(() => {
             panel.remove();
-        }, 500);
+        }, 400);
+
+        toggleStatsBtn.style.display = 'flex';
     });
+
+    // Mostrar el panel si no ha sido abierto nunca
+    if (!haSidoAbierto || localStorage.getItem('statsPanelMinimizado') !== 'true') {
+        setTimeout(() => {
+            panel.style.transform = 'translateX(0)';
+        }, 100);
+    } else {
+        // Minimizado desde el inicio
+        panel.remove();
+        toggleStatsBtn.style.display = 'flex';
+    }
 }
 
 // Inicializar cuando el DOM esté listo

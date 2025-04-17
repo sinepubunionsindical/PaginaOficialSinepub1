@@ -38,10 +38,16 @@ body.fade-in {
 /* Encabezado Principal (Franja azul delgada con títulos) */
 
 header {
+  position: fixed;             /* 👈 Esto lo fija arriba */
+  top: 0;
+  left: 0;
+  width: 100%;
   background-color: #0249aa;
   color: #fff;
-  padding: 5px 0; /* Reducimos aún más el padding vertical para una franja más delgada */
-  text-align: center; /* Centrar los títulos */
+  padding: 5px 0;
+  text-align: center;
+  z-index: 10000;              /* 👈 Asegura que quede encima de todo */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); /* 👈 Sombra elegante */
 }
 
 .header-titles-container {
@@ -87,6 +93,8 @@ header {
   background: white;
   padding: 20px 0;
   position: relative;
+  margin-top: 70px; /* puedes ajustar a 80px si querés más separación */
+
 }
 .logo-container {
   display: flex;
@@ -777,7 +785,7 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
 /* Estilos para los circulitos de navegación del slider */
 .slider-dots {
   position: absolute;
-  top: 380px; 
+  top: 405px; 
   left: 50%;
   transform: translateX(-50%);
   display: flex;

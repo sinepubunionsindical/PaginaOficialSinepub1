@@ -230,7 +230,7 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
             console.log("🔍 Verificando estado del perfil en el backend para cédula:", cedula);
 
             try {
-                // Mostrar indicador de carga
+                // Mostrar indicador de carga      
                 const loadingPopup = document.createElement("div");
                 loadingPopup.id = "loading-popup";
                 loadingPopup.style.position = "fixed";
@@ -255,6 +255,7 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
                         }
                     </style>
                 `;
+                document.getElementById("auth-popup")?.remove(); // ✅ Oculta popup de cédula si aún está presente
                 document.body.appendChild(loadingPopup);
 
                 const verificarPerfil = async () => {
