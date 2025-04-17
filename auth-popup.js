@@ -422,7 +422,6 @@ function mostrarPopupBienvenidaSimple(mensaje) {
     botonAceptar.addEventListener("click", function() {
         popupBienvenida.remove();
         // Activar el chatbot directamente
-        activarChatbot();
         mostrarPopupBienvenidaPersonalizado();
     });
 
