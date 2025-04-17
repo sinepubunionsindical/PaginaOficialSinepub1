@@ -276,7 +276,7 @@ function mostrarPanelEstadisticasUsuario() {
 
     // Validar que la cédula esté y exista el backend
     if (cedula && window.API_ENDPOINTS?.usuario) {
-        fetch(`${window.API_ENDPOINTS.usuario}/${cedula}`, {
+        fetch(`${window.API_ENDPOINTS.perfil}/${cedula}`, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
