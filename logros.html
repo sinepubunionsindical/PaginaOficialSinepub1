@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="logros.css"> <!-- Enlace a CSS específico de Logros -->
     <link rel="stylesheet" href="android.css">
+    <link rel="stylesheet" href="chat-button.css">
     <script src="https://unpkg.com/react@17.0.2/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js" crossorigin></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
@@ -181,7 +182,28 @@
         <span class="close-modal" id="close-pdf-modal">×</span>
         <div id="modal-pdf-container" class="pdf-viewer-container"></div>
         </div>
-    </div>     
+        <!-- Contenedor del chatbot -->
+        <div id="chatbot-container" style="display: none;"></div>
+
+        <!-- Contenedor del video de la IA (inicialmente oculto) -->
+        <div id="ai-video-container" class="ai-video-container" style="display: none;">
+            <div class="video-wrapper">
+                <!-- Video de espera (idle) -->
+                <video id="idle-video" class="ai-avatar-video active" autoplay loop muted playsinline preload="auto">
+                    <source src="1.mp4" type="video/mp4">
+                    Tu navegador no soporta videos HTML5.
+                </video>
+
+                <!-- Video de habla (speaking) -->
+                <video id="speaking-video" class="ai-avatar-video" autoplay loop muted playsinline preload="auto">
+                    <source src="2.mp4" type="video/mp4">
+                    Tu navegador no soporta videos HTML5.
+                </video>
+            </div>
+        </div>
+    </div>
+    <script src="chat-button.js" defer></script>
+    <script src="chat-integration.js" defer></script>
     <script src="logros.js" defer></script> <!-- NUEVO ARCHIVO JS -->
     <script src="pdf.js" defer></script>
     <script src="menu-mobile.js" defer></script>

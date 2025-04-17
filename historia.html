@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="styles.css">
         <link rel="stylesheet" href="historia.css">
         <link rel="stylesheet" href="android.css">
+        <link rel="stylesheet" href="chat-button.css">
         <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
         <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
         <script src="https://unpkg.com/react@17.0.2/umd/react.development.js" crossorigin></script>
@@ -229,11 +230,32 @@
                         </div>
                     </div>
                 </div>
+                        <!-- Contenedor del chatbot -->
+                        <div id="chatbot-container" style="display: none;"></div>
+
+                        <!-- Contenedor del video de la IA (inicialmente oculto) -->
+                        <div id="ai-video-container" class="ai-video-container" style="display: none;">
+                            <div class="video-wrapper">
+                                <!-- Video de espera (idle) -->
+                                <video id="idle-video" class="ai-avatar-video active" autoplay loop muted playsinline preload="auto">
+                                    <source src="1.mp4" type="video/mp4">
+                                    Tu navegador no soporta videos HTML5.
+                                </video>
+
+                                <!-- Video de habla (speaking) -->
+                                <video id="speaking-video" class="ai-avatar-video" autoplay loop muted playsinline preload="auto">
+                                    <source src="2.mp4" type="video/mp4">
+                                    Tu navegador no soporta videos HTML5.
+                                </video>
+                            </div>
+                        </div>
             </div>
         </footer>     
         <script>
             const player = new Plyr('#player');
         </script>
+        <script src="chat-button.js" defer></script>
+        <script src="chat-integration.js" defer></script>
         <script src="historia.js" defer></script>  <!-- Cambiado a historia.js -->
         <script src="menu-mobile.js" defer></script>
     </body>

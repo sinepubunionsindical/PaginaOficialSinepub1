@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="publicidad.css">
     <link rel="stylesheet" href="android.css">
+    <link rel="stylesheet" href="chat-button.css">
 
     <!-- React (Descomenta si realmente lo necesitas en esta página) -->
     <!--
@@ -389,10 +390,28 @@
             </div>
             <button class="prev-slide" aria-label="Anterior">❮</button>
             <button class="next-slide" aria-label="Siguiente">❯</button>
-
+        
         </div> <!-- Fin .slider-container -->
     </section> <!-- Fin #publicidad-content -->
+    <!-- Contenedor del chatbot -->
+    <div id="chatbot-container" style="display: none;"></div>
 
+    <!-- Contenedor del video de la IA (inicialmente oculto) -->
+    <div id="ai-video-container" class="ai-video-container" style="display: none;">
+        <div class="video-wrapper">
+            <!-- Video de espera (idle) -->
+            <video id="idle-video" class="ai-avatar-video active" autoplay loop muted playsinline preload="auto">
+                <source src="1.mp4" type="video/mp4">
+                Tu navegador no soporta videos HTML5.
+            </video>
+
+            <!-- Video de habla (speaking) -->
+            <video id="speaking-video" class="ai-avatar-video" autoplay loop muted playsinline preload="auto">
+                <source src="2.mp4" type="video/mp4">
+                Tu navegador no soporta videos HTML5.
+            </video>
+        </div>
+    </div>
     <!-- Pie de página -->
     <footer>
         <div class="container">
@@ -433,6 +452,8 @@
     <div id="mobile-menu-container" class="mobile-menu" aria-hidden="true">
         <!-- Contenido clonado por JS (menu-mobile.js) -->
     </div>
+    <script src="chat-button.js" defer></script>
+    <script src="chat-integration.js" defer></script>
     <script src="config.js"> defer</script>
     <!-- Tus Scripts (asegúrate que las rutas sean correctas y el orden sea adecuado) -->
     <script src="slider.js" defer></script>

@@ -398,6 +398,7 @@ function mostrarPopupBienvenidaSimple(mensaje) {
         popupBienvenida.remove();
         // Activar el chatbot directamente
         activarChatbot();
+        mostrarPopupBienvenidaPersonalizado();
     });
 
     // Ocultar el popup de autenticación si aún existe

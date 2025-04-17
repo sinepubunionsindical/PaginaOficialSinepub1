@@ -275,7 +275,7 @@ function mostrarPanelEstadisticasUsuario() {
     const panel = document.createElement('div');
     panel.id = 'user-stats-panel';
     panel.style.position = 'fixed';
-    panel.style.top = '20px';
+    panel.style.top = '60px';
     panel.style.left = '20px';
     panel.style.width = '300px';
     panel.style.background = 'white';
