@@ -23,6 +23,8 @@ function createChatButton() {
     chatButton.addEventListener('click', toggleChat);
 
     console.log('Botón flotante de chat creado');
+    // 👇 Mostrar panel al crear el botón (inicia abierto)
+    mostrarPanelEstadisticasUsuario();
     return chatButton;
 }
 
@@ -258,6 +260,69 @@ function activateChatAfterAuth(nombre, cargo) {
     }, 5000);
 
     console.log(`Chat activado para ${nombre} (${cargo})`);
+}
+
+function mostrarPanelEstadisticasUsuario() {
+    if (document.getElementById('user-stats-panel')) return; // evitar duplicados
+
+    const nombre = localStorage.getItem('nombre') || 'Usuario';
+    const foto = localStorage.getItem('foto') || '';
+    
+    const panel = document.createElement('div');
+    panel.id = 'user-stats-panel';
+    panel.style.position = 'fixed';
+    panel.style.top = '0';
+    panel.style.left = '0';
+    panel.style.height = '100%';
+    panel.style.width = '280px';
+    panel.style.backgroundColor = '#f7f9fa';
+    panel.style.boxShadow = '2px 0 10px rgba(0,0,0,0.2)';
+    panel.style.zIndex = '9999';
+    panel.style.padding = '20px';
+    panel.style.display = 'flex';
+    panel.style.flexDirection = 'column';
+    panel.style.gap = '15px';
+    panel.style.transition = 'transform 0.5s ease-in-out';
+    panel.style.transform = 'translateX(-100%)';
+
+    setTimeout(() => {
+        panel.style.transform = 'translateX(0)';
+    }, 100);
+
+    panel.innerHTML = `
+        <div style="text-align: center;">
+            ${foto ? `<img src="${foto}" alt="Foto de perfil" style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid #0249aa; object-fit: cover;">` : ''}
+            <h3 style="margin: 10px 0; color: #0249aa;">${nombre}</h3>
+        </div>
+        <div style="font-size: 16px; line-height: 1.6;">
+            <p><strong>Publicidades:</strong> <span id="contador-publicidades">0</span></p>
+            <p><strong>Solicitudes:</strong> <span id="contador-solicitudes">0</span></p>
+            <p><strong>Comentarios:</strong> <span id="contador-comentarios">0</span></p>
+        </div>
+        <button id="minimizar-panel-btn" style="
+            position: absolute;
+            top: 10px;
+            right: -35px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #0249aa;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        " title="Minimizar">👤</button>
+    `;
+
+    document.body.appendChild(panel);
+
+    document.getElementById('minimizar-panel-btn').addEventListener('click', () => {
+        panel.style.transform = 'translateX(-100%)';
+        setTimeout(() => {
+            panel.remove();
+        }, 500);
+    });
 }
 
 // Inicializar cuando el DOM esté listo
