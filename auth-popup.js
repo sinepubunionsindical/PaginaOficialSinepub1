@@ -975,7 +975,15 @@ async function mostrarPopupBienvenidaPersonalizado() {
     let fotoPublica = "";
 
     try {
-        const response = await fetch(`${getBackendUrl()}/api/perfil_foto_base64/${cedula}`);
+        const response = await fetch(`${getBackendUrl()}/api/perfil_foto_base64/${cedula}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'ngrok-skip-browser-warning': 'true',
+                'User-Agent': 'sinepub-client'
+            }
+        });        
         if (response.ok) {
             const data = await response.json();
             fotoPublica = data.foto_base64;
