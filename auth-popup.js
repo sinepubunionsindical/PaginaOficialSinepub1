@@ -1,3 +1,28 @@
+async function verificarConexionBackend() {
+    const backendUrl = window.API_ENDPOINTS?.base || window.BACKEND_URL || 'http://localhost:8000';
+
+    try {
+        const response = await fetch(`${backendUrl}/api/ping`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'ngrok-skip-browser-warning': 'true',
+                'User-Agent': 'sinepub-client'
+            }
+        });
+
+        if (!response.ok) throw new Error("Respuesta inválida");
+
+        const data = await response.json();
+        return data?.status === 'ok';
+
+    } catch (error) {
+        console.warn('🔴 No hay conexión con el backend:', error.message);
+        return false;
+    }
+}
+
 // Función para mostrar el Popup de consentimiento Habeas Data
 function showDataConsentPopup() {
     console.log("📊 Mostrando popup de consentimiento de datos...");
@@ -704,6 +729,45 @@ function crearBotonFlotante() {
 document.addEventListener("DOMContentLoaded", function() {
     console.log('Inicializando botón de chat desde auth-popup.js...');
     const chatButton = document.getElementById("chatbot-button");
+
+    // Revisar si el usuario ya falló antes y bloquear botón
+    if (localStorage.getItem("afiliado") === "no") {
+        console.log('Usuario bloqueado por intentos previos');
+        bloquearBoton();
+    }
+
+    if (chatButton) {
+        console.log('Agregando event listener al botón de chat');
+        chatButton.addEventListener("click", function() {
+            console.log('Botón de chat clickeado');
+            showAuthPopup();
+        });
+    } else {
+        console.error('Botón de chat no encontrado en el DOM');
+    }
+});
+
+document.addEventListener("DOMContentLoaded", async function() {
+    console.log('Inicializando botón de chat desde auth-popup.js...');
+    const chatButton = document.getElementById("chatbot-button");
+
+    const conexionActiva = await verificarConexionBackend();
+
+    if (!conexionActiva) {
+        console.warn("❌ Servidor backend inactivo. Desactivando botón.");
+        if (chatButton) {
+            chatButton.disabled = true;
+            chatButton.style.backgroundColor = "#888";
+            chatButton.style.color = "#fff";
+            chatButton.style.cursor = "not-allowed";
+            chatButton.innerHTML = "⛔ Servidor inactivo";
+            chatButton.title = "No se pudo conectar al servidor. Intenta más tarde.";
+        }
+        localStorage.setItem("backend_inactivo", "true");
+        return;
+    } else {
+        localStorage.setItem("backend_inactivo", "false");
+    }
 
     // Revisar si el usuario ya falló antes y bloquear botón
     if (localStorage.getItem("afiliado") === "no") {

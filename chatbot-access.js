@@ -97,4 +97,31 @@ function cerrarTodosLosPopups() {
     });
 }
 
+async function verificarConexionBackend() {
+    const backendUrl = window.API_ENDPOINTS?.base || window.BACKEND_URL || 'http://localhost:8000';
+
+    try {
+        const response = await fetch(`${backendUrl}/api/ping`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'ngrok-skip-browser-warning': 'true',
+                'User-Agent': 'sinepub-client'
+            }
+        });
+
+        if (!response.ok) throw new Error("Respuesta inválida");
+        const data = await response.json();
+
+        if (data.status === 'ok') {
+            console.log('🟢 Conexión establecida con el backend');
+            return true;
+        }
+    } catch (error) {
+        console.warn('🔴 No hay conexión con el backend:', error.message);
+    }
+
+    return false;
+}
 
