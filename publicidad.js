@@ -1041,240 +1041,266 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param {Array} anunciosAprobados - Array de objetos de anuncio aprobados.
      */
     function actualizarVistaAnuncios(anunciosAprobados) {
-        if (!anunciosContainer) return;
-
-        if (!anunciosAprobados || anunciosAprobados.length === 0) {
-            anunciosContainer.innerHTML = `<p class="info-mensaje">✨ De momento no hay anuncios publicados. ¡Sé el primero en registrar uno! ✨</p>`;
+        // Verificar que exista el contenedor donde mostrar anuncios
+        if (!anunciosContainer) {
+            console.error("❌ No se encontró el contenedor para mostrar anuncios. Verifique ID/clase.");
             return;
         }
 
-        // Generar HTML para cada anuncio con diseño mejorado
-        anunciosContainer.innerHTML = anunciosAprobados.map(anuncio => {
-            // Proporcionar valores por defecto si alguna propiedad falta
-            const id = anuncio.id || `temp_${Math.random().toString(36).substring(2)}`;
+        // Agrupar anuncios por categoría para el filtro
+        const categorias = {};
+        
+        anunciosAprobados.forEach(anuncio => {
+            // Garantizar que la categoría tenga un valor válido, usar 'general' por defecto
+            const categoria = anuncio.categoria || "general";
             
-            // Verificar y preparar la URL de la imagen
-            let imagenSrc = '';
-            if (anuncio.imagen_ruta) {
-                // Asegurarse de que la ruta comience con '/'
-                imagenSrc = anuncio.imagen_ruta.startsWith('/') ? anuncio.imagen_ruta : '/' + anuncio.imagen_ruta;
-            } else if (anuncio.imagen_base64) {
-                imagenSrc = anuncio.imagen_base64;
-            } else {
-                // Asegurarse de que el placeholder también tenga la ruta correcta
-                imagenSrc = '/images/placeholder-anuncio.png';
+            // Inicializar array de categoría si no existe
+            if (!categorias[categoria]) {
+                categorias[categoria] = [];
             }
             
-            const titulo = anuncio.titulo || 'Anuncio';
-            const descripcion = anuncio.descripcion || 'Sin descripción.';
-            const categoriaOriginal = anuncio.categoria ? anuncio.categoria.toLowerCase().trim() : '';
-            const categoriasValidas = ["asistencia", "comercio", "servicios", "educacion"];
-            const categoria = categoriasValidas.includes(categoriaOriginal) ? categoriaOriginal : 'educacion';
-            const likes = anuncio.likes || 0;
-            const nombre = anuncio.nombre || 'Anónimo';
-            
-            // Buscar la foto de perfil o usar un placeholder
-            let fotoPerfil = '/images/avatar-placeholder.png'; // Placeholder por defecto
-            
-            // Si hay foto de perfil en el anuncio, usar la ruta de GitHub
-            if (anuncio.foto_perfil) {
-                if (typeof anuncio.foto_perfil === 'object' && anuncio.foto_perfil.github_path) {
-                    fotoPerfil = anuncio.foto_perfil.github_path;
-                } else if (typeof anuncio.foto_perfil === 'string') {
-                    fotoPerfil = anuncio.foto_perfil;
-                }
-            }
-            
-            // Fecha de publicación formateada
-            const fechaPublicacion = anuncio.fecha_creacion ? 
-                new Date(anuncio.fecha_creacion).toLocaleDateString('es-ES', {
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric'
-                }) : 
-                'Fecha no disponible';
-
+            // Añadir anuncio al grupo de su categoría
+            categorias[categoria].push(anuncio);
+        });
+        
+        // Verificar si el usuario está autenticado y tiene perfil completo
+        const estaAutenticado = localStorage.getItem("afiliado_autenticado") === "true";
+        const perfilCompleto = localStorage.getItem("perfil_completo") === "true";
+        const usuarioAfiliado = estaAutenticado && perfilCompleto;
+        const cedula = localStorage.getItem("cedula");
+        
+        // Crear contenedor para filtros de categoría en la parte superior
+        const categoriasHTML = Object.keys(categorias).map(cat => 
+            `<button class="categoria-btn" data-categoria="${cat}">${cat.charAt(0).toUpperCase() + cat.slice(1)}</button>`
+        ).join('');
+        
+        // Generar el código HTML para los anuncios agrupados por categoría
+        const anunciosHTML = Object.entries(categorias).map(([categoria, anunciosList]) => {
+            // Crear sección para cada categoría
             return `
-            <div class="anuncio-card" data-id="${id}">
-                <div class="anuncio-header">
-                    <div class="anuncio-perfil">
-                        <img src="${fotoPerfil}" alt="Foto de ${nombre}" class="anuncio-perfil-imagen" onerror="this.onerror=null; this.src='images/avatar-placeholder.png';">
-                        <div class="anuncio-perfil-info">
-                            <h4>${nombre}</h4>
-                            <span class="anuncio-fecha">${fechaPublicacion}</span>
-                        </div>
+                <div class="categoria-section" id="categoria-${categoria}" style="margin-bottom: 40px;">
+                    <h2 class="categoria-titulo">${categoria.charAt(0).toUpperCase() + categoria.slice(1)}</h2>
+                    <div class="anuncios-grid">
+                        ${anunciosList.map(anuncio => {
+                            // Determinar clases para el botón de like según el estado del usuario
+                            let likeButtonClass = "like-button";
+                            if (!usuarioAfiliado) {
+                                likeButtonClass += " disabled";
+                            }
+                            
+                            // Determinar título del botón según estado del usuario
+                            let likeBtnTitle = usuarioAfiliado 
+                                ? "Dale me gusta a esta publicación" 
+                                : "Solo usuarios afiliados pueden dar me gusta";
+                            
+                            return `
+                                <div class="anuncio">
+                                    <div class="anuncio-header">
+                                        <h3>${anuncio.titulo || "Sin título"}</h3>
+                                        <p class="categoria-tag">${anuncio.categoria || "general"}</p>
+                                    </div>
+                                    
+                                    ${anuncio.imagen ? 
+                                        `<div class="anuncio-imagen"><img src="${anuncio.imagen}" alt="${anuncio.titulo || 'Imagen de publicidad'}"></div>` 
+                                        : ''
+                                    }
+                                    
+                                    <div class="anuncio-contenido">
+                                        <p>${anuncio.descripcion || ""}</p>
+                                        <div class="anuncio-contacto">
+                                            <p><strong>Contacto:</strong> ${anuncio.nombre || "Anónimo"}</p>
+                                            ${anuncio.email ? `<p><strong>Email:</strong> ${anuncio.email}</p>` : ''}
+                                            ${anuncio.telefono ? `<p><strong>Teléfono:</strong> ${anuncio.telefono}</p>` : ''}
+                                        </div>
+                                        <div class="anuncio-meta">
+                                            <span class="fecha">${anuncio.fecha_creacion || ""}</span>
+                                            <button class="${likeButtonClass}" 
+                                                   data-anuncio-id="${anuncio.id}"
+                                                   title="${likeBtnTitle}" 
+                                                   ${!usuarioAfiliado ? 'disabled' : ''}>
+                                                <i class="fas fa-thumbs-up"></i> 
+                                                <span class="likes-count">${anuncio.likes || 0}</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
                     </div>
-                    <span class="categoria-badge"><i class="fas fa-tag"></i> ${categoria}</span>
                 </div>
-                
-                <h3 class="anuncio-titulo">${titulo}</h3>
-                
-                <div class="anuncio-imagen-container">
-                    <img src="${imagenSrc}" alt="Imagen de ${titulo}" class="anuncio-imagen" onerror="this.onerror=null; this.src='/images/placeholder-anuncio.png';">
-                </div>
-                
-                <div class="anuncio-content">
-                    <p class="anuncio-descripcion">${descripcion}</p>
-                    
-                    <div class="anuncio-footer">
-                        <button class="like-button" data-anuncio-id="${id}" title="Me gusta">
-                            <i class="fas fa-thumbs-up"></i>
-                            <span class="likes-count">${likes}</span>
-                        </button>
-                        
-                        <div class="anuncio-contacto">
-                            ${anuncio.telefono ? `<a href="tel:${anuncio.telefono}" class="contacto-link"><i class="fas fa-phone"></i></a>` : ''}
-                            ${anuncio.email ? `<a href="mailto:${anuncio.email}" class="contacto-link"><i class="fas fa-envelope"></i></a>` : ''}
-                        </div>
-                    </div>
-                </div>
-            </div>
             `;
         }).join('');
-
-        // Añadir estilos CSS inline para los nuevos elementos
+        
+        // Implementar la estructura completa con filtros y anuncios
+        anunciosContainer.innerHTML = `
+            <div class="filtros-container">
+                <h3>Filtrar por categoría:</h3>
+                <div class="categorias-botones">
+                    <button class="categoria-btn active" data-categoria="todas">Todas</button>
+                    ${categoriasHTML}
+                </div>
+            </div>
+            <div class="anuncios-container-inner">
+                ${anunciosHTML}
+            </div>
+        `;
+        
+        // Añadir listeners a los botones de categoría
+        document.querySelectorAll('.categoria-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const categoria = this.dataset.categoria;
+                
+                // Remover clase 'active' de todos los botones y añadirla al actual
+                document.querySelectorAll('.categoria-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Mostrar/ocultar secciones de categoría según la selección
+                if (categoria === 'todas') {
+                    document.querySelectorAll('.categoria-section').forEach(section => {
+                        section.style.display = 'block';
+                    });
+                } else {
+                    document.querySelectorAll('.categoria-section').forEach(section => {
+                        if (section.id === `categoria-${categoria}`) {
+                            section.style.display = 'block';
+                        } else {
+                            section.style.display = 'none';
+                        }
+                    });
+                }
+            });
+        });
+        
+        // Agregar estilos CSS para los anuncios directamente
         const style = document.createElement('style');
         style.textContent = `
-            .anuncio-card {
-                border-radius: 10px;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-                margin-bottom: 30px;
+            .anuncios-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 20px;
+                margin-top: 20px;
+            }
+            .anuncio {
+                background: #fff;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0,0,0,.1);
                 overflow: hidden;
-                background: white;
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                transition: transform .2s;
             }
-            
-            .anuncio-card:hover {
+            .anuncio:hover {
                 transform: translateY(-5px);
-                box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+                box-shadow: 0 5px 15px rgba(0,0,0,.15);
             }
-            
             .anuncio-header {
+                padding: 15px;
+                background: #35a9aa;
+                color: #fff;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding: 15px;
-                border-bottom: 1px solid #f0f0f0;
             }
-            
-            .anuncio-perfil {
-                display: flex;
-                align-items: center;
-            }
-            
-            .anuncio-perfil-imagen {
-                width: 50px;
-                height: 50px;
-                border-radius: 50%;
-                object-fit: cover;
-                border: 2px solid #35a9aa;
-                margin-right: 10px;
-            }
-            
-            .anuncio-perfil-info h4 {
+            .anuncio-header h3 {
                 margin: 0;
-                font-size: 16px;
-                color: #333;
+                font-size: 1.1em;
+                word-break: break-word;
             }
-            
-            .anuncio-fecha {
-                font-size: 12px;
-                color: #888;
-            }
-            
-            .categoria-badge {
-                background: #f0f8ff;
-                padding: 5px 10px;
+            .categoria-tag {
+                background: rgba(255,255,255,.3);
                 border-radius: 15px;
-                font-size: 12px;
-                color: #0249aa;
-            }
-            
-            .anuncio-titulo {
-                padding: 15px 15px 10px;
+                padding: 3px 10px;
+                font-size: 0.8em;
                 margin: 0;
-                color: #0249aa;
-                font-size: 18px;
             }
-            
-            .anuncio-imagen-container {
-                width: 100%;
-                height: 250px;
-                overflow: hidden;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            
             .anuncio-imagen {
+                width: 100%;
+                height: 180px;
+                overflow: hidden;
+            }
+            .anuncio-imagen img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
             }
-            
-            .anuncio-content {
+            .anuncio-contenido {
                 padding: 15px;
             }
-            
-            .anuncio-descripcion {
-                margin-top: 0;
-                margin-bottom: 15px;
-                color: #555;
-                line-height: 1.5;
-            }
-            
-            .anuncio-footer {
+            .anuncio-meta {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                margin-top: 15px;
                 padding-top: 10px;
-                border-top: 1px solid #f0f0f0;
+                border-top: 1px solid #eee;
             }
-            
+            .fecha {
+                font-size: 0.8em;
+                color: #777;
+            }
             .like-button {
-                background: transparent;
+                background: #35a9aa;
+                color: white;
                 border: none;
+                border-radius: 20px;
+                padding: 5px 12px;
+                cursor: pointer;
+                transition: all 0.2s;
                 display: flex;
                 align-items: center;
                 gap: 5px;
-                color: #35a9aa;
-                cursor: pointer;
-                padding: 5px 10px;
-                border-radius: 5px;
-                transition: background 0.2s ease;
             }
-            
             .like-button:hover {
-                background: #f0f8ff;
+                background: #2a8587;
             }
-            
-            .liked-animation {
-                animation: likeEffect 1s ease;
+            .like-button.disabled {
+                background: #cccccc;
+                cursor: not-allowed;
             }
-            
-            @keyframes likeEffect {
+            .like-button.liked-animation {
+                animation: heart-beat 1s;
+            }
+            @keyframes heart-beat {
                 0% { transform: scale(1); }
-                50% { transform: scale(1.2); }
+                50% { transform: scale(1.3); }
                 100% { transform: scale(1); }
             }
-            
-            .anuncio-contacto {
+            .filtros-container {
+                margin-bottom: 20px;
+            }
+            .categorias-botones {
                 display: flex;
+                flex-wrap: wrap;
                 gap: 10px;
             }
-            
-            .contacto-link {
-                color: #666;
-                font-size: 16px;
-                transition: color 0.2s ease;
+            .categoria-btn {
+                background: #f0f0f0;
+                border: none;
+                border-radius: 20px;
+                padding: 8px 15px;
+                cursor: pointer;
+                transition: all 0.2s;
             }
-            
-            .contacto-link:hover {
-                color: #35a9aa;
+            .categoria-btn:hover, .categoria-btn.active {
+                background: #35a9aa;
+                color: white;
+            }
+            .anuncio-contacto p {
+                margin: 5px 0;
+                font-size: 0.9em;
+            }
+            /* Responsive adjustments */
+            @media (max-width: 768px) {
+                .anuncios-grid {
+                    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                }
+            }
+            @media (max-width: 480px) {
+                .anuncios-grid {
+                    grid-template-columns: 1fr;
+                }
             }
         `;
         
-        // Eliminar estilo anterior si existe
+        // Reemplazar estilo si ya existe
         const existingStyle = document.getElementById('anuncios-style');
         if (existingStyle) {
             existingStyle.remove();
@@ -1319,25 +1345,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /**
      * Envía una solicitud para dar "like" a un anuncio.
-     * ¡¡¡ ADVERTENCIA: LA URL USADA AQUÍ ES PROBABLEMENTE INCORRECTA !!!
-     * Debería usar un endpoint específico para likes, ej: /api/like/{anuncioId}
      * @param {string} anuncioId - El ID del anuncio al que dar like.
      */
     async function darLike(anuncioId) {
-        // --- !! ALERTA DE CONFIGURACIÓN !! ---
-        // Esta URL probablemente está mal. Necesitas un endpoint POST /api/like/{id}
-        // const urlLikeCorrecta = `${window.API_ENDPOINTS?.like}/${anuncioId}`; // Ejemplo de cómo podría ser
-        const urlLikeIncorrecta = `${backendApiUrl}/like/${anuncioId}`; // URL incorrecta usada en v1
-        const likeEndpoint = window.API_ENDPOINTS?.like; // Intentar obtener endpoint de like
+        const likeEndpoint = window.API_ENDPOINTS?.like;
         const urlLike = likeEndpoint ? `${likeEndpoint}/${anuncioId}` : null;
 
         if (!urlLike) {
              console.warn(`⚠️ Funcionalidad 'Like' deshabilitada: window.API_ENDPOINTS.like no está definido en config.js.`);
              alert("La función de 'Me gusta' no está configurada correctamente.");
-             return; // Detener si no hay URL correcta
+             return;
         }
+        
+        // Verificar si el usuario está autenticado
+        const estaAutenticado = localStorage.getItem("afiliado_autenticado") === "true";
+        const perfilCompleto = localStorage.getItem("perfil_completo") === "true";
+        
+        if (!estaAutenticado || !perfilCompleto) {
+            alert("Solo los usuarios afiliados pueden dar 'Me gusta' a las publicaciones.");
+            return;
+        }
+        
+        // Obtener la cédula del usuario del localStorage
+        const cedula = localStorage.getItem("cedula");
+        if (!cedula) {
+            console.error("❌ No se encontró la cédula del usuario en localStorage.");
+            alert("No se puede dar 'Me gusta' porque no se encuentra su información de usuario.");
+            return;
+        }
+        
         console.log(`👍 Intentando dar like a ${anuncioId} en ${urlLike}`);
-
 
         const button = document.querySelector(`.like-button[data-anuncio-id="${anuncioId}"]`);
         const likesCountSpan = button?.querySelector('.likes-count');
@@ -1351,13 +1388,36 @@ document.addEventListener('DOMContentLoaded', function() {
         button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
         try {
-            const response = await fetch(urlLike, { // Usar la URL correcta (si está definida)
-                method: 'POST',
+            // Primero verificar si el usuario ya dio like a este anuncio
+            const checkResponse = await fetch(`${urlLike}?cedula=${cedula}`, {
+                method: 'GET',
                 headers: {
-                    // 'Content-Type': 'application/json', // No necesario si no hay body
                     'Accept': 'application/json'
                 }
-                // body: JSON.stringify({ userId: '...' }) // Si necesitas enviar quién dio like
+            });
+            
+            const checkData = await checkResponse.json().catch(() => ({}));
+            
+            if (!checkResponse.ok) {
+                throw new Error(checkData.detail || checkData.message || `Error ${checkResponse.status} al verificar like.`);
+            }
+            
+            // Si el usuario ya dio like, mostrar mensaje y no continuar
+            if (checkData.usuario_dio_like) {
+                button.innerHTML = originalButtonState;
+                button.disabled = false;
+                alert("Ya le diste me gusta a esta publicidad");
+                return;
+            }
+            
+            // Enviar el like con la cédula del usuario
+            const response = await fetch(urlLike, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ cedula: cedula })
             });
 
             const data = await response.json().catch(() => ({}));
@@ -1365,25 +1425,31 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!response.ok) {
                 throw new Error(data.detail || data.message || `Error ${response.status} al dar like.`);
             }
+            
+            // Si ya le dio like anteriormente, mostrar el mensaje
+            if (data.success === false && data.message) {
+                alert(data.message);
+                button.innerHTML = originalButtonState;
+                button.disabled = false;
+                return;
+            }
 
             // Éxito - Actualizar contador y feedback visual
-            likesCountSpan.textContent = data.likes !== undefined ? data.likes : parseInt(likesCountSpan.textContent || '0') + 1; // Actualizar contador
-            button.classList.add('liked-animation'); // Añadir clase para animación CSS
+            likesCountSpan.textContent = data.likes !== undefined ? data.likes : parseInt(likesCountSpan.textContent || '0') + 1;
+            button.classList.add('liked-animation');
 
             console.log(`✅ Like registrado para ${anuncioId}. Nueva cuenta: ${likesCountSpan.textContent}`);
 
             // Quitar animación y restaurar botón después de un tiempo
             setTimeout(() => {
                 button.classList.remove('liked-animation');
-                // Restaurar icono y contador (ya actualizado)
                 button.innerHTML = `<i class="fas fa-thumbs-up"></i> <span class="likes-count">${likesCountSpan.textContent}</span>`;
                 button.disabled = false;
-            }, 1000); // Duración de la animación
+            }, 1000);
 
         } catch (error) {
             console.error(`🚨 Error al dar like al anuncio ${anuncioId}:`, error);
             alert(`No se pudo registrar el 'Me gusta'. ${error.message}`);
-            // Restaurar botón a su estado original en caso de error
             button.innerHTML = originalButtonState;
             button.disabled = false;
         }
