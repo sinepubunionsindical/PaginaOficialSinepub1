@@ -24,7 +24,7 @@ const EFFECTIVE_URL = DEBUG_MODE ? LOCAL_URL : BACKEND_URL;
 const API_ENDPOINTS = {
     base: EFFECTIVE_URL,
     publicidad: `${EFFECTIVE_URL}/api/publicidad`,
-    usuario: `${EFFECTIVE_URL}/api/usuario`,
+    usuario: `${EFFECTIVE_URL}/api/perfil`,
     meGusta: `${EFFECTIVE_URL}/api/me-gusta`,
     afiliacion: `${EFFECTIVE_URL}/api/afiliacion`,
     afiliados: `${EFFECTIVE_URL}/api/afiliados`,
