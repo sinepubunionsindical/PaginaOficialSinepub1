@@ -833,7 +833,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                         
                                         <div class="anuncio-footer">
                                             <div class="anuncio-stats">
-                                                <button class="like-button" onclick="darLike('${anuncio.id}')" title="Me gusta">
+                                                <button class="like-button" data-anuncio-id="${anuncio.id}" title="Me gusta">
                                                     <i class="fas fa-heart"></i>
                                                     <span class="likes-count">${anuncio.likes || 0}</span>
                                                 </button>
@@ -1313,6 +1313,10 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error("❌ No se encontró anuncioId en el botón de like.");
             return;
         }
+        if (localStorage.getItem(`like_${anuncioId}`)) {
+            alert("⚠️ Ya le diste 'Me gusta' a este anuncio.");
+            return;
+        }        
         await darLike(anuncioId); // Llamar a la función que interactúa con el backend
     }
 
@@ -1323,69 +1327,64 @@ document.addEventListener('DOMContentLoaded', function() {
  */
 async function darLike(anuncioId) {
     const likeEndpoint = window.API_ENDPOINTS?.like;
-    const cedula = localStorage.getItem('cedula');
+    const urlLike = likeEndpoint ? `${likeEndpoint}/${anuncioId}` : null;
+    const cedula = localStorage.getItem("cedula");
 
-    if (!likeEndpoint || !cedula) {
-        alert("⚠️ No se puede registrar 'Me gusta': configuración incompleta.");
+    if (!urlLike || !cedula) {
+        console.warn("❌ Like deshabilitado. Faltan la URL o la cédula del usuario.");
+        alert("Debes iniciar sesión para dar Me Gusta.");
         return;
     }
 
-    const urlLike = `${likeEndpoint}/${anuncioId}`;
     const button = document.querySelector(`.like-button[data-anuncio-id="${anuncioId}"]`);
     const likesCountSpan = button?.querySelector('.likes-count');
-
     if (!button || !likesCountSpan) {
-        console.error(`❌ Botón de like o contador no encontrado para anuncio ID: ${anuncioId}`);
+        console.error(`❌ No se encontró el botón o contador de likes para ${anuncioId}`);
         return;
     }
 
-    // UI: Estado cargando
-    const originalHTML = button.innerHTML;
+    const originalState = button.innerHTML;
     button.disabled = true;
-    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    button.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
 
     try {
         const response = await fetch(urlLike, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                'ngrok-skip-browser-warning': 'true',
-                'User-Agent': 'sinepub-client'
-            },
-            body: JSON.stringify({ cedula })
+                'cedula': cedula
+            }
         });
 
         const data = await response.json().catch(() => ({}));
 
         if (!response.ok) {
-            throw new Error(data.message || `Error HTTP ${response.status}`);
+            throw new Error(data.error || `Error HTTP ${response.status}`);
         }
 
-        if (data.ya_dio_like) {
-            alert("⚠️ Ya le diste 'Me gusta' a esta publicidad.");
+        // Validar si ya dio like
+        if (data.duplicado) {
+            alert("⚠️ Ya le diste Me Gusta a esta publicidad.");
         } else {
-            // Actualizar visualmente el contador
             likesCountSpan.textContent = data.likes;
-            localStorage.setItem(`like_${anuncioId}`, 'true');
             button.classList.add('liked-animation');
-
-            setTimeout(() => {
-                button.classList.remove('liked-animation');
-                button.innerHTML = `<i class="fas fa-thumbs-up"></i> <span class="likes-count">${data.likes}</span>`;
-            }, 800);
+            localStorage.setItem(`like_${anuncioId}`, 'true');
         }
+
+        // Restaurar UI
+        setTimeout(() => {
+            button.classList.remove('liked-animation');
+            button.innerHTML = `<i class="fas fa-thumbs-up"></i> <span class="likes-count">${likesCountSpan.textContent}</span>`;
+            button.disabled = false;
+        }, 800);
 
     } catch (error) {
-        console.error("❌ Error al dar like:", error);
-        alert(`No se pudo registrar tu 'Me gusta': ${error.message}`);
-        button.innerHTML = originalHTML;
-
-    } finally {
+        console.error(`❌ Error al dar like:`, error);
+        alert(`No se pudo dar Me Gusta. ${error.message}`);
+        button.innerHTML = originalState;
         button.disabled = false;
     }
 }
-
 
 
     // --- Inicialización de la Página y Listeners Globales ---
