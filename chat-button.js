@@ -271,6 +271,33 @@ function mostrarPanelEstadisticasUsuario() {
     const nombre = localStorage.getItem('nombre') || 'Usuario';
     const cargo = localStorage.getItem('cargo') || 'Afiliado';
     const foto = localStorage.getItem('foto') || '';
+    // Obtener cédula para consultar perfil real
+    const cedula = localStorage.getItem('cedula');
+
+    // Validar que la cédula esté y exista el backend
+    if (cedula && window.API_ENDPOINTS?.usuario) {
+        fetch(`${window.API_ENDPOINTS.usuario}/${cedula}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'ngrok-skip-browser-warning': 'true',
+                'User-Agent': 'sinepub-client'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data?.datos?.total_publicidades !== undefined) {
+                const contador = document.getElementById('contador-publicidades');
+                if (contador) {
+                    contador.textContent = data.datos.total_publicidades;
+                }
+            }
+        })
+        .catch(error => {
+            console.warn('No se pudo cargar el contador de publicidades:', error);
+        });
+        
+    }
 
     const panel = document.createElement('div');
     panel.id = 'user-stats-panel';
@@ -328,7 +355,7 @@ function mostrarPanelEstadisticasUsuario() {
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         " title="Minimizar stats">−</button>
     `;
-
+    
     document.body.appendChild(panel);
 
     // Botón flotante para restaurar
