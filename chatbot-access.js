@@ -52,6 +52,7 @@ async function activarChatbot() {
     try {
         // En lugar de inicializarChatIA, usamos createChatButton
         createChatButton();
+        mostrarPanelEstadisticasUsuario();
         console.log('Botón de chat creado correctamente');
     } catch (error) {
         console.error('Error al crear el botón de chat:', error);
