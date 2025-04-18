@@ -218,7 +218,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Actualizar los enlaces/puntos de navegación
         updateNavLinks(currentSlide);
-        updateSliderDots(); // Aunque esté vacía, la llamamos por si se implementa en el futuro
     }
 
     /**
@@ -278,75 +277,6 @@ document.addEventListener('DOMContentLoaded', function() {
      * Esta función se mantiene vacía si los dots están ocultos o no implementados.
      * Si se añaden dots en HTML/CSS, aquí iría la lógica para marcar el activo.
      */
-    function updateSliderDots() {
-        // console.log("⚪ updateSliderDots: No implementado (dots ocultos/inexistentes).");
-        // Ejemplo si hubiera dots:
-        // const dots = document.querySelectorAll('.slider-dot');
-        // if (dots.length > 0) {
-        //     dots.forEach((dot, index) => {
-        //         dot.classList.toggle('active', index === currentSlide);
-        //     });
-        // }
-        return; // No hacer nada por ahora
-    }
-
-
-    // --- Funciones del Formulario (Base: Versión 1 - CORREGIDO ENVÍO) ---
-
-    // Configura la lógica de los botones para usar email del perfil o uno diferente
-    function configurarBotonesEmail() {
-        const btnEmailPerfil = document.getElementById('usar-email-perfil');
-        const btnEmailDiferente = document.getElementById('usar-email-diferente');
-        const emailInput = document.getElementById('email');
-
-        if (btnEmailPerfil && btnEmailDiferente && emailInput) {
-            const emailGuardado = localStorage.getItem("email");
-
-            // Limpiar listeners previos clonando y reemplazando los botones
-            // Esto es importante si la función se llama múltiples veces (ej, al abrir modal)
-            const newBtnEmailPerfil = btnEmailPerfil.cloneNode(true);
-            const newBtnEmailDiferente = btnEmailDiferente.cloneNode(true);
-            btnEmailPerfil.parentNode.replaceChild(newBtnEmailPerfil, btnEmailPerfil);
-            btnEmailDiferente.parentNode.replaceChild(newBtnEmailDiferente, btnEmailDiferente);
-
-            // Lógica inicial de visibilidad y valor
-            if (emailGuardado) {
-                emailInput.value = emailGuardado;
-                emailInput.readOnly = false; // Permitir editar por si acaso
-                newBtnEmailDiferente.style.display = 'inline-block'; // Mostrar "Usar otro"
-                newBtnEmailPerfil.style.display = 'none'; // Ocultar "Usar perfil" (ya está puesto)
-            } else {
-                emailInput.value = '';
-                emailInput.readOnly = false;
-                newBtnEmailDiferente.style.display = 'none'; // Ocultar "Usar otro"
-                newBtnEmailPerfil.style.display = 'none'; // Ocultar "Usar perfil" (no hay)
-            }
-
-            // Añadir listeners a los NUEVOS botones
-            newBtnEmailPerfil.addEventListener('click', function() {
-                const emailPerfil = localStorage.getItem("email");
-                if (emailPerfil) {
-                    emailInput.value = emailPerfil;
-                    newBtnEmailDiferente.style.display = 'inline-block';
-                    newBtnEmailPerfil.style.display = 'none';
-                } else {
-                    alert("No tienes un email guardado en tu perfil. Por favor, actualiza tu perfil primero.");
-                    emailInput.focus();
-                }
-            });
-
-            newBtnEmailDiferente.addEventListener('click', function() {
-                emailInput.value = '';
-                emailInput.readOnly = false;
-                emailInput.focus();
-                // Mostrar "Usar perfil" solo si existe un email guardado
-                newBtnEmailPerfil.style.display = localStorage.getItem("email") ? 'inline-block' : 'none';
-                newBtnEmailDiferente.style.display = 'none';
-            });
-        } else {
-             console.warn("⚠️ No se encontraron todos los elementos para configurar botones de email (usar-email-perfil, usar-email-diferente, email).");
-        }
-    }
 
     /**
      * Limpia los campos del formulario y la vista previa de la imagen.
@@ -580,6 +510,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (cedulaGuardada) {
                     datos.cedula = cedulaGuardada;
                 }
+                const nombrePerfil = localStorage.getItem("nombre");
+                if (nombrePerfil) {
+                    datos.nombre_perfil = nombrePerfil;
+                }
                 
                 // Leer imagen como base64 si hay una seleccionada
                 if (imagenInput && imagenInput.files.length > 0) {
@@ -723,8 +657,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         setTimeout(() => { mensajeError.remove(); }, 7000); // Dar un poco más de tiempo para leer errores
     }
-
-
     // --- Funciones de Carga y Like de Anuncios (Base: Versión 1 - ¡REVISAR URL LIKE!) ---
 
     /**
@@ -815,7 +747,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                             <img src="${fotoPerfil}" alt="Foto de perfil" class="perfil-imagen"
                                                  onerror="this.onerror=null; this.src='/images/avatar-placeholder.png';">
                                             <div class="perfil-info">
-                                                <h4>${anuncio.nombre || 'Anónimo'}</h4>
+                                                <h4>${anuncio.nombre_perfil || 'Afiliado'}</h4>
                                                 <span class="fecha-publicacion">${fechaFormateada}</span>
                                             </div>
                                         </div>
@@ -824,36 +756,55 @@ document.addEventListener('DOMContentLoaded', function() {
                                         </div>
                                     </div>
 
-                                    <div class="anuncio-imagen-container">
-                                        <img src="${imagenSrc}" alt="${anuncio.titulo}" class="anuncio-imagen"
-                                             onerror="this.onerror=null; this.src='/images/placeholder-anuncio.png';">
-                                    </div>
+                                    <div class="anuncio-contenido-flex">
 
-                                    <div class="anuncio-contenido">
-                                        <h3 class="anuncio-titulo">${anuncio.titulo}</h3>
-                                        <p class="anuncio-descripcion">${anuncio.descripcion}</p>
-                                        
-                                        <div class="anuncio-footer">
-                                            <div class="anuncio-stats">
-                                                <button class="like-button" data-anuncio-id="${anuncio.id}" title="Me gusta">
-                                                    <i class="fas fa-heart"></i>
-                                                    <span class="likes-count">${anuncio.likes || 0}</span>
-                                                </button>
-                                            </div>
+                                        <!-- 📌 Columna izquierda -->
+                                        <div class="anuncio-info">
+                                            <p class="anuncio-responsable"><strong>Responsable:</strong> ${anuncio.nombre || 'Anónimo'}</p>
+
+                                            <h3 class="anuncio-titulo">${anuncio.titulo}</h3>
+
                                             <div class="anuncio-contacto">
                                                 ${anuncio.telefono ? `
-                                                    <a href="tel:${anuncio.telefono}" class="contacto-btn">
+                                                    <a href="tel:${anuncio.telefono}" class="contacto-btn contacto-llamar">
                                                         <i class="fas fa-phone"></i> Llamar
                                                     </a>` : ''
                                                 }
                                                 ${anuncio.email ? `
-                                                    <a href="mailto:${anuncio.email}" class="contacto-btn">
+                                                    <a href="mailto:${anuncio.email}" class="contacto-btn contacto-email">
                                                         <i class="fas fa-envelope"></i> Email
                                                     </a>` : ''
                                                 }
                                             </div>
+
+                                            <p class="anuncio-descripcion">${anuncio.descripcion}</p>
+                                        </div>
+
+                                        <!-- 📌 Columna derecha: imagen con marco -->
+                                        <div class="anuncio-imagen-lateral">
+                                            <img src="${imagenSrc}" alt="Imagen del anuncio"
+                                                class="anuncio-imagen-derecha"
+                                                onerror="this.onerror=null; this.src='/images/placeholder-anuncio.png';">
+
+                                            <!-- 📌 Footer debajo de imagen -->
+                                            <div class="anuncio-interaccion">
+                                                <button class="like-button" data-anuncio-id="${anuncio.id}" title="Me gusta">
+                                                    <i class="fas fa-heart"></i>
+                                                    <span class="likes-count">${anuncio.likes || 0}</span>
+                                                </button>
+
+                                                <button class="comentario-button" data-anuncio-id="${anuncio.id}">
+                                                    <i class="fas fa-comment"></i> Comentar
+                                                </button>
+
+                                                <div class="comentario-box hidden" id="comentario-box-${anuncio.id}">
+                                                    <textarea placeholder="Escribe tu comentario..." class="comentario-input"></textarea>
+                                                    <button class="btn-publicar-comentario" data-anuncio-id="${anuncio.id}">Publicar</button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
+
                                 </div>
                             `;
                         }).join('');
@@ -1399,7 +1350,6 @@ async function darLike(anuncioId) {
             if (document.querySelector('.slider-nav')) {
                 setupSliderNavListeners();
                 // Actualizar los indicadores del slider
-                updateSliderDots();
             } else {
                 console.log("⚠️ No se encontró el elemento slider-nav");
             }
@@ -1544,7 +1494,7 @@ async function darLike(anuncioId) {
     // 'darLike' ya no necesita ser global porque usamos addEventListener
     // window.darLike = darLike; // Ya no es necesario con setupLikeButtonListeners
     window.configurarBotonRegistro = configurarBotonRegistro; // Necesario para auth-popup.js u otros
-    // window.updatePublicidadSliderDots = updateSliderDots; // No parece necesario globalmente
+    
 
     // --- Ejecución Inicial ---
     initPage();
