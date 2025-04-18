@@ -167,7 +167,17 @@ function initSlider() {
 
         // Cambiar el slide visualmente
         slides.forEach((slide, index) => {
-            slide.classList.toggle('active', index === slideIndex);
+            const isActive = index === slideIndex;
+            slide.classList.toggle('active', isActive);
+        
+             // 🔥 Si es el slide 1 (inicio) y está activo, dale flujo normal
+            if (isActive && slide.id === "slide-1") {
+                slide.style.position = 'relative';
+                slider.classList.add('modo-scroll');
+                sliderContainerElement.classList.add('modo-scroll');
+            } else {
+                slide.style.position = 'absolute';
+            }
         });
 
         currentSlide = slideIndex; // Actualizar el índice global
@@ -218,6 +228,15 @@ function initSlider() {
 
         // Actualizar dots (sin cambios en esta llamada)
         updateDots(slideIndex);
+        // Ajuste especial para que slide-1 se comporte como scroll natural
+        if (slideIndex === 0) {
+            slider.classList.add('modo-scroll');
+            sliderContainerElement.classList.add('modo-scroll'); // esta es nueva
+        } else {
+            slider.classList.remove('modo-scroll');
+            sliderContainerElement.classList.remove('modo-scroll'); // quitar
+        }
+
     } // Fin de la función updateSlide modificada
 
     function createNavigationDots() {
