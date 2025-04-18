@@ -172,33 +172,57 @@
             <form id="formulario-publicidad" class="formulario-registro">
                 <div class="form-grid">
                     <!-- Email -->
+                    <!-- Email -->
                     <div class="form-group">
                         <label for="email">Correo electrónico:</label>
+                        <div class="opciones-contacto">
+                            <button type="button" id="btn-usar-email-perfil" class="btn-secundario-mini">
+                                <i class="fas fa-user"></i> Usar correo del perfil
+                            </button>
+                            <button type="button" id="btn-usar-email-alterno" class="btn-secundario-mini">
+                                <i class="fas fa-edit"></i> Usar otro correo
+                            </button>
+                        </div>
                         <div class="input-with-icon">
                             <i class="fas fa-envelope"></i>
-                            <input type="email" id="email" name="email" required placeholder="tu.correo@ejemplo.com">
+                            <input type="email" id="email" name="email" required placeholder="tu.correo@ejemplo.com" disabled>
                         </div>
-                        <!-- Botón para usar email del perfil (requiere JS) -->
-                        <!-- <button type="button" id="usar-email-perfil" class="btn-link"><i class="fas fa-user"></i> Usar email del perfil</button> -->
                     </div>
 
                     <!-- Teléfono -->
                     <div class="form-group">
                         <label for="telefono">Teléfono de contacto:</label>
+                        <div class="opciones-contacto">
+                            <button type="button" id="btn-usar-telefono-perfil" class="btn-secundario-mini" disabled>
+                                <i class="fas fa-mobile-alt"></i> Usar celular del perfil
+                            </button>
+                            <button type="button" id="btn-usar-telefono-alterno" class="btn-secundario-mini">
+                                <i class="fas fa-edit"></i> Agregar otro celular
+                            </button>
+                        </div>
                         <div class="input-with-icon">
                             <i class="fas fa-phone"></i>
-                            <input type="tel" id="telefono" name="telefono" required pattern="[0-9]{10}" title="Ingrese 10 dígitos numéricos (ej: 3101234567)" placeholder="Ej: 3101234567">
+                            <input type="tel" id="telefono" name="telefono" required pattern="[0-9]{10}" title="Ingrese 10 dígitos numéricos (ej: 3101234567)" placeholder="Ej: 3101234567" disabled>
                         </div>
                     </div>
 
                     <!-- Nombre -->
                     <div class="form-group">
                         <label for="nombre">Nombre del Contacto:</label>
+                        <div class="opciones-contacto">
+                            <button type="button" id="btn-usar-nombre-perfil" class="btn-secundario-mini">
+                                <i class="fas fa-user-check"></i> Usar nombre del perfil
+                            </button>
+                            <button type="button" id="btn-usar-nombre-alterno" class="btn-secundario-mini">
+                                <i class="fas fa-user-edit"></i> Usar otro nombre
+                            </button>
+                        </div>
                         <div class="input-with-icon">
                             <i class="fas fa-user"></i>
-                            <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre completo">
+                            <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre completo" disabled>
                         </div>
                     </div>
+
 
                     <!-- Categoría -->
                     <div class="form-group">
