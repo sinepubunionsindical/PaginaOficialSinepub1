@@ -468,29 +468,35 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
                         const perfilCompletoBackend = perfilData.perfil_completo === true;
                         const perfilCompletoLocal = localStorage.getItem("perfil_completo") === "true";
                         
-                        if (perfilCompletoBackend || perfilCompletoLocal) {
+                        if (perfilCompletoBackend) {
                             console.log("✅ Perfil marcado como completo en backend o localStorage.");
                             localStorage.setItem('perfil_completo', 'true');
                             localStorage.setItem('afiliado', 'yes');
                         
                             const datos = perfilData.datos || {};
                             if (datos.nombre) localStorage.setItem('nombre', datos.nombre);
-                            if (datos.correo) {
-                                localStorage.setItem('correo', datos.correo);
-                                localStorage.setItem('email', datos.correo);
-                            }
+                            if (datos.correo && typeof datos.correo === "string" && datos.correo.includes("@")) {
+                                localStorage.setItem('correo', datos.correo.trim());
+                                console.log("📧 Correo guardado correctamente:", datos.correo);
+                            } else {
+                                console.warn("⚠️ Correo del backend no es válido o no está presente:", datos.correo);
+                            }                            
                             if (datos.foto && datos.foto.backend_path) {
                                 localStorage.setItem('foto_ruta', datos.foto.backend_path);
                             }
                         
                             document.getElementById("loading-popup")?.remove();
-                            mostrarPopupBienvenidaPersonalizado();
+                            setTimeout(() => {
+                                mostrarPopupBienvenidaPersonalizado();
+                            }, 100); // o 200ms si querés asegurar sincronía
                             return;
                         }
                         
                         // Si no está completo ni en backend ni en localStorage
                         document.getElementById("loading-popup")?.remove();
-                        mostrarFormularioCompletarPerfilObligatorio(cedula, nombre);                   
+                        const correo = perfilData.datos?.correo || "";
+                        const telefono = perfilData.datos?.telefono || "";
+                        mostrarFormularioCompletarPerfilObligatorio(cedula, nombre, correo, telefono);
                 
                     } catch (error) {
                         console.error("❌ Error al verificar el perfil:", error);
@@ -502,8 +508,9 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
                             mostrarPopupBienvenidaPersonalizado();
                             return;
                         }
-                
-                        mostrarFormularioCompletarPerfilObligatorio(cedula, nombre);
+                        const correo = perfilData.datos?.correo || "";
+                        const telefono = perfilData.datos?.telefono || "";
+                        mostrarFormularioCompletarPerfilObligatorio(cedula, nombre, correo, telefono);
                     }
                 };
                 
@@ -513,7 +520,9 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
             } catch (error) {
                 console.error("❌ Error crítico al verificar el perfil:", error);
                 document.getElementById("loading-popup")?.remove();
-                mostrarFormularioCompletarPerfilObligatorio(cedula, nombre);
+                const correo = perfilData.datos?.correo || "";
+                const telefono = perfilData.datos?.telefono || "";
+                mostrarFormularioCompletarPerfilObligatorio(cedula, nombre, correo, telefono);
             }
 
         } else {
@@ -598,7 +607,8 @@ function mostrarPopupBienvenidaSimple(mensaje) {
 }
 
 // Función para mostrar el formulario de completar perfil obligatorio (sin opción de omitir)
-function mostrarFormularioCompletarPerfilObligatorio(cedula, nombre) {
+function mostrarFormularioCompletarPerfilObligatorio(cedula, nombre, correo = "", telefono = ""){
+
     console.log("📝 Mostrando formulario obligatorio para completar perfil");
     
     const existingPopup = document.getElementById("auth-popup");
@@ -627,17 +637,17 @@ function mostrarFormularioCompletarPerfilObligatorio(cedula, nombre) {
         <div id="profile-panel">
             <div style="margin-bottom: 15px;">
                 <label for="nombre">Nombre completo:</label>
-                <input type="text" id="nombre" value="${nombre || ''}" placeholder="Tu nombre completo" required>
+                <input type="text" id="nombre-perfil" name="nombre" required value="${nombre}">
             </div>
             
             <div style="margin-bottom: 15px;">
                 <label for="correo">Correo electrónico:</label>
-                <input type="email" id="correo" placeholder="tu@correo.com" required>
+                 <input type="email" id="correo" value="${correo}" placeholder="tu@correo.com" required>
             </div>
             
             <div style="margin-bottom: 15px;">
                 <label for="telefono">Número de teléfono (opcional):</label>
-                <input type="tel" id="telefono" placeholder="Tu número de teléfono">
+                <input type="tel" id="telefono" value="${telefono}" placeholder="Tu número de teléfono">
             </div>
             
             <div style="margin-bottom: 15px;">
@@ -654,37 +664,15 @@ function mostrarFormularioCompletarPerfilObligatorio(cedula, nombre) {
 
     document.body.appendChild(popup);
     
-    // Obtener correo y teléfono desde perfiles.json (API) si existen
-    if (cedula && window.API_ENDPOINTS?.perfil) {
-        const perfilUrl = window.API_ENDPOINTS.perfil.replace('{cedula}', cedula);
-
-        fetch(perfilUrl, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'ngrok-skip-browser-warning': 'true',
-                'User-Agent': 'sinepub-client'
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data?.perfil_existe && data?.datos) {
-                const { correo, telefono } = data.datos;
-                if (correo) {
-                    document.getElementById('correo').value = correo;
-                    localStorage.setItem('correo', correo);
-                    localStorage.setItem('email', correo);
-                }
-                if (telefono) {
-                    document.getElementById('telefono').value = telefono;
-                    localStorage.setItem('telefono', telefono);
-                }
-            }
-        })
-        .catch(err => {
-            console.warn("⚠️ No se pudo precargar datos del perfil:", err);
-        });
-    }    
+    // Obtener correo de localStorage si existe
+    if (!document.getElementById('correo').value && localStorage.getItem("correo")) {
+        document.getElementById('correo').value = localStorage.getItem("correo");
+    }
+    if (!document.getElementById('telefono').value && localStorage.getItem("telefono")) {
+        document.getElementById('telefono').value = localStorage.getItem("telefono");
+    }
+    
+    
     // Evento para previsualizar la imagen seleccionada
     document.getElementById('user-photo').addEventListener('change', function(e) {
         const file = e.target.files[0];
@@ -710,7 +698,7 @@ function mostrarFormularioCompletarPerfilObligatorio(cedula, nombre) {
         
         guardarBtn.addEventListener('click', function() {
             // Validación de campos obligatorios
-            const nombreValue = document.getElementById('nombre').value;
+            const nombreValue = document.getElementById('nombre-perfil').value;
             const correoValue = document.getElementById('correo').value;
             
             if (!nombreValue || !correoValue) {
@@ -791,7 +779,6 @@ function mostrarFormularioCompletarPerfilObligatorio(cedula, nombre) {
         });
     }
 }
-
 // Función para bloquear el botón en caso de acceso denegado
 function bloquearBoton() {
     const chatButton = document.getElementById("chatbot-button");
@@ -1003,123 +990,6 @@ window.bloquearBoton = bloquearBoton;
 window.activarChatbot = activarChatbot;
 window.verificarPerfilUsuario = verificarPerfilUsuario;
 
-// Función para mostrar el formulario de perfil
-function mostrarFormularioPerfil(cedula, nombre) {
-    console.log(" Mostrando formulario de perfil para cédula:", cedula);
-    
-    // Guardar datos en localStorage
-    localStorage.setItem("cedula", cedula);
-    if (nombre) {
-        localStorage.setItem("nombre", nombre);
-    }
-    
-    // Cerrar el popup actual si existe
-    const existingPopup = document.getElementById("auth-popup");
-    if (existingPopup) {
-        existingPopup.remove();
-    }
-    
-    // Crear el nuevo popup de perfil
-    const popup = document.createElement("div");
-    popup.id = "auth-popup";
-    popup.style.position = "fixed";
-    popup.style.top = "50%";
-    popup.style.left = "50%";
-    popup.style.transform = "translate(-50%, -50%)";
-    popup.style.background = "white";
-    popup.style.padding = "20px";
-    popup.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
-    popup.style.zIndex = "10000";
-    popup.style.borderRadius = "8px";
-    popup.style.width = "400px";
-    popup.style.textAlign = "center";
-
-    popup.innerHTML = `
-        <h3>Completa tu perfil</h3>
-        <p>Por favor completa la siguiente información para continuar:</p>
-        
-        <div id="profile-panel">
-            <div style="margin-bottom: 15px;">
-                <label for="nombre-perfil">Nombre:</label>
-                <input type="text" id="nombre-perfil" name="nombre" required value="${nombre}"> 
-            </div>
-            <div>
-                <label for="correo-perfil">Correo Electrónico:</label>
-                <input type="email" id="correo-perfil" name="correo" required>
-            </div>
-            <div style="margin-bottom: 15px;">
-                <label>Foto de perfil:</label>
-                <div style="display: flex; align-items: center; justify-content: center; margin-top: 10px;">
-                    <img id="user-photo-preview" src="" alt="Foto de perfil" style="width: 100px; height: 100px; border-radius: 50%; border: 1px solid #ccc; object-fit: cover; display: none;">
-                    <input type="file" id="user-photo" accept="image/*" style="display: block; margin: 10px auto;">
-                </div>
-            </div>
-            <button id="guardar-perfil-btn">Guardar Perfil</button>
-            <button id="cancelar-perfil-btn">Cancelar</button>
-        </div>
-    `;
-
-    document.body.appendChild(popup);
-    
-    // Obtener correo de localStorage si existe
-    const correo = localStorage.getItem("correo");
-    if (correo) {
-        document.getElementById('correo-perfil').value = correo;
-    }
-    
-    // Evento para previsualizar la imagen seleccionada
-    document.getElementById('user-photo').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const preview = document.getElementById('user-photo-preview');
-                preview.src = event.target.result;
-                preview.style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-    
-    // Evento para guardar el perfil
-    let guardarBtn = document.getElementById('guardar-perfil-btn');
-    let cancelarBtn = document.getElementById('cancelar-perfil-btn');
-    
-    if (guardarBtn) {
-        // --- CLONAR PARA LIMPIAR LISTENERS ---
-        const newGuardarBtn = guardarBtn.cloneNode(true);
-        guardarBtn.parentNode.replaceChild(newGuardarBtn, guardarBtn);
-        guardarBtn = newGuardarBtn; // Actualizar la referencia
-        // --- FIN CLONADO ---
-        
-        guardarBtn.addEventListener('click', function() {
-            // Deshabilitar botones
-            guardarBtn.disabled = true;
-            guardarBtn.textContent = 'Guardando...';
-            if(cancelarBtn) cancelarBtn.disabled = true;
-            
-            const nombreValue = document.getElementById('nombre-perfil').value;
-            const correoValue = document.getElementById('correo-perfil').value;
-            const fotoPreview = document.getElementById('user-photo-preview');
-            const fotoValue = fotoPreview.style.display !== 'none' ? fotoPreview.src : '';
-            
-            // Pasar la referencia correcta del botón
-            guardarPerfilUsuario(cedula, nombreValue, correoValue, fotoValue, guardarBtn, cancelarBtn);
-        });
-    }
-    
-    // Evento para cancelar (podría necesitar clonado similar si la función se llama múltiples veces)
-    if (cancelarBtn) {
-        // Opcional: Clonar y reemplazar cancelarBtn si es necesario
-        // const newCancelarBtn = cancelarBtn.cloneNode(true);
-        // cancelarBtn.parentNode.replaceChild(newCancelarBtn, cancelarBtn);
-        // cancelarBtn = newCancelarBtn;
-        
-        cancelarBtn.addEventListener('click', function() {
-            closeAuthPopup();
-        });
-    }
-}
 
 // Función para mostrar mensajes de error
 function mostrarError(mensaje) {
