@@ -654,18 +654,37 @@ function mostrarFormularioCompletarPerfilObligatorio(cedula, nombre) {
 
     document.body.appendChild(popup);
     
-    // Obtener correo de localStorage si existe
-    const correo = localStorage.getItem("correo");
-    if (correo) {
-        document.getElementById('correo').value = correo;
-    }
-    
-    // Obtener teléfono de localStorage si existe
-    const telefono = localStorage.getItem("telefono");
-    if (telefono) {
-        document.getElementById('telefono').value = telefono;
-    }
-    
+    // Obtener correo y teléfono desde perfiles.json (API) si existen
+    if (cedula && window.API_ENDPOINTS?.perfil) {
+        const perfilUrl = window.API_ENDPOINTS.perfil.replace('{cedula}', cedula);
+
+        fetch(perfilUrl, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'ngrok-skip-browser-warning': 'true',
+                'User-Agent': 'sinepub-client'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data?.perfil_existe && data?.datos) {
+                const { correo, telefono } = data.datos;
+                if (correo) {
+                    document.getElementById('correo').value = correo;
+                    localStorage.setItem('correo', correo);
+                    localStorage.setItem('email', correo);
+                }
+                if (telefono) {
+                    document.getElementById('telefono').value = telefono;
+                    localStorage.setItem('telefono', telefono);
+                }
+            }
+        })
+        .catch(err => {
+            console.warn("⚠️ No se pudo precargar datos del perfil:", err);
+        });
+    }    
     // Evento para previsualizar la imagen seleccionada
     document.getElementById('user-photo').addEventListener('change', function(e) {
         const file = e.target.files[0];

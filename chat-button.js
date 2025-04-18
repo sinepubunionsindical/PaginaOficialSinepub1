@@ -292,6 +292,11 @@ function mostrarPanelEstadisticasUsuario() {
                     contador.textContent = data.datos.total_publicidades;
                 }
             }
+            // ✅ NUEVO BLOQUE - Sincroniza teléfono desde backend
+            if (data?.datos?.telefono) {
+                localStorage.setItem('telefono', data.datos.telefono);
+                console.log("📞 Teléfono sincronizado:", data.datos.telefono);
+            }
         })
         .catch(error => {
             console.warn('No se pudo cargar el contador de publicidades:', error);

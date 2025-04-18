@@ -322,6 +322,28 @@
     display: none !important; /* Ocultar completamente */
 }
 
+.opciones-contacto {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 5px;
+    flex-wrap: wrap;
+  }
+  
+  .btn-secundario-mini {
+    padding: 4px 8px;
+    font-size: 13px;
+    border: 1px solid #ccc;
+    background-color: #e7f0ff;
+    color: #0249aa;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .btn-secundario-mini:disabled {
+    background-color: #eee;
+    cursor: not-allowed;
+    color: #999;
+  }
+    
 /* Estilos responsivos */
 @media (max-width: 768px) {
     .publicidad-title-container {

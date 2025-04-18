@@ -113,6 +113,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Configurar listeners de cierre
         setupModalCloseListeners();
+        configurarBotonesFormularioConPerfil(); 
+
         
         console.log("✅ Formulario de registro mostrado correctamente");
     }
@@ -423,7 +425,7 @@ document.addEventListener('DOMContentLoaded', function() {
      * Inicializa el formulario de publicidad.
      */
     function inicializarFormularioPublicidad() {
-        // Obtener elementos importantes
+                
         const formularioPublicidad = document.getElementById("formulario-publicidad");
         
         if (!formularioPublicidad) {
@@ -1441,7 +1443,103 @@ async function darLike(anuncioId) {
             }
         }
     });
-
+    function configurarBotonesFormularioConPerfil() {
+        const perfil = {
+            nombre: localStorage.getItem('nombre') || '',
+            correo: localStorage.getItem('email') || '',
+            telefono: localStorage.getItem('telefono') || ''
+        };
+    
+        // === EMAIL ===
+        const emailInput = document.getElementById('email');
+        const btnEmailPerfil = document.getElementById('btn-usar-email-perfil');
+        const btnEmailOtro = document.getElementById('btn-usar-email-alterno');
+    
+        if (btnEmailPerfil && btnEmailOtro && emailInput) {
+            if (perfil.correo) {
+                btnEmailPerfil.disabled = false;
+                btnEmailPerfil.style.display = 'inline-block';
+            } else {
+                btnEmailPerfil.disabled = true;
+                btnEmailPerfil.style.display = 'none';
+            }
+    
+            btnEmailPerfil.addEventListener('click', () => {
+                emailInput.value = perfil.correo;
+                emailInput.disabled = true;
+                btnEmailPerfil.style.display = 'none';
+                btnEmailOtro.style.display = 'inline-block';
+            });
+    
+            btnEmailOtro.addEventListener('click', () => {
+                emailInput.disabled = false;
+                emailInput.value = '';
+                emailInput.focus();
+                btnEmailPerfil.style.display = perfil.correo ? 'inline-block' : 'none';
+                btnEmailOtro.style.display = 'none';
+            });
+        }
+    
+        // === TELÉFONO ===
+        const telefonoInput = document.getElementById('telefono');
+        const btnTelPerfil = document.getElementById('btn-usar-telefono-perfil');
+        const btnTelOtro = document.getElementById('btn-usar-telefono-alterno');
+    
+        if (btnTelPerfil && btnTelOtro && telefonoInput) {
+            if (perfil.telefono) {
+                btnTelPerfil.disabled = false;
+                btnTelPerfil.style.display = 'inline-block';
+            } else {
+                btnTelPerfil.disabled = true;
+                btnTelPerfil.style.display = 'none';
+            }
+    
+            btnTelPerfil.addEventListener('click', () => {
+                telefonoInput.value = perfil.telefono;
+                telefonoInput.disabled = true;
+                btnTelPerfil.style.display = 'none';
+                btnTelOtro.style.display = 'inline-block';
+            });
+    
+            btnTelOtro.addEventListener('click', () => {
+                telefonoInput.disabled = false;
+                telefonoInput.value = '';
+                telefonoInput.focus();
+                btnTelPerfil.style.display = perfil.telefono ? 'inline-block' : 'none';
+                btnTelOtro.style.display = 'none';
+            });
+        }
+    
+        // === NOMBRE ===
+        const nombreInput = document.getElementById('nombre');
+        const btnNombrePerfil = document.getElementById('btn-usar-nombre-perfil');
+        const btnNombreOtro = document.getElementById('btn-usar-nombre-alterno');
+    
+        if (btnNombrePerfil && btnNombreOtro && nombreInput) {
+            if (perfil.nombre) {
+                btnNombrePerfil.disabled = false;
+                btnNombrePerfil.style.display = 'inline-block';
+            } else {
+                btnNombrePerfil.disabled = true;
+                btnNombrePerfil.style.display = 'none';
+            }
+    
+            btnNombrePerfil.addEventListener('click', () => {
+                nombreInput.value = perfil.nombre;
+                nombreInput.disabled = true;
+                btnNombrePerfil.style.display = 'none';
+                btnNombreOtro.style.display = 'inline-block';
+            });
+    
+            btnNombreOtro.addEventListener('click', () => {
+                nombreInput.disabled = false;
+                nombreInput.value = '';
+                nombreInput.focus();
+                btnNombrePerfil.style.display = perfil.nombre ? 'inline-block' : 'none';
+                btnNombreOtro.style.display = 'none';
+            });
+        }        
+    }
     // Exponer funciones globalmente SOLO si son necesarias desde fuera (ej: onclick en HTML o desde otros scripts)
     // 'darLike' ya no necesita ser global porque usamos addEventListener
     // window.darLike = darLike; // Ya no es necesario con setupLikeButtonListeners
