@@ -1,10 +1,180 @@
 .fade-section {
   opacity: 0;
-  transition: opacity 0.6s ease-in-out;
+  visibility: hidden;
+  transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out;
   pointer-events: none;
+  display: block !important;
 }
 
 .fade-section.active {
   opacity: 1;
+  visibility: visible;
   pointer-events: all;
+  z-index: 1;
 }
+
+
+.fade-child {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.fade-section.active .fade-child {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.slide {
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out;
+  display: block; /* 👈 SIEMPRE visible, se oculta solo con opacidad */
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.slide.active {
+  opacity: 1;
+  pointer-events: all;
+  position: relative;
+}
+
+.fade-section {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out;
+  pointer-events: none;
+  /* 👇 No pongas display aquí. Se gestiona con clases como hidden. */
+}
+
+.fade-section.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+  z-index: 1;
+}
+
+.advanced-slider-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.main-slide-view {
+  flex: 1;
+  max-width: 70%;
+  position: relative;
+  min-height: 300px; /* 👈 espacio mínimo para evitar saltos */
+  overflow: hidden;  /* 👈 evita que se vean los slides apilados */
+}
+
+.main-slide-view .slide {
+  display: none;
+}
+
+.main-slide-view .slide.active {
+  display: block;
+}
+
+.imagen-principal {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.thumbnail-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 🔥 Dos columnas */
+  gap: 10px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.thumbnail {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border: 3px solid transparent;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.thumbnail.active-thumb {
+  border-color: #0249aa;
+  transform: scale(1.05);
+}
+.fade-section.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+  z-index: 1;
+}
+
+.slide video.imagen-principal {
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out;
+}
+
+.slide.active video.imagen-principal {
+  opacity: 1;
+}
+
+.placeholder-visual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  padding: 30px;
+  background-color: #f4faff;
+  border: 2px dashed #0249aa;
+  border-radius: 20px;
+  margin: 20px 0;
+  text-align: center;
+  transition: opacity 0.4s ease-in-out;
+  animation: fadeInPlaceholder 1s ease;
+}
+
+.placeholder-icon {
+  font-size: 64px;
+  color: #0249aa;
+  animation: bounce 1.6s infinite;
+}
+
+.placeholder-text {
+  margin-top: 15px;
+  font-size: 18px;
+  color: #0249aa;
+  font-weight: 500;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* Animaciones */
+@keyframes fadeInPlaceholder {
+  0% {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+

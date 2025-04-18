@@ -1,36 +1,29 @@
 document.addEventListener('DOMContentLoaded', function () {
+    
     // Aplicar fade-in al cargar
     document.body.classList.remove('fade-out');
-    document.body.classList.add('fade-in'); // Aseguramos que la clase fade-in se aplica correctamente al cargar la página
+    document.body.classList.add('fade-in');
 
-    // Interceptar clics en enlaces para aplicar fade-out
     document.querySelectorAll('a[href]').forEach(link => {
         link.addEventListener('click', (e) => {
             const href = link.getAttribute('href');
-            // Verifica si es un enlace interno, no un ancla (#) y no abre en nueva pestaña
             const isInternal = href && !href.startsWith('#') && !link.hasAttribute('target');
 
             if (isInternal) {
-                e.preventDefault(); // Prevenir navegación inmediata
+                e.preventDefault();
                 document.body.classList.remove('fade-in');
                 document.body.classList.add('fade-out');
-                
-                // Usamos 'transitionend' para asegurarnos de que la transición haya terminado antes de navegar
                 document.body.addEventListener('transitionend', function onTransitionEnd() {
-                    // Eliminar el listener para evitar múltiples invocaciones
                     document.body.removeEventListener('transitionend', onTransitionEnd);
-                    
-                    // Ahora podemos hacer la navegación después de que termine la transición
                     setTimeout(() => {
                         window.location.href = href;
-                    }, 600); // tiempo del fade (asegurarse de que coincida con la duración del fade-out en CSS)
+                    }, 400);
                 });
-        // NOTA: La llamada a initSlider() estaba DENTRO del listener de click,
-        // lo cual no tiene sentido. Se movió fuera del forEach pero dentro del DOMContentLoaded.
-    }
+            }
+        });
     });
-});
-
+    
+    // 🎯 SECCIONES Y BOTONES
     const historiaSecundariaLink = document.getElementById('historia-secundaria-link');
     const fundadoresSecundarioLink = document.getElementById('fundadores-secundario-link');
     const incorporacionSecundarioLink = document.getElementById('incorporacion-secundario-link');
@@ -44,31 +37,47 @@ document.addEventListener('DOMContentLoaded', function () {
     const prevButtonFundadores = document.querySelector('.prev-slide-fundadores');
     const nextButtonFundadores = document.querySelector('.next-slide-fundadores');
 
-    const incorporacionSlider = document.getElementById('incorporacion-slider');
-    const incorporacionSlides = incorporacionSlider.querySelectorAll('.slide');
-    const prevButtonIncorporacion = document.querySelector('.prev-slide-incorporacion');
-    const nextButtonIncorporacion = document.querySelector('.next-slide-incorporacion');
+    const incorporacionSlides = document.querySelectorAll('#incorporacion-slider-section .slide');
 
     let currentFundadorSlide = 0;
     let currentIncorporacionSlide = 0;
-
+    // Desactivar thumbnails y slides al inicio
+    document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active-thumb'));
+    incorporacionSlides.forEach(slide => {
+    slide.classList.remove('active');
+    slide.style.display = 'none';
+    });
     function showSection(sectionToShow) {
-        // Ocultar las actuales con fade-out
         const sections = [historiaSection, fundadoresSliderSection, incorporacionSliderSection];
+    
+        // Paso 1: Fade-out de todas
         sections.forEach(sec => {
-            sec.classList.remove('active'); // Apaga fade-in
+            sec.classList.remove('active');
             sec.classList.add('fade-section');
         });
     
-        // Mostrar con fade-in después de corto delay
+        // Paso 2: Esperar fade-out y aplicar fade-in
         setTimeout(() => {
-            sections.forEach(sec => sec.classList.add('hidden')); // Oculta completamente
+            sections.forEach(sec => sec.classList.add('hidden'));
+    
             sectionToShow.classList.remove('hidden');
-            requestAnimationFrame(() => {
-                sectionToShow.classList.add('active'); // Activa fade-in
-            });
-        }, 400);
+    
+            // 🔥 Forzar reflow después de mostrarla
+            void sectionToShow.offsetWidth;
+    
+            // Activar transición de entrada
+            sectionToShow.classList.add('active');
+    
+            // Reiniciar slide si aplica
+            if (sectionToShow === fundadoresSliderSection) {
+                updateFundadorSlide(0);
+            } else if (sectionToShow === incorporacionSliderSection) {
+                updateIncorporacionSlide(0);
+            }
+        }, 400); // 400ms debe coincidir con transición en .fade-section
     }
+    
+ 
 
     function deactivateSecondaryNavLinks() {
         historiaSecundariaLink.classList.remove('active');
@@ -76,69 +85,144 @@ document.addEventListener('DOMContentLoaded', function () {
         incorporacionSecundarioLink.classList.remove('active');
     }
 
-    function updateFundadorSlide(slideIndex) {
-        fundadoresSlides.forEach((slide, index) => {
-            slide.classList.toggle('active', index === slideIndex);
-        });
-        currentFundadorSlide = slideIndex;
+    function activarSubtituloSecundario(sectionId) {
+        deactivateSecondaryNavLinks();
+        switch (sectionId) {
+            case 'historia': historiaSecundariaLink.classList.add('active'); break;
+            case 'fundadores': fundadoresSecundarioLink.classList.add('active'); break;
+            case 'incorporacion': incorporacionSecundarioLink.classList.add('active'); break;
+        }
     }
 
-    function updateIncorporacionSlide(slideIndex) {
-        incorporacionSlides.forEach((slide, index) => {
-            slide.classList.toggle('active', index === slideIndex);
+    function updateFundadorSlide(index) {
+        fundadoresSlides.forEach((slide, i) => {
+            slide.classList.toggle('active', i === index);
         });
-        currentIncorporacionSlide = slideIndex;
+        currentFundadorSlide = index;
     }
 
-    // Flechas del slider de fundadores
+    function updateIncorporacionSlide(newIndex) {
+        const currentSlide = incorporacionSlides[currentIncorporacionSlide];
+        const nextSlide = incorporacionSlides[newIndex];
+    
+        if (currentSlide === nextSlide) return;
+    
+        // Paso 1: Fade-out del actual
+        currentSlide.classList.remove('active');
+        currentSlide.classList.add('fade-section');
+    
+        // Paso 2: Esperar que desaparezca y aplicar fade-in al nuevo
+        setTimeout(() => {
+            currentSlide.classList.remove('fade-section');
+    
+            // Ocultar el anterior
+            currentSlide.classList.remove('active');
+    
+            // Mostrar el nuevo
+            nextSlide.classList.remove('fade-section');
+            nextSlide.classList.add('active');
+    
+            // Forzar reflow para que el fade-in se active
+            void nextSlide.offsetWidth;
+            nextSlide.classList.add('active');
+    
+            // Actualizar índice global
+            currentIncorporacionSlide = newIndex;
+        }, 400); // debe coincidir con el tiempo de .fade-section
+    }
+
+    // Navegación Fundadores
     prevButtonFundadores.addEventListener('click', () => {
-        let slideIndex = currentFundadorSlide - 1;
-        if (slideIndex < 0) slideIndex = fundadoresSlides.length - 1;
-        updateFundadorSlide(slideIndex);
+        let idx = currentFundadorSlide - 1;
+        if (idx < 0) idx = fundadoresSlides.length - 1;
+        updateFundadorSlide(idx);
+        activarSubtituloSecundario('fundadores');
     });
 
     nextButtonFundadores.addEventListener('click', () => {
-        let slideIndex = currentFundadorSlide + 1;
-        if (slideIndex >= fundadoresSlides.length) slideIndex = 0;
-        updateFundadorSlide(slideIndex);
+        let idx = currentFundadorSlide + 1;
+        if (idx >= fundadoresSlides.length) idx = 0;
+        updateFundadorSlide(idx);
+        activarSubtituloSecundario('fundadores');
     });
 
-    // Flechas del slider de Incorporación 2017
-    prevButtonIncorporacion.addEventListener('click', () => {
-        let slideIndex = currentIncorporacionSlide - 1;
-        if (slideIndex < 0) slideIndex = incorporacionSlides.length - 1;
-        updateIncorporacionSlide(slideIndex);
-    });
 
-    nextButtonIncorporacion.addEventListener('click', () => {
-        let slideIndex = currentIncorporacionSlide + 1;
-        if (slideIndex >= incorporacionSlides.length) slideIndex = 0;
-        updateIncorporacionSlide(slideIndex);
-    });
-
-    // Inicializar
-    showSection(historiaSection);
-    historiaSecundariaLink.classList.add('active');
-
-    // Event listeners para los botones del menú secundario
-    historiaSecundariaLink.addEventListener('click', (event) => {
-        event.preventDefault();
+    // Enlaces menú secundario
+    historiaSecundariaLink.addEventListener('click', (e) => {
+        e.preventDefault();
         showSection(historiaSection);
-        deactivateSecondaryNavLinks();
-        historiaSecundariaLink.classList.add('active');
+        activarSubtituloSecundario('historia');
     });
 
-    fundadoresSecundarioLink.addEventListener('click', (event) => {
-        event.preventDefault();
+    fundadoresSecundarioLink.addEventListener('click', (e) => {
+        e.preventDefault();
         showSection(fundadoresSliderSection);
-        deactivateSecondaryNavLinks();
-        fundadoresSecundarioLink.classList.add('active');
+        activarSubtituloSecundario('fundadores');
     });
 
-    incorporacionSecundarioLink.addEventListener('click', (event) => {
-        event.preventDefault();
+    incorporacionSecundarioLink.addEventListener('click', (e) => {
+        e.preventDefault();
         showSection(incorporacionSliderSection);
-        deactivateSecondaryNavLinks();
-        incorporacionSecundarioLink.classList.add('active');
+        activarSubtituloSecundario('incorporacion');
     });
+    // Al cargar, ocultar todos los slides y thumbnails activos
+    incorporacionSlides.forEach(slide => {
+        slide.classList.remove('active');
+        slide.style.display = 'none';
+    });
+    document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active-thumb'));
+    currentIncorporacionSlide = -1; // 🔥 Esto es CLAVE
+  
+
+    const thumbnails = document.querySelectorAll('.thumbnail');
+    const placeholder = document.getElementById('placeholder-incorporacion');
+    thumbnails.forEach((thumb, index) => {
+        thumb.addEventListener('click', () => {
+            if (index === currentIncorporacionSlide) return; // si ya está activo, salir
+    
+            // 🔥 Ocultar el placeholder
+            document.getElementById('placeholder-incorporacion')?.classList.add('hidden');
+    
+            // 🔄 Desactivar el slide actual (si existe)
+            if (currentIncorporacionSlide >= 0) {
+                const currentSlide = incorporacionSlides[currentIncorporacionSlide];
+                currentSlide.classList.remove('active');
+                currentSlide.style.opacity = '0';
+    
+                setTimeout(() => {
+                    currentSlide.style.display = 'none';
+                }, 400);
+            }
+    
+            // 🆕 Mostrar el nuevo slide con fade-in
+            const newSlide = incorporacionSlides[index];
+            newSlide.style.display = 'block';
+            void newSlide.offsetWidth; // trigger reflow
+            newSlide.classList.add('active');
+            newSlide.style.opacity = '1';
+    
+            // 🎯 Actualizar miniaturas
+            thumbnails.forEach(t => t.classList.remove('active-thumb'));
+            thumb.classList.add('active-thumb');
+    
+            // 🔁 Actualizar el índice actual
+            currentIncorporacionSlide = index;
+    
+            // ▶️ Si es video, reiniciar
+            if (index === 8) {
+                const video = newSlide.querySelector('video');
+                if (video) {
+                    video.currentTime = 0;
+                    video.pause(); // Si querés que inicie pausado
+                    video.style.opacity = '0';
+                    void video.offsetWidth;
+                    video.style.opacity = '1';
+                }
+            }
+        });
+    });
+    
+    // ✅ Inicialización inicial
+    showSection(historiaSection);
+    activarSubtituloSecundario('historia');
 });
