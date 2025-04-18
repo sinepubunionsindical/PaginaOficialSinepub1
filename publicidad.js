@@ -516,15 +516,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 
                 // Leer imagen como base64 si hay una seleccionada
-                if (imagenInput && imagenInput.files.length > 0) {
-                    try {
-                        datos.imagen_base64 = await leerImagenComoBase64(imagenInput.files[0]);
-                    } catch (error) {
-                        console.error("Error al leer la imagen:", error);
-                        alert("Error al procesar la imagen. Por favor, intenta con otra imagen.");
-                        return;
-                    }
+                // Validar que se haya adjuntado una imagen
+                if (!imagenInput || imagenInput.files.length === 0) {
+                    alert("Por favor, adjunta una imagen para tu publicidad (obligatorio).");
+                    return;
                 }
+
+                // Leer imagen como base64
+                try {
+                    datos.imagen_base64 = await leerImagenComoBase64(imagenInput.files[0]);
+                } catch (error) {
+                    console.error("Error al leer la imagen:", error);
+                    alert("Error al procesar la imagen. Por favor, intenta con otra imagen.");
+                    return;
+                }
+
                 
                 // Enviar datos al backend
                 const backendApiUrl = window.API_ENDPOINTS?.publicidad || `${getBackendUrl()}/api/publicidad`;
@@ -807,164 +813,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                                 </div>
                             `;
-                        }).join('');
-
-                        // Añadir estilos CSS
-                        if (!document.getElementById('anuncios-custom-styles')) {
-                            const styles = document.createElement('style');
-                            styles.id = 'anuncios-custom-styles';
-                            styles.textContent = `
-                                .anuncio-card {
-                                    background: white;
-                                    border-radius: 12px;
-                                    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-                                    margin-bottom: 25px;
-                                    overflow: hidden;
-                                    transition: transform 0.3s ease, box-shadow 0.3s ease;
-                                }
-
-                                .anuncio-card:hover {
-                                    transform: translateY(-5px);
-                                    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-                                }
-
-                                .anuncio-header {
-                                    display: flex;
-                                    justify-content: space-between;
-                                    align-items: center;
-                                    padding: 15px;
-                                    border-bottom: 1px solid #f0f0f0;
-                                }
-
-                                .anuncio-perfil {
-                                    display: flex;
-                                    align-items: center;
-                                    gap: 12px;
-                                }
-
-                                .perfil-imagen {
-                                    width: 45px;
-                                    height: 45px;
-                                    border-radius: 50%;
-                                    object-fit: cover;
-                                    border: 2px solid #35a9aa;
-                                }
-
-                                .perfil-info h4 {
-                                    margin: 0;
-                                    font-size: 16px;
-                                    color: #2c3e50;
-                                }
-
-                                .fecha-publicacion {
-                                    font-size: 12px;
-                                    color: #7f8c8d;
-                                }
-
-                                .categoria-badge {
-                                    padding: 6px 12px;
-                                    border-radius: 20px;
-                                    font-size: 13px;
-                                    font-weight: 500;
-                                }
-
-                                .categoria-badge.asistencia { background: #e8f5e9; color: #2e7d32; }
-                                .categoria-badge.comercio { background: #e3f2fd; color: #1565c0; }
-                                .categoria-badge.servicios { background: #fff3e0; color: #ef6c00; }
-                                .categoria-badge.educacion { background: #f3e5f5; color: #7b1fa2; }
-
-                                .anuncio-imagen-container {
-                                    position: relative;
-                                    width: 100%;
-                                    height: 250px;
-                                    overflow: hidden;
-                                }
-
-                                .anuncio-imagen {
-                                    width: 100%;
-                                    height: 100%;
-                                    object-fit: cover;
-                                    transition: transform 0.3s ease;
-                                }
-
-                                .anuncio-imagen:hover {
-                                    transform: scale(1.05);
-                                }
-
-                                .anuncio-contenido {
-                                    padding: 20px;
-                                }
-
-                                .anuncio-titulo {
-                                    margin: 0 0 15px 0;
-                                    font-size: 20px;
-                                    color: #2c3e50;
-                                }
-
-                                .anuncio-descripcion {
-                                    color: #34495e;
-                                    line-height: 1.6;
-                                    margin-bottom: 20px;
-                                }
-
-                                .anuncio-footer {
-                                    display: flex;
-                                    justify-content: space-between;
-                                    align-items: center;
-                                    margin-top: 20px;
-                                    padding-top: 15px;
-                                    border-top: 1px solid #f0f0f0;
-                                }
-
-                                .like-button {
-                                    background: none;
-                                    border: none;
-                                    color: #e74c3c;
-                                    cursor: pointer;
-                                    display: flex;
-                                    align-items: center;
-                                    gap: 5px;
-                                    padding: 5px 10px;
-                                    transition: transform 0.2s ease;
-                                }
-
-                                .like-button:hover {
-                                    transform: scale(1.1);
-                                }
-
-                                .anuncio-contacto {
-                                    display: flex;
-                                    gap: 10px;
-                                }
-
-                                .contacto-btn {
-                                    display: inline-flex;
-                                    align-items: center;
-                                    gap: 5px;
-                                    padding: 8px 15px;
-                                    border-radius: 20px;
-                                    text-decoration: none;
-                                    font-size: 14px;
-                                    transition: all 0.3s ease;
-                                }
-
-                                .contacto-btn:first-child {
-                                    background: #35a9aa;
-                                    color: white;
-                                }
-
-                                .contacto-btn:last-child {
-                                    background: #f0f0f0;
-                                    color: #2c3e50;
-                                }
-
-                                .contacto-btn:hover {
-                                    transform: translateY(-2px);
-                                    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-                                }
-                            `;
-                            document.head.appendChild(styles);
-                        }
+                        }).join('');                                          
 
                     } else {
                         container.innerHTML = `
