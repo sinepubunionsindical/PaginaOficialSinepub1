@@ -111,39 +111,144 @@ function mostrarPopupPoliticasPrivacidad() {
 
     const content = document.createElement("div");
     content.style.background = "#fff";
-    content.style.padding = "25px";
-    content.style.maxWidth = "700px";
+    content.style.padding = "35px";
+    content.style.maxWidth = "800px";
     content.style.width = "90%";
     content.style.borderRadius = "8px";
     content.style.overflowY = "auto";
-    content.style.maxHeight = "80vh";
+    content.style.maxHeight = "90vh";
     content.style.boxShadow = "0 4px 15px rgba(0,0,0,0.3)";
     content.innerHTML = `
-        <h2 style="color: #0249aa; text-align:center;">Políticas de Privacidad</h2>
-        <div id="contenido-politica-privacidad">
-            <!-- Aquí insertas el contenido que me vas a mandar -->
-            <p><em>Cargando contenido...</em></p>
-        </div>
-        <div style="text-align: center; margin-top: 20px;">
-            <button id="cerrar-privacidad" style="background: #0249aa; color: white; padding: 10px 20px; border: none; border-radius: 5px;">Cerrar</button>
-        </div>
-    `;
+        <h2 style="color: #0249aa; text-align:center;">Tratamiento de Datos y Políticas de Privacidad</h2>
+        <div style="text-align: left; font-size: 14px; line-height: 1.5; max-height: 60vh; overflow-y: auto;">
+            <pre style="
+                white-space: pre-wrap;
+                font-family: 'Segoe UI', 'Arial', sans-serif;
+                font-size: 15px;
+                line-height: 1.7;
+                color: #333;
+                background-color: #fdfdfd;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                padding: 25px;
+                overflow-y: auto;
+                max-height: 60vh;
+                box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+                scrollbar-width: thin;
 
-    modal.appendChild(content);
-    document.body.appendChild(modal);
+                /* 👇 NUEVOS estilos añadidos 👇 */
+                width: 100%;
+                box-sizing: border-box;
+                margin: 0;
+            ">A continuación, se encuentra la política de privacidad y de tratamiento de datos personales que ha adoptado SINEPUB HUV, aplicando y cumpliendo las obligaciones de la Ley 1581 de 2012, el Decreto 1377 de 2013 y demás normas que regulan la materia.
+Con esta política, se busca garantizar los derechos a la privacidad, la intimidad y el buen nombre en el tratamiento de sus Datos Personales y, en consecuencia, todas las actuaciones de SINEPUB HUV se basarán en los principios de legalidad, finalidad, libertad, veracidad,  calidad, transparencia, acceso y circulación restringida, seguridad y confidencialidad.
+En este sentido, todas los afiliados que en el ejercicio de las actividades de la Organización Sindical, suministren cualquier tipo de información o Dato Personal, tendrán el derecho a que sus Datos Personales sean tratados conforme se establece en la presente política y, en especial, podrán conocer sus Datos Personales, actualizarlos y rectificarlos, en caso de que los mismos se encuentren errados o sean imprecisos.
+La recolección de sus datos tiene por finalidad la prestación de un mejor servicio y, en especial, que se puedan generar mecanismos más idóneos de comunicación, de tal manera que se pueda brindar toda la información relacionada con las actividades que desarrolla SINEPUB HUV y que se le pueda compartir noticias de interés, informes sobre las gestiones que se realizan en el desarrollo de sus funciones o de sus procesos y, ante todo, mejorar cada día en la calidad de nuestra atención.
+Esta política aplica para todas las actividades que desarrolla SINEPUB HUV, tanto electrónica como físicamente, por lo que será aplicable a toda relación que se pueda desarrollar actualmente y en el futuro.
+Si en algún momento requiere que se actualice su información, se ajuste o incluso, desea que sea eliminada, no dude en contactarse con la Organización Sindical a través del siguiente https://www.sinepub-huv.com, pues siempre se estará atentos a atender y garantizar su derecho de habeas data.
 
-    document.getElementById("cerrar-privacidad").addEventListener("click", () => {
-        modal.remove();
-    });
 
-    // 🔄 Cargar contenido (te lo agrego apenas me lo mandes)
-    const contenido = document.getElementById("contenido-politica-privacidad");
-    if (contenido) {
-        contenido.innerHTML = `
-            <p><strong>Ejemplo temporal:</strong> Estas políticas explican cómo usamos, almacenamos y protegemos sus datos personales conforme a la Ley 1581 de 2012. [Aquí se cargará el contenido completo que me vas a mandar.]</p>
-        `;
-    }
-}
+
+
+Responsable
+
+
+El responsable de sus datos es SINEPUB HUV, identificada con NIT. 901434349-6.
+Está ubicada en la Calle 5 No. 36-08 Piso 7°, Hospital Universitario del Valle “Evaristo García”, San Fernando, Cali.
+Para ejercer sus derechos de habeas data puede escribir al correo electrónico: sinepubhuv@gmail.com o comunicarse al teléfono (602) 6206000 ext: 1835.  Se está muy atentos a recibir cualquier solicitud que tengan.
+
+
+Titular de los Datos Personales y aceptación de la política de privacidad Términos del documento
+
+
+Lo primero que debe tener claro es que el titular de sus datos personales es usted, por tanto, tiene derecho a brindar, de forma libre y voluntaria, la autorización o no, para el uso de los mismos, conforme a la política de SINEPUB HUV. Para su conocimiento, al aceptar esta política, está aceptando el uso de sus datos por parte de SINEPUB HUV para con sus afiliados a la Organización sindical, siempre limitados a los términos y condiciones previstos en esta política y cualquier modificación posterior que haya sobre la misma.
+La declaración de aceptación que hace de la política es la siguiente:
+“Al aceptar esta política, estoy aceptando como Titular de mis Datos Personales el Tratamiento de estos por parte de SINEPUB HUV, con la finalidad de prestar un mejor servicio y, en especial, cumplir con las funciones y obligaciones. Acepto que mis Datos Personales se usarán para fines de verificar la afiliación a la Organización Sindical, así como el envío de notificaciones, informes sobre estado del proceso o proyecto, noticias de interés, informes sobre las gestiones que se realizan, y diferente información relacionada con las actividades que se desarrollan. Lo anterior, sin perjuicio de que yo manifieste expresamente, a través de los medios establecidos para ello por parte de SINEPUB HUV, que se eliminen, rectifiquen o supriman mis Datos Personales de sus Bases de Datos”.
+Dato Personal: Es cualquier información vinculada o que pueda asociarse a una o varias personas naturales.
+Dato Privado: Es el dato que por su naturaleza íntima o reservada solo es relevante para el Titular del dato.
+Dato Público: Son los datos relativos al estado civil, profesión u oficio y a la calidad de comerciante o de servidor público de una persona. Estos datos pueden ser obtenidos y ofrecidos sin reserva alguna y sin importar si hacen alusión a información general, privada o personal.
+Dato Semiprivado: Es el dato que no es íntimo, reservado, ni público, cuyo conocimiento o divulgación puede interesar no solo a su Titular sino a cierto sector o grupo de personas o a la política en general, como el dato financiero y crediticio de actividad comercial.
+Dato Sensible: Son los datos que afectan la intimidad del Titular o cuyo uso indebido puede generar su discriminación, tales como aquellos que revelen el origen racial o étnico, la orientación política, orientación sexual, las convicciones religiosas o filosóficas, la pertenencia a sindicatos, organizaciones sociales, de derechos humanos o que promueva intereses de cualquier partido político, entre otros.
+Autorización: Es el consentimiento previo, expreso e informado del Titular para que SINEPUB HUV lleve a cabo el Tratamiento de sus Datos Personales.
+Base de Datos: Es el conjunto organizado de Datos Personales que sea objeto de Tratamiento.
+Encargado del Tratamiento: Es la persona natural o jurídica, pública o privada, que por sí misma o en asocio con otros, realice el Tratamiento de sus Datos Personales, bajo los términos y condiciones previstos en la presente política.
+Responsable del Tratamiento: SINEPUB HUV por sí mismo o en asocio con otros, es el que decide sobre la Base de Datos y/o el Tratamiento de los Datos Personales, bajo los términos y condiciones previstos en la presente política.
+Titular: Es usted, la persona natural cuyos Datos Personales está suministrando a SINEPUB HUV y serán objeto del tratamiento establecido en la presente política.
+Tratamiento: Es cualquier operación o conjunto de operaciones sobre sus Datos Personales, tales como la recolección, almacenamiento, uso, circulación o supresión.
+Autorización
+
+
+SINEPUB HUV solicita la autorización escrita a todo afiliad@ a la organización sindical del cual realice el tratamiento de Datos Personales, para que sus datos puedan ser tratados de conformidad con la finalidad establecida para cada caso y en cumplimiento de las normas que regulan la materia, pero, principalmente, buscando la protección y la garantía del derecho constitucional al Habeas Data.
+En todo caso, si decide navegar por la página web, solicitar y/o adquirir servicios de forma electrónica y/o física y acceder a la plataforma digital, medios en los que se requiere brindar sus datos personales, con el suministro de dichos datos, está aceptando de forma tácita el tratamiento de sus Datos Personales, conforme a la presente política.
+
+
+Tratamiento
+
+
+La información contenida en las bases de datos de SINEPUB HUV es sometida a distintas formas de tratamiento, tales como: recolección,  actualización, procesamiento,  o supresión, entre otras, todo lo anterior en cumplimiento de las finalidades y los objetivos establecidos en la presente Política de Tratamiento de Datos Personales.
+Derechos del titular
+
+
+Usted, como titular de los Datos Personales, tiene derecho a:
+Conocer, actualizar, rectificar y solicitar la eliminación de sus Datos Personales de la Base de Datos de SINEPUB HUV.
+Ser informado de los usos que se le están dando a sus Datos Personales.
+Presentar quejas y reclamos ante las entidades correspondientes y ante SINPUB HUV.
+Recibir respuesta a sus inquietudes y solicitudes, de una manera clara, completa y oportuna.
+Revocar la autorización suministrada a SINEPUB HUV.
+Los demás establecidos por la Ley.
+Deberes de SINEPUB HUV
+
+
+Según el artículo 17 de la Ley 1581 de 2012, SINEPUB HUV como responsable del tratamiento de sus Datos Personales, debe cumplir con los siguientes deberes:
+Garantizarle, en todo tiempo, el pleno y efectivo ejercicio del derecho de Habeas Data.
+Solicitar su autorización, como se hace en la presente política, y conservar una copia de la autorización que otorga frente a la misma.
+Informarle sobre la finalidad de la recolección de sus Datos Personales y los derechos que tiene en virtud de ello.
+Conservar la información bajo las condiciones de seguridad necesarias para impedir su adulteración, pérdida, consulta, uso o acceso no autorizado o fraudulento.
+Garantizar que la información que se suministre al Encargado del Tratamiento sea veraz, completa, exacta, actualizada, comprobable y comprensible.
+Actualizar su información, comunicando de forma oportuna al Encargado del Tratamiento, todas las novedades respecto de los datos que previamente le hayamos suministrado y adoptar las demás medidas necesarias para que la información suministrada se mantenga actualizada. Por ello lo invitamos siempre, a actualizar sus datos a través del presente link https://www.sinepu-huv.com.
+Rectificar su información cuando sea incorrecta y comunicar lo pertinente al Encargado del Tratamiento. Si observa que se tiene información incorrecta, por favor informe tal situación a través de este link https://www.sinepu-huv.com, para que se pueda tener toda la información de forma correcta.
+Suministrar al Encargado del Tratamiento, según el caso, únicamente datos cuyo Tratamiento esté previamente autorizado.
+Exigir al Encargado del Tratamiento, en todo momento, el respeto a las condiciones de seguridad y privacidad de la información del Titular.
+Tramitar las consultas y reclamos formulados. Por ello, si tiene alguna queja o reclamo, por favor accede al siguiente link https://www.sinepu-huv.com, para que se pueda atenderlo en el menor tiempo posible.
+Adoptar un manual interno de políticas y procedimientos para el adecuado tratamiento de los Datos Personales.
+Informar al Encargado del Tratamiento cuando determinada información se encuentra en discusión por parte del Titular, una vez se haya presentado la reclamación y no haya finalizado el trámite respectivo.
+Informar, cuando así lo solicite, sobre el uso dado a sus Datos Personales.
+Informar a la Autoridad de protección de datos cuando se presenten violaciones a los códigos de seguridad y existan riesgos en la administración de la información de los Titulares.
+
+
+Cómo ejercer sus derechos de Habeas Data ante SINEPUB HUV
+
+
+Además de hacer las solicitudes, quejas y reclamos en los links dispuestos en la presente política, podrá ejercer sus derechos, a través de los siguientes medios:
+Electrónicamente en los siguiente link: https://www.sinepu-huv.com.
+Mediante una comunicación enviada a través de correo electrónico a sinepubhuv@gmail.com  o a través de correo certificado físico dirigido al domicilio de l Organización Sindicaal.
+En dicha solicitud, debe incluir:
+
+
+Sus Datos Personales: Nombre, teléfono, dirección y datos de contacto.
+Debe identificarse como Titular de los Datos Personales.
+Debe describir de forma detallada los hechos que dan lugar a su solicitud.
+Debe adjuntar los documentos que se requieran, dependiendo del tipo de solicitud que se trate.
+Una vez recibida la solicitud completa, SINEPUB HUV incluirá en su Base de Datos una frase que dice “reclamo en trámite” y el motivo del mismo, en un término no mayor a dos (2) días hábiles. Dicha frase deberá mantenerse hasta que su solicitud sea decidida.
+El término máximo para responder su solicitud será de diez (10) días hábiles contados a partir del día siguiente a la fecha en que SINEPUB HUV reciba su solicitud de forma completa. Cuando para SINEPUB HUV no fuere posible atender su solicitud dentro de dicho término, le informaremos los motivos de la demora y la fecha en que se responderá su solicitud, la cual en ningún caso podrá superar los cinco (5) días hábiles siguientes al vencimiento del primer término.
+SINEPUB HUV podrá solicitar ampliación de la información enviada o información adicional. Si transcurridos dos (2) meses calendario desde la fecha del requerimiento de información adicional por parte de SINEPUB HUV, sin que se presente la misma, se entenderá que ha desistido de su solicitud.
+Solo podrá presentar una queja ante la Superintendencia de Industria y Comercio una vez haya agotado el trámite de solicitud ante SINEPUB HUV como Responsable o Encargado del Tratamiento de sus Datos Personales.
+Cualquier inquietud o información adicional, por favor contacte a SINEPUB HUV, por los medios informados en la presente política.</pre>
+                    </div>
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button id="cerrar-privacidad" style="background: #0249aa; color: white; padding: 10px 20px; border: none; border-radius: 5px;">Cerrar</button>
+                    </div>
+                `;
+
+                modal.appendChild(content);
+                document.body.appendChild(modal);
+
+                document.getElementById("cerrar-privacidad").addEventListener("click", () => {
+                    modal.remove();
+                });
+            }
+
+
 
 
 // Función para mostrar el Popup de autenticación (renombrada la original)
