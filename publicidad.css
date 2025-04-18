@@ -129,10 +129,6 @@
     transition: all 0.3s ease;
 }
 
-.like-button:hover {
-    background-color: #ffe0e3;
-}
-
 .like-button i {
     font-size: 1.2em;
 }
@@ -140,12 +136,6 @@
 .likes-count {
     color: #666;
     font-size: 0.9em;
-}
-
-.fecha-publicacion {
-    color: #666;
-    font-size: 0.8em;
-    font-style: italic;
 }
 
 .anuncios-seccion {
@@ -373,11 +363,6 @@
     margin: 0;
 }
 
-.anuncio-contacto {
-    display: flex;
-    gap: 10px;
-}
-
 .contacto-btn {
     display: inline-flex;
     align-items: center;
@@ -432,32 +417,53 @@
     gap: 10px;
 }
 
-.like-button,
-.comentario-button {
-    background: #e0e0e0;
+.anuncio-interaccion > button {
+    margin-bottom: 4px;
+    width: 100%;
+}
+@media (min-width: 480px) {
+    .anuncio-interaccion {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .anuncio-interaccion > button {
+        flex: 1 1 auto;
+        width: auto;
+    }
+}
+
+.opinar-button,
+.ver-comentarios-button {
     border: none;
     border-radius: 8px;
     padding: 8px 12px;
     font-size: 14px;
     cursor: pointer;
-    transition: background 0.3s ease;
     display: flex;
     align-items: center;
     gap: 6px;
+    transition: background 0.3s ease;
 }
 
-.like-button:hover {
-    background: #a5d6a7;
-    color: #2c3e50;
+/* 🖊 Botón Opinar: azul institucional */
+.opinar-button {
+    background: #0249aa;
+    color: white;
+}
+.opinar-button:hover {
+    background: #01387e;
 }
 
-.comentario-button:hover {
-    background: #81d4fa;
-    color: #2c3e50;
+/* 💬 Botón Comentarios: morado claro */
+.ver-comentarios-button {
+    background: #f1e0ff;
+    color: #6b1e87;
 }
-
-.liked-animation {
-    animation: likeEffect 0.5s ease;
+.ver-comentarios-button:hover {
+    background: #e1c8ff;
 }
 
 @keyframes likeEffect {
@@ -475,15 +481,6 @@
     margin-top: 10px;
 }
 
-.comentario-input {
-    width: 100%;
-    min-height: 60px;
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    resize: vertical;
-}
-
 .btn-publicar-comentario {
     align-self: flex-end;
     background-color: #35a9aa;
@@ -499,26 +496,87 @@
     background-color: #2b8f90;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .anuncio-contenido-flex {
-        flex-direction: column;
-        padding: 15px;
-    }
+.comentario-box-popup {
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid #35a9aa;
+    padding: 20px;
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.15);
+}
 
-    .anuncio-imagen-lateral,
-    .anuncio-info {
-        flex: 1 1 100%;
-    }
+.comentario-popup-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    width: 100%;
+    max-width: 600px;
+}
 
-    .anuncio-imagen-derecha {
-        max-width: 100%;
-        height: auto;
-    }
+.comentario-perfil-col {
+    flex: 0 0 100px;
+}
 
-    .comentario-box {
-        max-width: 100%;
-    }
+.perfil-imagen-popup {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid #2ecc71;
+    object-fit: cover;
+}
+
+.comentario-form-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.comentario-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    resize: vertical;
+    font-size: 14px;
+}
+
+.comentario-botones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-publicar-comentario,
+.btn-cancelar-comentario {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.btn-publicar-comentario {
+    background-color: #35a9aa;
+    color: white;
+}
+
+.btn-publicar-comentario:hover {
+    background-color: #2b8f90;
+}
+
+.btn-cancelar-comentario {
+    background-color: #ccc;
+    color: #2c3e50;
+}
+
+.btn-cancelar-comentario:hover {
+    background-color: #999;
 }
   
 /* Estilos responsivos */
@@ -547,6 +605,48 @@
     }
 }
 
+.comentario-tarjeta {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
 
+.comentario-autor {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
 
+.comentario-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 2px solid #35a9aa;
+    object-fit: cover;
+}
 
+.comentario-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.comentario-info strong {
+    color: #0249aa;
+    font-size: 15px;
+}
+
+.comentario-fecha {
+    font-size: 12px;
+    color: #777;
+    font-style: italic;
+}
+
+.comentario-texto {
+    margin: 0;
+    font-size: 15px;
+    color: #333;
+    line-height: 1.4;
+}

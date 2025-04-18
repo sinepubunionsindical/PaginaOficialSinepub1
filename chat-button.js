@@ -293,6 +293,13 @@ function mostrarPanelEstadisticasUsuario() {
                     contador.textContent = data.datos.total_publicidades;
                 }
             }
+            // ✅ NUEVO BLOQUE: total de comentarios desde perfil
+            if (data?.datos?.total_comentarios !== undefined) {
+                const contadorComentarios = document.getElementById('contador-comentarios');
+                if (contadorComentarios) {
+                    contadorComentarios.textContent = data.datos.total_comentarios;
+                }
+            }
             // ✅ NUEVO BLOQUE - Sincroniza teléfono desde backend
             if (data?.datos?.telefono) {
                 localStorage.setItem('telefono', data.datos.telefono);

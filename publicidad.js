@@ -588,6 +588,23 @@ document.addEventListener('DOMContentLoaded', function() {
     async function enviarPublicidadBackend(datos, urlDestino) {
         console.log(`📤 Enviando datos de publicidad a ${urlDestino}...`);
         
+        // Obtener datos del solicitante desde localStorage
+        const nombreSolicitante = localStorage.getItem('nombre') || 'No disponible';
+        const cedulaSolicitante = localStorage.getItem('cedula') || 'No disponible';
+        const correoSolicitante = localStorage.getItem('email') || 'No disponible';
+        const telefonoSolicitante = localStorage.getItem('telefono') || 'No disponible';
+        
+        // Agregar la información del solicitante a los datos de la publicidad
+        const datosPublicidad = {
+            ...datos, // Los datos originales de la publicidad
+            solicitante: {
+                nombre: nombreSolicitante,
+                cedula: cedulaSolicitante,
+                email: correoSolicitante,
+                telefono: telefonoSolicitante
+            }
+        };
+    
         try {
             const response = await fetch(urlDestino, {
                 method: 'POST',
@@ -597,13 +614,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     'ngrok-skip-browser-warning': 'true', // Para evitar la página de advertencia de ngrok
                     'User-Agent': 'sinepub-client' // Identificar la solicitud
                 },
-                body: JSON.stringify(datos)
+                body: JSON.stringify(datosPublicidad) // Enviar los datos con los nuevos valores del solicitante
             });
-
+    
             if (!response.ok) {
                 throw new Error(`500: Error al procesar la solicitud de publicidad`);
             }
-
+    
             // Parsear la respuesta como JSON
             const data = await response.json();
             console.log(`✅ Publicidad enviada con éxito:`, data);
@@ -616,7 +633,7 @@ document.addEventListener('DOMContentLoaded', function() {
             };
         }
     }
-
+    
     // --- Funciones de Mensajes (Base: Versión 1) ---
     function mostrarMensajeExito(texto = "Operación realizada con éxito.") {
         if (!formularioContainer) return;
@@ -791,7 +808,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                             <img src="${imagenSrc}" alt="Imagen del anuncio"
                                                 class="anuncio-imagen-derecha"
                                                 onerror="this.onerror=null; this.src='/images/placeholder-anuncio.png';">
-
+                                            
                                             <!-- 📌 Footer debajo de imagen -->
                                             <div class="anuncio-interaccion">
                                                 <button class="like-button" data-anuncio-id="${anuncio.id}" title="Me gusta">
@@ -799,21 +816,151 @@ document.addEventListener('DOMContentLoaded', function() {
                                                     <span class="likes-count">${anuncio.likes || 0}</span>
                                                 </button>
 
-                                                <button class="comentario-button" data-anuncio-id="${anuncio.id}">
-                                                    <i class="fas fa-comment"></i> Comentar
+                                                <button class="opinar-button" data-anuncio-id="${anuncio.id}">
+                                                    <i class="fas fa-pen"></i> Opinar
                                                 </button>
 
-                                                <div class="comentario-box hidden" id="comentario-box-${anuncio.id}">
-                                                    <textarea placeholder="Escribe tu comentario..." class="comentario-input"></textarea>
-                                                    <button class="btn-publicar-comentario" data-anuncio-id="${anuncio.id}">Publicar</button>
+                                                <button class="ver-comentarios-button" data-anuncio-id="${anuncio.id}">
+                                                    <i class="fas fa-comments"></i> Comentarios
+                                                </button>
+
+                                                <!-- 🟢 Caja de comentario emergente -->
+                                                <div class="comentario-box-popup hidden" id="comentario-box-${anuncio.id}">
+                                                <div class="comentarios-lista" id="comentarios-contenedor-${anuncio.id}"></div>
+                                                    <div class="comentario-popup-content">
+                                                        <div class="comentario-perfil-col">
+                                                            <img src="${fotoPerfil}" alt="Tu foto" class="perfil-imagen-popup"
+                                                                onerror="this.onerror=null; this.src='/images/avatar-placeholder.png';">
+                                                        </div>
+                                                        <div class="comentario-form-col">
+                                                            <textarea placeholder="Escribe tu comentario..." class="comentario-input"></textarea>
+                                                            <div class="comentario-botones">
+                                                                <button class="btn-publicar-comentario" data-anuncio-id="${anuncio.id}">Publicar</button>
+                                                                <button class="btn-cancelar-comentario" data-anuncio-id="${anuncio.id}">Cancelar</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
+
                                         </div>
                                     </div>
 
                                 </div>
                             `;
                         }).join('');                                          
+                        // Activar eventos de comentario para cada anuncio
+                        anunciosCategoria.forEach(anuncio => {
+                            
+                            const botonOpinar = document.querySelector(`.opinar-button[data-anuncio-id="${anuncio.id}"]`);
+                            const popup = document.getElementById(`comentario-box-${anuncio.id}`);
+
+                            if (botonOpinar && popup) {
+                                botonOpinar.addEventListener("click", () => {
+                                    popup.classList.remove("hidden");
+                                });
+                            }
+
+                            const btnCancelar = popup?.querySelector(".btn-cancelar-comentario");
+                            if (btnCancelar) {
+                                btnCancelar.addEventListener("click", () => {
+                                    popup.classList.add("hidden");
+                                });
+                            }
+
+                            const btnPublicar = popup?.querySelector(".btn-publicar-comentario");
+                            if (btnPublicar) {
+                                btnPublicar.addEventListener("click", async () => {
+                                    const textarea = popup.querySelector(".comentario-input");
+                                    const comentarioTexto = textarea?.value?.trim();
+
+                                    if (!comentarioTexto) {
+                                        alert("El comentario no puede estar vacío.");
+                                        return;
+                                    }
+
+                                    const cedula = localStorage.getItem("cedula");
+                                    if (!cedula) {
+                                        alert("Debes estar autenticado para comentar.");
+                                        return;
+                                    }
+
+                                    try {
+                                        const backendUrl = `${getBackendUrl()}/api/comentar/${anuncio.id}`;
+                                        const response = await fetch(backendUrl, {
+                                            method: "POST",
+                                            headers: {
+                                                "Content-Type": "application/json",
+                                                "cedula": cedula,
+                                                "ngrok-skip-browser-warning": "true",
+                                                "User-Agent": "sinepub-client"
+                                            },
+                                            body: JSON.stringify({ comentario: comentarioTexto })
+                                        });
+
+                                        const result = await response.json();
+
+                                        if (response.ok) {
+                                            alert("✅ Comentario registrado correctamente.");
+                                            textarea.value = "";
+                                            popup.classList.add("hidden");
+                                        } else {
+                                            throw new Error(result?.error || "Error al registrar comentario.");
+                                        }
+                                    } catch (error) {
+                                        console.error("❌ Error al enviar comentario:", error);
+                                        alert("Hubo un problema al enviar tu comentario.");
+                                    }
+                                });
+                                const botonComentarios = document.querySelector(`.comentarios-button[data-anuncio-id="${anuncio.id}"]`);
+                                const contenedorComentarios = document.getElementById(`comentarios-contenedor-${anuncio.id}`);
+
+                                if (botonComentarios && contenedorComentarios) {
+                                    botonComentarios.addEventListener("click", async () => {
+                                        contenedorComentarios.innerHTML = `<p style="color:#999;">Cargando comentarios...</p>`;
+                                        try {
+                                            const backendUrl = `${getBackendUrl()}/api/comentarios/${anuncio.id}`;
+                                            const response = await fetch(backendUrl, {
+                                                method: "GET",
+                                                headers: {
+                                                    "ngrok-skip-browser-warning": "true",
+                                                    "User-Agent": "sinepub-client"
+                                                }
+                                            });
+
+                                            const data = await response.json();
+
+                                            if (response.ok && Array.isArray(data.comentarios)) {
+                                                if (data.comentarios.length === 0) {
+                                                    contenedorComentarios.innerHTML = `<p style="color:#999;">Este anuncio aún no tiene comentarios.</p>`;
+                                                    return;
+                                                }
+
+                                                contenedorComentarios.innerHTML = data.comentarios.map(c => `
+                                                    <div class="comentario-tarjeta">
+                                                        <div class="comentario-autor">
+                                                            <img src="${c.foto_base64 || '/images/avatar-placeholder.png'}" class="comentario-avatar" alt="Foto de ${c.nombre}">
+                                                            <div class="comentario-info">
+                                                                <strong>${c.nombre}</strong>
+                                                                <span class="comentario-fecha">${c.fecha}</span>
+                                                            </div>
+                                                        </div>
+                                                        <p class="comentario-texto">${c.comentario}</p>
+                                                    </div>
+                                                `).join('');
+                                            } else {
+                                                contenedorComentarios.innerHTML = `<p style="color:red;">Error al cargar comentarios.</p>`;
+                                            }
+                                        } catch (error) {
+                                            console.error("❌ Error cargando comentarios:", error);
+                                            contenedorComentarios.innerHTML = `<p style="color:red;">Error de conexión al backend.</p>`;
+                                        }
+                                    });
+                                }
+
+                            }
+
+                        });
 
                     } else {
                         container.innerHTML = `
