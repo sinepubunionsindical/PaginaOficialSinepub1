@@ -273,7 +273,8 @@ function mostrarPanelEstadisticasUsuario() {
     const foto = localStorage.getItem('foto') || '';
     // Obtener cédula para consultar perfil real
     const cedula = localStorage.getItem('cedula');
-
+    
+    
     // Validar que la cédula esté y exista el backend
     if (cedula && window.API_ENDPOINTS?.perfil) {
         fetch(window.API_ENDPOINTS.perfil.replace('{cedula}', cedula), {    

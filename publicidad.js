@@ -1446,7 +1446,7 @@ async function darLike(anuncioId) {
     function configurarBotonesFormularioConPerfil() {
         const perfil = {
             nombre: localStorage.getItem('nombre') || '',
-            correo: localStorage.getItem('email') || '',
+            correo: localStorage.getItem('correo') || '',
             telefono: localStorage.getItem('telefono') || ''
         };
     
