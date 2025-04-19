@@ -144,39 +144,38 @@ function initializeChat() {
         const sendMessage = async function() {
             const message = userInput.value.trim();
             if (!message) return;
-
+        
             // Mostrar el mensaje del usuario
             addMessage(message, 'user');
             userInput.value = '';
-
+        
             try {
-                // Procesar el mensaje con la IA
                 if (!aiChatInstance) {
-                    // Crear instancia de AIChat si no existe
                     aiChatInstance = new AIChat();
-                    await aiChatInstance.initialize('Afiliado'); // Por defecto como afiliado
+                    await aiChatInstance.initialize('Afiliado');
                 }
-
-                // Asegurarse de que el contenedor de video esté visible
+        
                 const aiVideoContainer = document.getElementById('ai-video-container');
-                if (aiVideoContainer) {
-                    aiVideoContainer.style.display = 'block';
-                    console.log('Asegurando que el contenedor de video esté visible al enviar mensaje');
-                }
-
-                // Obtener respuesta de la IA
+                if (aiVideoContainer) aiVideoContainer.style.display = 'block';
+        
+                // ⏳ Mostrar mensaje de carga
+                const loadingId = 'ai-loading-message';
+                addMessage('Pensando...', 'ai', loadingId);
+        
+                // ⏱️ Obtener respuesta de la IA
                 const response = await aiChatInstance.processMessage(message);
-
-                // Mostrar la respuesta
+        
+                // ✅ Quitar "Pensando..." y mostrar respuesta real
+                removeMessageById(loadingId);
                 addMessage(response, 'ai');
-
-                // La respuesta ya se reproduce con voz en processMessage
-                // No necesitamos llamar a speakResponse aquí para evitar duplicación
+        
             } catch (error) {
                 console.error('Error al procesar el mensaje:', error);
+                removeMessageById('ai-loading-message');
                 addMessage('Lo siento, ocurrió un error al procesar tu mensaje. Por favor, intenta de nuevo.', 'ai');
             }
         };
+        
 
         // Agregar eventos para enviar mensajes
         sendButton.addEventListener('click', sendMessage);
@@ -195,7 +194,7 @@ function initializeChat() {
 }
 
 // Función para agregar un mensaje al chat
-function addMessage(text, type) {
+function addMessage(text, type, customId = null) {
     const chatMessages = document.getElementById('chat-messages');
     if (!chatMessages) {
         console.error('No se encontró el contenedor de mensajes');
@@ -206,8 +205,19 @@ function addMessage(text, type) {
     messageDiv.className = `message ${type}-message`;
     messageDiv.textContent = text;
 
+    if (customId) {
+        messageDiv.id = customId; // Para poder eliminarlo luego
+    }
+
     chatMessages.appendChild(messageDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function removeMessageById(messageId) {
+    const message = document.getElementById(messageId);
+    if (message) {
+        message.remove();
+    }
 }
 
 // Función para activar el chat después de la autenticación

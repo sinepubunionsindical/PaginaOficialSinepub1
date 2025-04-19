@@ -207,3 +207,28 @@
         right: 10px;
     }
 }
+
+.ai-message {
+    background-color: #dbeafe; /* Azul claro */
+    color: #1e3a8a;
+}
+
+.user-message {
+    background-color: #f3f4f6; /* Gris claro */
+    color: #111827;
+}
+
+.message {
+    padding: 8px 12px;
+    margin: 8px;
+    border-radius: 8px;
+    max-width: 80%;
+    font-size: 16px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+

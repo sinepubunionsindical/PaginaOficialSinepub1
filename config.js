@@ -32,7 +32,8 @@ const API_ENDPOINTS = {
     verificarCedula: `${EFFECTIVE_URL}/api/verificar_cedula`,
     like: `${EFFECTIVE_URL}/api/like`,
     comentar: `${EFFECTIVE_URL}/api/comentar`,
-    obtenerComentarios: `${EFFECTIVE_URL}/api/obtener_comentarios`  // Nuevo endpoint agregado
+    obtenerComentarios: `${EFFECTIVE_URL}/api/obtener_comentarios`,
+    ia: `${EFFECTIVE_URL}/ia`
 };
 
 // Función para enviar formulario de afiliación por correo
