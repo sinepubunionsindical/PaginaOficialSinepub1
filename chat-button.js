@@ -138,43 +138,168 @@ function initializeChat() {
             }
         });
     }
-
+    const enviarMensajeConContexto = async (mensaje) => {
+        const cedula = localStorage.getItem("cedula");
+    
+        if (!cedula) {
+            console.warn("No se encontró la cédula en localStorage");
+            return "No se pudo identificar tu perfil.";
+        }
+    
+        // 1️⃣ Validar si es la primera vez
+        try {
+            const initRes = await fetch(`${window.BACKEND_URL}/ia-init`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "ngrok-skip-browser-warning": "true"
+                },
+                body: JSON.stringify({ cedula })
+            });
+    
+            const initData = await initRes.json();
+    
+            if (initData.primera_vez) {
+                console.log("Es la primera vez. Mostrando mensaje de bienvenida.");
+    
+                // Mostrar como respuesta visual
+                addMessage(initData.mensaje_sistema, "ai");
+    
+                // TTS
+                if (window.aiChatInstance && window.aiChatInstance.speakResponse) {
+                    window.aiChatInstance.speakResponse(initData.mensaje_sistema);
+                }
+    
+                return initData.mensaje_sistema;
+            }
+    
+        } catch (e) {
+            console.warn("Fallo al verificar primera vez:", e);
+            // Continuar como si no fuera la primera vez
+        }
+    
+        // 2️⃣ Si NO es la primera vez, hacer inferencia normal
+        const response = await fetch(`${window.BACKEND_URL}/ia-contextual`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "cedula": cedula,
+                "ngrok-skip-browser-warning": "true"
+            },
+            body: JSON.stringify({ prompt: mensaje })
+        });
+    
+        if (!response.ok) {
+            console.error("Error en la inferencia contextual:", await response.text());
+            return "Lo siento, hubo un error al consultar la IA.";
+        }
+    
+        const data = await response.json();
+        return data.respuesta || "No hubo respuesta.";
+    };
+    
+    
+    function addCustomMessage(htmlContent, id = null) {
+        const chatMessages = document.getElementById('chat-messages');
+        if (!chatMessages) return;
+    
+        const wrapper = document.createElement('div');
+        wrapper.className = 'message ai-message';
+        if (id) wrapper.id = id;
+        wrapper.innerHTML = htmlContent;
+    
+        chatMessages.appendChild(wrapper);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    let chatInicializadoConPerfil = false;
     if (sendButton && userInput) {
         // Función para enviar mensaje
         const sendMessage = async function() {
             const message = userInput.value.trim();
             if (!message) return;
         
-            // Mostrar el mensaje del usuario
-            addMessage(message, 'user');
-            userInput.value = '';
+            // ⛔ Desactivar botón para evitar clics múltiples
+            sendButton.disabled = true;
+            userInput.disabled = true;
         
             try {
+                // Inicializar AIChat si no existe
                 if (!aiChatInstance) {
                     aiChatInstance = new AIChat();
-                    await aiChatInstance.initialize('Afiliado');
                 }
         
-                const aiVideoContainer = document.getElementById('ai-video-container');
-                if (aiVideoContainer) aiVideoContainer.style.display = 'block';
+                // Verificar si es el primer mensaje (se hace el init)
+                if (!chatInicializadoConPerfil) {
+                    const cedula = localStorage.getItem("cedula");
+                    if (cedula) {
+                        const initRes = await fetch(`${window.BACKEND_URL}/ia-init`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "ngrok-skip-browser-warning": "true",
+                                "User-Agent": "sinepub-client"
+                            },
+                            body: JSON.stringify({ cedula })
+                        });
         
-                // ⏳ Mostrar mensaje de carga
+                        const initData = await initRes.json();
+        
+                        if (initRes.ok && initData.mensaje_sistema) {
+                            console.log("📡 Mensaje inicial cargado desde backend:", initData.mensaje_sistema);
+                        
+                            // Mostrar spinner antes del mensaje de bienvenida
+                            const loadingIdInit = 'ia-loading-init';
+                            addCustomMessage(`
+                                <div class="ai-loading-container">
+                                    <div class="ai-icon">🤖</div>
+                                    <div class="spinner"></div>
+                                    <div class="ai-text">Cargando información de tu perfil...</div>
+                                </div>
+                            `, loadingIdInit);
+                        
+                            // Procesar mensaje de bienvenida del sistema
+                            const respuestaInicial = await aiChatInstance.processMessage(initData.mensaje_sistema);
+                        
+                            removeMessageById(loadingIdInit);
+                            addMessage(respuestaInicial, 'ai');
+                        
+                            chatInicializadoConPerfil = true;
+                        }                        
+                    }
+                }
+                
+                
+                // ✅ Mostrar el mensaje del usuario SOLO después del init exitoso
+                addMessage(message, 'user');
+                userInput.value = '';
+        
                 const loadingId = 'ai-loading-message';
-                addMessage('Pensando...', 'ai', loadingId);
+                addCustomMessage(`
+                    <div class="ai-loading-container">
+                        <div class="ai-icon">🤖</div>
+                        <div class="spinner"></div>
+                        <div class="ai-text">Pensando...</div>
+                    </div>
+                `, loadingId);
+                
         
-                // ⏱️ Obtener respuesta de la IA
-                const response = await aiChatInstance.processMessage(message);
+                const response = await enviarMensajeConContexto(message);
         
-                // ✅ Quitar "Pensando..." y mostrar respuesta real
                 removeMessageById(loadingId);
                 addMessage(response, 'ai');
         
             } catch (error) {
-                console.error('Error al procesar el mensaje:', error);
+                console.error('❌ Error en sendMessage:', error);
                 removeMessageById('ai-loading-message');
                 addMessage('Lo siento, ocurrió un error al procesar tu mensaje. Por favor, intenta de nuevo.', 'ai');
+            } finally {
+                // ✅ Reactivar controles
+                sendButton.disabled = false;
+                userInput.disabled = false;
+                userInput.focus();
             }
         };
+        
         
 
         // Agregar eventos para enviar mensajes

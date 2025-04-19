@@ -232,3 +232,52 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
+.ai-loading-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #e6f0f5;
+    padding: 10px 14px;
+    border-radius: 12px;
+    animation: fadeIn 0.3s ease-in-out;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 14px;
+    color: #0d3b66;
+    max-width: 80%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.ai-icon {
+    font-size: 20px;
+}
+
+.spinner {
+    width: 16px;
+    height: 16px;
+    border: 3px solid #3db2ff;
+    border-top: 3px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.ai-text {
+    font-weight: 500;
+    color: #0d3b66;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.chat-input-container button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #999;
+}
+

@@ -45,8 +45,10 @@ class AIChat {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "ngrok-skip-browser-warning": "true"
+                    "ngrok-skip-browser-warning": "true",
+                    "cedula": localStorage.getItem("cedula") || "desconocida"
                 },
+
                 body: JSON.stringify({ prompt: message })
             });
     
