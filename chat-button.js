@@ -138,65 +138,6 @@ function initializeChat() {
             }
         });
     }
-    const enviarMensajeConContexto = async (mensaje) => {
-        const cedula = localStorage.getItem("cedula");
-    
-        if (!cedula) {
-            console.warn("No se encontró la cédula en localStorage");
-            return "No se pudo identificar tu perfil.";
-        }
-    
-        // 1️⃣ Validar si es la primera vez
-        try {
-            const initRes = await fetch(`${window.BACKEND_URL}/ia-init`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "ngrok-skip-browser-warning": "true"
-                },
-                body: JSON.stringify({ cedula })
-            });
-    
-            const initData = await initRes.json();
-    
-            if (initData.primera_vez) {
-                console.log("Es la primera vez. Mostrando mensaje de bienvenida.");
-    
-                // Mostrar como respuesta visual
-                addMessage(initData.mensaje_sistema, "ai");
-    
-                // TTS
-                if (window.aiChatInstance && window.aiChatInstance.speakResponse) {
-                    window.aiChatInstance.speakResponse(initData.mensaje_sistema);
-                }
-    
-                return initData.mensaje_sistema;
-            }
-    
-        } catch (e) {
-            console.warn("Fallo al verificar primera vez:", e);
-            // Continuar como si no fuera la primera vez
-        }
-    
-        // 2️⃣ Si NO es la primera vez, hacer inferencia normal
-        const response = await fetch(`${window.BACKEND_URL}/ia-contextual`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "cedula": cedula,
-                "ngrok-skip-browser-warning": "true"
-            },
-            body: JSON.stringify({ prompt: mensaje })
-        });
-    
-        if (!response.ok) {
-            console.error("Error en la inferencia contextual:", await response.text());
-            return "Lo siento, hubo un error al consultar la IA.";
-        }
-    
-        const data = await response.json();
-        return data.respuesta || "No hubo respuesta.";
-    };
     
     
     function addCustomMessage(htmlContent, id = null) {
@@ -221,6 +162,7 @@ function initializeChat() {
             // ⛔ Desactivar botón para evitar clics múltiples
             sendButton.disabled = true;
             userInput.disabled = true;
+            userInput.value = ''
         
             try {
                 // Inicializar AIChat si no existe
@@ -264,6 +206,17 @@ function initializeChat() {
                             addMessage(respuestaInicial, 'ai');
                         
                             chatInicializadoConPerfil = true;
+
+                            // 🧹 Limpiar campo de entrada
+                            userInput.value = '';
+
+                            // ✅ Reactivar controles
+                            sendButton.disabled = false;
+                            userInput.disabled = false;
+                            userInput.focus();
+
+                            // ⛔ Finalizar ejecución, no se envía el mensaje del usuario
+                            return;
                         }                        
                     }
                 }
@@ -283,10 +236,9 @@ function initializeChat() {
                 `, loadingId);
                 
         
-                const response = await enviarMensajeConContexto(message);
-        
+                const respuestaFinal = await aiChatInstance.processMessage(message);
                 removeMessageById(loadingId);
-                addMessage(response, 'ai');
+                addMessage(respuestaFinal, 'ai');                
         
             } catch (error) {
                 console.error('❌ Error en sendMessage:', error);
@@ -294,6 +246,8 @@ function initializeChat() {
                 addMessage('Lo siento, ocurrió un error al procesar tu mensaje. Por favor, intenta de nuevo.', 'ai');
             } finally {
                 // ✅ Reactivar controles
+                // 🧹 Limpiar campo de entrada
+                userInput.value = ''
                 sendButton.disabled = false;
                 userInput.disabled = false;
                 userInput.focus();

@@ -41,7 +41,7 @@ class AIChat {
             }
     
             // Enviar al backend local
-            const response = await fetch(`${window.BACKEND_URL}/ia`, {
+            const response = await fetch(`${window.BACKEND_URL}/ia-contextual`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -114,12 +114,8 @@ class AIChat {
                 speakingVideo.currentTime = 0;
 
                 // Reproducir el video de habla
-                const playPromise = speakingVideo.play();
-                if (playPromise !== undefined) {
-                    await playPromise.catch(error => {
-                        console.warn('Error al reproducir el video de habla:', error);
-                    });
-                }
+                // Reproducir con manejo seguro
+                await safePlay(speakingVideo);
 
                 // Aplicar la transición
                 idleVideo.classList.remove('active'); // Ocultar el video de espera
@@ -162,21 +158,21 @@ class AIChat {
                             continueTransition();
                         }
 
-                        function continueTransition() {
-                            // Reiniciar el video para que comience desde el principio
+                        async function continueTransition() {
                             idleVideo.currentTime = 0;
-
-                            // Reproducir el video de espera
-                            idleVideo.play().catch(error => {
-                                console.warn('Error al reproducir el video de espera:', error);
-                            });
-
-                            // Aplicar la transición
-                            speakingVideo.classList.remove('active'); // Ocultar el video de habla
-                            idleVideo.classList.add('active'); // Mostrar el video de espera
-
+                        
+                            try {
+                                await safePlay(idleVideo); // Esperar reproducción segura
+                            } catch (err) {
+                                console.warn("Error reproduciendo video idle:", err);
+                            }
+                        
+                            // Aplicar transición visual
+                            speakingVideo.classList.remove('active');
+                            idleVideo.classList.add('active');
                             console.log('Transición al video de espera completada');
                         }
+                        
                     } catch (error) {
                         console.warn('Error durante la transición al video de espera:', error);
                         // Intentar aplicar la transición de todos modos
@@ -241,3 +237,19 @@ class AIChat {
         });
     }
 }
+
+async function safePlay(videoElement) {
+    try {
+        if (!videoElement) throw new Error('Elemento de video no definido');
+        
+        const playPromise = videoElement.play();
+
+        if (playPromise !== undefined) {
+            await playPromise;
+            console.log('✅ Reproducción exitosa:', videoElement.id);
+        }
+    } catch (error) {
+        console.warn('⚠️ Error al reproducir video:', error.message);
+    }
+}
+

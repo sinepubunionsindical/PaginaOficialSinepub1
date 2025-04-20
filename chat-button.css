@@ -107,7 +107,9 @@
     position: absolute;
     top: 0;
     left: 0;
-    transition: opacity 0.5s ease-in-out; /* Transición suave para el efecto de desvanecimiento */
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
     opacity: 0; /* Por defecto, todos los videos están ocultos */
     z-index: 1; /* Todos los videos tienen un z-index base */
 }
