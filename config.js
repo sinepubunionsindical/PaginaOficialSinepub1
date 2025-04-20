@@ -10,7 +10,7 @@ const API_KEYS = {
 };
 
 // URL de backend centralizada usando ngrok
-const BACKEND_URL = 'https://44c6-2800-484-8786-7d00-8983-3226-aa7e-4f0f.ngrok-free.app';
+const BACKEND_URL = 'https://877a-2800-484-8786-7d00-8983-3226-aa7e-4f0f.ngrok-free.app';
 
 // Modo de depuración - cambia a true para usar localhost en lugar de ngrok
 // Si hay problemas con ngrok, cambiar a true
