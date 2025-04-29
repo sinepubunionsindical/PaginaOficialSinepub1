@@ -914,7 +914,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 });
                                 // Cargar comentarios al hacer click en el botón de comentarios
                                 console.log("DEBUG anuncio.id:", anuncio.id);
-                                const botonComentarios = document.querySelector(`ver-comentarios-button[data-anuncio-id="${anuncio.id}"]`);
+                                const botonComentarios = document.querySelector(`.ver-comentarios-button[data-anuncio-id="${anuncio.id}"]`);
                                 const contenedorComentarios = document.getElementById(`comentarios-contenedor-${anuncio.id}`);
 
                                 if (botonComentarios && contenedorComentarios) {
@@ -943,7 +943,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                                 contenedorComentarios.innerHTML = data.comentarios.map(c => `
                                                     <div class="comentario-tarjeta">
                                                         <div class="comentario-autor">
-                                                            <img src="${c.foto_base64 || '/images/avatar-placeholder.png'}" class="comentario-avatar" alt="Foto de ${c.nombre}">
+                                                            <img src="${c.foto_base64 ? `data:image/png;base64,${c.foto_base64}` : '/images/avatar-placeholder.png'}" class="comentario-avatar" alt="Foto de ${c.nombre}">
                                                             <div class="comentario-info">
                                                                 <strong>${c.nombre}</strong>
                                                                 <span class="comentario-fecha">${c.fecha}</span>
@@ -965,7 +965,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                 }
                             }
                         });
-
                     } else {
                         container.innerHTML = `
                             <div class="anuncio-vacio">
