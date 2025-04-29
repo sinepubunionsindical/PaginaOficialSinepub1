@@ -10,7 +10,7 @@ const API_KEYS = {
 };
 
 // URL de backend centralizada usando ngrok
-const BACKEND_URL = 'https://2982-2800-484-8786-7d00-5c4c-6f9b-97ce-59d5.ngrok-free.app';
+const BACKEND_URL = 'https://d018-2800-484-8786-7d00-5c4c-6f9b-97ce-59d5.ngrok-free.app';
 
 // Modo de depuración - cambia a true para usar localhost en lugar de ngrok
 // Si hay problemas con ngrok, cambiar a true
@@ -33,6 +33,7 @@ const API_ENDPOINTS = {
     like: `${EFFECTIVE_URL}/api/like`,
     comentar: `${EFFECTIVE_URL}/api/comentar`,
     obtenerComentarios: `${EFFECTIVE_URL}/api/comentarios`,
+    yaComento: `${EFFECTIVE_URL}/api/ya_comento`, 
     ia: `${EFFECTIVE_URL}/ia`,
     iaInit: `${EFFECTIVE_URL}/ia-init`,
     iaContextual: `${EFFECTIVE_URL}/ia-contextual`
