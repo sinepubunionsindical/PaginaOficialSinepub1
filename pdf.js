@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (acuerdoLink) {
     acuerdoLink.addEventListener("click", e => {
       e.preventDefault();
-      openSecurePDFModal("https://trainheartx.github.io/sinepub-website1/RESOLUCION.pdf");
+      openSecurePDFModal("https://cdn.jsdelivr.net/gh/trainheartx/sinepub-website1/RESOLUCION.pdf");
     });
   }
 
@@ -73,14 +73,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     estatutosLink.addEventListener("click", e => {
       e.preventDefault();
-      openSecurePDFModal("https://trainheartx.github.io/sinepub-website1/Estatutos.pdf");
+      openSecurePDFModal("https://cdn.jsdelivr.net/gh/trainheartx/sinepub-website1/Estatutos.pdf");
     });
   }
   // También capturar eventos dinámicos por seguridad
   document.addEventListener("click", function (e) {
     if (e.target && e.target.id === "estatutos-link") {
       e.preventDefault();
-      openSecurePDFModal("https://trainheartx.github.io/sinepub-website1/Estatutos.pdf");
+      openSecurePDFModal("https://cdn.jsdelivr.net/gh/trainheartx/sinepub-website1/Estatutos.pdf");
     }
   });
 });
