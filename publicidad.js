@@ -820,9 +820,10 @@ document.addEventListener('DOMContentLoaded', function() {
                                                     <i class="fas fa-pen"></i> Opinar
                                                 </button>
 
-                                                <button class="ver-comentarios-button" data-anuncio-id="${anuncio.id}">
-                                                    <i class="fas fa-comments"></i> Comentarios
+                                                <button class="ver-comentarios-button" data-anuncio-id="${anuncio.id}" data-comentarios-count="0">
+                                                    💬 <span class="comentarios-count">0</span> Comentarios
                                                 </button>
+
 
                                                 <!-- 🟢 Caja de comentario emergente -->
                                                 <!-- 🔵 SOLO lista de comentarios (siempre visible si hay comentarios) -->
