@@ -32,7 +32,7 @@ const API_ENDPOINTS = {
     verificarCedula: `${EFFECTIVE_URL}/api/verificar_cedula`,
     like: `${EFFECTIVE_URL}/api/like`,
     comentar: `${EFFECTIVE_URL}/api/comentar`,
-    obtenerComentarios: `${EFFECTIVE_URL}/api/obtener_comentarios`,
+    obtenerComentarios: `${EFFECTIVE_URL}/api/comentarios`,
     ia: `${EFFECTIVE_URL}/ia`,
     iaInit: `${EFFECTIVE_URL}/ia-init`,
     iaContextual: `${EFFECTIVE_URL}/ia-contextual`
