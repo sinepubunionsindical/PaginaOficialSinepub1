@@ -913,7 +913,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     }
                                 });
                                 // Cargar comentarios al hacer click en el botón de comentarios
-                                const botonComentarios = document.querySelector(`.comentarios-button[data-anuncio-id="${anuncio.id}"]`);
+                                const botonComentarios = document.querySelector(`.ver-comentarios-button[data-anuncio-id="${anuncio.id}"]`);
                                 const contenedorComentarios = document.getElementById(`comentarios-contenedor-${anuncio.id}`);
 
                                 if (botonComentarios && contenedorComentarios) {
