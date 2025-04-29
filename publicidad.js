@@ -825,8 +825,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                                 </button>
 
                                                 <!-- 🟢 Caja de comentario emergente -->
-                                                <div class="comentario-box-popup hidden" id="comentario-box-${anuncio.id}">
+                                                <!-- 🔵 SOLO lista de comentarios (siempre visible si hay comentarios) -->
                                                 <div class="comentarios-lista" id="comentarios-contenedor-${anuncio.id}"></div>
+
+                                                <!-- 🟣 Popup de comentar (solo aparece cuando oprimís "Opinar") -->
+                                                <div class="comentario-box-popup hidden" id="comentario-box-${anuncio.id}">
                                                     <div class="comentario-popup-content">
                                                         <div class="comentario-perfil-col">
                                                             <img src="${fotoPerfil}" alt="Tu foto" class="perfil-imagen-popup"
@@ -841,6 +844,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                                         </div>
                                                     </div>
                                                 </div>
+
                                             </div>
 
                                         </div>
@@ -854,12 +858,48 @@ document.addEventListener('DOMContentLoaded', function() {
                             
                             const botonOpinar = document.querySelector(`.opinar-button[data-anuncio-id="${anuncio.id}"]`);
                             const popup = document.getElementById(`comentario-box-${anuncio.id}`);
-
+                            
                             if (botonOpinar && popup) {
-                                botonOpinar.addEventListener("click", () => {
-                                    popup.classList.remove("hidden");
-                                });
-                            }
+                                botonOpinar.addEventListener("click", async () => {
+                                    const esAfiliado = localStorage.getItem("afiliado") === "yes";
+                                    if (!esAfiliado) {
+                                        alert("🔐 Debes iniciar sesión para comentar en esta publicación.");
+                                        return;
+                                    }
+                                
+                                    const anuncioId = anuncio.id;
+                                    const cedula = localStorage.getItem("cedula");
+                                
+                                    if (!cedula) {
+                                        alert("❌ No se pudo verificar tu identidad. Debes iniciar sesión.");
+                                        return;
+                                    }
+                                
+                                    try {
+                                        const respuesta = await fetch(`${getBackendUrl()}/api/ya_comento/${anuncioId}/${cedula}`, {
+                                            method: "GET",
+                                            headers: {
+                                                "Accept": "application/json",
+                                                "ngrok-skip-browser-warning": "true",
+                                                "User-Agent": "sinepub-client"
+                                            }
+                                        });
+                                
+                                        const data = await respuesta.json();
+                                
+                                        if (data.ya_comento) {
+                                            localStorage.setItem(`comentado_${anuncioId}`, "true");
+                                            alert("⚠️ Ya has comentado en esta publicación.");
+                                            return;
+                                        } else {
+                                            popup.classList.remove("hidden");
+                                        }
+                                    } catch (error) {
+                                        console.error("❌ Error verificando si ya comentó:", error);
+                                        alert("Hubo un error verificando tu estado de comentario. Intenta de nuevo.");
+                                    }
+                                });                                                              
+                            }                            
 
                             const btnCancelar = popup?.querySelector(".btn-cancelar-comentario");
                             if (btnCancelar) {
@@ -904,6 +944,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                             alert("✅ Comentario registrado correctamente.");
                                             textarea.value = "";
                                             popup.classList.add("hidden");
+
+                                            // ✅ Guardar que ya comentó
+                                            localStorage.setItem(`comentado_${anuncio.id}`, "true");                                            
                                         } else {
                                             throw new Error(result?.error || "Error al registrar comentario.");
                                         }
@@ -913,14 +956,18 @@ document.addEventListener('DOMContentLoaded', function() {
                                     }
                                 });
                                 // Cargar comentarios al hacer click en el botón de comentarios
-                                console.log("DEBUG anuncio.id:", anuncio.id);
                                 const botonComentarios = document.querySelector(`.ver-comentarios-button[data-anuncio-id="${anuncio.id}"]`);
+                                const popup = document.getElementById(`comentario-box-${anuncio.id}`); // ⚡ Esto recupera el popup general
                                 const contenedorComentarios = document.getElementById(`comentarios-contenedor-${anuncio.id}`);
-
-                                if (botonComentarios && contenedorComentarios) {
+                                
+                                if (botonComentarios && contenedorComentarios && popup) {
                                     botonComentarios.addEventListener("click", async () => {
                                         console.log("Cargando comentarios...");
+                                        // 👇 Mostrar popup que estaba hidden
+                                        
+                                
                                         contenedorComentarios.innerHTML = `<p style="color:#999;">Cargando comentarios...</p>`;
+                                
                                         try {
                                             const backendUrl = `${getBackendUrl()}/api/comentarios/${anuncio.id}`;
                                             const response = await fetch(backendUrl, {
@@ -931,30 +978,39 @@ document.addEventListener('DOMContentLoaded', function() {
                                                     "User-Agent": "sinepub-client"
                                                 }
                                             });
-
+                                
                                             const data = await response.json();
-
+                                
                                             if (response.ok && Array.isArray(data.comentarios)) {
                                                 if (data.comentarios.length === 0) {
                                                     contenedorComentarios.innerHTML = `<p style="color:#999;">Este anuncio aún no tiene comentarios.</p>`;
                                                     return;
                                                 }
-
-                                                contenedorComentarios.innerHTML = data.comentarios.map(c => `
-                                                    <div class="comentario-tarjeta">
-                                                        <div class="comentario-autor">
-                                                            <img src="${c.foto_base64 ? `data:image/png;base64,${c.foto_base64}` : '/images/avatar-placeholder.png'}" class="comentario-avatar" alt="Foto de ${c.nombre}">
-                                                            <div class="comentario-info">
-                                                                <strong>${c.nombre}</strong>
-                                                                <span class="comentario-fecha">${c.fecha}</span>
+                                
+                                                const comentariosHTML = data.comentarios.map(c => {
+                                                    const foto = c.foto_base64 
+                                                        ? `data:image/png;base64,${c.foto_base64}` 
+                                                        : '/images/avatar-placeholder.png';
+                                                    
+                                                    return `
+                                                        <div class="comentario-tarjeta">
+                                                            <div class="comentario-autor">
+                                                                <img src="${foto}" class="comentario-avatar" alt="Foto de ${c.nombre || 'Afiliado'}">
+                                                                <div class="comentario-info">
+                                                                    <strong>${c.nombre || 'Afiliado'}</strong>
+                                                                    <span class="comentario-fecha">${c.fecha || ''}</span>
+                                                                </div>
                                                             </div>
+                                                            <p class="comentario-texto">${c.comentario || ''}</p>
                                                         </div>
-                                                        <p class="comentario-texto">${c.comentario}</p>
-                                                    </div>
-                                                `).join('');
+                                                    `;
+                                                }).join('');
+                                
+                                                contenedorComentarios.innerHTML = comentariosHTML;
                                             } else {
                                                 contenedorComentarios.innerHTML = `<p style="color:red;">Error al cargar comentarios.</p>`;
                                             }
+                                
                                         } catch (error) {
                                             console.error("❌ Error cargando comentarios:", error);
                                             contenedorComentarios.innerHTML = `<p style="color:red;">Error de conexión al backend.</p>`;
@@ -963,6 +1019,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 } else {
                                     console.log("Botón de ver comentarios no encontrado.");
                                 }
+                                
                             }
                         });
                     } else {
