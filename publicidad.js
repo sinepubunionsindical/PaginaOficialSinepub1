@@ -821,7 +821,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                                 </button>
 
                                                 <button class="ver-comentarios-button" data-anuncio-id="${anuncio.id}" data-comentarios-count="0">
-                                                    💬 <span class="comentarios-count">0</span> Comentarios
+                                                    💬 <span class="comentarios-count"></span> Comentarios
                                                 </button>
 
 
