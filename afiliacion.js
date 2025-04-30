@@ -18,14 +18,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 alert("✅ Tu formulario se descargará correctamente y se enviará a las directivas para proceso de análisis.");
 
-                // Capturar visual del iframe
                 const iframe = pdfViewer;
                 const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 
-                // Esperar un pequeño tiempo por si hay campos activos (delay corto)
-                await new Promise(r => setTimeout(r, 500));
+                // ✅ Validar campos
+                if (!validarCamposFormulario(iframeDoc)) {
+                    alert("⚠️ Por favor, llena todos los campos antes de continuar.");
+                    downloadBtn.textContent = "Descargar Formulario Lleno";
+                    downloadBtn.disabled = false;
+                    return;
+                }
 
-                // html2canvas sobre el body del iframe (asegura incluir annotationLayer si existe)
+                // ✅ Forzar pérdida de foco y permitir actualización visual
+                iframeDoc.activeElement?.blur();
+                await new Promise(r => setTimeout(r, 300));
+
+                // ✅ Captura visual con html2canvas
                 const canvas = await html2canvas(iframeDoc.body, {
                     scale: 2,
                     useCORS: true,
@@ -35,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 const imgData = canvas.toDataURL("image/png");
 
-                // Generar PDF visual con jsPDF
+                // ✅ Generar PDF con jsPDF
                 const { jsPDF } = window.jspdf;
                 const pdf = new jsPDF({
                     orientation: "portrait",
@@ -46,14 +54,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
                 const pdfBlob = pdf.output("blob");
 
-                // Descargar localmente
+                // ✅ Descargar localmente
                 const fileName = `FormularioAfiliacion_${new Date().toISOString().slice(0, 19).replace(/[:T]/g, "_")}.pdf`;
                 const link = document.createElement("a");
                 link.href = URL.createObjectURL(pdfBlob);
                 link.download = fileName;
                 link.click();
 
-                // Enviar al backend
+                // ✅ Enviar al backend
                 const formData = new FormData();
                 formData.append("pdf", pdfBlob, fileName);
                 formData.append("timestamp", new Date().toISOString());
@@ -82,3 +90,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// ✅ Valida que todos los campos visibles estén llenos
+function validarCamposFormulario(iframeDoc) {
+    const campos = iframeDoc.querySelectorAll("input, textarea, select");
+    for (const campo of campos) {
+        const esVisible = campo.offsetParent !== null && campo.type !== "hidden";
+        if (esVisible && campo.type !== "button" && campo.type !== "submit") {
+            if (!campo.value.trim()) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
