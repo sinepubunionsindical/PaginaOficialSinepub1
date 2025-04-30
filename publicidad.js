@@ -293,8 +293,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Restablecer elementos principales del formulario
-        document.getElementById('titulo-anuncio').value = '';
-        document.getElementById('texto-anuncio').value = '';
+        document.getElementById('titulo').value = '';
+        document.getElementById('descripcion').value = '';        
         
         // Conservar las opciones de selección de datos del usuario
         // pero restablecer cualquier input visible alternativo
@@ -557,7 +557,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         cerrarModalFormulario();
                         
                         // Mostrar mensaje de éxito
-                        mostrarMensajeExito("Tu anuncio ha sido enviado y está pendiente de aprobación por la Junta Directiva.");
+                        mostrarMensajeExitoExterno();
                     } else {
                         throw new Error(resultado.mensaje || "Error desconocido al enviar la publicidad");
                     }
@@ -1307,6 +1307,7 @@ async function darLike(anuncioId) {
 
     // --- Ejecución Inicial ---
     initPage();
+    
 
 }); // Fin de DOMContentLoaded
 
@@ -1384,4 +1385,25 @@ function getBackendUrl() {
     
     // Por último, usar la URL de ngrok estática como fallback
     return 'https://61f8-2800-484-8786-7d00-5963-3db4-73c3-1a5c.ngrok-free.app';
+}
+
+function mostrarMensajeExitoExterno() {
+    const modal = document.getElementById('mensaje-exito-externo');
+    if (!modal) return;
+
+    modal.classList.remove('hidden');
+
+    // Cerrar automáticamente en 7 segundos
+    const timeoutId = setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 7000);
+
+    // Cierre manual con botón 'X'
+    const cerrarBtn = modal.querySelector('.cerrar-exito');
+    if (cerrarBtn) {
+        cerrarBtn.onclick = () => {
+            modal.classList.add('hidden');
+            clearTimeout(timeoutId);
+        };
+    }
 }
