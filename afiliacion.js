@@ -12,13 +12,27 @@ downloadBtn.addEventListener("click", async function () {
 
         alert("✅ Tu formulario se descargará correctamente y se enviará a las directivas para proceso de análisis.");
 
-        const pdfURL = pdfViewer.src;
+        const iframeDocument = pdfViewer.contentDocument || pdfViewer.contentWindow.document;
+        const iframeBody = iframeDocument.body;
 
-        const response = await fetch(pdfURL, { mode: 'cors' });
-        const pdfBlob = await response.blob();
+        const canvas = await html2canvas(iframeBody, {
+            scale: 2,
+            useCORS: true
+        });
 
-        const timestamp = new Date().toISOString();
-        const fileName = `FormularioAfiliacion_${timestamp.slice(0, 19).replace(/[:T]/g, "_")}.pdf`;
+        const imgData = canvas.toDataURL("image/png");
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+            orientation: "portrait",
+            unit: "px",
+            format: [canvas.width, canvas.height]
+        });
+
+        pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
+        const pdfBlob = pdf.output("blob");
+
+        const fileName = `FormularioAfiliacion_${new Date().toISOString().slice(0, 19).replace(/[:T]/g, "_")}.pdf`;
 
         // Descargar localmente
         const link = document.createElement("a");
@@ -26,12 +40,12 @@ downloadBtn.addEventListener("click", async function () {
         link.download = fileName;
         link.click();
 
-        // Enviar al backend
+        // Enviar al backend sin email ni URL
         const formData = new FormData();
         formData.append("pdf", pdfBlob, fileName);
-        formData.append("timestamp", timestamp);
+        formData.append("timestamp", new Date().toISOString());
 
-        const result = await fetch(API_ENDPOINTS.enviarPDFLleno, {
+        const response = await fetch(API_ENDPOINTS.enviarPDFLlenoBlob, {
             method: "POST",
             headers: {
                 "ngrok-skip-browser-warning": "true"
@@ -39,11 +53,14 @@ downloadBtn.addEventListener("click", async function () {
             body: formData
         });
 
-        const resultJson = await result.json();
-        if (!resultJson.success) throw new Error(resultJson.error || "Fallo el envío del PDF.");
+        const result = await response.json();
 
-    } catch (error) {
-        console.error("Error:", error);
+        if (!result.success) {
+            throw new Error(result.error || "No se pudo enviar el formulario.");
+        }
+
+    } catch (err) {
+        console.error("Error:", err);
         alert("❌ Ocurrió un error al procesar el formulario.");
     } finally {
         downloadBtn.textContent = "Descargar Formulario Lleno";
