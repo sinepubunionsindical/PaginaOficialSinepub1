@@ -1344,7 +1344,6 @@ async function verificarCedulaPublicidad(cedula, callback) {
         }
 
         const data = await response.json();
-        console.log("✅ Respuesta del servidor:", data);
 
         // Guardar datos en localStorage
         if (data.valid) {
