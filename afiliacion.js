@@ -1,106 +1,124 @@
-// Script para manejar el formulario de afiliación
-
-document.addEventListener('DOMContentLoaded', function() {
-    const downloadBtn = document.getElementById("downloadPdf");
-
-    if (downloadBtn) {
-        downloadBtn.addEventListener("click", async function () {
-            const pdfViewer = document.getElementById("pdfViewer");
-
-            if (!pdfViewer) {
-                alert("No se pudo acceder al formulario PDF. Recarga la página e intenta de nuevo.");
-                return;
-            }
-
-            try {
-                downloadBtn.textContent = "Procesando...";
-                downloadBtn.disabled = true;
-
-                alert("✅ Tu formulario se descargará correctamente y se enviará a las directivas para proceso de análisis.");
-
-                const iframe = pdfViewer;
-                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-
-                // ✅ Validar campos
-                if (!validarCamposFormulario(iframeDoc)) {
-                    alert("⚠️ Por favor, llena todos los campos antes de continuar.");
-                    downloadBtn.textContent = "Descargar Formulario Lleno";
-                    downloadBtn.disabled = false;
-                    return;
-                }
-
-                // ✅ Forzar pérdida de foco y permitir actualización visual
-                iframeDoc.activeElement?.blur();
-                await new Promise(r => setTimeout(r, 300));
-
-                // ✅ Captura visual con html2canvas
-                const canvas = await html2canvas(iframeDoc.body, {
-                    scale: 2,
-                    useCORS: true,
-                    logging: false,
-                    backgroundColor: "#ffffff"
-                });
-
-                const imgData = canvas.toDataURL("image/png");
-
-                // ✅ Generar PDF con jsPDF
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF({
-                    orientation: "portrait",
-                    unit: "px",
-                    format: [canvas.width, canvas.height]
-                });
-
-                pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
-                const pdfBlob = pdf.output("blob");
-
-                // ✅ Descargar localmente
-                const fileName = `FormularioAfiliacion_${new Date().toISOString().slice(0, 19).replace(/[:T]/g, "_")}.pdf`;
-                const link = document.createElement("a");
-                link.href = URL.createObjectURL(pdfBlob);
-                link.download = fileName;
-                link.click();
-
-                // ✅ Enviar al backend
-                const formData = new FormData();
-                formData.append("pdf", pdfBlob, fileName);
-                formData.append("timestamp", new Date().toISOString());
-
-                const response = await fetch(API_ENDPOINTS.enviarPDFLleno, {
-                    method: "POST",
-                    headers: {
-                        "ngrok-skip-browser-warning": "true"
-                    },
-                    body: formData
-                });
-
-                const result = await response.json();
-
-                if (!result.success) {
-                    throw new Error(result.error || "No se pudo enviar el formulario.");
-                }
-
-            } catch (err) {
-                console.error("Error:", err);
-                alert("❌ Ocurrió un error al procesar el formulario.");
-            } finally {
-                downloadBtn.textContent = "Descargar Formulario Lleno";
-                downloadBtn.disabled = false;
-            }
+// Script para manejar el formulario de afiliación v2
+document.addEventListener('DOMContentLoaded', () => {
+    const downloadBtn = document.getElementById('downloadPdf');
+    if (!downloadBtn) return;
+  
+    downloadBtn.addEventListener('click', async () => {
+      const iframe = document.getElementById('pdfViewer');
+      if (!iframe) return alert('💥 No se encontró el visor PDF.');
+  
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+  
+      /* 1️⃣ Validar campos visibles */
+      if (!validarCamposFormulario(iframeDoc)) {
+        return alert('⚠️ Completa todos los campos antes de continuar.');
+      }
+  
+      try {
+        bloqueaBoton(true);
+        alert('✅ Procesando… tu formulario será enviado a las directivas.');
+  
+        /* 2️⃣ Obtener bytes del PDF original (url del visor) */
+        const pdfUrl = iframe.contentWindow.PDFViewerApplication.url;
+        const originalBytes = await fetch(pdfUrl).then(r => r.arrayBuffer());
+  
+        /* 3️⃣ Usar pdf-lib para rellenar y “aplanar” */
+        const pdfDoc = await PDFLib.PDFDocument.load(originalBytes, {
+          ignoreEncryption: true,
         });
-    }
-});
-
-// ✅ Valida que todos los campos visibles estén llenos
-function validarCamposFormulario(iframeDoc) {
-    const campos = iframeDoc.querySelectorAll("input, textarea, select");
-    for (const campo of campos) {
-        const esVisible = campo.offsetParent !== null && campo.type !== "hidden";
-        if (esVisible && campo.type !== "button" && campo.type !== "submit") {
-            if (!campo.value.trim()) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
+        const form = pdfDoc.getForm();
+  
+        // Mapeo automático: html name === AcroForm fieldName
+        const inputs = iframeDoc.querySelectorAll(
+          'input, select, textarea'
+        );
+  
+        inputs.forEach(el => {
+          const name = el.name || el.getAttribute('data-element-name');
+          if (!name) return;
+          const field = form.getFieldMaybe(name);
+          if (!field) return;
+  
+          switch (field.constructor.name) {
+            case 'PDFTextField':
+              field.setText(el.value);
+              break;
+            case 'PDFCheckBox':
+              el.checked ? field.check() : field.uncheck();
+              break;
+            case 'PDFDropdown':
+            case 'PDFOptionList':
+              field.select(el.value);
+              break;
+            case 'PDFRadioGroup':
+              field.select(el.value);
+              break;
+            default:
+              console.warn('Campo no gestionado:', name);
+          }
+        });
+  
+        form.flatten();               // 👈 convierte campos en dibujo (no editables)
+        const pdfBytes = await pdfDoc.save({ useObjectStreams: true });
+        const pdfBlob = new Blob([pdfBytes], { type: 'application/pdf' });
+  
+        /* 4️⃣ Descarga local */
+        const fileName = `FormularioAfiliacion_${new Date()
+          .toISOString()
+          .slice(0, 19)
+          .replace(/[:T]/g, '_')}.pdf`;
+  
+        descargarBlob(pdfBlob, fileName);
+  
+        /* 5️⃣ Envía al backend */
+        await subirAlBackend(pdfBlob, fileName);
+  
+        alert('📨 Formulario enviado con éxito.');
+      } catch (e) {
+        console.error(e);
+        alert('❌ Error al procesar el formulario.');
+      } finally {
+        bloqueaBoton(false);
+      }
+    });
+  });
+  
+  /* ----------------- utilidades ----------------- */
+  
+  function validarCamposFormulario(doc) {
+    return [...doc.querySelectorAll('input, textarea, select')].every(c => {
+      const visible = c.offsetParent !== null && c.type !== 'hidden';
+      return !visible || ['button', 'submit'].includes(c.type) || c.value.trim();
+    });
+  }
+  
+  function descargarBlob(blob, nombre) {
+    const url = URL.createObjectURL(blob);
+    const a = Object.assign(document.createElement('a'), {
+      href: url,
+      download: nombre,
+    });
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+  
+  async function subirAlBackend(blob, nombre) {
+    const formData = new FormData();
+    formData.append('pdf', blob, nombre);
+    formData.append('timestamp', new Date().toISOString());
+  
+    const res = await fetch(API_ENDPOINTS.enviarPDFLleno, {
+      method: 'POST',
+      headers: { 'ngrok-skip-browser-warning': 'true' },
+      body: formData,
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'upload failed');
+  }
+  
+  function bloqueaBoton(bloquear) {
+    const b = document.getElementById('downloadPdf');
+    b.textContent = bloquear ? 'Procesando…' : 'Descargar Formulario Lleno';
+    b.disabled = bloquear;
+  }
+  
