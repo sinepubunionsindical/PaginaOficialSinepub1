@@ -36,7 +36,8 @@ const API_ENDPOINTS = {
     yaComento: `${EFFECTIVE_URL}/api/ya_comento`, 
     ia: `${EFFECTIVE_URL}/ia`,
     iaInit: `${EFFECTIVE_URL}/ia-init`,
-    iaContextual: `${EFFECTIVE_URL}/ia-contextual`
+    iaContextual: `${EFFECTIVE_URL}/ia-contextual`,
+    enviarPDFLleno: `${EFFECTIVE_URL}/api/enviar_pdf_lleno`
 };
 
 // Función para enviar formulario de afiliación por correo

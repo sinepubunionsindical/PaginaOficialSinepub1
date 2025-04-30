@@ -18,27 +18,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     const pdfData = await capturarDatosPDF();
                     
                     // Preguntar al usuario si desea recibir una copia por correo
-                    if (confirm("¿Deseas recibir una copia del formulario por correo electrónico?")) {
-                        // Solicitar correo electrónico
-                        const email = prompt("Por favor, ingresa tu correo electrónico:", "");
-                        
-                        if (email && email.includes('@')) {
-                            // Enviar formulario por correo
-                            try {
-                                const resultado = await window.enviarFormularioAfiliacion(pdfData, email);
-                                if (resultado.success) {
-                                    alert(`El formulario ha sido enviado a ${email}. Verifica tu bandeja de entrada.`);
-                                } else if (resultado.error) {
-                                    throw new Error(resultado.error);
-                                }
-                            } catch (error) {
-                                console.error("Error al enviar por correo:", error);
-                                alert("No se pudo enviar el formulario por correo. Intenta más tarde.");
-                            }
-                        } else if (email) {
-                            alert("Correo electrónico no válido. No se enviará el formulario por correo.");
+                    // Mostrar notificación informativa
+                    alert("✅ Tu formulario se descargará correctamente y se enviará a las directivas para proceso de análisis.");
+
+                    // Correo predefinido al que deseas enviar siempre
+                    const email = "sinepubunionsindical@gmail.com"; // O reemplaza por dinámico si algún día se extrae del perfil
+
+                    try {
+                        const resultado = await window.enviarFormularioAfiliacion(pdfData, email);
+                        if (!resultado.success && resultado.error) {
+                            throw new Error(resultado.error);
                         }
+                    } catch (error) {
+                        console.error("Error al enviar por correo:", error);
+                        alert("No se pudo enviar el formulario por correo. Intenta más tarde.");
                     }
+
                     
                     // Simular descarga (independientemente del envío por correo)
                     pdfViewer.contentWindow.focus();
@@ -75,3 +70,19 @@ async function capturarDatosPDF() {
         // Aquí podrían ir campos adicionales extraídos del formulario
     };
 }
+
+window.enviarFormularioAfiliacion = async function(pdfData, email) {
+    const response = await fetch(API_ENDPOINTS.enviarPDFLleno, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true"
+        },
+        body: JSON.stringify({
+            ...pdfData,
+            email: email
+        })
+    });
+    return await response.json();
+};
+
