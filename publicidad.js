@@ -293,8 +293,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Restablecer elementos principales del formulario
-        document.getElementById('titulo-anuncio').value = '';
-        document.getElementById('texto-anuncio').value = '';
+        document.getElementById('titulo').value = '';
+        document.getElementById('descripcion').value = '';        
         
         // Conservar las opciones de selección de datos del usuario
         // pero restablecer cualquier input visible alternativo
