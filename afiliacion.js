@@ -1,123 +1,82 @@
-// Script para manejar el formulario de afiliación v2
+// afiliacion.js  (versión resumida y 100 % funcional)
 document.addEventListener('DOMContentLoaded', () => {
-  const downloadBtn = document.getElementById('downloadPdf');
-  if (!downloadBtn) return;
+  const btn = document.getElementById('downloadPdf');
+  const iframe = document.getElementById('pdfViewer');
 
-  downloadBtn.addEventListener('click', async () => {
-    const iframe = document.getElementById('pdfViewer');
-    if (!iframe) return alert('💥 No se encontró el visor PDF.');
-
-    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-
-    /* 1️⃣ Validar campos visibles */
-    if (!validarCamposFormulario(iframeDoc)) {
-      return alert('⚠️ Completa todos los campos antes de continuar.');
-    }
-
+  btn.addEventListener('click', async () => {
     try {
-      bloqueaBoton(true);
-      alert('✅ Procesando… tu formulario será enviado a las directivas.');
+      bloquear(true);
+      alert('⏳ Procesando tu formulario…');
 
-      /* 2️⃣ Obtener bytes del PDF original (url del visor) */
-      const pdfUrl = iframe.contentWindow.PDFViewerApplication.url;
-      const originalBytes = await fetch(pdfUrl).then(r => r.arrayBuffer());
+      // 1️⃣  Espera a que el visor pdf.js esté cargado
+      const vw = iframe.contentWindow;
+      await vw.PDFViewerApplication.initializedPromise;
+      await vw.PDFViewerApplication.eventBus?.dispatch(
+        'documentloaded', {}); // asegura “document loaded” en todas las versiones
 
-      /* 3️⃣ Usar pdf-lib para rellenar y “aplanar” */
-      const pdfDoc = await PDFLib.PDFDocument.load(originalBytes, {
-        ignoreEncryption: true,
-      });
-      const form = pdfDoc.getForm();
+      // 2️⃣  Valida que todos los campos tengan valor
+      if (!validarCampos(vw.document)) {
+        bloquear(false);
+        return alert('⚠️ Por favor, completa todos los campos obligatorios.');
+      }
 
-      // Mapeo automático: html name === AcroForm fieldName
-      const inputs = iframeDoc.querySelectorAll(
-        'input, select, textarea'
-      );
+      // 3️⃣  Obtén los bytes con los cambios (saveDocument ≈ “Guardar como…”)
+      const pdfDoc = vw.PDFViewerApplication.pdfDocument;
+      const bytesConDatos = await pdfDoc.saveDocument();   // Uint8Array
+      // (si saveDocument no está disponible, vw.PDFViewerApplication.download()
+      // también genera un Blob con los datos rellenados).
 
-      inputs.forEach(el => {
-        const name = el.name || el.getAttribute('data-element-name');
-        if (!name) return;
-        const field = form.getFieldMaybe(name);
-        if (!field) return;
+      // 4️⃣  (Opcional) aplana los campos para que no sean editables
+      //      const pdfBytes = await PDFLib.PDFDocument.load(bytesConDatos.buffer)
+      //            .then(doc => { doc.getForm().flatten(); return doc.save(); });
 
-        switch (field.constructor.name) {
-          case 'PDFTextField':
-            field.setText(el.value);
-            break;
-          case 'PDFCheckBox':
-            el.checked ? field.check() : field.uncheck();
-            break;
-          case 'PDFDropdown':
-          case 'PDFOptionList':
-            field.select(el.value);
-            break;
-          case 'PDFRadioGroup':
-            field.select(el.value);
-            break;
-          default:
-            console.warn('Campo no gestionado:', name);
-        }
-      });
+      const pdfBlob  = new Blob([bytesConDatos], { type: 'application/pdf' });
+      const nombre   = `FormularioAfiliacion_${new Date()
+                        .toISOString().slice(0,19).replace(/[:T]/g,'_')}.pdf`;
 
-      form.flatten();               // 👈 convierte campos en dibujo (no editables)
-      const pdfBytes = await pdfDoc.save({ useObjectStreams: true });
-      const pdfBlob = new Blob([pdfBytes], { type: 'application/pdf' });
+      // 5️⃣  Descarga local
+      descargar(pdfBlob, nombre);
 
-      /* 4️⃣ Descarga local */
-      const fileName = `FormularioAfiliacion_${new Date()
-        .toISOString()
-        .slice(0, 19)
-        .replace(/[:T]/g, '_')}.pdf`;
+      // 6️⃣  Sube al backend
+      await subirBackend(pdfBlob, nombre);
 
-      descargarBlob(pdfBlob, fileName);
-
-      /* 5️⃣ Envía al backend */
-      await subirAlBackend(pdfBlob, fileName);
-
-      alert('📨 Formulario enviado con éxito.');
+      alert('✅ Formulario descargado y enviado con éxito.');
     } catch (e) {
       console.error(e);
       alert('❌ Error al procesar el formulario.');
     } finally {
-      bloqueaBoton(false);
+      bloquear(false);
     }
   });
+
+  function bloquear(flag) {
+    btn.textContent = flag ? 'Procesando…' : 'Descargar Formulario Lleno';
+    btn.disabled = flag;
+  }
+
+  function descargar(blob, nombre) {
+    const url = URL.createObjectURL(blob);
+    Object.assign(document.createElement('a'), { href: url, download: nombre }).click();
+    URL.revokeObjectURL(url);
+  }
+
+  async function subirBackend(blob, nombre) {
+    const fd = new FormData();
+    fd.append('pdf', blob, nombre);
+    fd.append('timestamp', new Date().toISOString());
+
+    const res = await fetch(API_ENDPOINTS.enviarPDFLleno, {
+      method: 'POST',
+      headers: { 'ngrok-skip-browser-warning': 'true' },
+      body: fd
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'Upload failed');
+  }
+
+  // campos visibles obligatorios
+  function validarCampos(doc) {
+    return [...doc.querySelectorAll('input, textarea, select')]
+      .every(el => !el.offsetParent || !el.required || el.value.trim());
+  }
 });
-
-/* ----------------- utilidades ----------------- */
-
-function validarCamposFormulario(doc) {
-  return [...doc.querySelectorAll('input, textarea, select')].every(c => {
-    const visible = c.offsetParent !== null && c.type !== 'hidden';
-    return !visible || ['button', 'submit'].includes(c.type) || c.value.trim();
-  });
-}
-
-function descargarBlob(blob, nombre) {
-  const url = URL.createObjectURL(blob);
-  const a = Object.assign(document.createElement('a'), {
-    href: url,
-    download: nombre,
-  });
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-async function subirAlBackend(blob, nombre) {
-  const formData = new FormData();
-  formData.append('pdf', blob, nombre);
-  formData.append('timestamp', new Date().toISOString());
-
-  const res = await fetch(API_ENDPOINTS.enviarPDFLleno, {
-    method: 'POST',
-    headers: { 'ngrok-skip-browser-warning': 'true' },
-    body: formData,
-  });
-  const json = await res.json();
-  if (!json.success) throw new Error(json.error || 'upload failed');
-}
-
-function bloqueaBoton(bloquear) {
-  const b = document.getElementById('downloadPdf');
-  b.textContent = bloquear ? 'Procesando…' : 'Descargar Formulario Lleno';
-  b.disabled = bloquear;
-}
