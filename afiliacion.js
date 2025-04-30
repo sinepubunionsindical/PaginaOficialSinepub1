@@ -12,6 +12,7 @@ downloadBtn.addEventListener("click", async function () {
 
         alert("✅ Tu formulario se descargará correctamente y se enviará a las directivas para proceso de análisis.");
 
+        // Captura de imagen del iframe con html2canvas
         const iframeDocument = pdfViewer.contentDocument || pdfViewer.contentWindow.document;
         const iframeBody = iframeDocument.body;
 
@@ -40,7 +41,7 @@ downloadBtn.addEventListener("click", async function () {
         link.download = fileName;
         link.click();
 
-        // Enviar al backend sin email ni URL
+        // Enviar al backend sin exponer email
         const formData = new FormData();
         formData.append("pdf", pdfBlob, fileName);
         formData.append("timestamp", new Date().toISOString());
