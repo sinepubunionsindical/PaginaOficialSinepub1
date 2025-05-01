@@ -1,4 +1,3 @@
-devuelvelo completo corregido, para que lo descargue no interactivo y ademas no permita guardar el pdf interactivo, solo llenarlo:
 // afiliacion.js  (versión resumida y 100 % funcional)
 document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('downloadPdf');
