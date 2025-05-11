@@ -835,6 +835,10 @@ function activarChatbot() {
         // Fallback a crearBotonFlotante nativo
         crearBotonFlotante();
     }
+    // ✅ Reconstruye menú móvil si estás en móvil
+    if (window.innerWidth <= 768) {
+        setupMobileMenu();
+    }   
 }
 
 // Función para crear el botón flotante de chat si no existe
