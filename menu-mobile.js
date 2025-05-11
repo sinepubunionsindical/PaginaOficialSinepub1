@@ -289,6 +289,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 } else if (link.href.endsWith('.pdf')) {
                     window.open(link.href, '_blank');
+                } else {
+                    window.location.href = mobileLink.href; // 🔥 Esto arregla publicidad.html
                 }
             });
             
