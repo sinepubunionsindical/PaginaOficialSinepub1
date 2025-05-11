@@ -829,11 +829,12 @@ function activarChatbot() {
             console.error(" La función createChatButton no está disponible globalmente");
             // Fallback a crearBotonFlotante nativo
             crearBotonFlotante();
+            // ✅ Reconstruye menú móvil si estás en móvil
+                if (window.innerWidth <= 768) {
+                    setupMobileMenu();
+                } 
         }
-    // ✅ Reconstruye menú móvil si estás en móvil
-    if (window.innerWidth <= 768) {
-        setupMobileMenu();
-    }   
+      
     } catch (error) {
         console.error(" Error al crear el botón de chat:", error);
         // Fallback a crearBotonFlotante nativo
