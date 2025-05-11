@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     openSecurePDFModal("https://cdn.jsdelivr.net/gh/trainheartx/sinepub-website1/Estatutos.pdf");
                 } else if (isAcuerdo && typeof openSecurePDFModal === 'function') {
                     e.preventDefault();
-                    openSecurePDFModal("https://cdn.jsdelivr.net/gh/trainheartx/sinepub-website1/Estatutos.pdf");
+                    openSecurePDFModal("https://cdn.jsdelivr.net/gh/trainheartx/sinepub-website1/RESOLUCION.pdf");
                 }
                 else if (mobileLink.dataset.slideTarget && !link.href.endsWith('.pdf')) {
                     const originalTargetLink = sliderNav.querySelector(`a[data-slide="${mobileLink.dataset.slideTarget}"]`);
