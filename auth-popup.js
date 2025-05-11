@@ -817,7 +817,10 @@ function activarChatbot() {
     if (linkEstatutosMobile) linkEstatutosMobile.style.display = "block"; 
     if (linkModulos) linkModulos.style.display = "inline";
     if (linkAfiliacion) linkAfiliacion.style.display = "none";
-
+    // ✅ Reconstruye menú móvil si estás en móvil
+    if (window.innerWidth <= 768) {
+        setupMobileMenu();
+    }   
     // En lugar de configurar el contenedor chatbot directamente, usamos createChatButton
     try {
         console.log(" Creando botón flotante de chat con createChatButton()...");
@@ -835,10 +838,6 @@ function activarChatbot() {
         // Fallback a crearBotonFlotante nativo
         crearBotonFlotante();
     }
-    // ✅ Reconstruye menú móvil si estás en móvil
-    if (window.innerWidth <= 768) {
-        setupMobileMenu();
-    }   
 }
 
 // Función para crear el botón flotante de chat si no existe
