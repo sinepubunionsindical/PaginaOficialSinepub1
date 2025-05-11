@@ -40,6 +40,9 @@ document.addEventListener("DOMContentLoaded", () => {
   if (document.getElementById("pdf-viewer-slide8")) {
     loadSecurePDFMulti("pdf-viewer-slide8", "producto_del_acuerdo_nacional.pdf");
   }
+  if (document.getElementById("pdf-viewer-slide5")) {
+    loadSecurePDFMulti("pdf-viewer-slide5", "resolucion_1843_2025.pdf"); // ← asegúrate que esté en la raíz o ajustá la ruta
+  }
 
   // Cierre del modal por botón X
   const closeModalBtn = document.getElementById("close-pdf-modal");
