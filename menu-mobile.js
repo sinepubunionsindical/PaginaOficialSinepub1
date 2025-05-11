@@ -262,38 +262,35 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             mobileLink.addEventListener('click', (e) => {
-                const href = mobileLink.getAttribute('href') || '';
-                const isEstatutos = mobileLink.id === 'estatutos-link' || mobileLink.id === 'estatutos-link-mobile';
-                const isAcuerdo = mobileLink.id === 'acuerdo-colectivo-link' || mobileLink.id === 'acuerdo-colectivo-link-mobile';
-
-                if (
-                    isEstatutos || isAcuerdo ||
-                    href.startsWith('#') || href.endsWith('.pdf')
-                ) {
-                    e.preventDefault();
-                }
-
+                            
                 secondaryNavButton.textContent = mobileLink.textContent;
                 secondaryNavDropdown.classList.remove('open');
                 secondaryNavButton.classList.remove('open');
                 secondaryNavButton.setAttribute('aria-expanded', 'false');
-
+            
+                // Marcar este como activo y desmarcar otros
                 secondaryNavDropdown.querySelectorAll('a').forEach(a => a.classList.remove('active-mobile'));
                 mobileLink.classList.add('active-mobile');
-
+            
+                // --- Lógica personalizada para enlaces especiales ---
+                const href = mobileLink.getAttribute('href') || '';
+                const isEstatutos = mobileLink.id === 'estatutos-link' || mobileLink.id === 'estatutos-link-mobile';
+                const isAcuerdo = mobileLink.id === 'acuerdo-colectivo-link' || mobileLink.id === 'acuerdo-colectivo-link-mobile';
+            
                 if (isEstatutos && typeof openSecurePDFModal === 'function') {
                     openSecurePDFModal("https://trainheartx.github.io/sinepub-website1/Estatutos.pdf");
                 } else if (isAcuerdo && typeof openSecurePDFModal === 'function') {
                     openSecurePDFModal("https://trainheartx.github.io/sinepub-website1/RESOLUCION.pdf");
-                } else if (mobileLink.dataset.slideTarget && !href.endsWith('.pdf')) {
+                }
+                else if (mobileLink.dataset.slideTarget && !link.href.endsWith('.pdf')) {
                     const originalTargetLink = sliderNav.querySelector(`a[data-slide="${mobileLink.dataset.slideTarget}"]`);
                     if (originalTargetLink) {
                         originalTargetLink.click();
                     }
-                } else if (href.endsWith('.pdf')) {
-                    window.open(href, '_blank');
+                } else if (link.href.endsWith('.pdf')) {
+                    window.open(link.href, '_blank');
                 } else {
-                    window.location.href = href;
+                    window.location.href = mobileLink.href; // 🔥 Esto arregla publicidad.html
                 }
             });
             
