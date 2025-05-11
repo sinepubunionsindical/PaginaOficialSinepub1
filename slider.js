@@ -188,7 +188,7 @@ function initSlider() {
         let activeNavLink = null; // Para guardar el enlace que debe estar activo
 
         // Determinar qué enlace secundario debe estar activo
-        if (slideIndex >= 1 && slideIndex <= 3) { // Slides Noticias (índices 1, 2, 3, 4)
+        if (slideIndex >= 1 && slideIndex <= 4) { // Slides Noticias (índices 1, 2, 3, 4)
             activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '2'); // Asumiendo data-slide="2" para Noticias
         } else if (slideIndex === 5) { // Slide Afiliación (índice 5)
             activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '6'); // Asumiendo data-slide="6" para Afiliación
@@ -244,7 +244,7 @@ function initSlider() {
         sliderDotsContainer.innerHTML = ''; // Limpiar dots previos
 
         // Crear dots solo para los slides de noticias (índices 1, 2, 3, 4)
-        const newsSlideIndices = [1, 2, 3];
+        const newsSlideIndices = [1, 2, 3, 4];
         newsSlideIndices.forEach((slideIndex) => {
              const dot = document.createElement('span');
              dot.classList.add('slider-dot');
@@ -271,7 +271,7 @@ function initSlider() {
                 dot.classList.toggle('active', dotIndex === slideIndex);
             });
             // Mostrar/ocultar contenedor basado en si estamos en sección noticias
-            sliderDotsContainer.style.display = (slideIndex >= 1 && slideIndex <= 3) ? 'flex' : 'none';
+            sliderDotsContainer.style.display = (slideIndex >= 1 && slideIndex <= 4) ? 'flex' : 'none';
         }
 
         // Actualizar dots de Módulos
@@ -291,7 +291,7 @@ function initSlider() {
         autoplayInterval = setInterval(() => {
             let nextSlideIndex;
             // Autoplay cicla solo por las noticias (índices 1, 2, 3, 4)
-            if (currentSlide >= 1 && currentSlide <= 3) { // Si estamos en una noticia (excepto la última)
+            if (currentSlide >= 1 && currentSlide <= 4) { // Si estamos en una noticia (excepto la última)
                 nextSlideIndex = currentSlide + 1;
             } else { // Si estamos en la última noticia (4) o fuera de las noticias
                 nextSlideIndex = 1; // Volver a la primera noticia (índice 1)
