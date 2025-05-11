@@ -1038,9 +1038,8 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
 }
 .pdf-viewer-container {
   width: 50%;
-  height: auto; /* ✅ Dejá que crezca automáticamente */
-  min-height: 100%; /* 🔥 Igualá altura del contenedor padre */
-  overflow-y: auto;
+  height: auto; /* 🔥 Esto hace que se ajuste a su contenido */
+  flex-grow: 1; /* ✅ Esto sí permite que crezca proporcional al espacio */
   padding: 10px;
   background: #fff;
   display: flex;
@@ -1284,10 +1283,17 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  align-items: flex-start;  /* 👈 Evita que el video se expanda horizontalmente */
+  flex-grow: 1;             /* 👈 Aporta balance vertical */
   gap: 20px;
 }
 
+
 .video-explicativo {
+  width: 100%;             /* ✅ Limita el ancho dentro del 50% del lado izquierdo */
+  max-width: 400px;        /* ✅ Controla tamaño sin deformarlo si es vertical */
   margin-top: 10px;
   text-align: center;
+  align-self: center;      /* 👈 Centrado opcional solo del video si quieres */
 }
+
