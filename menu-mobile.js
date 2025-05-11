@@ -312,56 +312,6 @@ document.addEventListener('DOMContentLoaded', () => {
             secondaryNavButton.setAttribute('aria-expanded', isOpen);
         });
 
-// --- Agregar ESTATUTOS manualmente si existe y está oculto ---
-const estatutosOriginal = document.querySelector('#estatutos-link');
-if (estatutosOriginal) {
-    const estatutosLinkMobile = document.createElement('a');
-    estatutosLinkMobile.href = estatutosOriginal.href;
-    estatutosLinkMobile.textContent = 'Estatutos';
-    estatutosLinkMobile.id = 'estatutos-link-mobile';
-    estatutosLinkMobile.style.display = 'none';
-    estatutosLinkMobile.setAttribute('role', 'option');
-
-    estatutosLinkMobile.addEventListener('click', (e) => {
-        e.preventDefault();
-
-        // ✅ Abrir en modal (como en escritorio)
-        if (typeof openSecurePDFModal === 'function') {
-            openSecurePDFModal("https://trainheartx.github.io/sinepub-website1/Estatutos.pdf");
-        }
-
-        secondaryNavDropdown.classList.remove('open');
-        secondaryNavButton.classList.remove('open');
-        secondaryNavButton.setAttribute('aria-expanded', 'false');
-    });
-
-    secondaryNavDropdown.appendChild(estatutosLinkMobile);
-    }
-
-    // Opcional: agregar otro link (como "acuerdo-colectivo") si también es dinámico
-    const acuerdoOriginal = document.querySelector('#acuerdo-colectivo-link');
-    if (acuerdoOriginal) {
-        const acuerdoLinkMobile = document.createElement('a');
-        acuerdoLinkMobile.href = acuerdoOriginal.href;
-        acuerdoLinkMobile.textContent = 'Acuerdo Colectivo';
-        acuerdoLinkMobile.id = 'acuerdo-colectivo-link-mobile';
-        acuerdoLinkMobile.style.display = 'none';
-        acuerdoLinkMobile.setAttribute('role', 'option');
-
-        acuerdoLinkMobile.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (typeof openSecurePDFModal === 'function') {
-                openSecurePDFModal("https://trainheartx.github.io/sinepub-website1/RESOLUCION.pdf");
-            }
-
-            secondaryNavDropdown.classList.remove('open');
-            secondaryNavButton.classList.remove('open');
-            secondaryNavButton.setAttribute('aria-expanded', 'false');
-        });
-
-        secondaryNavDropdown.appendChild(acuerdoLinkMobile);
-    }
-
          // --- Cerrar dropdown al hacer clic fuera (sin cambios) ---
          document.addEventListener('click', (event) => {
             if (!secondaryNavMobileContainer.contains(event.target) && secondaryNavDropdown.classList.contains('open')) {
