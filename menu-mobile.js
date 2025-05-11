@@ -17,6 +17,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let isSecondaryNavSetup = false;
 
     function setupMobileMenu() {
+        // 🔄 Permitir reconstrucción del menú móvil si ya existe
+        if (isMobileMenuSetup) {
+            isMobileMenuSetup = false;
+            if (mobileMenuContainer.parentNode) mobileMenuContainer.remove();
+            if (hamburgerButton.parentNode) hamburgerButton.remove();
+            if (mobileMenuOverlay.parentNode) mobileMenuOverlay.remove();
+        }
+        
         if (!header || !headerNav || isMobileMenuSetup) return;
 
         // --- Crear Botón Hamburguesa (sin cambios) ---
