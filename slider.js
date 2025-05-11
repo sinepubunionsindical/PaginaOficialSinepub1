@@ -291,7 +291,7 @@ function initSlider() {
         autoplayInterval = setInterval(() => {
             let nextSlideIndex;
             // Autoplay cicla solo por las noticias (índices 1, 2, 3, 4)
-            if (currentSlide >= 1 && currentSlide <= 4) { // Si estamos en una noticia (excepto la última)
+            if (currentSlide >= 1 && currentSlide <= 3) { // Si estamos en una noticia (excepto la última)
                 nextSlideIndex = currentSlide + 1;
             } else { // Si estamos en la última noticia (4) o fuera de las noticias
                 nextSlideIndex = 1; // Volver a la primera noticia (índice 1)
