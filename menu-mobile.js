@@ -277,14 +277,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isEstatutos = mobileLink.id === 'estatutos-link' || mobileLink.id === 'estatutos-link-mobile';
                 const isAcuerdo = mobileLink.id === 'acuerdo-colectivo-link' || mobileLink.id === 'acuerdo-colectivo-link-mobile';
             
-                if (isEstatutos) {
-                    window.open("https://trainheartx.github.io/sinepub-website1/Estatutos.pdf", "_blank");
-                    return; // 🔥 Termina ejecución para evitar que siga
-                } else if (isAcuerdo) {
-                    window.open("https://trainheartx.github.io/sinepub-website1/RESOLUCION.pdf", "_blank");
-                    return;
+                if (isEstatutos && typeof openSecurePDFModal === 'function') {
+                    e.preventDefault();
+                    openSecurePDFModal("https://cdn.jsdelivr.net/gh/trainheartx/sinepub-website1/Estatutos.pdf");
+                } else if (isAcuerdo && typeof openSecurePDFModal === 'function') {
+                    e.preventDefault();
+                    openSecurePDFModal("https://cdn.jsdelivr.net/gh/trainheartx/sinepub-website1/Estatutos.pdf");
                 }
-
                 else if (mobileLink.dataset.slideTarget && !link.href.endsWith('.pdf')) {
                     const originalTargetLink = sliderNav.querySelector(`a[data-slide="${mobileLink.dataset.slideTarget}"]`);
                     if (originalTargetLink) {
