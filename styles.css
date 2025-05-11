@@ -629,7 +629,7 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
 /* Imagen y texto */
 .imagen-y-texto {
   display: flex;
-  align-items: flex-start; /* Mantiene alineación arriba */
+  align-items: stretch; 
   justify-content: space-between;
   width: 100%;
   position: relative;
@@ -1037,12 +1037,16 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
   height: 16px;
 }
 .pdf-viewer-container {
+  flex: 1;
+  align-self: stretch;
+  height: auto;
+  min-height: 100%;
   width: 100%;
-  max-height: 700px;
   overflow-y: auto;
   position: relative;
   padding: 10px;
   background: #fff;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1); /* Opcional: para que luzca más pro */
 }
 
 .pdf-canvas {
