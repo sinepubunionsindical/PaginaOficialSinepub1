@@ -266,8 +266,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isEstatutos = mobileLink.id === 'estatutos-link' || mobileLink.id === 'estatutos-link-mobile';
                 const isAcuerdo = mobileLink.id === 'acuerdo-colectivo-link' || mobileLink.id === 'acuerdo-colectivo-link-mobile';
 
-                // Prevenir solo si es uno de los enlaces especiales
-                if (isEstatutos || isAcuerdo || href.startsWith('#') || href.endsWith('.pdf')) {
+                if (
+                    isEstatutos || isAcuerdo ||
+                    href.startsWith('#') || href.endsWith('.pdf')
+                ) {
                     e.preventDefault();
                 }
 
@@ -291,11 +293,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else if (href.endsWith('.pdf')) {
                     window.open(href, '_blank');
                 } else {
-                    // ✅ Redirección segura para publicidad.html o cualquier otro .html
                     window.location.href = href;
                 }
             });
-
             
             secondaryNavDropdown.appendChild(mobileLink);
         });
