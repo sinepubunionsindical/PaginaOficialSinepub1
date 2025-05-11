@@ -814,11 +814,7 @@ function activarChatbot() {
     }
     
     if (linkEstatutos) linkEstatutos.style.display = "inline";
-    if (linkEstatutosMobile) linkEstatutosMobile.style.display = "block";
-    // ✅ Reconstruye menú móvil si estás en móvil
-    if (window.innerWidth <= 768) {
-        setupMobileMenu();
-    }    
+    if (linkEstatutosMobile) linkEstatutosMobile.style.display = "block"; 
     if (linkModulos) linkModulos.style.display = "inline";
     if (linkAfiliacion) linkAfiliacion.style.display = "none";
 
