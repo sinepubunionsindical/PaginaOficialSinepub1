@@ -8,6 +8,8 @@
         <link rel="stylesheet" href="chat-styles.css">
         <link rel="stylesheet" href="android.css">
         <link rel="stylesheet" href="chat-button.css">
+        <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
+        <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>       
         <script type="module" src="https://cdn.jsdelivr.net/npm/@huggingface/inference"></script>
         <script src="https://unpkg.com/react@17.0.2/umd/react.development.js" crossorigin></script>
         <script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js" crossorigin></script>
@@ -220,6 +222,13 @@
                                 </p>
                                 <p>📌 Puedes consultar el documento completo directamente aquí:</p>
                             </div>
+                            <div class="video-explicativo" style="margin-top: 20px;">
+                                <h4>🎥 Video Explicativo sobre la Resolución</h4>
+                                <video id="player-resolucion" playsinline controls class="plyr-video" style="width: 100%; max-width: 800px; height: auto; border-radius: 8px; box-shadow: 0 0 8px rgba(0,0,0,0.2);">
+                                    <source src="videos/explicacion_resolucion_1843.mp4" type="video/mp4">
+                                    Tu navegador no soporta video HTML5. <a href="videos/explicacion_resolucion_1843.mp4" target="_blank">Descargar video</a>
+                                </video>
+                            </div>
 
                             <!-- Visor PDF.js como en slide 7/8 -->
                             <div id="pdf-viewer-slide5" class="pdf-viewer-container" style="width: 100%; height: 700px; position: relative;">
@@ -380,6 +389,11 @@
                 </video>
             </div>
         </div>
+        <script>
+            if (window.Plyr) {
+                new Plyr('#player-resolucion');
+            }
+        </script>        
         <!-- Scripts críticos que deben cargarse inmediatamente y en orden -->
         <script src="config.js"></script>
         <script src="publicidad.js"></script>
