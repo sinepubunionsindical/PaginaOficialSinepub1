@@ -1051,7 +1051,7 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
 
 .pdf-viewer-container-video {
   width: 50%;
-  height: 860px; /* ← Controla altura fija del visor */
+  height: 960px; /* ← Controla altura fija del visor */
   overflow-y: auto; /* ← Scroll interno */
   padding: 10px;
   background: #fff;
