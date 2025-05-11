@@ -1275,3 +1275,16 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
     width: 350px;
     height: 500px;
 }
+
+.bloque-texto-video {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  justify-content: flex-start;
+}
+
+.video-explicativo {
+  margin-top: 10px;
+  text-align: center;
+}
