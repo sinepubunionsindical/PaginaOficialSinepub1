@@ -1039,7 +1039,7 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
 }
 
 .pdf-viewer-container {
-  width: 50%;
+  width: 100%;
   height: 700px; /* ← Controla altura fija del visor */
   overflow-y: auto; /* ← Scroll interno */
   padding: 10px;
