@@ -629,10 +629,11 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
 /* Imagen y texto */
 .imagen-y-texto {
   display: flex;
-  align-items: stretch; /* Mantiene alineación arriba */
+  align-items: stretch;
   justify-content: space-between;
   width: 100%;
   position: relative;
+  min-height: 100%;
 }
 
 .imagen-banner {
@@ -1036,15 +1037,16 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
   width: 16px;      /* Dot activo un poco más grande */
   height: 16px;
 }
+
 .pdf-viewer-container {
   width: 50%;
-  height: auto; /* 🔥 Esto hace que se ajuste a su contenido */
-  flex-grow: 1; /* ✅ Esto sí permite que crezca proporcional al espacio */
+  min-height: 100%;
   padding: 10px;
   background: #fff;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  align-self: stretch;
 }
 
 .pdf-canvas {
@@ -1283,17 +1285,15 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: flex-start;  /* 👈 Evita que el video se expanda horizontalmente */
-  flex-grow: 1;             /* 👈 Aporta balance vertical */
+  align-items: flex-start;
+  flex-grow: 1;
   gap: 20px;
 }
 
-
 .video-explicativo {
-  width: 100%;             /* ✅ Limita el ancho dentro del 50% del lado izquierdo */
-  max-width: 400px;        /* ✅ Controla tamaño sin deformarlo si es vertical */
+  width: 100%;
+  max-width: 400px;
   margin-top: 10px;
   text-align: center;
-  align-self: center;      /* 👈 Centrado opcional solo del video si quieres */
+  align-self: flex-start;
 }
-
