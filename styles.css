@@ -1308,3 +1308,40 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
   text-align: center;
   align-self: flex-start;
 }
+.galeria-evento {
+    width: 50%;
+    overflow-x: auto;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+}
+
+.imagenes-galeria {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start; /* 🔥 Para que las imágenes horizontales y verticales arranquen alineadas arriba */
+}
+
+.imagenes-galeria img {
+    flex: 0 0 auto; /* Importante: que NO se estire */
+    height: auto;
+    max-height: 300px; /* 🔥 Este es el truco: Limita solo el alto máximo sin alterar ancho */
+    width: auto; /* 🔥 Permite que el ancho sea natural */
+    border-radius: 8px;
+    object-fit: contain; /* Opcional: asegura que la imagen siempre quepa sin recorte si activas tamaños fijos */
+}
+
+
+@media (min-width: 768px) {
+    .imagen-y-texto {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start; /* Esto asegura que ambas columnas arranquen alineadas arriba */
+    }
+    .galeria-evento {
+        width: 60%;
+    }
+    .texto-banner {
+        width: 40%;
+    }
+}
+

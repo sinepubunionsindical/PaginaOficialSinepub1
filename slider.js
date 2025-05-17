@@ -48,6 +48,7 @@ function initSlider() {
     const dropdownColaboradores = document.querySelector(".dropdown-menu-colaboradores");
     const infoColaboradores = document.querySelectorAll(".info-colaborador");
     const headerMenu = document.querySelector(".header-titles-nav");
+    const eventosDotsContainer = document.querySelector('.modulos-nav-eventos');
 
     // --- Variables de Estado ---
     let currentSlide = 0;
@@ -147,6 +148,26 @@ function initSlider() {
         });
         moduleDotsContainer.style.display = 'none'; // Ocultar inicialmente
     }
+    function createEventosDots() {
+        if (!eventosDotsContainer) return;
+        eventosDotsContainer.innerHTML = ''; // Limpiar previos
+
+        const eventosSlideIndices = [8, 9, 10]; // Recuerda: base 0 (slide-9 = índice 8)
+        eventosSlideIndices.forEach((slideIndex) => {
+            const dot = document.createElement('span');
+            dot.classList.add('slider-dot');
+            dot.dataset.slideIndex = slideIndex;
+            dot.addEventListener('click', (event) => {
+                const slideIndexToGo = parseInt(event.target.dataset.slideIndex);
+                updateSlide(slideIndexToGo);
+                stopAutoplay();
+                resetInactivityTimer();
+            });
+            eventosDotsContainer.appendChild(dot);
+        });
+
+        eventosDotsContainer.style.display = 'none'; // Ocultar inicialmente
+    }
 
     function setupModuleNavigation() {
         // Esta función parece redundante si los slides ya son visibles por defecto.
@@ -188,15 +209,18 @@ function initSlider() {
         let activeNavLink = null; // Para guardar el enlace que debe estar activo
 
         // Determinar qué enlace secundario debe estar activo
-        if (slideIndex >= 1 && slideIndex <= 4) { // Slides Noticias (índices 1, 2, 3, 4)
-            activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '2'); // Asumiendo data-slide="2" para Noticias
-        } else if (slideIndex === 5) { // Slide Afiliación (índice 5)
-            activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '6'); // Asumiendo data-slide="6" para Afiliación
-        } else if (slideIndex === 6 || slideIndex === 7) { // Slides Módulos (índices 6, 7)
-            activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '7'); // Asumiendo data-slide="7" para Módulos
-        } else { // Slide Inicio (índice 0) o cualquier otro caso
-            activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '1'); // Asumiendo data-slide="1" para Inicio
+        if (slideIndex >= 1 && slideIndex <= 4) { // Noticias
+            activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '2');
+        } else if (slideIndex === 5) { // Afiliación
+            activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '6');
+        } else if (slideIndex === 6 || slideIndex === 7) { // Módulos
+            activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '7');
+        } else if (slideIndex >= 8 && slideIndex <= 10) { // Eventos
+            activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '9');
+        } else { // Inicio u otro
+            activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '1');
         }
+
 
         // Si encontramos un enlace correspondiente, lo activamos y actualizamos el botón móvil
         if (activeNavLink) {
@@ -284,6 +308,16 @@ function initSlider() {
              // Mostrar/ocultar contenedor basado en si estamos en sección módulos
             moduleDotsContainer.style.display = (slideIndex === 6 || slideIndex === 7) ? 'flex' : 'none';
         }
+
+        // Actualizar dots de Eventos
+        if (eventosDotsContainer) {
+            const eventosDots = eventosDotsContainer.querySelectorAll('.slider-dot');
+            eventosDots.forEach(dot => {
+                const dotIndex = parseInt(dot.dataset.slideIndex);
+                dot.classList.toggle('active', dotIndex === slideIndex);
+            });
+            eventosDotsContainer.style.display = (slideIndex >= 8 && slideIndex <= 10) ? 'flex' : 'none';
+        }
     }
 
     function startAutoplay() {
@@ -349,6 +383,7 @@ function initSlider() {
     // --- Inicialización del Slider ---
     createNavigationDots(); // Crear dots de noticias
     createModuleDots();     // Crear dots de módulos
+    createEventosDots();    // Eventos
     setupModuleNavigation(); // Configurar navegación de módulos (si es necesario)
     updateSlide(0);         // Mostrar el slide inicial (índice 0)
     startAutoplay();        // Iniciar autoplay (ciclará noticias)
