@@ -781,3 +781,56 @@
 .prev-slide-fundadores, .prev-slide-incorporacion { left: 10px !important; }
 .next-slide-fundadores, .next-slide-incorporacion { right: 10px !important; }
 
+
+/* ✅ Popups universales de autenticación y consentimiento en móviles */
+@media (max-width: 768px) {
+    #data-consent-popup,
+    #auth-popup,
+    #popup-contrasena,
+    #popup-bienvenida,
+    #popup-bienvenida-personalizado,
+    #privacy-policy-popup > div,
+    #popup-contrasena,
+    #popup-contrasena #input-contrasena,
+    #popup-contrasena button,
+    #popup-bienvenida button,
+    #auth-popup input,
+    #auth-popup button {
+        width: 90vw !important;
+        max-width: 90vw !important;
+        padding: 20px !important;
+        border-radius: 10px !important;
+        font-size: 14px !important;
+        max-height: 90vh !important;
+        overflow-y: auto !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Inputs y botones a ancho completo y grandes para mejor usabilidad */
+    #auth-popup input,
+    #popup-contrasena input,
+    #auth-popup button,
+    #popup-contrasena button {
+        width: 100% !important;
+        margin-top: 10px !important;
+        padding: 12px !important;
+        font-size: 16px !important;
+    }
+
+    /* Ajuste específico para el popup de privacidad */
+    #privacy-policy-popup > div pre {
+        max-height: 65vh !important;
+        font-size: 13px !important;
+        line-height: 1.5 !important;
+    }
+
+    /* ✅ Botón cerrar, siempre visible y accesible */
+    #cerrar-privacidad,
+    #consent-accept-btn,
+    #consent-cancel-btn {
+        width: 100% !important;
+        padding: 12px !important;
+        font-size: 16px !important;
+        margin-top: 10px !important;
+    }
+}
