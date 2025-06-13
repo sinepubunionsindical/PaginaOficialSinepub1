@@ -6,14 +6,12 @@ document.addEventListener('DOMContentLoaded', function () { // INICIO DOMContent
     const miembroFoto = document.getElementById('miembro-foto');
     const miembroNombre = document.getElementById('miembro-nombre');
     const miembroCargo = document.getElementById('miembro-cargo');
-    const miembroUbicacion = document.getElementById('miembro-ubicacion');
-    const miembroCelular = document.getElementById('miembro-celular');
     const miembroDescripcion = document.getElementById('miembro-descripcion');
     const miembroInfoContainer = document.querySelector('.miembro-info'); 
     const juntaContainer = document.querySelector('.junta-directiva-container'); 
 
     // --- VERIFICACIÓN CRÍTICA ---
-    if (!listaCargosSource || !miembroFoto || !miembroNombre || !miembroCargo || !miembroUbicacion || !miembroCelular || !miembroDescripcion || !miembroInfoContainer || !juntaContainer) {
+    if (!listaCargosSource || !miembroFoto || !miembroNombre || !miembroCargo || !miembroDescripcion || !miembroInfoContainer || !juntaContainer) {
         console.error("Error Crítico: Faltan elementos HTML esenciales para la Junta Directiva.");
         return; 
     }
@@ -61,8 +59,6 @@ document.addEventListener('DOMContentLoaded', function () { // INICIO DOMContent
             nombre: "Jenny Patricia Ricaurte Zuluaga",
             cargo: "Presidente",
             foto: "images/junta1.jpg",
-            ubicacion: "CIAU primer piso",
-            celular: "3163218579",
             descripcion: `
                 <p>Como líder sindical y representante legal de SINEPUB HUV, mi compromiso es brindar siempre asesoramiento y orientación de manera clara y coherente, priorizando en todo momento el bienestar y la defensa de los derechos de los empleados públicos y trabajadores que representan.</p>
 
@@ -73,8 +69,6 @@ document.addEventListener('DOMContentLoaded', function () { // INICIO DOMContent
             nombre: "Luis Fernando Van Pacheco Agredo",
             cargo: "Vicepresidente",
             foto: "images/junta2.jpg",
-            ubicacion: "Médico del área de Hospitalización Sala de Hemato Oncología - 6° Piso",
-            celular: "311 3470591",
             descripcion: `
                 <p>Tengo el honor de servir como Vicepresidente de la Organización Sindical SINEPUB HUV. Mi formación médica y mi liderazgo son la base de mi compromiso con nuestra organización, siempre buscando proponer acciones que fortalezcan nuestro propósito y que nos permitan avanzar en las deliberaciones de la Junta Directiva.</p>
 
@@ -85,8 +79,6 @@ document.addEventListener('DOMContentLoaded', function () { // INICIO DOMContent
             nombre: "Leidy Cecilia Hernández Acevedo",
             cargo: "Tesorera (E) - Secretaria de Humanización y DDHH",
             foto: "images/junta3.jpg",
-            ubicacion: "Área de Hospitalización Unidad de Quemados - 2° Piso",
-            celular: "317 5027871",
             descripcion: `
                 <p>Mi experiencia y formación me han permitido aportar a la organización sindical una orientación centrada en el manejo adecuado de las relaciones dentro del grupo, con el fin de fomentar un ambiente colectivo incluyente, basado en el respeto y la sana convivencia.</p>
 
@@ -97,8 +89,6 @@ document.addEventListener('DOMContentLoaded', function () { // INICIO DOMContent
             nombre: "Edith Medina Conde",
             cargo: "Fiscal",
             foto: "images/junta4.jpg",
-            ubicacion: "CIRENA - 5° Piso",
-            celular: "321 5480580",
             descripcion: `
                 <p>Tengo el honor de ocupar el cargo de Fiscal en la Organización Sindical SINEPUBHUV. Mi formación y sentido de responsabilidad me han permitido desempeñar esta función con el compromiso de realizar una correcta veeduría sobre el funcionamiento de nuestro sindicato, siempre guiado por el principio de la coherencia.</p>
 
@@ -111,8 +101,6 @@ document.addEventListener('DOMContentLoaded', function () { // INICIO DOMContent
             nombre: "Luis Carlos Calderón",
             cargo: "Secretario de Salud Ocupacional",
             foto: "images/junta5.jpg",
-            ubicacion: "Consulta Externa – Otorrinolaringología - 3° Piso",
-            celular: "320 5966054",
             descripcion: `
                 <p>Mi formación y experiencia en el área de salud ocupacional me permiten identificar riesgos potenciales, promover buenas prácticas y garantizar que los afiliados estén protegidos tanto física como mentalmente.</p>
 
@@ -123,8 +111,6 @@ document.addEventListener('DOMContentLoaded', function () { // INICIO DOMContent
             nombre: "Martha Cecilia Solarte Caicedo",
             cargo: "Secretaria de Carrera Administrativa",
             foto: "images/junta6.jpg",
-            ubicacion: "Sala de Médicas Hombres.",
-            celular: "3188846015",
             descripcion: `
                 <p>Velará por el cumplimiento de la carrera administrativa, promoviendo reuniones con la Comisión de Personal y supervisando la Evaluación del Desempeño Laboral.</p>
 
@@ -135,8 +121,6 @@ document.addEventListener('DOMContentLoaded', function () { // INICIO DOMContent
             nombre: "Patricia Salazar Morales",
             cargo: "Secretaria de Reclamos y Solución de Conflictos",
             foto: "images/junta7.jpg",
-            ubicacion: "Sala de Médicas Mujeres",
-            celular: "3147373069",
             descripcion: `
                 <p>Velará por el cumplimiento de la Ley de Acoso Laboral, promoviendo la formación de los afiliados para identificar, prevenir y corregir conductas de agresión u hostigamiento.</p>
 
@@ -147,8 +131,6 @@ document.addEventListener('DOMContentLoaded', function () { // INICIO DOMContent
             nombre: "Leydy Yohana González Ulabarry",
             cargo: "Secretaria General",
             foto: "images/junta8.jpg",
-            ubicacion: "Área de Hospitalización Sala de Hemato Oncología - 6° Piso",
-            celular: "318 8954129",
             descripcion: `
                 <p>Es un honor para mí servir como Secretaria General de la Organización Sindical SINEPUBHUV. Mi liderazgo y compromiso me han permitido brindar apoyo en todas las gestiones administrativas de nuestra organización, siempre enfocados en lograr el éxito y el crecimiento continuo de nuestra comunidad sindical.</p>
 
@@ -167,15 +149,11 @@ document.addEventListener('DOMContentLoaded', function () { // INICIO DOMContent
                 miembroFoto.src = miembro.foto;
                 miembroNombre.textContent = miembro.nombre;
                 miembroCargo.textContent = miembro.cargo;
-                miembroUbicacion.textContent = miembro.ubicacion || "N/D";
-                miembroCelular.textContent = miembro.celular || "N/D";
                 miembroDescripcion.innerHTML = miembro.descripcion || "<p>Descripción no disponible.</p>";
             } else {
                 miembroFoto.src = "images/placeholder-miembro.jpg";
                 miembroNombre.textContent = "Selecciona un cargo";
                 miembroCargo.textContent = "";
-                miembroUbicacion.textContent = "";
-                miembroCelular.textContent = "";
                 miembroDescripcion.innerHTML = ""; 
             }
             miembroInfoContainer.classList.add('show');
