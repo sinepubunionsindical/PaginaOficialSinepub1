@@ -1349,23 +1349,35 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
 /* ====== ESTILOS: MODAL DE NOTICIA URGENTE - LFP ======== */
 /* ======================================================= */
 
+/* --- Mejora: Animación para el fondo sutilmente dinámico --- */
+@keyframes subtle-gradient-animation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
 .noticia-urgente-container {
     position: fixed;
-    /* Inicia fuera de la pantalla, a la derecha */
     right: -100%; 
     top: 50%;
     transform: translateY(-50%);
-    width: 90%; /* Ancho responsivo */
-    max-width: 800px; /* Ancho máximo para pantallas grandes */
-    background: rgba(255, 255, 255, 0.98); /* Fondo blanco casi opaco */
-    backdrop-filter: blur(5px); /* Efecto de desenfoque del fondo */
-    -webkit-backdrop-filter: blur(5px);
+    width: 90%;
+    max-width: 800px;
     padding: 25px;
-    border-radius: 12px;
-    border: 1px solid #ddd;
-    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
-    z-index: 10001; /* Un poco más arriba que el modal del video */
-    transition: right 0.8s cubic-bezier(0.25, 0.8, 0.25, 1); /* Transición suave */
+    border-radius: 15px; /* Bordes un poco más pronunciados */
+    border: 1px solid rgba(221, 221, 221, 0.5); /* Borde más sutil */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); /* Sombra más profesional */
+    z-index: 10001;
+
+    /* --- Mejora 1: Entrada con "Rebote" --- */
+    transition: right 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+
+    /* --- Mejora 3: Fondo Animado y Efecto de Cristal Esmerilado --- */
+    background: linear-gradient(-45deg, rgba(255,255,255,0.8), rgba(247,249,252,0.85), rgba(241,244,248,0.8), rgba(255,255,255,0.8));
+    background-size: 400% 400%;
+    animation: subtle-gradient-animation 15s ease infinite;
+    backdrop-filter: blur(10px); /* Desenfoque más intenso para el efecto cristal */
+    -webkit-backdrop-filter: blur(10px);
 }
 
 /* Estado activo: cuando el modal es visible */
@@ -1375,88 +1387,121 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
 
 .noticia-urgente-wrapper {
     display: flex;
-    align-items: flex-start; /* Alinea los elementos al inicio */
-    gap: 20px;
+    align-items: center; /* Centrado vertical para un mejor look */
+    gap: 25px; /* Un poco más de espacio */
     position: relative;
     width: 100%;
 }
 
 .noticia-urgente-imagen {
-    width: 200px; /* Tamaño fijo para la imagen */
+    width: 200px;
     height: auto;
-    border-radius: 8px;
+    border-radius: 10px; /* Consistente con el contenedor */
     object-fit: cover;
-    align-self: center; /* Centra la imagen verticalmente en el espacio */
-}
-
-.noticia-urgente-contenido {
-    flex: 1; /* Ocupa el espacio restante */
-    color: #333;
-    font-family: Arial, sans-serif;
+    flex-shrink: 0; /* Evita que la imagen se encoja */
+    /* --- Mejora: Animación sutil para la imagen --- */
     opacity: 0;
-    transform: translateY(15px);
-    transition: all 0.6s ease 0.5s; /* Animación de entrada con retraso */
+    transform: scale(0.9);
+    transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s;
 }
 
-/* El contenido se vuelve visible cuando el modal está activo */
-.noticia-urgente-container.active .noticia-urgente-contenido {
+.noticia-urgente-container.active .noticia-urgente-imagen {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* --- Mejora 2: Animación en Cascada (Stagger) para el texto --- */
+.noticia-urgente-contenido h3,
+.noticia-urgente-contenido p {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.noticia-urgente-container.active .noticia-urgente-contenido h3,
+.noticia-urgente-container.active .noticia-urgente-contenido p {
     opacity: 1;
     transform: translateY(0);
 }
 
+/* Retrasos en cascada para cada elemento */
+.noticia-urgente-container.active .noticia-urgente-contenido h3 {
+    transition-delay: 0.4s;
+}
+.noticia-urgente-container.active .noticia-urgente-contenido p:nth-of-type(1) {
+    transition-delay: 0.5s;
+}
+.noticia-urgente-container.active .noticia-urgente-contenido p:nth-of-type(2) {
+    transition-delay: 0.6s;
+}
+.noticia-urgente-container.active .noticia-urgente-contenido p:nth-of-type(3) {
+    transition-delay: 0.7s;
+}
+.noticia-urgente-container.active .noticia-urgente-contenido p:nth-of-type(4) {
+    transition-delay: 0.8s;
+}
+.noticia-urgente-container.active .noticia-urgente-contenido p:nth-of-type(5) {
+    transition-delay: 0.9s;
+}
+
 .noticia-urgente-contenido h3 {
-    font-size: 22px;
+    font-size: 24px; /* Un poco más grande */
     color: #0249aa;
     margin-bottom: 15px;
+    font-weight: bold;
 }
 
 .noticia-urgente-contenido p {
     font-size: 16px;
-    line-height: 1.6;
+    line-height: 1.7; /* Más espaciado para mejor lectura */
     margin-bottom: 12px;
     text-align: justify;
+    color: #333; /* Texto principal oscuro */
 }
 
+/* --- Mejora 4: Botón de Cierre más Interactivo --- */
 .cerrar-noticia-urgente {
     position: absolute;
     top: -15px;
     right: -15px;
-    background: #d9534f; /* Rojo de advertencia */
+    background: #d9534f;
     color: white;
-    border: 2px solid white;
+    border: 3px solid white;
     border-radius: 50%;
-    width: 35px;
-    height: 35px;
+    width: 40px; /* Un poco más grande para ser más fácil de clickear */
+    height: 40px;
     cursor: pointer;
-    font-size: 24px;
-    line-height: 30px; /* Alinea la 'x' verticalmente */
+    font-size: 26px;
+    line-height: 34px;
     text-align: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .cerrar-noticia-urgente:hover {
-    background: #c9302c; /* Rojo más oscuro */
-    transform: scale(1.1) rotate(90deg);
+    background: #c9302c;
+    transform: scale(1.15) rotate(180deg); /* Efecto de giro y escala más pronunciado */
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4); /* Sombra más dramática al interactuar */
 }
 
 /* === Media Query para Móviles === */
 @media (max-width: 768px) {
     .noticia-urgente-container.active {
-        right: 50%; /* Centra el modal en móviles */
+        right: 50%;
         transform: translate(50%, -50%);
         width: 95%;
     }
     
     .noticia-urgente-wrapper {
-        flex-direction: column; /* Apila los elementos verticalmente */
+        flex-direction: column;
         align-items: center;
         text-align: center;
+        gap: 15px;
     }
     
     .noticia-urgente-imagen {
-        width: 150px; /* Imagen un poco más pequeña */
-        margin-bottom: 15px;
+        width: 150px;
+        margin-bottom: 0;
     }
 
     .noticia-urgente-contenido h3 {
@@ -1469,7 +1514,11 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
     }
 
     .cerrar-noticia-urgente {
-        top: -10px;
-        right: -10px;
+        top: -12px;
+        right: -12px;
+        width: 35px;
+        height: 35px;
+        font-size: 22px;
+        line-height: 30px;
     }
 }
