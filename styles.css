@@ -1345,3 +1345,131 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
     }
 }
 
+/* ======================================================= */
+/* ====== ESTILOS: MODAL DE NOTICIA URGENTE - LFP ======== */
+/* ======================================================= */
+
+.noticia-urgente-container {
+    position: fixed;
+    /* Inicia fuera de la pantalla, a la derecha */
+    right: -100%; 
+    top: 50%;
+    transform: translateY(-50%);
+    width: 90%; /* Ancho responsivo */
+    max-width: 800px; /* Ancho máximo para pantallas grandes */
+    background: rgba(255, 255, 255, 0.98); /* Fondo blanco casi opaco */
+    backdrop-filter: blur(5px); /* Efecto de desenfoque del fondo */
+    -webkit-backdrop-filter: blur(5px);
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+    z-index: 10001; /* Un poco más arriba que el modal del video */
+    transition: right 0.8s cubic-bezier(0.25, 0.8, 0.25, 1); /* Transición suave */
+}
+
+/* Estado activo: cuando el modal es visible */
+.noticia-urgente-container.active {
+    right: 20px;
+}
+
+.noticia-urgente-wrapper {
+    display: flex;
+    align-items: flex-start; /* Alinea los elementos al inicio */
+    gap: 20px;
+    position: relative;
+    width: 100%;
+}
+
+.noticia-urgente-imagen {
+    width: 200px; /* Tamaño fijo para la imagen */
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
+    align-self: center; /* Centra la imagen verticalmente en el espacio */
+}
+
+.noticia-urgente-contenido {
+    flex: 1; /* Ocupa el espacio restante */
+    color: #333;
+    font-family: Arial, sans-serif;
+    opacity: 0;
+    transform: translateY(15px);
+    transition: all 0.6s ease 0.5s; /* Animación de entrada con retraso */
+}
+
+/* El contenido se vuelve visible cuando el modal está activo */
+.noticia-urgente-container.active .noticia-urgente-contenido {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.noticia-urgente-contenido h3 {
+    font-size: 22px;
+    color: #0249aa;
+    margin-bottom: 15px;
+}
+
+.noticia-urgente-contenido p {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 12px;
+    text-align: justify;
+}
+
+.cerrar-noticia-urgente {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    background: #d9534f; /* Rojo de advertencia */
+    color: white;
+    border: 2px solid white;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    font-size: 24px;
+    line-height: 30px; /* Alinea la 'x' verticalmente */
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+}
+
+.cerrar-noticia-urgente:hover {
+    background: #c9302c; /* Rojo más oscuro */
+    transform: scale(1.1) rotate(90deg);
+}
+
+/* === Media Query para Móviles === */
+@media (max-width: 768px) {
+    .noticia-urgente-container.active {
+        right: 50%; /* Centra el modal en móviles */
+        transform: translate(50%, -50%);
+        width: 95%;
+    }
+    
+    .noticia-urgente-wrapper {
+        flex-direction: column; /* Apila los elementos verticalmente */
+        align-items: center;
+        text-align: center;
+    }
+    
+    .noticia-urgente-imagen {
+        width: 150px; /* Imagen un poco más pequeña */
+        margin-bottom: 15px;
+    }
+
+    .noticia-urgente-contenido h3 {
+        font-size: 20px;
+    }
+
+    .noticia-urgente-contenido p {
+        font-size: 15px;
+        text-align: center;
+    }
+
+    .cerrar-noticia-urgente {
+        top: -10px;
+        right: -10px;
+    }
+}
