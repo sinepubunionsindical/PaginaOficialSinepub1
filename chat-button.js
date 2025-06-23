@@ -741,7 +741,13 @@ async function handleProfileUpdate(event) {
     try {
         const response = await fetch(window.API_ENDPOINTS.actualizarPerfil, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+            headers: {
+                'Content-Type': 'application/json',
+                // ===== INICIO DE LA CORRECCIÓN =====
+                'ngrok-skip-browser-warning': 'true',
+                'User-Agent': 'sinepub-client'
+                // ====== FIN DE LA CORRECCIÓN ======
+            },
             body: JSON.stringify(payload)
         });
         const result = await response.json();
