@@ -152,7 +152,7 @@ function initSlider() {
         if (!eventosDotsContainer) return;
         eventosDotsContainer.innerHTML = ''; // Limpiar previos
 
-        const eventosSlideIndices = [8, 9, 10]; // Recuerda: base 0 (slide-9 = índice 8)
+        const eventosSlideIndices = [8, 9, 10, 11, 12]; // Recuerda: base 0 (slide-9 = índice 8)
         eventosSlideIndices.forEach((slideIndex) => {
             const dot = document.createElement('span');
             dot.classList.add('slider-dot');
@@ -215,7 +215,7 @@ function initSlider() {
             activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '6');
         } else if (slideIndex === 6 || slideIndex === 7) { // Módulos
             activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '7');
-        } else if (slideIndex >= 8 && slideIndex <= 10) { // Eventos
+        } else if (slideIndex >= 8 && slideIndex <= 12) { // Eventos
             activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '9');
         } else { // Inicio u otro
             activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '1');
@@ -316,7 +316,7 @@ function initSlider() {
                 const dotIndex = parseInt(dot.dataset.slideIndex);
                 dot.classList.toggle('active', dotIndex === slideIndex);
             });
-            eventosDotsContainer.style.display = (slideIndex >= 8 && slideIndex <= 10) ? 'flex' : 'none';
+            eventosDotsContainer.style.display = (slideIndex >= 8 && slideIndex <= 12) ? 'flex' : 'none';
         }
     }
 
