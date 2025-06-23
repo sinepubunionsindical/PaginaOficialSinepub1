@@ -753,20 +753,35 @@ async function handleProfileUpdate(event) {
         const result = await response.json();
         if (!response.ok) throw new Error(result.error || 'Error en el servidor');
 
-        // Éxito: Actualizar localStorage y la UI
+        // --- ÉXITO: Actualizar localStorage y la UI (CON CACHE BUSTING) ---
         localStorage.setItem('nombre', result.datos.nombre);
         localStorage.setItem('email', result.datos.email);
         localStorage.setItem('telefono', result.datos.telefono);
-        if (result.datos.foto) {
-            localStorage.setItem('foto', result.datos.foto);
-        }
+        
+        // El backend debe devolver la nueva URL de la foto
+        if (result.datos.foto && !result.datos.foto.includes('placeholder')) {
+            // 1. Crear el parámetro de cache busting
+            const cacheBuster = `?t=${new Date().getTime()}`;
+            const nuevaFotoUrl = result.datos.foto + cacheBuster;
 
-        const panel = document.getElementById('user-stats-panel');
-        if (panel) {
-            panel.querySelector('h3').textContent = result.datos.nombre;
-            if (result.datos.foto) {
-                panel.querySelector('img').src = result.datos.foto;
+            // 2. Guardar la nueva URL completa en localStorage
+            localStorage.setItem('foto', nuevaFotoUrl);
+
+            // 3. Actualizar visualmente el panel de estadísticas con la nueva URL
+            const panel = document.getElementById('user-stats-panel');
+            if (panel) {
+                panel.querySelector('h3').textContent = result.datos.nombre;
+                const imgElement = panel.querySelector('img');
+                if (imgElement) {
+                    imgElement.src = nuevaFotoUrl;
+                }
             }
+        } else {
+             // Si no hay foto, solo actualizamos el nombre en el panel
+             const panel = document.getElementById('user-stats-panel');
+             if (panel) {
+                panel.querySelector('h3').textContent = result.datos.nombre;
+             }
         }
 
         alert('¡Perfil actualizado con éxito!');
