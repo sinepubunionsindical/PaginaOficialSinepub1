@@ -668,7 +668,7 @@ function abrirModalEditarPerfil() {
     // 3. Resetear y rellenar datos
     nuevaImagenBase64 = null;
     document.getElementById('profile-nombre').value = localStorage.getItem('nombre') || '';
-    document.getElementById('profile-email').value = localStorage.getItem('email') || '';
+    document.getElementById('profile-email').value = localStorage.getItem('correo') || '';
     document.getElementById('profile-telefono').value = localStorage.getItem('telefono') || '';
     const fotoPreview = document.getElementById('profile-photo-preview');
     fotoPreview.src = localStorage.getItem('foto') || '/images/avatar-placeholder.png';
