@@ -10,7 +10,7 @@ const API_KEYS = {
 };
 
 // URL de backend centralizada usando ngrok
-const BACKEND_URL = 'https://23b6-201-219-246-178.ngrok-free.app';
+const BACKEND_URL = 'https://3ca1-201-219-246-92.ngrok-free.app';
 
 // Modo de depuración - cambia a true para usar localhost en lugar de ngrok
 // Si hay problemas con ngrok, cambiar a true
@@ -37,8 +37,7 @@ const API_ENDPOINTS = {
     ia: `${EFFECTIVE_URL}/ia`,
     iaInit: `${EFFECTIVE_URL}/ia-init`,
     iaContextual: `${EFFECTIVE_URL}/ia-contextual`,
-    enviarPDFLleno: `${EFFECTIVE_URL}/api/enviar_pdf_lleno`,
-    actualizarPerfil: `${EFFECTIVE_URL}/api/perfil/actualizar`
+    enviarPDFLleno: `${EFFECTIVE_URL}/api/enviar_pdf_lleno`
 };
 
 // Exportar las claves y URLs para uso en otros archivos
