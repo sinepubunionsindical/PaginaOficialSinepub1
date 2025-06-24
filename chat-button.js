@@ -752,36 +752,39 @@ async function handleProfileUpdate(event) {
         });
         const result = await response.json();
         if (!response.ok) throw new Error(result.error || 'Error en el servidor');
-
-        // --- ÉXITO: Actualizar localStorage y la UI (CON CACHE BUSTING) ---
+        // --- ÉXITO: Actualizar localStorage y la UI (VERSIÓN A PRUEBA DE ERRORES) ---
+        // Primero, actualizamos los datos de texto, que es seguro.
         localStorage.setItem('nombre', result.datos.nombre);
         localStorage.setItem('email', result.datos.email);
         localStorage.setItem('telefono', result.datos.telefono);
         
-        // El backend debe devolver la nueva URL de la foto
-        if (result.datos.foto && !result.datos.foto.includes('placeholder')) {
-            // 1. Crear el parámetro de cache busting
+        const panel = document.getElementById('user-stats-panel');
+        if (panel) {
+            panel.querySelector('h3').textContent = result.datos.nombre;
+        }
+
+        // Ahora, manejamos la foto de forma segura.
+        let urlFotoParaMostrar = '/images/avatar-placeholder.png'; // Valor por defecto
+
+        // Verificamos que la URL recibida sea válida y no sea el placeholder
+        if (result.datos.foto && typeof result.datos.foto === 'string' && !result.datos.foto.includes('placeholder')) {
+            // Si es una foto válida, aplicamos el cache busting
             const cacheBuster = `?t=${new Date().getTime()}`;
-            const nuevaFotoUrl = result.datos.foto + cacheBuster;
+            urlFotoParaMostrar = result.datos.foto + cacheBuster;
+        } else if (result.datos.foto) {
+            // Si es el placeholder, lo usamos tal cual, sin cache busting
+            urlFotoParaMostrar = result.datos.foto;
+        }
+        
+        // Actualizamos localStorage con la URL final (con o sin cache busting)
+        localStorage.setItem('foto', urlFotoParaMostrar);
 
-            // 2. Guardar la nueva URL completa en localStorage
-            localStorage.setItem('foto', nuevaFotoUrl);
-
-            // 3. Actualizar visualmente el panel de estadísticas con la nueva URL
-            const panel = document.getElementById('user-stats-panel');
-            if (panel) {
-                panel.querySelector('h3').textContent = result.datos.nombre;
-                const imgElement = panel.querySelector('img');
-                if (imgElement) {
-                    imgElement.src = nuevaFotoUrl;
-                }
+        // Actualizamos la imagen en el panel de estadísticas
+        if (panel) {
+            const imgElement = panel.querySelector('img');
+            if (imgElement) {
+                imgElement.src = urlFotoParaMostrar;
             }
-        } else {
-             // Si no hay foto, solo actualizamos el nombre en el panel
-             const panel = document.getElementById('user-stats-panel');
-             if (panel) {
-                panel.querySelector('h3').textContent = result.datos.nombre;
-             }
         }
 
         alert('¡Perfil actualizado con éxito!');
