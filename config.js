@@ -10,7 +10,7 @@ const API_KEYS = {
 };
 
 // URL de backend centralizada usando ngrok
-const BACKEND_URL = 'tcp://2.tcp.ngrok.io:15698';
+const BACKEND_URL = 'tcp://6.tcp.ngrok.io:15691';
 
 // Modo de depuración - cambia a true para usar localhost en lugar de ngrok
 // Si hay problemas con ngrok, cambiar a true
