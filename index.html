@@ -1,898 +1,899 @@
-<!DOCTYPE html>
-<html lang="es">
- <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title>
-   SINEPUB - Sindicato del HUV
-  </title>
-  <!-- 🧠 Meta Tags para redes sociales -->
-  <meta content="SINEPUB HUV - Sindicato del Hospital Universitario del Valle" property="og:title"/>
-  <meta content="Un sindicato que lucha por tus derechos laborales en el HUV." property="og:description"/>
-  <meta content="https://sinepub-huv.com/images/logo.png" property="og:image">
-   <meta content="https://sinepub-huv.com/" property="og:url">
-    <meta content="website" property="og:type"/>
-    <!-- 🐦 Meta para Twitter -->
-    <meta content="summary_large_image" name="twitter:card"/>
-    <meta content="SINEPUB HUV" name="twitter:title"/>
-    <meta content="Afíliate al sindicato del Hospital Universitario del Valle." name="twitter:description"/>
-    <meta content="https://sinepub-huv.com/images/logo.png" name="twitter:image"/>
-    <link href="styles.css" rel="stylesheet"/>
-    <link href="chat-styles.css" rel="stylesheet"/>
-    <link href="android.css" rel="stylesheet"/>
-    <link href="chat-button.css" rel="stylesheet"/>
-    <link href="https://cdn.plyr.io/3.7.8/plyr.css" rel="stylesheet"/>
-    <script src="https://cdn.plyr.io/3.7.8/plyr.js">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/@huggingface/inference" type="module">
-    </script>
-    <script crossorigin="" src="https://unpkg.com/react@17.0.2/umd/react.development.js">
-    </script>
-    <script crossorigin="" src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js">
-    </script>
-    <script src="https://unpkg.com/pdf-lib@1.17.1">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js">
-    </script>
-   </meta>
-  </meta>
- </head>
- <body clas="" s="fade-out">
-  <div class="video-container" id="video-bienvenida">
-   <h1 class="titulo-bienvenida">
-    BIENVENIDO A NUESTRO PORTAL
-   </h1>
-   <div class="video-wrapper">
-    <video autoplay="" controls="" id="video-intro" loop="" muted="" playsinline="">
-     <source src="Proyecto.mp4" type="video/mp4"/>
-    </video>
-    <button class="cerrar-video" id="cerrar-video">
-     ×
-    </button>
-   </div>
-  </div>
-  <!-- Encabezado Principal (Franja azul delgada con títulos) -->
-  <header>
-   <div class="container header-titles-container">
-    <!-- Nuevo contenedor para los títulos -->
-    <nav class="header-titles-nav">
-     <!-- Nueva navegación para los títulos -->
-     <ul>
-      <li>
-       <a class="active" href="#">
-        Inicio
-       </a>
-      </li>
-      <li>
-       <a href="historia.html" id="historia-link">
-        Historia
-       </a>
-      </li>
-      <li>
-       <a class="no-fade" href="javascript:void(0)" id="estatutos-link" style="display: none;">
-        Estatutos
-       </a>
-      </li>
-      <li>
-       <a href="juntadi.html">
-        Junta Directiva
-       </a>
-      </li>
-      <li>
-       <a href="logros.html">
-        Logros
-       </a>
-      </li>
-      <li class="menu-item-redes-sociales">
-       <!-- Añadimos una clase al LI -->
-       <div class="dropdown-container-redes-sociales">
-        <!-- NUEVO DIV CONTENEDOR -->
-        <a class="dropdown-toggle" href="#">
-         Redes Sociales
-        </a>
-        <div class="dropdown-menu dropdown-menu-redes-sociales">
-         <h2>
-          Redes Sociales
-         </h2>
-         <p>
-          Síguenos en nuestras redes sociales para estar al día con las últimas noticias y novedades del sindicato:
-         </p>
-         <div class="redes-sociales-header">
-          <a href="https://www.facebook.com/people/Sindicato-de-Empleados-P%25C3%25BAblicos-Sinepub-HUV/100064330442393/" target="_blank">
-           <img alt="Facebook" src="images/icono.facebook.jpg"/>
-          </a>
-          <a href="https://web.whatsapp.com/send/?phone=%2B573163218579&amp;context=ARA_Q_pzjXz8Xc1JNzpw6upSuHE9w825NQlneatdpHwu0FO26cq6ivICcbMORKR3pT_4HzmNl_Aky2IRu_neaai7HKXVwhT1CacJzpFOFANuNKjQwbhTfwQdfhk1G2rnGTY71RB49Bl3Z1bkuaivHvfxoQ&amp;source=FB_Page&amp;app=facebook&amp;entry_point=page_cta&amp;fbclid=IwY2xjawH62IxleHRuA2FlbQIxMAABHaz7Q3eybwVxMxtEi601LIJaVaPH6ttX5OI1SOxoXrV8GD8D5at1P_aksg_aem_fRKBzcZnA3IH1JogroXN_g" target="_blank">
-           <img alt="WhatsApp" src="images/icono.whatsapp.png"/>
-          </a>
-         </div>
-        </div>
-       </div>
-      </li>
-      <!-- Nueva sección de Colaboradores -->
-      <li class="menu-item-colaboradores">
-       <div class="dropdown-container-colaboradores">
-        <a class="dropdown-toggle" href="#">
-         Colaboradores
-        </a>
-        <div class="dropdown-menu dropdown-menu-colaboradores">
-         <h2>
-          Colaboradores
-         </h2>
-         <p>
-          Conoce a nuestros aliados estratégicos:
-         </p>
-         <!-- JURARKO SAS -->
-         <div class="colaborador">
-          <img alt="JURARKO SAS" src="images/jurarko_logo.jpg"/>
-          <div class="info-colaborador">
-           <p>
-            <strong>
-             JURARKO SAS
-            </strong>
-           </p>
-           <p>
-            Asesoría Jurídica
-           </p>
-           <p>
-            NIT: 901251939
-           </p>
-           <p>
-            Contacto:
-            <a href="mailto:jurarkosas@gmail.com" style="color: #0249aa;">
-             jurarkosas@gmail.com
-            </a>
-           </p>
-          </div>
-         </div>
-         <!-- María Alejandra Cruz -->
-         <div class="colaborador">
-          <img alt="María Alejandra Cruz" src="images/maria_cruz.jpg"/>
-          <div class="info-colaborador">
-           <p>
-            <strong>
-             María Alejandra Cruz
-            </strong>
-           </p>
-           <p>
-            Asesoría Contable
-           </p>
-           <p>
-            Contacto:
-            <a href="tel:+573183639419" style="color: #0249aa;">
-             318 3639419
-            </a>
-           </p>
-          </div>
-         </div>
-        </div>
-       </div>
-      </li>
-     </ul>
-    </nav>
-    <!-- BOTÓN HAMBURGUESA - Añadido aquí -->
-    <button aria-controls="mobile-menu-container" aria-expanded="false" aria-label="Abrir menú de navegación" class="hamburger-button" id="hamburger-button" style="display: none;">
-     ☰
-     <!-- Código HTML para el icono de hamburguesa -->
-    </button>
-   </div>
-  </header>
-  <!-- Imágenes del Encabezado (Debajo de la franja azul) -->
-  <section class="header-logos">
-   <div class="logo-container">
-    <img alt="SINEPUB Logo" class="logo-sinepub" src="images/logo.png"/>
-    <img alt="Logo HUV" class="logo-huv" src="images/HUV.jpg"/>
-   </div>
-  </section>
-  <!-- Navegación Secundaria (Inicio, Noticias, Afiliación - controla el slider) -->
-  <section class="below-header-nav">
-   <div class="container below-header-nav-container">
-    <nav class="slider-nav">
-     <!-- Nueva clase slider-nav para JS -->
-     <ul>
-      <li>
-       <a class="active" data-slide="1" href="#">
-        Inicio
-       </a>
-      </li>
-      <!-- data-slide y clase active -->
-      <li>
-       <a data-slide="2" href="#">
-        Noticias
-       </a>
-      </li>
-      <!-- data-slide -->
-      <li>
-       <a data-slide="6" href="#" id="afiliacion-link">
-        Afiliación
-       </a>
-      </li>
-      <!-- data-slide -->
-      <li>
-       <a href="publicidad.html" id="publicidad-link">
-        Publicidad
-       </a>
-      </li>
-      <!-- Link to new publicidad.html -->
-      <li>
-       <a data-slide="7" href="#" id="modulos-link" style="display: none;">
-        Módulos de Información
-       </a>
-      </li>
-      <li>
-       <a data-slide="9" href="#" id="eventos-link">
-        Eventos
-       </a>
-      </li>
-     </ul>
-    </nav>
-   </div>
-  </section>
-  <!-- Slider de imágenes -->
-  <section id="inicio">
-   <div class="slider-container">
-    <!-- Navegación entre módulos -->
-    <div class="modulos-nav">
-     <span class="modulo-dot" data-slide="7">
-     </span>
-     <span class="modulo-dot" data-slide="8">
-     </span>
-    </div>
-    <div class="modulos-nav modulos-nav-eventos">
-     <span class="modulo-dot" data-slide="9">
-     </span>
-     <span class="modulo-dot" data-slide="10">
-     </span>
-     <span class="modulo-dot" data-slide="11">
-     </span>
-     <span class="modulo-dot" data-slide="12">
-     </span>
-     <span class="modulo-dot" data-slide="13">
-     </span>
-    </div>
-    <div class="slider">
-     <div class="slide active" id="slide-1">
-      <div class="imagen-y-texto">
-       <img alt="Banner 1" class="imagen-banner" src="images/fotoportada.jpg"/>
-       <div class="texto-banner">
-        <h1>
-         Bienvenidos a SINEPUB HUV
-        </h1>
-        <p>
-         En el corazón de nuestra labor sindical yace el compromiso inquebrantable con la justicia, la equidad y el bienestar de todos los trabajadores del Hospital Universitario del Valle. En SINEPUB HUV, creemos firmemente que el trabajo digno y justo es la piedra angular del desarrollo personal y colectivo, razón por la cual luchamos día a día para defender los derechos de nuestros afiliados.
-        </p>
-        <p>
-         Somos más que un sindicato: somos una familia que protege, apoya y motiva a sus integrantes a alcanzar mejores condiciones laborales y una vida más plena. Nuestra organización está guiada por principios de solidaridad, honestidad y transparencia, asegurando que cada voz sea escuchada y cada necesidad sea atendida con el respeto y la seriedad que merece.
-        </p>
-        <div class="mision-vision">
-         <div class="mision">
-          <h3>
-           Misión
-          </h3>
-          <p>
-           Brindar un respaldo sólido e inquebrantable a nuestros afiliados, luchando incansablemente por condiciones laborales justas, equitativas y dignas. Nos esforzamos por garantizar un entorno laboral donde se respeten los derechos fundamentales y se fomenten oportunidades de crecimiento y bienestar integral.
-          </p>
-         </div>
-         <div class="vision">
-          <h3>
-           Visión
-          </h3>
-          <p>
-           Para el año 2030, aspiramos a consolidarnos como la organización sindical líder en Colombia, un referente en la defensa y promoción de los derechos de los trabajadores del sector salud. Visualizamos un futuro donde nuestros afiliados cuenten con seguridad laboral, condiciones justas y un ambiente de trabajo óptimo para su desarrollo profesional y personal.
-          </p>
-         </div>
-        </div>
-        <p>
-         El poder del cambio reside en la unidad, y en SINEPUB HUV trabajamos con el firme propósito de construir una comunidad sindical fuerte y unida, capaz de transformar la realidad de los trabajadores. Nuestro compromiso va más allá de lo contractual; buscamos el bienestar integral de cada afiliado, promoviendo el respeto, la equidad y la justicia en cada una de nuestras acciones.
-        </p>
-        <p>
-         ¡Únete a nosotros y forma parte de una organización que lucha por ti, que te escucha y que jamás dejará de trabajar para construir un futuro mejor para todos!
-        </p>
-       </div>
-      </div>
-     </div>
-    </div>
-    <div class="slide" id="slide-2">
-     <!-- Slide de Noticias 1 actualizado -->
-     <div class="imagen-y-texto">
-      <img alt="Banner doctor pacheco" class="imagen-banner" src="images/junta2.jpg"/>
-      <div class="texto-banner">
-       <h3>
-        ¡Victoria Colectiva! Dr. Pacheco elegido a la Comisión de Personal
-       </h3>
-       <p>
-        <strong>
-         Fecha:
-        </strong>
-        Junio 18 de 2025
-       </p>
-       <p>
-        Con gran orgullo anunciamos el resultado de las elecciones a la Comisión de Personal, donde nuestro Vicepresidente, el Dr. Luis Fernando Pacheco, fue elegido como miembro principal al obtener la votación más alta con
-        <strong>
-         52 votos
-        </strong>
-        .
-       </p>
-       <p>
-        <strong>
-         Puntos clave de esta victoria:
-        </strong>
-       </p>
-       <ul>
-        <li>
-         ✅ Elección del Dr. Pacheco, nuestro Vicepresidente, como representante principal.
-        </li>
-        <li>
-         ✅ Obtuvo la votación más alta, asegurando una representación sólida y legítima.
-        </li>
-        <li>
-         ✅ Un triunfo de nuestro colectivo que fortalece la defensa de los derechos laborales.
-        </li>
-       </ul>
-       <p>
-        📌 Desde SINEPUB HUV agradecemos profundamente a cada afiliado que respaldó esta candidatura. Este logro demuestra que nuestra unión es nuestra mayor fortaleza.
-       </p>
-      </div>
-     </div>
-    </div>
-    <div class="slide" id="slide-3">
-     <!-- Slide de Noticias 2 -->
-     <div class="imagen-y-texto">
-      <img alt="Banner 3" class="imagen-banner" src="images/licencia_mascotas.jpeg"/>
-      <div class="texto-banner">
-       <h3>
-        Proyecto de Ley busca otorgar licencia remunerada por fallecimiento de mascotas
-       </h3>
-       <p>
-        El Congreso de Colombia ha aprobado en primer debate un proyecto de ley que permitiría a los empleados recibir un día de licencia remunerada tras el fallecimiento de sus mascotas, específicamente perros y gatos.
-       </p>
-       <p>
-        <strong>
-         Detalles:
-        </strong>
-       </p>
-       <ul>
-        <li>
-         ✅ La iniciativa es liderada por la congresista Alexandra Vásquez.
-        </li>
-        <li>
-         ✅ Se requiere un certificado veterinario para acreditar la muerte de la mascota.
-        </li>
-        <li>
-         ✅ La licencia solo podrá solicitarse una vez por año fiscal.
-        </li>
-       </ul>
-       <p>
-        📌 Desde SINEPUB HUV apoyamos esta medida que reconoce el valor emocional de las mascotas en la vida de nuestros afiliados.
-       </p>
-       <p>
-        <a href="https://www.infobae.com/colombia/2025/03/12/congreso-aprobo-en-primer-debate-proyecto-de-ley-que-busca-dar-licencia-remunerada-a-empleados-cuyos-perros-y-gatos-han-fallecido/" target="_blank">
-         Leer más
-        </a>
-       </p>
-      </div>
-     </div>
-    </div>
-    <div class="slide" id="slide-4">
-     <!-- Slide de Noticias 3 -->
-     <div class="imagen-y-texto">
-      <img alt="Banner 4" class="imagen-banner" src="images/sigep_notificacion.jpeg"/>
-      <div class="texto-banner">
-       <h3>
-        Atención servidores públicos del HUV: Certificados de ingresos 2024 y actualización en SIGEP II
-       </h3>
-       <p>
-        Se informa a todos los colaboradores del Hospital Universitario del Valle (HUV) que los certificados de ingresos correspondientes al año 2024 están siendo enviados a sus correos electrónicos registrados. Es fundamental que cada servidor público esté atento a la recepción de este documento, ya que es necesario para cumplir con la obligación de actualizar la Declaración de Bienes y Rentas en el Sistema de Información y Gestión del Empleo Público (SIGEP II).
-       </p>
-       <p>
-        <strong>
-         📅 Fechas clave para la actualización en SIGEP II:
-        </strong>
-       </p>
-       <ul>
-        <li>
-         🗓️ Del 1 de junio al 31 de julio de 2025: Periodo destinado para que los servidores públicos de entidades y organismos públicos de orden territorial, como el HUV, realicen la actualización de su Declaración de Bienes y Rentas.
-        </li>
-       </ul>
-       <p>
-        <strong>
-         ✅ Pasos a seguir:
-        </strong>
-       </p>
-       <ul>
-        <li>
-         📩 Revisión del correo electrónico institucional: Verifique la recepción del certificado de ingresos 2024.
-        </li>
-        <li>
-         🔗 Ingreso al SIGEP II: Acceda al sistema utilizando sus credenciales a través de
-         <a href="https://www1.funcionpublica.gov.co/web/sigep2" target="_blank">
-          www1.funcionpublica.gov.co
-         </a>
-         .
-        </li>
-        <li>
-         📝 Actualización de la Declaración de Bienes y Rentas: Diligencie la información correspondiente al año 2024, asegurándose de incluir todos los datos requeridos.
-        </li>
-        <li>
-         📌 Confirmación de envío: Una vez completada la actualización, confirme que la información ha sido enviada correctamente.
-        </li>
-       </ul>
-       <p>
-        ⚠️ El cumplimiento de esta obligación es esencial para garantizar la transparencia y la correcta gestión de la función pública. Se recomienda no esperar hasta el último momento para realizar este trámite y, en caso de dudas o inconvenientes, contactar al área de recursos humanos del HUV o al soporte del SIGEP II.
-       </p>
-       <p>
-        📽️ Guía paso a paso para actualizar la información en SIGEP II:
-       </p>
-       <p>
-        <a href="https://www.youtube.com/watch?v=cjG1Aw4MatY" target="_blank">
-         🎥 Ver tutorial en YouTube
-        </a>
-       </p>
-      </div>
-     </div>
-    </div>
-    <div class="slide" id="slide-5">
-     <!-- Slide de Noticias 4 con PDF -->
-     <div class="imagen-y-texto">
-      <!-- ⬅️ aquí va el display: flex -->
-      <div class="bloque-texto-video">
-       <!-- 👈 agrupador -->
-       <div class="texto-banner">
-        <h3>
-         Resolución 1843 del 2025
-        </h3>
-        <p>
-         <strong>
-          📄 Exámenes Ocupacionales y Protocolos de Salud Laboral
-         </strong>
-        </p>
-        <p>
-         La Resolución 1843 de 2025 establece los lineamientos técnicos para exámenes médicos ocupacionales en instituciones públicas. Este documento es fundamental para comprender los protocolos vigentes en salud laboral.
-        </p>
-        <p>
-         📌 Puedes consultar el documento completo directamente aquí:
-        </p>
-       </div>
-       <div class="video-explicativo">
-        <h4>
-         🎥 Video Explicativo sobre la Resolución
-        </h4>
-        <video class="plyr-video" controls="" id="player-resolucion" playsinline="" style="width: 100%; max-width: 360px; height: auto; margin-top: 15px; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 0 8px rgba(0,0,0,0.2);">
-         <source src="videos/explicacion_resolucion_1843.mp4" type="video/mp4"/>
-         Tu navegador no soporta video HTML5.
-         <a href="videos/explicacion_resolucion_1843.mp4" target="_blank">
-          Descargar video
-         </a>
-        </video>
-       </div>
-      </div>
-      <!-- Visor PDF.js como en slide 7/8 -->
-      <div class="pdf-viewer-container-video" id="pdf-viewer-slide5">
-       <!-- Canvases se generan con JS -->
-      </div>
-     </div>
-    </div>
-    <div class="slide" id="slide-6">
-     <!-- SLIDE para Afiliación -->
-     <div class="imagen-y-texto afiliacion-container">
-      <!-- Contenedor para organizar PDF y texto -->
-      <!-- Visor de PDF -->
-      <iframe id="pdfViewer" src="pdfjs/web/viewer.html?file=/Afiliacion.pdf#toolbar=0&amp;navpanes=0&amp;view=FitH" style="width:100%;height:700px;border:none;">
-      </iframe>
-      <!-- Explicación a la derecha -->
-      <div class="texto-banner afiliacion-info">
-       <h1>
-        Formulario de Afiliación
-       </h1>
-       <p>
-        Por favor, llena el formulario interactivo directamente en el visor de PDF. Una vez completado, usa el botón de descarga para guardarlo con tus datos.
-       </p>
-       <p>
-        Después de descargarlo, imprime el formulario y llévalo a la oficina de SINEPUB en el
-        <strong>
-         séptimo piso de la Torre Capilla
-        </strong>
-        . Asegúrate de agregar tu firma y huella antes de entregarlo.
-       </p>
-       <!-- Botón para descargar PDF llenado -->
-       <button class="boton-descargar" id="downloadPdf">
-        Descargar Formulario Lleno
-       </button>
-      </div>
-     </div>
-    </div>
-    <div class="slide" id="slide-7">
-     <!-- NUEVO SLIDE para Módulos de Formación -->
-     <div class="imagen-y-texto">
-      <div class="texto-banner">
-       <h1>
-        Módulo aportado por JURARKO
-       </h1>
-       <p>
-        📚
-        <strong>
-         Disponibilidad Laboral del Empleado Público
-        </strong>
-       </p>
-       <p>
-        En el entorno laboral del sector público, comprender la disponibilidad laboral es clave para garantizar el cumplimiento de las responsabilidades sin afectar los derechos fundamentales de los trabajadores.
-       </p>
-       <p>
-        Este módulo de formación, basado en el concepto emitido por el
-        <strong>
-         colaborador JURARKO
-        </strong>
-        , explora los fundamentos legales y las normas que rigen la disponibilidad de los empleados públicos, incluyendo:
-       </p>
-       <ul>
-        <li>
-         ✅ Diferencias entre jornada laboral, disponibilidad y trabajo suplementario.
-        </li>
-        <li>
-         ✅ Derechos y deberes del trabajador ante solicitudes fuera del horario laboral.
-        </li>
-        <li>
-         ✅ Cómo se reconoce el trabajo adicional (remuneración vs. compensación en tiempo).
-        </li>
-        <li>
-         ✅ El derecho a la desconexión laboral y su aplicación en el sector salud.
-        </li>
-        <li>
-         ✅ Casos específicos aplicables al Hospital Universitario del Valle.
-        </li>
-       </ul>
-       <p>
-        🔹
-        <strong>
-         Este documento es una guía esencial
-        </strong>
-        para comprender los límites y derechos en torno a la disponibilidad laboral y su impacto en la vida personal y profesional de los trabajadores del sector salud.
-       </p>
-      </div>
-      <!-- Contenedor del visor PDF.js en slide-7 -->
-      <div class="pdf-viewer-container" id="pdf-viewer-slide7" style="width: 100%; height: 700px; position: relative;">
-       <canvas id="pdf-canvas-slide7">
-       </canvas>
-       <div class="loading-overlay">
-        Cargando documento...
-       </div>
-      </div>
-     </div>
-    </div>
-    <div class="slide" id="slide-8">
-     <!-- NUEVO SLIDE para Módulos de Formación -->
-     <div class="imagen-y-texto">
-      <div class="texto-banner">
-       <h1>
-        Acuerdo No. 020 de la ESAP
-       </h1>
-       <p>
-        📚
-        <strong>
-         Beneficios Académicos del Acuerdo Nacional Estatal
-        </strong>
-       </p>
-       <p>
-        El conocimiento y la educación son herramientas clave para fortalecer el ejercicio profesional en el sector público. Como parte del
-        <strong>
-         Acuerdo Nacional Estatal 2023
-        </strong>
-        , se ha establecido un beneficio exclusivo para los servidores públicos sindicalizados:
-       </p>
-       <ul>
-        <li>
-         ✅ Exoneración del 50% en matrículas de especializaciones y maestrías en la ESAP.
-        </li>
-        <li>
-         ✅ Acceso a formación de alto nivel para fortalecer la capacidad de gestión y liderazgo.
-        </li>
-        <li>
-         ✅ Oportunidad para mejorar competencias técnicas y administrativas en el sector público.
-        </li>
-        <li>
-         ✅ Compromiso del Gobierno Nacional con la educación continua de los trabajadores del Estado.
-        </li>
-       </ul>
-       <p>
-        🔹
-        <strong>
-         Este documento es una guía esencial
-        </strong>
-        para conocer los beneficios educativos para los afiliados sindicales.
-       </p>
-      </div>
-      <!-- Contenedor del visor PDF.js en slide-8 -->
-      <div class="pdf-viewer-container" id="pdf-viewer-slide8" style="width: 100%; height: 700px; position: relative;">
-       <canvas id="pdf-canvas-slide8">
-       </canvas>
-       <div class="loading-overlay">
-        Cargando documento...
-       </div>
-      </div>
-     </div>
-    </div>
-    <div class="slide" id="slide-9">
-     <div class="imagen-y-texto">
-      <div class="galeria-evento">
-       <div class="imagenes-galeria">
-        <img alt="Evento 1" src="images/eventos1.jpg"/>
-        <img alt="Evento 2" src="images/eventos2.jpg"/>
-        <img alt="Evento 3" src="images/eventos3.jpg"/>
-        <img alt="Evento 4" src="images/eventos4.jpg"/>
-        <img alt="Evento 5" src="images/eventos5.jpg"/>
-        <img alt="Evento 6" src="images/eventos6.jpg"/>
-        <img alt="Evento 7" src="images/eventos7.jpg"/>
-       </div>
-      </div>
-      <div class="texto-banner">
-       <h3>
-        INAUGURACIÓN PÁGINA WEB
-       </h3>
-       <p>
-        <strong>
-         Fecha:
-        </strong>
-        4 de abril de 2025
-       </p>
-       <p>
-        Celebramos juntos la inauguración oficial de la nueva página web de SINEPUB HUV...
-       </p>
-      </div>
-     </div>
-    </div>
-    <div class="slide" id="slide-10">
-     <div class="imagen-y-texto">
-      <div class="galeria-evento">
-       <div class="imagenes-galeria">
-        <img alt="Evento 8" src="images/eventos8.jpg"/>
-        <img alt="Evento 9" src="images/eventos9.jpg"/>
-        <img alt="Evento 10" src="images/eventos10.jpg"/>
-        <img alt="Evento 11" src="images/eventos11.jpg"/>
-        <img alt="Evento 12" src="images/eventos12.jpg"/>
-        <img alt="Evento 13" src="images/eventos13.jpg"/>
-        <img alt="Evento 14" src="images/eventos14.jpg"/>
-       </div>
-      </div>
-      <div class="texto-banner">
-       <h3>
-        celebración del día de nuestros afiliad@s  administrativ@s.
-       </h3>
-       <p>
-        <strong>
-         Fecha:
-        </strong>
-        25 de abril de 2025
-       </p>
-       <p>
-        Desde SINEPUB HUV reconocemos la dedicación y compromiso de nuestros compañer@s.
-       </p>
-      </div>
-     </div>
-    </div>
-    <div class="slide" id="slide-11">
-     <div class="imagen-y-texto">
-      <div class="galeria-evento">
-       <div class="imagenes-galeria">
-        <img alt="Evento 15" src="images/eventos15.jpg"/>
-        <img alt="Evento 16" src="images/eventos16.jpg"/>
-        <img alt="Evento 17" src="images/eventos17.jpg"/>
-        <img alt="Evento 18" src="images/eventos18.jpg"/>
-        <img alt="Evento 19" src="images/eventos19.jpg"/>
-        <img alt="Evento 20" src="images/eventos20.jpg"/>
-        <img alt="Evento 21" src="images/eventos21.jpg"/>
-        <img alt="Evento 22" src="images/eventos22.jpg"/>
-        <img alt="Evento 23" src="images/eventos23.jpg"/>
-        <img alt="Evento 24" src="images/eventos24.jpg"/>
-        <img alt="Evento 25" src="images/eventos25.jpg"/>
-       </div>
-      </div>
-      <div class="texto-banner">
-       <h3>
-        Celebración de su día laboral a los compañern@s de Enfermería, Trabajo Social, Técnica Respiratoria y Auxiliares de Enfermería.
-       </h3>
-       <p>
-        <strong>
-         Fecha:
-        </strong>
-        16 Mayo 2025
-       </p>
-       <p>
-        Desde SINEPUB HUV reconocemos la dedicación y compromiso de nuestros compañer@s.
-       </p>
-      </div>
-     </div>
-    </div>
-    <!-- =================== INICIO NUEVO EVENTO SLIDE 12 =================== -->
-    <div class="slide" id="slide-12">
-     <div class="imagen-y-texto">
-      <div class="galeria-evento">
-       <div class="imagenes-galeria">
-        <!-- IMPORTANTE: Reemplaza estos nombres con los de tus 6 fotos nuevas -->
-        <img alt="Mesa de participación 1" src="images/evento-becas-1.jpeg"/>
-        <img alt="Mesa de participación 2" src="images/evento-becas-2.jpeg"/>
-        <img alt="Mesa de participación 3" src="images/evento-becas-3.jpeg"/>
-        <img alt="Mesa de participación 4" src="images/evento-becas-4.jpeg"/>
-        <img alt="Mesa de participación 5" src="images/evento-becas-5.jpeg"/>
-        <img alt="Mesa de participación 6" src="images/evento-becas-6.jpeg"/>
-       </div>
-      </div>
-      <div class="texto-banner">
-       <h3>
-        Mesa de Participación Social por Becas
-       </h3>
-       <!-- IMPORTANTE: No olvides poner la fecha correcta del evento -->
-       <p>
-        <strong>
-         Fecha:
-        </strong>
-        06 de Junio 2025
-       </p>
-       <p>
-        Participación activa en la mesa de participación social por parte del Ministerio de Trabajo, con el fin de lograr la firma del acta para la distribución de las becas.
-       </p>
-      </div>
-     </div>
-    </div>
-    <div class="slide" id="slide-13">
-     <div class="imagen-y-texto">
-      <div class="galeria-evento">
-       <div class="imagenes-galeria">
-        <!-- IMPORTANTE: Reemplaza estos nombres con los de tus 3 fotos nuevas -->
-        <img alt="Capacitación acoso laboral 1" src="images/evento-acoso-1.jpeg"/>
-        <img alt="Capacitación acoso laboral 2" src="images/evento-acoso-2.jpeg"/>
-        <img alt="Capacitación acoso laboral 3" src="images/evento-acoso-3.jpeg"/>
-       </div>
-      </div>
-      <div class="texto-banner">
-       <h3>
-        Capacitación sobre Acoso Sexual Laboral
-       </h3>
-       <!-- IMPORTANTE: No olvides poner la fecha correcta del evento -->
-       <p>
-        <strong>
-         Fecha:
-        </strong>
-        20 de Junio 2025
-       </p>
-       <p>
-        Participación en la capacitación del Mintrabajo sobre acoso sexual en el entorno laboral.
-       </p>
-      </div>
-     </div>
-    </div>
-   </div>
-   <div class="slider-dots">
-    <!-- NUEVO DIV para los circulitos -->
-    <!-- Los circulitos se generarán aquí con JavaScript -->
-   </div>
-   <!-- NUEVO Modal PDF centrado -->
-   <div class="pdf-modal hidden" id="modal-pdf-viewer">
-    <div class="pdf-modal-content">
-     <span class="close-modal" id="close-pdf-modal">
-      ×
-     </span>
-     <div class="pdf-viewer-container" id="modal-pdf-container">
-     </div>
-    </div>
-   </div>
-   <button class="prev-slide" style="display: none;">
-    ❮
-   </button>
-   <button class="next-slide" style="display: none;">
-    ❯
-   </button>
-  </section>
-  <!-- Pie de página -->
-  <footer>
-   <div class="container">
-    <p>
-     © 2025 SINEPUB. Todos los derechos reservados.
-    </p>
-    <div class="footer-logos">
-     <img alt="Logo Confederacion" src="images/confederacion.jpg"/>
-     <img alt="Logo Propais" src="images/propais.png"/>
-     <img alt="Logo Fedetradh" src="images/fedetradh.png"/>
-    </div>
-    <div class="contacto">
-     <div class="informacion-y-mapa">
-      <div class="informacion">
-       <h1 class="titulo-contacto">
-        Contacto
-       </h1>
-       <p>
-        ¿Tienes dudas o necesitas más información? Contáctanos a traves de nuestros medios digitales:
-       </p>
-       <ul>
-        <li>
-         Email: sinepubhuv@gmail.com
-        </li>
-        <li>
-         Dirección: Calle 5 No. 36 - 08 Piso 7°. Cali, Valle del Cauca
-        </li>
-       </ul>
-       <div class="footer-redes-sociales">
-        <a href="https://www.facebook.com/people/Sindicato-de-Empleados-P%25C3%25BAblicos-Sinepub-HUV/100064330442393/" target="_blank">
-         <img alt="Facebook" src="images/icono.facebook.jpg"/>
-        </a>
-        <a href="https://web.whatsapp.com/send/?phone=%2B573163218579&amp;context=ARA_Q_pzjXz8Xc1JNzpw6upSuHE9w825NQlneatdpHwu0FO26cq6ivICcbMORKR3pT_4HzmNl_Aky2IRu_neaai7HKXVwhT1CacJzpFOFANuNKjQwbhTfwQdfhk1G2rnGTY71RB49Bl3Z1bkuaivHvfxoQ&amp;source=FB_Page&amp;app=facebook&amp;entry_point=page_cta&amp;fbclid=IwY2xjawH62IxleHRuA2FlbQIxMAABHaz7Q3eybwVxMxtEi601LIJaVaPH6ttX5OI1SOxoXrV8GD8D5at1P_aksg_aem_fRKBzcZnA3IH1JogroXN_g" target="_blank">
-         <img alt="WhatsApp" src="images/icono.whatsapp.png"/>
-        </a>
-       </div>
-      </div>
-      <div class="mapa">
-       <div class="mapa-titulo">
-        <h1 class="titulo-como-llegar">
-         Cómo llegar
-        </h1>
-        <iframe allowfullscreen="" frameborder="0" height="450" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3979.755111111111!2d-76.5473703!3d3.4306492!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e30a69c440a28bb%3A0xca12ae041f48a3b8!2sCl.+5+%2336%2C+El+Sindicato%2C+Cali%2C+Valle+del+Cauca!5e0!3m2!1ses-419!2sco!4v1667243455555!5m2!1ses-419!2sco" style="border:0" width="600">
-        </iframe>
-       </div>
-      </div>
-     </div>
-    </div>
-   </div>
-  </footer>
-  <!-- CONTENEDOR DEL MENÚ MÓVIL LATERAL - Añadido aquí -->
-  <div aria-hidden="true" class="mobile-menu" id="mobile-menu-container">
-   <!-- El contenido (la lista ul) será clonado aquí por JavaScript -->
-  </div>
-  <!-- Botón flotante con restricción de acceso -->
-  <div id="boton-flotante">
-   <button id="chatbot-button">
-    🗣️ Acceder a los Beneficios (Solo Afiliados)
-   </button>
-  </div>
-  <!-- Contenedor del chatbot -->
-  <!--<div id="chatbot-container" style="display: none;"></div> -->
-  <!-- Contenedor del video de la IA (inicialmente oculto) -->
-  <div class="ai-video-container" id="ai-video-container" style="display: none;">
-   <div class="video-wrapper">
-    <!-- Video de espera (idle) -->
-    <video autoplay="" class="ai-avatar-video active" id="idle-video" loop="" muted="" playsinline="" preload="auto">
-     <source src="1.mp4" type="video/mp4"/>
-     Tu navegador no soporta videos HTML5.
-    </video>
-    <!-- Video de habla (speaking) -->
-    <video autoplay="" class="ai-avatar-video" id="speaking-video" loop="" muted="" playsinline="" preload="auto">
-     <source src="2.mp4" type="video/mp4"/>
-     Tu navegador no soporta videos HTML5.
-    </video>
-   </div>
-  </div>
-  <script>
-   if (window.Plyr) {
-                new Plyr('#player-resolucion');
-            }
-  </script>
-  <!-- Scripts críticos que deben cargarse inmediatamente y en orden -->
-  <script src="config.js">
-  </script>
-  <script src="publicidad.js">
-  </script>
-  <script src="auth-popup.js">
-  </script>
-  <!-- Scripts no críticos que pueden cargarse después -->
-  <script defer="" src="noticia-urgente.js">
-  </script>
-  <script defer="" src="profile-checker.js">
-  </script>
-  <script defer="" src="slider.js">
-  </script>
-  <script defer="" src="pdf.js">
-  </script>
-  <script defer="" src="chat-integration.js">
-  </script>
-  <script defer="" src="chat-button.js">
-  </script>
-  <script defer="" src="chatbot-access.js">
-  </script>
-  <script defer="" src="afiliacion.js">
-  </script>
-  <script defer="" src="menu-mobile.js">
-  </script>
-  <script defer="" src="video-bienvenida.js">
-  </script>
- </body>
-</html>
+<!DOCTYPE html>
+<html lang="es">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   SINEPUB - Sindicato del HUV
+  </title>
+  <!-- 🧠 Meta Tags para redes sociales -->
+  <meta content="SINEPUB HUV - Sindicato del Hospital Universitario del Valle" property="og:title"/>
+  <meta content="Un sindicato que lucha por tus derechos laborales en el HUV." property="og:description"/>
+  <meta content="https://sinepub-huv.com/images/logo.png" property="og:image">
+   <meta content="https://sinepub-huv.com/" property="og:url">
+    <meta content="website" property="og:type"/>
+    <!-- 🐦 Meta para Twitter -->
+    <meta content="summary_large_image" name="twitter:card"/>
+    <meta content="SINEPUB HUV" name="twitter:title"/>
+    <meta content="Afíliate al sindicato del Hospital Universitario del Valle." name="twitter:description"/>
+    <meta content="https://sinepub-huv.com/images/logo.png" name="twitter:image"/>
+    <link href="styles.css" rel="stylesheet"/>
+    <link href="chat-styles.css" rel="stylesheet"/>
+    <link href="android.css" rel="stylesheet"/>
+    <link href="chat-button.css" rel="stylesheet"/>
+    <link href="https://cdn.plyr.io/3.7.8/plyr.css" rel="stylesheet"/>
+    <script src="https://cdn.plyr.io/3.7.8/plyr.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@huggingface/inference" type="module">
+    </script>
+    <script crossorigin="" src="https://unpkg.com/react@17.0.2/umd/react.development.js">
+    </script>
+    <script crossorigin="" src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js">
+    </script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js">
+    </script>
+   </meta>
+  </meta>
+ </head>
+ <body clas="" s="fade-out">
+  <div class="video-container" id="video-bienvenida">
+   <h1 class="titulo-bienvenida">
+    BIENVENIDO A NUESTRO PORTAL
+   </h1>
+   <div class="video-wrapper">
+    <video autoplay="" controls="" id="video-intro" loop="" muted="" playsinline="">
+     <source src="Proyecto.mp4" type="video/mp4"/>
+    </video>
+    <button class="cerrar-video" id="cerrar-video">
+     ×
+    </button>
+   </div>
+  </div>
+  <!-- Encabezado Principal (Franja azul delgada con títulos) -->
+  <header>
+   <div class="container header-titles-container">
+    <!-- Nuevo contenedor para los títulos -->
+    <nav class="header-titles-nav">
+     <!-- Nueva navegación para los títulos -->
+     <ul>
+      <li>
+       <a class="active" href="#">
+        Inicio
+       </a>
+      </li>
+      <li>
+       <a href="historia.html" id="historia-link">
+        Historia
+       </a>
+      </li>
+      <li>
+       <a class="no-fade" href="javascript:void(0)" id="estatutos-link" style="display: none;">
+        Estatutos
+       </a>
+      </li>
+      <li>
+       <a href="juntadi.html">
+        Junta Directiva
+       </a>
+      </li>
+      <li>
+       <a href="logros.html">
+        Logros
+       </a>
+      </li>
+      <li class="menu-item-redes-sociales">
+       <!-- Añadimos una clase al LI -->
+       <div class="dropdown-container-redes-sociales">
+        <!-- NUEVO DIV CONTENEDOR -->
+        <a class="dropdown-toggle" href="#">
+         Redes Sociales
+        </a>
+        <div class="dropdown-menu dropdown-menu-redes-sociales">
+         <h2>
+          Redes Sociales
+         </h2>
+         <p>
+          Síguenos en nuestras redes sociales para estar al día con las últimas noticias y novedades del sindicato:
+         </p>
+         <div class="redes-sociales-header">
+          <a href="https://www.facebook.com/people/Sindicato-de-Empleados-P%25C3%25BAblicos-Sinepub-HUV/100064330442393/" target="_blank">
+           <img alt="Facebook" src="images/icono.facebook.jpg"/>
+          </a>
+          <a href="https://web.whatsapp.com/send/?phone=%2B573163218579&amp;context=ARA_Q_pzjXz8Xc1JNzpw6upSuHE9w825NQlneatdpHwu0FO26cq6ivICcbMORKR3pT_4HzmNl_Aky2IRu_neaai7HKXVwhT1CacJzpFOFANuNKjQwbhTfwQdfhk1G2rnGTY71RB49Bl3Z1bkuaivHvfxoQ&amp;source=FB_Page&amp;app=facebook&amp;entry_point=page_cta&amp;fbclid=IwY2xjawH62IxleHRuA2FlbQIxMAABHaz7Q3eybwVxMxtEi601LIJaVaPH6ttX5OI1SOxoXrV8GD8D5at1P_aksg_aem_fRKBzcZnA3IH1JogroXN_g" target="_blank">
+           <img alt="WhatsApp" src="images/icono.whatsapp.png"/>
+          </a>
+         </div>
+        </div>
+       </div>
+      </li>
+      <!-- Nueva sección de Colaboradores -->
+      <li class="menu-item-colaboradores">
+       <div class="dropdown-container-colaboradores">
+        <a class="dropdown-toggle" href="#">
+         Colaboradores
+        </a>
+        <div class="dropdown-menu dropdown-menu-colaboradores">
+         <h2>
+          Colaboradores
+         </h2>
+         <p>
+          Conoce a nuestros aliados estratégicos:
+         </p>
+         <!-- JURARKO SAS -->
+         <div class="colaborador">
+          <img alt="JURARKO SAS" src="images/jurarko_logo.jpg"/>
+          <div class="info-colaborador">
+           <p>
+            <strong>
+             JURARKO SAS
+            </strong>
+           </p>
+           <p>
+            Asesoría Jurídica
+           </p>
+           <p>
+            NIT: 901251939
+           </p>
+           <p>
+            Contacto:
+            <a href="mailto:jurarkosas@gmail.com" style="color: #0249aa;">
+             jurarkosas@gmail.com
+            </a>
+           </p>
+          </div>
+         </div>
+         <!-- María Alejandra Cruz -->
+         <div class="colaborador">
+          <img alt="María Alejandra Cruz" src="images/maria_cruz.jpg"/>
+          <div class="info-colaborador">
+           <p>
+            <strong>
+             María Alejandra Cruz
+            </strong>
+           </p>
+           <p>
+            Asesoría Contable
+           </p>
+           <p>
+            Contacto:
+            <a href="tel:+573183639419" style="color: #0249aa;">
+             318 3639419
+            </a>
+           </p>
+          </div>
+         </div>
+        </div>
+       </div>
+      </li>
+     </ul>
+    </nav>
+    <!-- BOTÓN HAMBURGUESA - Añadido aquí -->
+    <button aria-controls="mobile-menu-container" aria-expanded="false" aria-label="Abrir menú de navegación" class="hamburger-button" id="hamburger-button" style="display: none;">
+     ☰
+     <!-- Código HTML para el icono de hamburguesa -->
+    </button>
+   </div>
+  </header>
+  <!-- Imágenes del Encabezado (Debajo de la franja azul) -->
+  <section class="header-logos">
+   <div class="logo-container">
+    <img alt="SINEPUB Logo" class="logo-sinepub" src="images/logo.png"/>
+    <img alt="Logo HUV" class="logo-huv" src="images/HUV.jpg"/>
+   </div>
+  </section>
+  <!-- Navegación Secundaria (Inicio, Noticias, Afiliación - controla el slider) -->
+  <section class="below-header-nav">
+   <div class="container below-header-nav-container">
+    <nav class="slider-nav">
+     <!-- Nueva clase slider-nav para JS -->
+     <ul>
+      <li>
+       <a class="active" data-slide="1" href="#">
+        Inicio
+       </a>
+      </li>
+      <!-- data-slide y clase active -->
+      <li>
+       <a data-slide="2" href="#">
+        Noticias
+       </a>
+      </li>
+      <!-- data-slide -->
+      <li>
+       <a data-slide="6" href="#" id="afiliacion-link">
+        Afiliación
+       </a>
+      </li>
+      <!-- data-slide -->
+      <li>
+       <a href="publicidad.html" id="publicidad-link">
+        Publicidad
+       </a>
+      </li>
+      <!-- Link to new publicidad.html -->
+      <li>
+       <a data-slide="7" href="#" id="modulos-link" style="display: none;">
+        Módulos de Información
+       </a>
+      </li>
+      <li>
+       <a data-slide="9" href="#" id="eventos-link">
+        Eventos
+       </a>
+      </li>
+     </ul>
+    </nav>
+   </div>
+  </section>
+  <!-- Slider de imágenes -->
+  <section id="inicio">
+   <div class="slider-container">
+    <!-- Navegación entre módulos -->
+    <div class="modulos-nav">
+     <span class="modulo-dot" data-slide="7">
+     </span>
+     <span class="modulo-dot" data-slide="8">
+     </span>
+    </div>
+    <div class="modulos-nav modulos-nav-eventos">
+     <span class="modulo-dot" data-slide="9">
+     </span>
+     <span class="modulo-dot" data-slide="10">
+     </span>
+     <span class="modulo-dot" data-slide="11">
+     </span>
+     <span class="modulo-dot" data-slide="12">
+     </span>
+     <span class="modulo-dot" data-slide="13">
+     </span>
+    </div>
+    <div class="slider">
+     <div class="slide active" id="slide-1">
+      <div class="imagen-y-texto">
+       <img alt="Banner 1" class="imagen-banner" src="images/fotoportada.jpg"/>
+       <div class="texto-banner">
+        <h1>
+         Bienvenidos a SINEPUB HUV
+        </h1>
+        <p>
+         En el corazón de nuestra labor sindical yace el compromiso inquebrantable con la justicia, la equidad y el bienestar de todos los trabajadores del Hospital Universitario del Valle. En SINEPUB HUV, creemos firmemente que el trabajo digno y justo es la piedra angular del desarrollo personal y colectivo, razón por la cual luchamos día a día para defender los derechos de nuestros afiliados.
+        </p>
+        <p>
+         Somos más que un sindicato: somos una familia que protege, apoya y motiva a sus integrantes a alcanzar mejores condiciones laborales y una vida más plena. Nuestra organización está guiada por principios de solidaridad, honestidad y transparencia, asegurando que cada voz sea escuchada y cada necesidad sea atendida con el respeto y la seriedad que merece.
+        </p>
+        <div class="mision-vision">
+         <div class="mision">
+          <h3>
+           Misión
+          </h3>
+          <p>
+           Brindar un respaldo sólido e inquebrantable a nuestros afiliados, luchando incansablemente por condiciones laborales justas, equitativas y dignas. Nos esforzamos por garantizar un entorno laboral donde se respeten los derechos fundamentales y se fomenten oportunidades de crecimiento y bienestar integral.
+          </p>
+         </div>
+         <div class="vision">
+          <h3>
+           Visión
+          </h3>
+          <p>
+           Para el año 2030, aspiramos a consolidarnos como la organización sindical líder en Colombia, un referente en la defensa y promoción de los derechos de los trabajadores del sector salud. Visualizamos un futuro donde nuestros afiliados cuenten con seguridad laboral, condiciones justas y un ambiente de trabajo óptimo para su desarrollo profesional y personal.
+          </p>
+         </div>
+        </div>
+        <p>
+         El poder del cambio reside en la unidad, y en SINEPUB HUV trabajamos con el firme propósito de construir una comunidad sindical fuerte y unida, capaz de transformar la realidad de los trabajadores. Nuestro compromiso va más allá de lo contractual; buscamos el bienestar integral de cada afiliado, promoviendo el respeto, la equidad y la justicia en cada una de nuestras acciones.
+        </p>
+        <p>
+         ¡Únete a nosotros y forma parte de una organización que lucha por ti, que te escucha y que jamás dejará de trabajar para construir un futuro mejor para todos!
+        </p>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="slide" id="slide-2">
+     <!-- Slide de Noticias 1 actualizado -->
+     <div class="imagen-y-texto">
+      <img alt="Banner doctor pacheco" class="imagen-banner" src="images/junta2.jpg"/>
+      <div class="texto-banner">
+       <h3>
+        ¡Victoria Colectiva! Dr. Pacheco elegido a la Comisión de Personal
+       </h3>
+       <p>
+        <strong>
+         Fecha:
+        </strong>
+        Junio 18 de 2025
+       </p>
+       <p>
+        Con gran orgullo anunciamos el resultado de las elecciones a la Comisión de Personal, donde nuestro Vicepresidente, el Dr. Luis Fernando Pacheco, fue elegido como miembro principal al obtener la votación más alta con
+        <strong>
+         52 votos
+        </strong>
+        .
+       </p>
+       <p>
+        <strong>
+         Puntos clave de esta victoria:
+        </strong>
+       </p>
+       <ul>
+        <li>
+         ✅ Elección del Dr. Pacheco, nuestro Vicepresidente, como representante principal.
+        </li>
+        <li>
+         ✅ Obtuvo la votación más alta, asegurando una representación sólida y legítima.
+        </li>
+        <li>
+         ✅ Un triunfo de nuestro colectivo que fortalece la defensa de los derechos laborales.
+        </li>
+       </ul>
+       <p>
+        📌 Desde SINEPUB HUV agradecemos profundamente a cada afiliado que respaldó esta candidatura. Este logro demuestra que nuestra unión es nuestra mayor fortaleza.
+       </p>
+      </div>
+     </div>
+    </div>
+    <div class="slide" id="slide-3">
+     <!-- Slide de Noticias 2 -->
+     <div class="imagen-y-texto">
+      <img alt="Banner 3" class="imagen-banner" src="images/licencia_mascotas.jpeg"/>
+      <div class="texto-banner">
+       <h3>
+        Proyecto de Ley busca otorgar licencia remunerada por fallecimiento de mascotas
+       </h3>
+       <p>
+        El Congreso de Colombia ha aprobado en primer debate un proyecto de ley que permitiría a los empleados recibir un día de licencia remunerada tras el fallecimiento de sus mascotas, específicamente perros y gatos.
+       </p>
+       <p>
+        <strong>
+         Detalles:
+        </strong>
+       </p>
+       <ul>
+        <li>
+         ✅ La iniciativa es liderada por la congresista Alexandra Vásquez.
+        </li>
+        <li>
+         ✅ Se requiere un certificado veterinario para acreditar la muerte de la mascota.
+        </li>
+        <li>
+         ✅ La licencia solo podrá solicitarse una vez por año fiscal.
+        </li>
+       </ul>
+       <p>
+        📌 Desde SINEPUB HUV apoyamos esta medida que reconoce el valor emocional de las mascotas en la vida de nuestros afiliados.
+       </p>
+       <p>
+        <a href="https://www.infobae.com/colombia/2025/03/12/congreso-aprobo-en-primer-debate-proyecto-de-ley-que-busca-dar-licencia-remunerada-a-empleados-cuyos-perros-y-gatos-han-fallecido/" target="_blank">
+         Leer más
+        </a>
+       </p>
+      </div>
+     </div>
+    </div>
+    <div class="slide" id="slide-4">
+     <!-- Slide de Noticias 3 -->
+     <div class="imagen-y-texto">
+      <img alt="Banner 4" class="imagen-banner" src="images/sigep_notificacion.jpeg"/>
+      <div class="texto-banner">
+       <h3>
+        Atención servidores públicos del HUV: Certificados de ingresos 2024 y actualización en SIGEP II
+       </h3>
+       <p>
+        Se informa a todos los colaboradores del Hospital Universitario del Valle (HUV) que los certificados de ingresos correspondientes al año 2024 están siendo enviados a sus correos electrónicos registrados. Es fundamental que cada servidor público esté atento a la recepción de este documento, ya que es necesario para cumplir con la obligación de actualizar la Declaración de Bienes y Rentas en el Sistema de Información y Gestión del Empleo Público (SIGEP II).
+       </p>
+       <p>
+        <strong>
+         📅 Fechas clave para la actualización en SIGEP II:
+        </strong>
+       </p>
+       <ul>
+        <li>
+         🗓️ Del 1 de junio al 31 de julio de 2025: Periodo destinado para que los servidores públicos de entidades y organismos públicos de orden territorial, como el HUV, realicen la actualización de su Declaración de Bienes y Rentas.
+        </li>
+       </ul>
+       <p>
+        <strong>
+         ✅ Pasos a seguir:
+        </strong>
+       </p>
+       <ul>
+        <li>
+         📩 Revisión del correo electrónico institucional: Verifique la recepción del certificado de ingresos 2024.
+        </li>
+        <li>
+         🔗 Ingreso al SIGEP II: Acceda al sistema utilizando sus credenciales a través de
+         <a href="https://www1.funcionpublica.gov.co/web/sigep2" target="_blank">
+          www1.funcionpublica.gov.co
+         </a>
+         .
+        </li>
+        <li>
+         📝 Actualización de la Declaración de Bienes y Rentas: Diligencie la información correspondiente al año 2024, asegurándose de incluir todos los datos requeridos.
+        </li>
+        <li>
+         📌 Confirmación de envío: Una vez completada la actualización, confirme que la información ha sido enviada correctamente.
+        </li>
+       </ul>
+       <p>
+        ⚠️ El cumplimiento de esta obligación es esencial para garantizar la transparencia y la correcta gestión de la función pública. Se recomienda no esperar hasta el último momento para realizar este trámite y, en caso de dudas o inconvenientes, contactar al área de recursos humanos del HUV o al soporte del SIGEP II.
+       </p>
+       <p>
+        📽️ Guía paso a paso para actualizar la información en SIGEP II:
+       </p>
+       <p>
+        <a href="https://www.youtube.com/watch?v=cjG1Aw4MatY" target="_blank">
+         🎥 Ver tutorial en YouTube
+        </a>
+       </p>
+      </div>
+     </div>
+    </div>
+    <div class="slide" id="slide-5">
+     <!-- Slide de Noticias 4 con PDF -->
+     <div class="imagen-y-texto">
+      <!-- ⬅️ aquí va el display: flex -->
+      <div class="bloque-texto-video">
+       <!-- 👈 agrupador -->
+       <div class="texto-banner">
+        <h3>
+         Resolución 1843 del 2025
+        </h3>
+        <p>
+         <strong>
+          📄 Exámenes Ocupacionales y Protocolos de Salud Laboral
+         </strong>
+        </p>
+        <p>
+         La Resolución 1843 de 2025 establece los lineamientos técnicos para exámenes médicos ocupacionales en instituciones públicas. Este documento es fundamental para comprender los protocolos vigentes en salud laboral.
+        </p>
+        <p>
+         📌 Puedes consultar el documento completo directamente aquí:
+        </p>
+       </div>
+       <div class="video-explicativo">
+        <h4>
+         🎥 Video Explicativo sobre la Resolución
+        </h4>
+        <video class="plyr-video" controls="" id="player-resolucion" playsinline="" style="width: 100%; max-width: 360px; height: auto; margin-top: 15px; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 0 8px rgba(0,0,0,0.2);">
+         <source src="videos/explicacion_resolucion_1843.mp4" type="video/mp4"/>
+         Tu navegador no soporta video HTML5.
+         <a href="videos/explicacion_resolucion_1843.mp4" target="_blank">
+          Descargar video
+         </a>
+        </video>
+       </div>
+      </div>
+      <!-- Visor PDF.js como en slide 7/8 -->
+      <div class="pdf-viewer-container-video" id="pdf-viewer-slide5">
+       <!-- Canvases se generan con JS -->
+      </div>
+     </div>
+    </div>
+    <div class="slide" id="slide-6">
+     <!-- SLIDE para Afiliación -->
+     <div class="imagen-y-texto afiliacion-container">
+      <!-- Contenedor para organizar PDF y texto -->
+      <!-- Visor de PDF -->
+      <iframe id="pdfViewer" src="pdfjs/web/viewer.html?file=/Afiliacion.pdf#toolbar=0&amp;navpanes=0&amp;view=FitH" style="width:100%;height:700px;border:none;">
+      </iframe>
+      <!-- Explicación a la derecha -->
+      <div class="texto-banner afiliacion-info">
+       <h1>
+        Formulario de Afiliación
+       </h1>
+       <p>
+        Por favor, llena el formulario interactivo directamente en el visor de PDF. Una vez completado, usa el botón de descarga para guardarlo con tus datos.
+       </p>
+       <p>
+        Después de descargarlo, imprime el formulario y llévalo a la oficina de SINEPUB en el
+        <strong>
+         séptimo piso de la Torre Capilla
+        </strong>
+        . Asegúrate de agregar tu firma y huella antes de entregarlo.
+       </p>
+       <!-- Botón para descargar PDF llenado -->
+       <button class="boton-descargar" id="downloadPdf">
+        Descargar Formulario Lleno
+       </button>
+      </div>
+     </div>
+    </div>
+    <div class="slide" id="slide-7">
+     <!-- NUEVO SLIDE para Módulos de Formación -->
+     <div class="imagen-y-texto">
+      <div class="texto-banner">
+       <h1>
+        Módulo aportado por JURARKO
+       </h1>
+       <p>
+        📚
+        <strong>
+         Disponibilidad Laboral del Empleado Público
+        </strong>
+       </p>
+       <p>
+        En el entorno laboral del sector público, comprender la disponibilidad laboral es clave para garantizar el cumplimiento de las responsabilidades sin afectar los derechos fundamentales de los trabajadores.
+       </p>
+       <p>
+        Este módulo de formación, basado en el concepto emitido por el
+        <strong>
+         colaborador JURARKO
+        </strong>
+        , explora los fundamentos legales y las normas que rigen la disponibilidad de los empleados públicos, incluyendo:
+       </p>
+       <ul>
+        <li>
+         ✅ Diferencias entre jornada laboral, disponibilidad y trabajo suplementario.
+        </li>
+        <li>
+         ✅ Derechos y deberes del trabajador ante solicitudes fuera del horario laboral.
+        </li>
+        <li>
+         ✅ Cómo se reconoce el trabajo adicional (remuneración vs. compensación en tiempo).
+        </li>
+        <li>
+         ✅ El derecho a la desconexión laboral y su aplicación en el sector salud.
+        </li>
+        <li>
+         ✅ Casos específicos aplicables al Hospital Universitario del Valle.
+        </li>
+       </ul>
+       <p>
+        🔹
+        <strong>
+         Este documento es una guía esencial
+        </strong>
+        para comprender los límites y derechos en torno a la disponibilidad laboral y su impacto en la vida personal y profesional de los trabajadores del sector salud.
+       </p>
+      </div>
+      <!-- Contenedor del visor PDF.js en slide-7 -->
+      <div class="pdf-viewer-container" id="pdf-viewer-slide7" style="width: 100%; height: 700px; position: relative;">
+       <canvas id="pdf-canvas-slide7">
+       </canvas>
+       <div class="loading-overlay">
+        Cargando documento...
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="slide" id="slide-8">
+     <!-- NUEVO SLIDE para Módulos de Formación -->
+     <div class="imagen-y-texto">
+      <div class="texto-banner">
+       <h1>
+        Acuerdo No. 020 de la ESAP
+       </h1>
+       <p>
+        📚
+        <strong>
+         Beneficios Académicos del Acuerdo Nacional Estatal
+        </strong>
+       </p>
+       <p>
+        El conocimiento y la educación son herramientas clave para fortalecer el ejercicio profesional en el sector público. Como parte del
+        <strong>
+         Acuerdo Nacional Estatal 2023
+        </strong>
+        , se ha establecido un beneficio exclusivo para los servidores públicos sindicalizados:
+       </p>
+       <ul>
+        <li>
+         ✅ Exoneración del 50% en matrículas de especializaciones y maestrías en la ESAP.
+        </li>
+        <li>
+         ✅ Acceso a formación de alto nivel para fortalecer la capacidad de gestión y liderazgo.
+        </li>
+        <li>
+         ✅ Oportunidad para mejorar competencias técnicas y administrativas en el sector público.
+        </li>
+        <li>
+         ✅ Compromiso del Gobierno Nacional con la educación continua de los trabajadores del Estado.
+        </li>
+       </ul>
+       <p>
+        🔹
+        <strong>
+         Este documento es una guía esencial
+        </strong>
+        para conocer los beneficios educativos para los afiliados sindicales.
+       </p>
+      </div>
+      <!-- Contenedor del visor PDF.js en slide-8 -->
+      <div class="pdf-viewer-container" id="pdf-viewer-slide8" style="width: 100%; height: 700px; position: relative;">
+       <canvas id="pdf-canvas-slide8">
+       </canvas>
+       <div class="loading-overlay">
+        Cargando documento...
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="slide" id="slide-9">
+     <div class="imagen-y-texto">
+      <div class="galeria-evento">
+       <div class="imagenes-galeria">
+        <img alt="Evento 1" src="images/eventos1.jpg"/>
+        <img alt="Evento 2" src="images/eventos2.jpg"/>
+        <img alt="Evento 3" src="images/eventos3.jpg"/>
+        <img alt="Evento 4" src="images/eventos4.jpg"/>
+        <img alt="Evento 5" src="images/eventos5.jpg"/>
+        <img alt="Evento 6" src="images/eventos6.jpg"/>
+        <img alt="Evento 7" src="images/eventos7.jpg"/>
+       </div>
+      </div>
+      <div class="texto-banner">
+       <h3>
+        INAUGURACIÓN PÁGINA WEB
+       </h3>
+       <p>
+        <strong>
+         Fecha:
+        </strong>
+        4 de abril de 2025
+       </p>
+       <p>
+        Celebramos juntos la inauguración oficial de la nueva página web de SINEPUB HUV...
+       </p>
+      </div>
+     </div>
+    </div>
+    <div class="slide" id="slide-10">
+     <div class="imagen-y-texto">
+      <div class="galeria-evento">
+       <div class="imagenes-galeria">
+        <img alt="Evento 8" src="images/eventos8.jpg"/>
+        <img alt="Evento 9" src="images/eventos9.jpg"/>
+        <img alt="Evento 10" src="images/eventos10.jpg"/>
+        <img alt="Evento 11" src="images/eventos11.jpg"/>
+        <img alt="Evento 12" src="images/eventos12.jpg"/>
+        <img alt="Evento 13" src="images/eventos13.jpg"/>
+        <img alt="Evento 14" src="images/eventos14.jpg"/>
+       </div>
+      </div>
+      <div class="texto-banner">
+       <h3>
+        celebración del día de nuestros afiliad@s  administrativ@s.
+       </h3>
+       <p>
+        <strong>
+         Fecha:
+        </strong>
+        25 de abril de 2025
+       </p>
+       <p>
+        Desde SINEPUB HUV reconocemos la dedicación y compromiso de nuestros compañer@s.
+       </p>
+      </div>
+     </div>
+    </div>
+    <div class="slide" id="slide-11">
+     <div class="imagen-y-texto">
+      <div class="galeria-evento">
+       <div class="imagenes-galeria">
+        <img alt="Evento 15" src="images/eventos15.jpg"/>
+        <img alt="Evento 16" src="images/eventos16.jpg"/>
+        <img alt="Evento 17" src="images/eventos17.jpg"/>
+        <img alt="Evento 18" src="images/eventos18.jpg"/>
+        <img alt="Evento 19" src="images/eventos19.jpg"/>
+        <img alt="Evento 20" src="images/eventos20.jpg"/>
+        <img alt="Evento 21" src="images/eventos21.jpg"/>
+        <img alt="Evento 22" src="images/eventos22.jpg"/>
+        <img alt="Evento 23" src="images/eventos23.jpg"/>
+        <img alt="Evento 24" src="images/eventos24.jpg"/>
+        <img alt="Evento 25" src="images/eventos25.jpg"/>
+       </div>
+      </div>
+      <div class="texto-banner">
+       <h3>
+        Celebración de su día laboral a los compañern@s de Enfermería, Trabajo Social, Técnica Respiratoria y Auxiliares de Enfermería.
+       </h3>
+       <p>
+        <strong>
+         Fecha:
+        </strong>
+        16 Mayo 2025
+       </p>
+       <p>
+        Desde SINEPUB HUV reconocemos la dedicación y compromiso de nuestros compañer@s.
+       </p>
+      </div>
+     </div>
+    </div>
+    <!-- =================== INICIO NUEVO EVENTO SLIDE 12 =================== -->
+    <div class="slide" id="slide-12">
+     <div class="imagen-y-texto">
+      <div class="galeria-evento">
+       <div class="imagenes-galeria">
+        <!-- IMPORTANTE: Reemplaza estos nombres con los de tus 6 fotos nuevas -->
+        <img alt="Mesa de participación 1" src="images/evento-becas-1.jpeg"/>
+        <img alt="Mesa de participación 2" src="images/evento-becas-2.jpeg"/>
+        <img alt="Mesa de participación 3" src="images/evento-becas-3.jpeg"/>
+        <img alt="Mesa de participación 4" src="images/evento-becas-4.jpeg"/>
+        <img alt="Mesa de participación 5" src="images/evento-becas-5.jpeg"/>
+        <img alt="Mesa de participación 6" src="images/evento-becas-6.jpeg"/>
+       </div>
+      </div>
+      <div class="texto-banner">
+       <h3>
+        Mesa de Participación Social por Becas
+       </h3>
+       <!-- IMPORTANTE: No olvides poner la fecha correcta del evento -->
+       <p>
+        <strong>
+         Fecha:
+        </strong>
+        06 de Junio 2025
+       </p>
+       <p>
+        Participación activa en la mesa de participación social por parte del Ministerio de Trabajo, con el fin de lograr la firma del acta para la distribución de las becas.
+       </p>
+      </div>
+     </div>
+    </div>
+    <div class="slide" id="slide-13">
+     <div class="imagen-y-texto">
+      <div class="galeria-evento">
+       <div class="imagenes-galeria">
+        <!-- IMPORTANTE: Reemplaza estos nombres con los de tus 3 fotos nuevas -->
+        <img alt="Capacitación acoso laboral 1" src="images/evento-acoso-1.jpeg"/>
+        <img alt="Capacitación acoso laboral 2" src="images/evento-acoso-2.jpeg"/>
+        <img alt="Capacitación acoso laboral 3" src="images/evento-acoso-3.jpeg"/>
+       </div>
+      </div>
+      <div class="texto-banner">
+       <h3>
+        Capacitación sobre Acoso Sexual Laboral
+       </h3>
+       <!-- IMPORTANTE: No olvides poner la fecha correcta del evento -->
+       <p>
+        <strong>
+         Fecha:
+        </strong>
+        20 de Junio 2025
+       </p>
+       <p>
+        Participación en la capacitación del Mintrabajo sobre acoso sexual en el entorno laboral.
+       </p>
+      </div>
+     </div>
+    </div>
+   </div>
+   <div class="slider-dots">
+    <!-- NUEVO DIV para los circulitos -->
+    <!-- Los circulitos se generarán aquí con JavaScript -->
+   </div>
+   <!-- NUEVO Modal PDF centrado -->
+   <div class="pdf-modal hidden" id="modal-pdf-viewer">
+    <div class="pdf-modal-content">
+     <span class="close-modal" id="close-pdf-modal">
+      ×
+     </span>
+     <div class="pdf-viewer-container" id="modal-pdf-container">
+     </div>
+    </div>
+   </div>
+   <button class="prev-slide" style="display: none;">
+    ❮
+   </button>
+   <button class="next-slide" style="display: none;">
+    ❯
+   </button>
+  </section>
+  <!-- Pie de página -->
+  <footer>
+   <div class="container">
+    <p>
+     © 2025 SINEPUB. Todos los derechos reservados.
+    </p>
+    <div class="footer-logos">
+     <img alt="Logo Confederacion" src="images/confederacion.jpg"/>
+     <img alt="Logo Propais" src="images/propais.png"/>
+     <img alt="Logo Fedetradh" src="images/fedetradh.png"/>
+    </div>
+    <div class="contacto">
+     <div class="informacion-y-mapa">
+      <div class="informacion">
+       <h1 class="titulo-contacto">
+        Contacto
+       </h1>
+       <p>
+        ¿Tienes dudas o necesitas más información? Contáctanos a traves de nuestros medios digitales:
+       </p>
+       <ul>
+        <li>
+         Email: sinepubhuv@gmail.com
+        </li>
+        <li>
+         Dirección: Calle 5 No. 36 - 08 Piso 7°. Cali, Valle del Cauca
+        </li>
+       </ul>
+       <div class="footer-redes-sociales">
+        <a href="https://www.facebook.com/people/Sindicato-de-Empleados-P%25C3%25BAblicos-Sinepub-HUV/100064330442393/" target="_blank">
+         <img alt="Facebook" src="images/icono.facebook.jpg"/>
+        </a>
+        <a href="https://web.whatsapp.com/send/?phone=%2B573163218579&amp;context=ARA_Q_pzjXz8Xc1JNzpw6upSuHE9w825NQlneatdpHwu0FO26cq6ivICcbMORKR3pT_4HzmNl_Aky2IRu_neaai7HKXVwhT1CacJzpFOFANuNKjQwbhTfwQdfhk1G2rnGTY71RB49Bl3Z1bkuaivHvfxoQ&amp;source=FB_Page&amp;app=facebook&amp;entry_point=page_cta&amp;fbclid=IwY2xjawH62IxleHRuA2FlbQIxMAABHaz7Q3eybwVxMxtEi601LIJaVaPH6ttX5OI1SOxoXrV8GD8D5at1P_aksg_aem_fRKBzcZnA3IH1JogroXN_g" target="_blank">
+         <img alt="WhatsApp" src="images/icono.whatsapp.png"/>
+        </a>
+       </div>
+      </div>
+      <div class="mapa">
+       <div class="mapa-titulo">
+        <h1 class="titulo-como-llegar">
+         Cómo llegar
+        </h1>
+        <iframe allowfullscreen="" frameborder="0" height="450" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3979.755111111111!2d-76.5473703!3d3.4306492!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e30a69c440a28bb%3A0xca12ae041f48a3b8!2sCl.+5+%2336%2C+El+Sindicato%2C+Cali%2C+Valle+del+Cauca!5e0!3m2!1ses-419!2sco!4v1667243455555!5m2!1ses-419!2sco" style="border:0" width="600">
+        </iframe>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </footer>
+  <!-- CONTENEDOR DEL MENÚ MÓVIL LATERAL - Añadido aquí -->
+  <div aria-hidden="true" class="mobile-menu" id="mobile-menu-container">
+   <!-- El contenido (la lista ul) será clonado aquí por JavaScript -->
+  </div>
+  <!-- Botón flotante con restricción de acceso -->
+  <div id="boton-flotante">
+   <button id="chatbot-button">
+    🗣️ Acceder a los Beneficios (Solo Afiliados)
+   </button>
+  </div>
+  <!-- Contenedor del chatbot -->
+  <!--<div id="chatbot-container" style="display: none;"></div> -->
+  <!-- Contenedor del video de la IA (inicialmente oculto) -->
+  <div class="ai-video-container" id="ai-video-container" style="display: none;">
+   <div class="video-wrapper">
+    <!-- Video de espera (idle) -->
+    <video autoplay="" class="ai-avatar-video active" id="idle-video" loop="" muted="" playsinline="" preload="auto">
+     <source src="1.mp4" type="video/mp4"/>
+     Tu navegador no soporta videos HTML5.
+    </video>
+    <!-- Video de habla (speaking) -->
+    <video autoplay="" class="ai-avatar-video" id="speaking-video" loop="" muted="" playsinline="" preload="auto">
+     <source src="2.mp4" type="video/mp4"/>
+     Tu navegador no soporta videos HTML5.
+    </video>
+   </div>
+  </div>
+  <script>
+   if (window.Plyr) {
+                new Plyr('#player-resolucion');
+            }
+  </script>
+  <!-- Scripts críticos que deben cargarse inmediatamente y en orden -->
+  <script src="config.js">
+  </script>
+  <script src="publicidad.js">
+  </script>
+  <script src="auth-popup.js">
+  </script>
+  <!-- Scripts no críticos que pueden cargarse después -->
+  #<script defer="" src="noticia-urgente.js">
+  </script>
+  <script defer="" src="profile-checker.js">
+  </script>
+  <script defer="" src="slider.js">
+  </script>
+  <script defer="" src="pdf.js">
+  </script>
+  <script defer="" src="chat-integration.js">
+  </script>
+  <script defer="" src="chat-button.js">
+  </script>
+  <script defer="" src="chatbot-access.js">
+  </script>
+  <script defer="" src="afiliacion.js">
+  </script>
+  <script defer="" src="menu-mobile.js">
+  </script>
+  <script defer="" src="video-bienvenida.js">
+  </script>
+ </body>
+</html>
+
 
