@@ -178,6 +178,44 @@ function initSlider() {
         // });
     }
 
+    // --- ENLACES DIRECTOS (query/hash) ---
+    function goToSlideByNumber(n) {
+        // n: "6" -> data-slide="6" (click al tab)
+        const link = document.querySelector(`.slider-nav a[data-slide="${n}"]`);
+        if (link) {
+            link.click();             // usa tu listener ya existente
+            stopAutoplay();           // coherente con interacción usuario
+            resetInactivityTimer();
+            return true;
+        }
+        return false;
+    }
+
+    function openSlideFromUrl() {
+        const url = new URL(window.location.href);
+        // Prioridad 1: ?slide=6
+        let target = url.searchParams.get('slide');
+
+        // Prioridad 2: #afiliacion o #slide-6
+        if (!target && window.location.hash) {
+            const hash = window.location.hash.replace('#','').toLowerCase();
+            if (hash === 'afiliacion') target = '6';
+            else if (/^slide-(\d+)$/.test(hash)) target = hash.split('-')[1];
+        }
+
+        if (target && /^\d+$/.test(target)) {
+            // si no pudo clickear (por alguna razón), llama updateSlide()
+            if (!goToSlideByNumber(target)) {
+                const idx = parseInt(target, 10) - 1; // base 0
+                if (!Number.isNaN(idx)) {
+                    updateSlide(idx);
+                    stopAutoplay();
+                    resetInactivityTimer();
+                }
+            }
+        }
+    }
+
     function updateSlide(slideIndex) {
         // Asegurar que el índice esté dentro de los límites
         if (slideIndex < 0) {
@@ -387,6 +425,24 @@ function initSlider() {
     setupModuleNavigation(); // Configurar navegación de módulos (si es necesario)
     updateSlide(0);         // Mostrar el slide inicial (índice 0)
     startAutoplay();        // Iniciar autoplay (ciclará noticias)
+    openSlideFromUrl();     // si la URL trae ?slide=6 o #afiliacion / #slide-6, ir allí
     resetInactivityTimer(); // Iniciar el contador de inactividad
 
 } // <-- CIERRE CORRECTO DE LA FUNCIÓN initSlider
+
+window.addEventListener('hashchange', () => {
+    // Re-ejecuta la apertura por hash cuando cambie #afiliacion o #slide-6
+    if (typeof initSlider === 'function') {
+        // Si quieres que funcione sin recargar, encuentra y “simula” un click
+        const hash = window.location.hash.replace('#','').toLowerCase();
+        if (hash === 'afiliacion') {
+            const link = document.querySelector(`.slider-nav a[data-slide="6"]`);
+            if (link) link.click();
+        } else if (/^slide-(\d+)$/.test(hash)) {
+            const n = hash.split('-')[1];
+            const link = document.querySelector(`.slider-nav a[data-slide="${n}"]`);
+            if (link) link.click();
+        }
+    }
+});
+
