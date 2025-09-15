@@ -1002,8 +1002,9 @@ function initAuthUIState() {
 
     if (isAuthed) {
         if (authBtnContainer) authBtnContainer.style.display = 'none';
-        if (chatContainer) chatContainer.style.display = 'block';
-        if (videoContainer) videoContainer.style.display = 'block';
+        // Mantener ocultos chat y video hasta que el usuario abra el chat
+        if (chatContainer) chatContainer.style.display = 'none';
+        if (videoContainer) videoContainer.style.display = 'none';
 
         // Asegurar boton flotante real
         if (!floatingButton) {
