@@ -984,6 +984,58 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
     }, 100);
 }
 
+// Inicializador unico del estado de la UI segun autenticacion
+function initAuthUIState() {
+    const isAuthed = localStorage.getItem('afiliado_autenticado') === 'true';
+
+    const authBtnContainer = document.getElementById('boton-flotante');
+    const chatContainer = document.getElementById('chatbot-container');
+    const videoContainer = document.getElementById('ai-video-container');
+
+    // Detectar boton flotante creado por chat-button.js o fallback local
+    let floatingButton = document.getElementById('chat-float-button') || document.querySelector('.chat-flotante');
+
+    const linkEstatutos = document.getElementById('estatutos-link');
+    const linkEstatutosMobile = document.getElementById('estatutos-link-mobile');
+    const linkModulos = document.getElementById('modulos-link');
+    const linkAfiliacion = document.getElementById('afiliacion-link');
+
+    if (isAuthed) {
+        if (authBtnContainer) authBtnContainer.style.display = 'none';
+        if (chatContainer) chatContainer.style.display = 'block';
+        if (videoContainer) videoContainer.style.display = 'block';
+
+        // Asegurar boton flotante real
+        if (!floatingButton) {
+            if (typeof window.createChatButton === 'function') {
+                floatingButton = window.createChatButton();
+            } else if (typeof window.crearBotonFlotante === 'function') {
+                floatingButton = window.crearBotonFlotante();
+            }
+        }
+        if (floatingButton) floatingButton.style.display = 'flex';
+
+        // Links visibles para afiliados
+        if (linkEstatutos) linkEstatutos.style.display = 'inline';
+        if (linkEstatutosMobile) linkEstatutosMobile.style.display = 'block';
+        if (linkModulos) linkModulos.style.display = 'inline';
+        if (linkAfiliacion) linkAfiliacion.style.display = 'none';
+    } else {
+        if (authBtnContainer) authBtnContainer.style.display = 'block';
+        if (chatContainer) chatContainer.style.display = 'none';
+        if (videoContainer) videoContainer.style.display = 'none';
+
+        // Ocultar boton flotante si existe
+        if (floatingButton) floatingButton.style.display = 'none';
+
+        // Estado de links para no afiliados
+        if (linkEstatutos) linkEstatutos.style.display = 'none';
+        if (linkEstatutosMobile) linkEstatutosMobile.style.display = 'none';
+        if (linkModulos) linkModulos.style.display = 'none';
+        if (linkAfiliacion) linkAfiliacion.style.display = 'inline';
+    }
+}
+
 // Exponer funciones globalmente
 window.showAuthPopup = showAuthPopup;
 window.verifyCedula = verifyCedula;
@@ -993,6 +1045,32 @@ window.mostrarFormularioCompletarPerfilObligatorio = mostrarFormularioCompletarP
 window.bloquearBoton = bloquearBoton;
 window.activarChatbot = activarChatbot;
 window.verificarPerfilUsuario = verificarPerfilUsuario;
+
+// Inicializacion unica al cargar el DOM (consolida duplicados)
+document.addEventListener('DOMContentLoaded', async () => {
+    const chatButton = document.getElementById('chatbot-button');
+    const conexionActiva = await verificarConexionBackend();
+    localStorage.setItem('backend_inactivo', conexionActiva ? 'false' : 'true');
+
+    if (!conexionActiva && chatButton) {
+        chatButton.disabled = true;
+        chatButton.style.backgroundColor = '#888';
+        chatButton.style.color = '#fff';
+        chatButton.style.cursor = 'not-allowed';
+        chatButton.innerHTML = 'Servidor inactivo';
+        chatButton.title = 'No se pudo conectar al servidor. Intenta mas tarde.';
+    }
+
+    // Levantar la UI correcta segun localStorage
+    initAuthUIState();
+
+    // Click del boton principal para abrir autenticacion
+    if (chatButton) {
+        chatButton.addEventListener('click', () => {
+            showAuthPopup();
+        });
+    }
+});
 
 
 // Función para mostrar mensajes de error
@@ -1165,7 +1243,9 @@ async function mostrarPopupBienvenidaPersonalizado() {
     continuarBtn.addEventListener("click", () => {
         popupBienvenida.remove();
         document.getElementById("auth-popup")?.remove();
-        activarChatbot();
+        // Reconstituir UI y opcionalmente abrir chat
+        initAuthUIState();
+        // activarChatbot(); // opcional si quieres auto-abrir chat
     });
 }
 
