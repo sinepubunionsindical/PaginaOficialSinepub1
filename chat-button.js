@@ -366,7 +366,7 @@ function mostrarPanelEstadisticasUsuario() {
     
     // Validar que la cédula esté y exista el backend
     if (cedula && window.API_ENDPOINTS?.perfil) {
-        fetch(window.API_ENDPOINTS.perfil.replace('{cedula}', cedula), {    
+        fetch(window.API_ENDPOINTS.perfil(cedula), {    
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -739,7 +739,7 @@ async function handleProfileUpdate(event) {
     submitButton.textContent = 'Guardando...';
 
     try {
-        const response = await fetch(window.API_ENDPOINTS.actualizarPerfil, {
+        const response = await fetch(window.API_ENDPOINTS.perfilActualizar, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
