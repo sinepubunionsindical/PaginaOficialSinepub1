@@ -533,7 +533,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 
                 // Enviar datos al backend
-                const backendApiUrl = window.API_ENDPOINTS?.publicidad || `${getBackendUrl()}/api/publicidad`;
+                const backendApiUrl = window.API_ENDPOINTS.publicidad;
                 
                 // Deshabilitar formulario durante envío
                 const submitBtn = document.getElementById("btn-guardar");
@@ -591,7 +591,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Obtener datos del solicitante desde localStorage
         const nombreSolicitante = localStorage.getItem('nombre') || 'No disponible';
         const cedulaSolicitante = localStorage.getItem('cedula') || 'No disponible';
-        const correoSolicitante = localStorage.getItem('email') || 'No disponible';
+        const correoSolicitante = localStorage.getItem('correo') || 'No disponible';
         const telefonoSolicitante = localStorage.getItem('telefono') || 'No disponible';
         
         // Agregar la información del solicitante a los datos de la publicidad
@@ -687,7 +687,7 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     async function cargarAnuncios() {
         try {
-            const backendApiUrl = window.API_ENDPOINTS?.publicidad || `${getBackendUrl()}/api/publicidad`;
+            const backendApiUrl = window.API_ENDPOINTS.publicidad;
             console.log(`📞 Cargando anuncios desde GET ${backendApiUrl}...`);
 
             const response = await fetch(backendApiUrl, {
@@ -877,7 +877,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     }
                                 
                                     try {
-                                        const respuesta = await fetch(`${getBackendUrl()}/api/ya_comento/${anuncioId}/${cedula}`, {
+                                        const respuesta = await fetch(window.API_ENDPOINTS.yaComento(anuncioId, cedula), {
                                             method: "GET",
                                             headers: {
                                                 "Accept": "application/json",
@@ -927,7 +927,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     }
 
                                     try {
-                                        const backendUrl = `${getBackendUrl()}/api/comentar/${anuncio.id}`;
+                                        const backendUrl = window.API_ENDPOINTS.comentar(anuncio.id);
                                         const response = await fetch(backendUrl, {
                                             method: "POST",
                                             headers: {
@@ -970,7 +970,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                         contenedorComentarios.innerHTML = `<p style="color:#999;">Cargando comentarios...</p>`;
                                 
                                         try {
-                                            const backendUrl = `${getBackendUrl()}/api/comentarios/${anuncio.id}`;
+                                            const backendUrl = window.API_ENDPOINTS.comentarios(anuncio.id);
                                             const response = await fetch(backendUrl, {
                                                 method: "GET",
                                                 headers: {
@@ -1088,8 +1088,7 @@ document.addEventListener('DOMContentLoaded', function() {
  * @param {string} anuncioId - ID único del anuncio.
  */
 async function darLike(anuncioId) {
-    const likeEndpoint = window.API_ENDPOINTS?.like;
-    const urlLike = likeEndpoint ? `${likeEndpoint}/${anuncioId}` : null;
+    const urlLike = window.API_ENDPOINTS.like(anuncioId);
     const cedula = localStorage.getItem("cedula");
 
     if (!urlLike || !cedula) {

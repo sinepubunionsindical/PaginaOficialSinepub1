@@ -10,7 +10,7 @@ const API_KEYS = {
 };
 
 // URL de backend centralizada usando ngrok
-const BACKEND_URL = 'https://b9f1966bcf71.ngrok-free.app';
+const BACKEND_URL = 'https://c23d43923842.ngrok-free.app';
 
 // Modo de depuración - cambia a true para usar localhost en lugar de ngrok
 // Si hay problemas con ngrok, cambiar a true
@@ -22,24 +22,19 @@ const EFFECTIVE_URL = DEBUG_MODE ? LOCAL_URL : BACKEND_URL;
 
 // Funciones para APIs específicas
 const API_ENDPOINTS = {
-    base: EFFECTIVE_URL,
-    publicidad: `${EFFECTIVE_URL}/api/publicidad`,
-    perfil: `${EFFECTIVE_URL}/api/perfil/{cedula}`,
-    meGusta: `${EFFECTIVE_URL}/api/me-gusta`,
-    afiliacion: `${EFFECTIVE_URL}/api/afiliacion`,
-    afiliados: `${EFFECTIVE_URL}/api/afiliados`,
-    validarCodigo: `${EFFECTIVE_URL}/api/validar-codigo`,
-    verificarCedula: `${EFFECTIVE_URL}/api/verificar_cedula`,
-    like: `${EFFECTIVE_URL}/api/like`,
-    comentar: `${EFFECTIVE_URL}/api/comentar`,
-    obtenerComentarios: `${EFFECTIVE_URL}/api/comentarios`,
-    yaComento: `${EFFECTIVE_URL}/api/ya_comento`, 
-    ia: `${EFFECTIVE_URL}/ia`,
-    iaInit: `${EFFECTIVE_URL}/ia-init`,
-    iaContextual: `${EFFECTIVE_URL}/ia-contextual`,
-    enviarPDFLleno: `${EFFECTIVE_URL}/api/enviar_pdf_lleno`,
-    actualizarPerfil: `${EFFECTIVE_URL}/api/perfil/actualizar`
+  base: EFFECTIVE_URL,
+  publicidad: `${EFFECTIVE_URL}/api/publicidad`,
+  verificarCedula: `${EFFECTIVE_URL}/api/verificar_cedula`,
+  perfil: (cedula) => `${EFFECTIVE_URL}/api/perfil/${cedula}`,
+  perfilFoto: (cedula) => `${EFFECTIVE_URL}/api/perfil_foto_base64/${cedula}`,
+  perfilActualizar: `${EFFECTIVE_URL}/api/perfil/actualizar`,
+  like: (id) => `${EFFECTIVE_URL}/api/like/${id}`,
+  comentar: (id) => `${EFFECTIVE_URL}/api/comentar/${id}`,
+  comentarios: (id) => `${EFFECTIVE_URL}/api/comentarios/${id}`,
+  yaComento: (id, cedula) => `${EFFECTIVE_URL}/api/ya_comento/${id}/${cedula}`,
+  enviarPDFLleno: `${EFFECTIVE_URL}/api/enviar_pdf_lleno`
 };
+
 
 // Exportar las claves y URLs para uso en otros archivos
 window.API_KEYS = API_KEYS;

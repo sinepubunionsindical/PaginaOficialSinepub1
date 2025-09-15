@@ -450,7 +450,7 @@ function mostrarPopupContrasena(nombre, cargo, mensajeBienvenida) {
 
                 const verificarPerfil = async () => {
                     try {
-                        const perfilResponse = await fetch(`${getBackendUrl()}/api/perfil/${cedula}`, {
+                        const perfilResponse = await fetch(window.API_ENDPOINTS.perfil(cedula), {
                             method: 'GET',
                             headers: {
                                 'Accept': 'application/json',
@@ -728,8 +728,8 @@ function mostrarFormularioCompletarPerfilObligatorio(cedula, nombre, correo = ""
                 foto: fotoValue
             };
             
-            fetch(`${getBackendUrl()}/actualizar_perfil`, {
-                method: 'POST',
+            fetch(window.API_ENDPOINTS.perfilActualizar, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
@@ -747,7 +747,6 @@ function mostrarFormularioCompletarPerfilObligatorio(cedula, nombre, correo = ""
                     // Actualizar localStorage con todos los datos
                     localStorage.setItem('nombre', nombreValue);
                     localStorage.setItem('correo', correoValue);
-                    localStorage.setItem('email', correoValue);
                     localStorage.setItem('perfil_completo', 'true');
                     localStorage.setItem('afiliado', 'yes');
                     if (telefonoValue) {
@@ -1023,7 +1022,6 @@ function getBackendUrl() {
 }
 
 function verificarPerfilEnBackend() {
-    const backendUrl = getBackendUrl();
     const cedula = window.cedulaAutenticada;
     
     if (!cedula) {
@@ -1034,7 +1032,7 @@ function verificarPerfilEnBackend() {
     
     console.log("🔍 Verificando perfil para cédula en memoria");
     
-    fetch(`${backendUrl}/obtener_perfil/${cedula}`)
+    fetch(window.API_ENDPOINTS.perfil(cedula))
         .then(response => {
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             return response.json();
@@ -1058,12 +1056,11 @@ function verificarPerfilEnBackend() {
 }
 
 function enviarDatosPerfil(datos) {
-    const backendUrl = getBackendUrl();
     
     console.log(" Enviando datos de perfil:", {...datos, foto: datos.foto ? '(Base64 imagen)' : null});
 
-    fetch(`${backendUrl}/actualizar_perfil`, {
-        method: 'POST',
+    fetch(window.API_ENDPOINTS.perfilActualizar, {
+        method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
@@ -1099,7 +1096,7 @@ async function mostrarPopupBienvenidaPersonalizado() {
     let fotoPublica = "";
 
     try {
-        const response = await fetch(`${getBackendUrl()}/api/perfil_foto_base64/${cedula}`, {
+        const response = await fetch(window.API_ENDPOINTS.perfilFoto(cedula), {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
