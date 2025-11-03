@@ -1363,11 +1363,13 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
     transform: translateY(-50%);
     width: 90%;
     max-width: 800px;
+    max-height: 90vh; /* Altura máxima del 90% de la ventana */
     padding: 25px;
     border-radius: 15px; /* Bordes un poco más pronunciados */
     border: 1px solid rgba(221, 221, 221, 0.5); /* Borde más sutil */
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); /* Sombra más profesional */
     z-index: 10001;
+    overflow-y: auto; /* Permitir scroll vertical si es necesario */
 
     /* --- Mejora 1: Entrada con "Rebote" --- */
     transition: right 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
@@ -1412,14 +1414,20 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
 
 /* --- Mejora 2: Animación en Cascada (Stagger) para el texto --- */
 .noticia-urgente-contenido h3,
-.noticia-urgente-contenido p {
+.noticia-urgente-contenido p,
+.noticia-urgente-contenido .elektra-capacidades,
+.noticia-urgente-contenido .elektra-cta,
+.noticia-urgente-contenido .elektra-tip {
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 0.5s ease-out, transform 0.5s ease-out;
 }
 
 .noticia-urgente-container.active .noticia-urgente-contenido h3,
-.noticia-urgente-container.active .noticia-urgente-contenido p {
+.noticia-urgente-container.active .noticia-urgente-contenido p,
+.noticia-urgente-container.active .noticia-urgente-contenido .elektra-capacidades,
+.noticia-urgente-container.active .noticia-urgente-contenido .elektra-cta,
+.noticia-urgente-container.active .noticia-urgente-contenido .elektra-tip {
     opacity: 1;
     transform: translateY(0);
 }
@@ -1431,17 +1439,14 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
 .noticia-urgente-container.active .noticia-urgente-contenido p:nth-of-type(1) {
     transition-delay: 0.5s;
 }
-.noticia-urgente-container.active .noticia-urgente-contenido p:nth-of-type(2) {
+.noticia-urgente-container.active .noticia-urgente-contenido .elektra-capacidades {
     transition-delay: 0.6s;
 }
-.noticia-urgente-container.active .noticia-urgente-contenido p:nth-of-type(3) {
+.noticia-urgente-container.active .noticia-urgente-contenido .elektra-cta {
     transition-delay: 0.7s;
 }
-.noticia-urgente-container.active .noticia-urgente-contenido p:nth-of-type(4) {
+.noticia-urgente-container.active .noticia-urgente-contenido .elektra-tip {
     transition-delay: 0.8s;
-}
-.noticia-urgente-container.active .noticia-urgente-contenido p:nth-of-type(5) {
-    transition-delay: 0.9s;
 }
 
 .noticia-urgente-contenido h3 {
@@ -1484,12 +1489,98 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
     box-shadow: 0 6px 20px rgba(0,0,0,0.4); /* Sombra más dramática al interactuar */
 }
 
+/* === Estilos para las capacidades de ELEKTRA === */
+.elektra-capacidades {
+    background: rgba(255, 255, 255, 0.6);
+    border-left: 4px solid #0249aa;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    backdrop-filter: blur(5px);
+}
+
+.elektra-capacidades h4 {
+    color: #0249aa;
+    font-size: 18px;
+    margin-bottom: 12px;
+    font-weight: bold;
+}
+
+.capacidad-grupo {
+    margin-bottom: 15px;
+}
+
+.capacidad-grupo strong {
+    color: #d9534f;
+    font-size: 16px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.capacidad-grupo ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.capacidad-grupo li {
+    padding: 6px 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #333;
+}
+
+.elektra-cta {
+    background: linear-gradient(135deg, #0249aa, #35a9aa);
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    margin: 15px 0;
+    font-size: 16px;
+}
+
+.elektra-cta a {
+    color: #fff;
+    font-size: 20px;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 8px;
+    padding: 8px 15px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.elektra-cta a:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+.elektra-tip {
+    font-style: italic;
+    color: #666;
+    font-size: 14px;
+    text-align: center;
+    background: rgba(255, 235, 59, 0.2);
+    padding: 10px;
+    border-radius: 6px;
+    border-left: 3px solid #ffc107;
+}
+
+.elektra-tip strong {
+    color: #f57c00;
+}
+
 /* === Media Query para Móviles === */
 @media (max-width: 768px) {
     .noticia-urgente-container.active {
         right: 50%;
         transform: translate(50%, -50%);
         width: 95%;
+        max-height: 85vh;
+        padding: 20px;
     }
     
     .noticia-urgente-wrapper {
@@ -1500,7 +1591,7 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
     }
     
     .noticia-urgente-imagen {
-        width: 150px;
+        width: 120px;
         margin-bottom: 0;
     }
 
@@ -1509,8 +1600,39 @@ footer .contacto:last-child { /* Quitar margin-bottom del último elemento de co
     }
 
     .noticia-urgente-contenido p {
+        font-size: 14px;
+        text-align: left;
+    }
+
+    .elektra-capacidades {
+        padding: 12px;
+    }
+
+    .elektra-capacidades h4 {
+        font-size: 16px;
+    }
+
+    .capacidad-grupo strong {
         font-size: 15px;
-        text-align: center;
+    }
+
+    .capacidad-grupo li {
+        font-size: 14px;
+    }
+
+    .elektra-cta {
+        padding: 12px;
+        font-size: 15px;
+    }
+
+    .elektra-cta a {
+        font-size: 18px;
+        padding: 6px 12px;
+    }
+
+    .elektra-tip {
+        font-size: 13px;
+        padding: 8px;
     }
 
     .cerrar-noticia-urgente {
