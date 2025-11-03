@@ -247,7 +247,7 @@ function initSlider() {
         let activeNavLink = null; // Para guardar el enlace que debe estar activo
 
         // Determinar qué enlace secundario debe estar activo
-        if (slideIndex >= 1 && slideIndex <= 4 && slideIndex !== 2) { // Noticias (excluyendo slide-3 deshabilitado)
+        if (slideIndex >= 1 && slideIndex <= 4) { // Noticias
             activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '2');
         } else if (slideIndex === 5) { // Afiliación
             activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '6');
@@ -305,9 +305,8 @@ function initSlider() {
         if (!sliderDotsContainer) return;
         sliderDotsContainer.innerHTML = ''; // Limpiar dots previos
 
-        // Crear dots solo para los slides de noticias activos (índices 1, 3, 4)
-        // Se excluye índice 2 (slide-3) que está deshabilitado
-        const newsSlideIndices = [1, 3, 4];
+        // Crear dots solo para los slides de noticias (índices 1, 2, 3, 4)
+        const newsSlideIndices = [1, 2, 3, 4];
         newsSlideIndices.forEach((slideIndex) => {
              const dot = document.createElement('span');
              dot.classList.add('slider-dot');
@@ -333,9 +332,8 @@ function initSlider() {
                 console.log('dotIndex:', dotIndex, 'slideIndex:', slideIndex); // Verifica los índices
                 dot.classList.toggle('active', dotIndex === slideIndex);
             });
-            // Mostrar/ocultar contenedor basado en si estamos en sección noticias activas (1, 3, 4)
-            // Se excluye índice 2 (slide-3 deshabilitado)
-            sliderDotsContainer.style.display = ((slideIndex === 1 || slideIndex === 3 || slideIndex === 4)) ? 'flex' : 'none';
+            // Mostrar/ocultar contenedor basado en si estamos en sección noticias
+            sliderDotsContainer.style.display = (slideIndex >= 1 && slideIndex <= 4) ? 'flex' : 'none';
         }
 
         // Actualizar dots de Módulos
@@ -364,16 +362,11 @@ function initSlider() {
         stopAutoplay(); // Detener cualquier autoplay anterior
         autoplayInterval = setInterval(() => {
             let nextSlideIndex;
-            // Autoplay cicla solo por las noticias activas (índices 1, 3, 4)
-            // Se salta el índice 2 (slide-3 deshabilitado)
-            if (currentSlide === 1) {
-                nextSlideIndex = 3; // De slide-2 (índice 1) a slide-4 (índice 3)
-            } else if (currentSlide === 3) {
-                nextSlideIndex = 4; // De slide-4 (índice 3) a slide-5 (índice 4)
-            } else if (currentSlide === 4) {
-                nextSlideIndex = 1; // De slide-5 (índice 4) vuelve a slide-2 (índice 1)
-            } else {
-                nextSlideIndex = 1; // Si estamos fuera de las noticias, volver a la primera activa
+            // Autoplay cicla solo por las noticias (índices 1, 2, 3, 4)
+            if (currentSlide >= 1 && currentSlide <= 4) { // Si estamos en una noticia (excepto la última)
+                nextSlideIndex = currentSlide + 1;
+            } else { // Si estamos en la última noticia (4) o fuera de las noticias
+                nextSlideIndex = 1; // Volver a la primera noticia (índice 1)
             }
             updateSlide(nextSlideIndex);
         }, 20000); // Cambiar slide cada 20 segundos
