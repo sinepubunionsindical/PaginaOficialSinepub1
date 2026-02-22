@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function () { // INICIO DOMContent
         },
         tesorera: {
             nombre: "Leidy Cecilia Hernández Acevedo",
-            cargo: "Tesorera (E) - Secretaria de Humanización y DDHH",
+            cargo: "Tesorera",
             foto: "images/junta3.jpg",
             descripcion: `
                 <p>Mi experiencia y formación me han permitido aportar a la organización sindical una orientación centrada en el manejo adecuado de las relaciones dentro del grupo, con el fin de fomentar un ambiente colectivo incluyente, basado en el respeto y la sana convivencia.</p>
@@ -97,24 +97,24 @@ document.addEventListener('DOMContentLoaded', function () { // INICIO DOMContent
                 <p>Como Fiscal, mi misión es garantizar la transparencia, la legalidad y la justicia en todas las actividades que emprendemos, con el objetivo de fortalecer nuestra organización y consolidar la confianza de todos nuestros miembros. Mi compromiso es ser una garantía imparcial de los valores que nos unen, asegurando que cada paso que demos sea siempre en beneficio de tod@s l@s afiliad@s.</p>
             `
         },
-        "secretario-salud-ocupacional": {
-            nombre: "Luis Carlos Calderón",
-            cargo: "Secretario de Salud Ocupacional",
-            foto: "images/junta5.jpg",
-            descripcion: `
-                <p>Mi formación y experiencia en el área de salud ocupacional me permiten identificar riesgos potenciales, promover buenas prácticas y garantizar que los afiliados estén protegidos tanto física como mentalmente.</p>
-
-                <p>Como Secretario de Salud Ocupacional, estaré siempre dispuesto a escuchar sus preocupaciones, a trabajar de la mano con las autoridades competentes y a impulsar iniciativas que mejoren nuestra calidad de vida en el trabajo. La prevención y el cuidado son la clave para un entorno laboral sano, y juntos podemos seguir construyendo un futuro más seguro y saludable para todos.</p>
-            `
-        },
-        "secretaria-carrera-administrativa": {
+        "secretaria-salud-ocupacional": {
             nombre: "Martha Cecilia Solarte Caicedo",
-            cargo: "Secretaria de Carrera Administrativa",
+            cargo: "Secretaria de Salud Ocupacional",
             foto: "images/junta6.jpg",
             descripcion: `
-                <p>Velará por el cumplimiento de la carrera administrativa, promoviendo reuniones con la Comisión de Personal y supervisando la Evaluación del Desempeño Laboral.</p>
+                <p>Mi compromiso en el área de salud ocupacional es identificar riesgos potenciales, promover buenas prácticas y garantizar que los afiliados estén protegidos tanto física como mentalmente.</p>
 
-                <p>Realizará veeduría en el hospital y participará en comisiones para garantizar transparencia, equidad y eficiencia en la gestión del talento humano.</p>
+                <p>Como Secretaria de Salud Ocupacional, estaré siempre dispuesta a escuchar sus preocupaciones, a trabajar de la mano con las autoridades competentes y a impulsar iniciativas que mejoren nuestra calidad de vida en el trabajo. La prevención y el cuidado son la clave para un entorno laboral sano, y juntos podemos seguir construyendo un futuro más seguro y saludable para todos.</p>
+            `
+        },
+        "secretaria-educacion": {
+            nombre: "Luis Carlos Calderón",
+            cargo: "Secretaria de Educación",
+            foto: "images/junta5.jpg",
+            descripcion: `
+                <p>Desde la Secretaría de Educación, mi enfoque es promover la formación continua y el fortalecimiento de las capacidades técnicas y profesionales de todos nuestros afiliados.</p>
+
+                <p>Creemos que la educación es la herramienta más poderosa para la defensa de nuestros derechos y el crecimiento de nuestra organización. Trabajaremos incansablemente para gestionar convenios académicos, capacitaciones y espacios de aprendizaje que beneficien a toda la comunidad de SINEPUB HUV.</p>
             `
         },
         "secretaria-reclamos": {

@@ -14,12 +14,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 e.preventDefault(); // Prevenir navegación inmediata
                 document.body.classList.remove('fade-in');
                 document.body.classList.add('fade-out');
-                
+
                 // Usamos 'transitionend' para asegurarnos de que la transición haya terminado antes de navegar
                 document.body.addEventListener('transitionend', function onTransitionEnd() {
                     // Eliminar el listener para evitar múltiples invocaciones
                     document.body.removeEventListener('transitionend', onTransitionEnd);
-                    
+
                     // Ahora podemos hacer la navegación después de que termine la transición
                     setTimeout(() => {
                         window.location.href = href;
@@ -81,7 +81,7 @@ function initSlider() {
                     // Esperar que termine la transición de opacidad antes de ocultar
                     setTimeout(() => {
                         if (!isHovering) { // Doble chequeo por si el usuario volvió a entrar rápido
-                           dropdownColaboradores.style.display = "none";
+                            dropdownColaboradores.style.display = "none";
                         }
                     }, 300); // Ajusta este tiempo a la duración de tu transición de opacidad CSS
                 }
@@ -123,7 +123,7 @@ function initSlider() {
         moduleDotsContainer.innerHTML = ''; // Limpiar dots previos
 
         // Seleccionar slides de módulos DENTRO de esta función o pasar 'slides' como argumento
-        const moduleSlides = Array.from(slides).filter(slide => slide.id.startsWith('slide-7') || slide.id.startsWith('slide-8'));
+        const moduleSlides = Array.from(slides).filter(slide => slide.id.startsWith('slide-8') || slide.id.startsWith('slide-9'));
 
         moduleSlides.forEach((slide, index) => {
             const dot = document.createElement('span');
@@ -133,7 +133,7 @@ function initSlider() {
             dot.dataset.slideIndex = originalSlideIndex; // Usar índice base 0
 
             if (index === 0) {
-               // No activar por defecto aquí, se maneja en updateSlide/updateDots
+                // No activar por defecto aquí, se maneja en updateSlide/updateDots
             }
 
             dot.addEventListener('click', function () {
@@ -152,7 +152,7 @@ function initSlider() {
         if (!eventosDotsContainer) return;
         eventosDotsContainer.innerHTML = ''; // Limpiar previos
 
-        const eventosSlideIndices = [8, 9, 10, 11, 12]; // Recuerda: base 0 (slide-9 = índice 8)
+        const eventosSlideIndices = [9, 10, 11, 12, 13, 14, 15]; // Recuerda: base 0 (slide-10 = índice 9)
         eventosSlideIndices.forEach((slideIndex) => {
             const dot = document.createElement('span');
             dot.classList.add('slider-dot');
@@ -198,7 +198,7 @@ function initSlider() {
 
         // Prioridad 2: #afiliacion o #slide-6
         if (!target && window.location.hash) {
-            const hash = window.location.hash.replace('#','').toLowerCase();
+            const hash = window.location.hash.replace('#', '').toLowerCase();
             if (hash === 'afiliacion') target = '6';
             else if (/^slide-(\d+)$/.test(hash)) target = hash.split('-')[1];
         }
@@ -228,8 +228,8 @@ function initSlider() {
         slides.forEach((slide, index) => {
             const isActive = index === slideIndex;
             slide.classList.toggle('active', isActive);
-        
-             // 🔥 Si es el slide 1 (inicio) y está activo, dale flujo normal
+
+            // 🔥 Si es el slide 1 (inicio) y está activo, dale flujo normal
             if (isActive && slide.id === "slide-1") {
                 slide.style.position = 'relative';
                 slider.classList.add('modo-scroll');
@@ -247,14 +247,14 @@ function initSlider() {
         let activeNavLink = null; // Para guardar el enlace que debe estar activo
 
         // Determinar qué enlace secundario debe estar activo
-        if (slideIndex >= 1 && slideIndex <= 4 && slideIndex !== 2) { // Noticias (excluyendo slide-3 deshabilitado)
+        if (slideIndex >= 1 && slideIndex <= 5 && slideIndex !== 3) { // Noticias (excluyendo slide-4 deshabilitado)
             activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '2');
-        } else if (slideIndex === 5) { // Afiliación
-            activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '6');
-        } else if (slideIndex === 6 || slideIndex === 7) { // Módulos
+        } else if (slideIndex === 6) { // Afiliación
             activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '7');
-        } else if (slideIndex >= 8 && slideIndex <= 12) { // Eventos
-            activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '9');
+        } else if (slideIndex === 7 || slideIndex === 8) { // Módulos
+            activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '8');
+        } else if (slideIndex >= 9 && slideIndex <= 15) { // Eventos
+            activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '10');
         } else { // Inicio u otro
             activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '1');
         }
@@ -275,7 +275,7 @@ function initSlider() {
             if (mobileDropdown) {
                 // Desactivar todos los links del dropdown móvil primero
                 mobileDropdown.querySelectorAll('a').forEach(a => a.classList.remove('active-mobile'));
-                
+
                 // Encontrar y activar el link correspondiente en el dropdown móvil
                 // Usamos activeNavLink.dataset.slide que ya sabemos que existe
                 const correspondingMobileLink = mobileDropdown.querySelector(`a[data-slide-target="${activeNavLink.dataset.slide}"]`);
@@ -305,23 +305,23 @@ function initSlider() {
         if (!sliderDotsContainer) return;
         sliderDotsContainer.innerHTML = ''; // Limpiar dots previos
 
-        // Crear dots solo para los slides de noticias activos (índices 1, 3, 4)
-        // Se excluye índice 2 (slide-3) que está deshabilitado
-        const newsSlideIndices = [1, 3, 4];
+        // Crear dots solo para los slides de noticias activos (índices 1, 2, 4, 5)
+        // Se excluye índice 3 (slide-4) que está deshabilitado
+        const newsSlideIndices = [1, 2, 4, 5];
         newsSlideIndices.forEach((slideIndex) => {
-             const dot = document.createElement('span');
-             dot.classList.add('slider-dot');
-             dot.dataset.slideIndex = slideIndex; // Índice base 0
-             // La activación se maneja en updateDots
-             dot.addEventListener('click', (event) => {
-                 const slideIndexToGo = parseInt(event.target.dataset.slideIndex);
-                 updateSlide(slideIndexToGo);
-                 stopAutoplay();
-                 resetInactivityTimer();
-             });
-             sliderDotsContainer.appendChild(dot);
+            const dot = document.createElement('span');
+            dot.classList.add('slider-dot');
+            dot.dataset.slideIndex = slideIndex; // Índice base 0
+            // La activación se maneja en updateDots
+            dot.addEventListener('click', (event) => {
+                const slideIndexToGo = parseInt(event.target.dataset.slideIndex);
+                updateSlide(slideIndexToGo);
+                stopAutoplay();
+                resetInactivityTimer();
+            });
+            sliderDotsContainer.appendChild(dot);
         });
-         sliderDotsContainer.style.display = 'none'; // Ocultar inicialmente
+        sliderDotsContainer.style.display = 'none'; // Ocultar inicialmente
     }
 
     function updateDots(slideIndex) {
@@ -333,20 +333,20 @@ function initSlider() {
                 console.log('dotIndex:', dotIndex, 'slideIndex:', slideIndex); // Verifica los índices
                 dot.classList.toggle('active', dotIndex === slideIndex);
             });
-            // Mostrar/ocultar contenedor basado en si estamos en sección noticias activas (1, 3, 4)
-            // Se excluye índice 2 (slide-3 deshabilitado)
-            sliderDotsContainer.style.display = ((slideIndex === 1 || slideIndex === 3 || slideIndex === 4)) ? 'flex' : 'none';
+            // Mostrar/ocultar contenedor basado en si estamos en sección noticias activas (1, 2, 4, 5)
+            // Se excluye índice 3 (slide-4 deshabilitado)
+            sliderDotsContainer.style.display = ((slideIndex === 1 || slideIndex === 2 || slideIndex === 4 || slideIndex === 5)) ? 'flex' : 'none';
         }
 
         // Actualizar dots de Módulos
         if (moduleDotsContainer) {
             const moduleDots = moduleDotsContainer.querySelectorAll('.slider-dot');
             moduleDots.forEach(dot => {
-                 const dotIndex = parseInt(dot.dataset.slideIndex);
-                 dot.classList.toggle('active', dotIndex === slideIndex);
+                const dotIndex = parseInt(dot.dataset.slideIndex);
+                dot.classList.toggle('active', dotIndex === slideIndex);
             });
-             // Mostrar/ocultar contenedor basado en si estamos en sección módulos
-            moduleDotsContainer.style.display = (slideIndex === 6 || slideIndex === 7) ? 'flex' : 'none';
+            // Mostrar/ocultar contenedor basado en si estamos en sección módulos
+            moduleDotsContainer.style.display = (slideIndex === 7 || slideIndex === 8) ? 'flex' : 'none';
         }
 
         // Actualizar dots de Eventos
@@ -356,7 +356,7 @@ function initSlider() {
                 const dotIndex = parseInt(dot.dataset.slideIndex);
                 dot.classList.toggle('active', dotIndex === slideIndex);
             });
-            eventosDotsContainer.style.display = (slideIndex >= 8 && slideIndex <= 12) ? 'flex' : 'none';
+            eventosDotsContainer.style.display = (slideIndex >= 9 && slideIndex <= 15) ? 'flex' : 'none';
         }
     }
 
@@ -364,14 +364,16 @@ function initSlider() {
         stopAutoplay(); // Detener cualquier autoplay anterior
         autoplayInterval = setInterval(() => {
             let nextSlideIndex;
-            // Autoplay cicla solo por las noticias activas (índices 1, 3, 4)
-            // Se salta el índice 2 (slide-3 deshabilitado)
+            // Autoplay cicla solo por las noticias activas (índices 1, 2, 4, 5)
+            // Se salta el índice 3 (slide-4 deshabilitado)
             if (currentSlide === 1) {
-                nextSlideIndex = 3; // De slide-2 (índice 1) a slide-4 (índice 3)
-            } else if (currentSlide === 3) {
-                nextSlideIndex = 4; // De slide-4 (índice 3) a slide-5 (índice 4)
+                nextSlideIndex = 2; // De slide-2 a slide-3
+            } else if (currentSlide === 2) {
+                nextSlideIndex = 4; // De slide-3 a slide-5 (salta el 3/slide-4)
             } else if (currentSlide === 4) {
-                nextSlideIndex = 1; // De slide-5 (índice 4) vuelve a slide-2 (índice 1)
+                nextSlideIndex = 5; // De slide-5 a slide-6
+            } else if (currentSlide === 5) {
+                nextSlideIndex = 1; // De slide-6 vuelve a slide-2
             } else {
                 nextSlideIndex = 1; // Si estamos fuera de las noticias, volver a la primera activa
             }
@@ -410,12 +412,12 @@ function initSlider() {
             event.preventDefault();
             // Asegúrate que el atributo data-slide existe y es un número
             if (link.dataset.slide) {
-                 const slideIndexToGo = parseInt(link.dataset.slide) - 1; // Convertir a base 0
-                 if (!isNaN(slideIndexToGo)) {
-                     updateSlide(slideIndexToGo);
-                     stopAutoplay();
-                     resetInactivityTimer();
-                 }
+                const slideIndexToGo = parseInt(link.dataset.slide) - 1; // Convertir a base 0
+                if (!isNaN(slideIndexToGo)) {
+                    updateSlide(slideIndexToGo);
+                    stopAutoplay();
+                    resetInactivityTimer();
+                }
             }
         });
     });
@@ -434,6 +436,82 @@ function initSlider() {
     startAutoplay();        // Iniciar autoplay (ciclará noticias)
     openSlideFromUrl();     // si la URL trae ?slide=6 o #afiliacion / #slide-6, ir allí
     resetInactivityTimer(); // Iniciar el contador de inactividad
+    initPremiumLightbox();  // Lógica de vista previa premium
+
+    function initPremiumLightbox() {
+        const lightbox = document.getElementById('premium-lightbox');
+        const content = lightbox.querySelector('.lightbox-content');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+        const prevBtn = lightbox.querySelector('.prev-btn');
+        const nextBtn = lightbox.querySelector('.next-btn');
+        const mediaItems = document.querySelectorAll('.media-item');
+
+        let currentIndex = -1;
+        let currentGalleryItems = [];
+
+        mediaItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // Encontrar todos los items de la misma galería (mismo slide)
+                const parentSlide = item.closest('.slide');
+                currentGalleryItems = Array.from(parentSlide.querySelectorAll('.media-item'));
+                currentIndex = currentGalleryItems.indexOf(item);
+
+                openLightbox(item);
+            });
+        });
+
+        function openLightbox(item) {
+            const type = item.dataset.type;
+            const src = type === 'img' ? item.querySelector('img').src : item.querySelector('video').src;
+
+            content.innerHTML = '';
+            if (type === 'img') {
+                const img = document.createElement('img');
+                img.src = src;
+                content.appendChild(img);
+            } else {
+                const video = document.createElement('video');
+                video.src = src;
+                video.controls = true;
+                video.autoplay = true;
+                content.appendChild(video);
+            }
+
+            lightbox.classList.add('active');
+            stopAutoplay(); // Detener el slider mientras se ve la galería
+        }
+
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            content.innerHTML = ''; // Limpiar para detener videos
+            resetInactivityTimer();
+        }
+
+        closeBtn.addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) closeLightbox();
+        });
+
+        prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentIndex = (currentIndex - 1 + currentGalleryItems.length) % currentGalleryItems.length;
+            openLightbox(currentGalleryItems[currentIndex]);
+        });
+
+        nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentIndex = (currentIndex + 1) % currentGalleryItems.length;
+            openLightbox(currentGalleryItems[currentIndex]);
+        });
+
+        // Soporte para teclado
+        document.addEventListener('keydown', (e) => {
+            if (!lightbox.classList.contains('active')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') prevBtn.click();
+            if (e.key === 'ArrowRight') nextBtn.click();
+        });
+    }
 
 } // <-- CIERRE CORRECTO DE LA FUNCIÓN initSlider
 
@@ -441,7 +519,7 @@ window.addEventListener('hashchange', () => {
     // Re-ejecuta la apertura por hash cuando cambie #afiliacion o #slide-6
     if (typeof initSlider === 'function') {
         // Si quieres que funcione sin recargar, encuentra y “simula” un click
-        const hash = window.location.hash.replace('#','').toLowerCase();
+        const hash = window.location.hash.replace('#', '').toLowerCase();
         if (hash === 'afiliacion') {
             const link = document.querySelector(`.slider-nav a[data-slide="6"]`);
             if (link) link.click();
