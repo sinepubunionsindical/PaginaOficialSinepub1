@@ -222,20 +222,21 @@ nav a {
   /* ¡Mismo tamaño que los títulos del header!  */
 }
 
+/* Link hover simple */
+.below-header-nav nav ul li a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+}
+
 /* Estilo para el link de navegación secundario activo */
 .below-header-nav nav ul li a.active {
-  background-color: #35a9aa;
-  /* Un azul un poco más oscuro para "activo" */
+  background-color: #35a9aa !important;
+  color: #ffffff !important;
   font-weight: bold;
-  /* Negrita */
-  padding-top: 14.4px;
-  /* Padding vertical para abarcar la franja azul */
-  padding-bottom: 16px;
-  /* Padding vertical para abarcar la franja azul */
-  padding-left: 15px;
-  /* Padding horizontal para extender a los lados */
-  padding-right: 15px;
-  /* Padding horizontal para extender a los lados */
+  padding: 14.4px 15px 16px 15px;
+  box-shadow: inset 0 -4px 0 #0249aa;
+  transition: all 0.3s ease;
+  border-radius: 5px;
 }
 
 /* Contenido principal mejorado */
@@ -958,27 +959,55 @@ footer .contacto:last-child {
   width: 12px;
   height: 12px;
   background-color: transparent;
-  /* Fondo transparente por defecto */
   border-radius: 50%;
   cursor: pointer;
   opacity: 0.8;
-  transition: opacity 0.3s ease;
-  border: 2px solid black;
-  /* ¡Añadimos un borde negro! */
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 2px solid #000;
+  position: relative;
 }
 
-.slider-dots .slider-dot:hover,
-.slider-dots .slider-dot.active {
+/* Estado: Activo (Persistente) */
+.slider-dot.active,
+.slider-dot[data-active="true"] {
+  width: 16px !important;
+  height: 16px !important;
+  background-color: #0249aa !important;
+  background: #0249aa !important;
+  border-color: #35a9aa !important;
+  transform: scale(1.4) !important;
+  box-shadow: 0 0 15px rgba(2, 73, 170, 0.8) !important;
+  opacity: 1 !important;
+  z-index: 10;
+}
+
+/* Tooltip Premium - Posicionado DEBAJO del punto pero ENCIMA de la línea de la galería */
+.slider-dot::after {
+  content: attr(title);
+  position: absolute;
+  top: 15px; /* Ajustado para que quede entre el punto y la línea */
+  left: 50%;
+  transform: translateX(-50%) translateY(-5px);
+  background: rgba(2, 73, 170, 0.98);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: bold;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  pointer-events: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  z-index: 100000;
+}
+
+.slider-dot:hover::after {
   opacity: 1;
-  /* Opacidad completa al hacer hover o cuando está activo */
-  background-color: #35a9aa;
-  /* Fondo blanco al hacer hover o activo */
-}
-
-.slider-dots .slider-dot.active {
-  width: 16px;
-  /* Dot activo un poco más grande */
-  height: 16px;
+  visibility: visible;
+  transform: translateX(-50%) translateY(5px);
 }
 
 /* Sección Slider de Fundadores */
@@ -1177,16 +1206,14 @@ footer .contacto:last-child {
   border-radius: 50%;
   background-color: gray;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
   border: 2px solid black;
-  /* ¡Añadimos un borde negro! */
+  position: relative;
 }
 
-.modulos-nav .slider-dot.active {
-  background-color: blue;
-  width: 16px;
-  /* Dot activo un poco más grande */
-  height: 16px;
+.modulos-nav .slider-dot:hover {
+  background-color: rgba(53, 169, 170, 0.4);
+  transform: scale(1.2);
 }
 
 .pdf-viewer-container {

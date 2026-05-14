@@ -118,55 +118,46 @@ function initSlider() {
 
     // --- Definiciones de Funciones Auxiliares (dentro de initSlider para acceso a variables) ---
 
-    function createModuleDots() {
-        if (!moduleDotsContainer) return;
-        moduleDotsContainer.innerHTML = ''; // Limpiar dots previos
+    function generateDotsForCategory(container, slideClass) {
+        if (!container) return;
+        container.innerHTML = '';
+        const targetSlides = Array.from(slides).filter(slide => slide.classList.contains(slideClass));
 
-        // Seleccionar slides de módulos DENTRO de esta función o pasar 'slides' como argumento
-        const moduleSlides = Array.from(slides).filter(slide => slide.id.startsWith('slide-8') || slide.id.startsWith('slide-9'));
-
-        moduleSlides.forEach((slide, index) => {
+        targetSlides.forEach((slide) => {
             const dot = document.createElement('span');
             dot.classList.add('slider-dot');
-            // El índice original del slide dentro de la colección 'slides'
-            const originalSlideIndex = Array.from(slides).indexOf(slide);
-            dot.dataset.slideIndex = originalSlideIndex; // Usar índice base 0
-
-            if (index === 0) {
-                // No activar por defecto aquí, se maneja en updateSlide/updateDots
+            const originalIndex = Array.from(slides).indexOf(slide);
+            // Buscar un título descriptivo prioritario (H2 o H3 en texto-banner)
+            let slideTitle = slide.querySelector('.texto-banner h2, .texto-banner h3, h2, h3')?.textContent?.trim();
+            
+            // Si no hay título o es genérico, buscar h4 o el primer párrafo
+            if (!slideTitle || /fotos|videos|media/i.test(slideTitle)) {
+                const altTitle = slide.querySelector('h4, .texto-banner p')?.textContent?.trim();
+                if (altTitle && !/fotos|videos|media/i.test(altTitle)) {
+                    slideTitle = altTitle.split('.')[0]; // Tomar solo la primera frase si es un párrafo
+                }
             }
+            
+            dot.title = slideTitle || `Slide ${originalIndex + 1}`;
+            dot.dataset.slideIndex = originalIndex; // ¡CRÍTICO: Restaurar el índice para la activación!
+            dot.dataset.slideTitle = dot.title; 
 
-            dot.addEventListener('click', function () {
-                const slideIndexToGo = parseInt(this.dataset.slideIndex);
-                updateSlide(slideIndexToGo); // El índice ya es base 0
+            dot.addEventListener('click', () => {
+                updateSlide(originalIndex);
                 stopAutoplay();
                 resetInactivityTimer();
-                // La activación del dot se maneja en updateSlide/updateDots
             });
-
-            moduleDotsContainer.appendChild(dot);
+            container.appendChild(dot);
         });
-        moduleDotsContainer.style.display = 'none'; // Ocultar inicialmente
+        container.style.display = 'none';
     }
+
+    function createModuleDots() {
+        generateDotsForCategory(moduleDotsContainer, 'slide-modulo');
+    }
+
     function createEventosDots() {
-        if (!eventosDotsContainer) return;
-        eventosDotsContainer.innerHTML = ''; // Limpiar previos
-
-        const eventosSlideIndices = [9, 10, 11, 12, 13, 14, 15, 16]; // Recuerda: base 0 (slide-10 = índice 9)
-        eventosSlideIndices.forEach((slideIndex) => {
-            const dot = document.createElement('span');
-            dot.classList.add('slider-dot');
-            dot.dataset.slideIndex = slideIndex;
-            dot.addEventListener('click', (event) => {
-                const slideIndexToGo = parseInt(event.target.dataset.slideIndex);
-                updateSlide(slideIndexToGo);
-                stopAutoplay();
-                resetInactivityTimer();
-            });
-            eventosDotsContainer.appendChild(dot);
-        });
-
-        eventosDotsContainer.style.display = 'none'; // Ocultar inicialmente
+        generateDotsForCategory(eventosDotsContainer, 'slide-evento');
     }
 
     function setupModuleNavigation() {
@@ -247,15 +238,22 @@ function initSlider() {
         let activeNavLink = null; // Para guardar el enlace que debe estar activo
 
         // Determinar qué enlace secundario debe estar activo
-        if (slideIndex >= 1 && slideIndex <= 5 && slideIndex !== 3) { // Noticias (excluyendo slide-4 deshabilitado)
+        const activeSlide = slides[slideIndex];
+        
+        if (activeSlide.classList.contains('slide-noticia')) {
             activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '2');
-        } else if (slideIndex === 6) { // Afiliación
+        } else if (activeSlide.classList.contains('slide-afiliacion')) {
             activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '7');
-        } else if (slideIndex === 7 || slideIndex === 8) { // Módulos
+        } else if (activeSlide.classList.contains('slide-modulo')) {
             activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '8');
-        } else if (slideIndex >= 9 && slideIndex <= 16) { // Eventos
+        } else if (activeSlide.classList.contains('slide-evento')) {
             activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '10');
-        } else { // Inicio u otro
+        } else {
+            activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '1');
+        }
+
+        // Si no se encuentra por clase, fallback al primer link (Inicio)
+        if (!activeNavLink) {
             activeNavLink = Array.from(navLinks).find(link => link.dataset.slide === '1');
         }
 
@@ -302,83 +300,62 @@ function initSlider() {
     } // Fin de la función updateSlide modificada
 
     function createNavigationDots() {
-        if (!sliderDotsContainer) return;
-        sliderDotsContainer.innerHTML = ''; // Limpiar dots previos
-
-        // Crear dots solo para los slides de noticias activos (índices 1, 2, 4, 5)
-        // Se excluye índice 3 (slide-4) que está deshabilitado
-        const newsSlideIndices = [1, 2, 4, 5];
-        newsSlideIndices.forEach((slideIndex) => {
-            const dot = document.createElement('span');
-            dot.classList.add('slider-dot');
-            dot.dataset.slideIndex = slideIndex; // Índice base 0
-            // La activación se maneja en updateDots
-            dot.addEventListener('click', (event) => {
-                const slideIndexToGo = parseInt(event.target.dataset.slideIndex);
-                updateSlide(slideIndexToGo);
-                stopAutoplay();
-                resetInactivityTimer();
-            });
-            sliderDotsContainer.appendChild(dot);
-        });
-        sliderDotsContainer.style.display = 'none'; // Ocultar inicialmente
+        generateDotsForCategory(sliderDotsContainer, 'slide-noticia');
     }
 
     function updateDots(slideIndex) {
-        // Actualizar dots de Noticias
-        if (sliderDotsContainer) {
-            const newsDots = sliderDotsContainer.querySelectorAll('.slider-dot');
-            newsDots.forEach(dot => {
-                const dotIndex = parseInt(dot.dataset.slideIndex);
-                console.log('dotIndex:', dotIndex, 'slideIndex:', slideIndex); // Verifica los índices
-                dot.classList.toggle('active', dotIndex === slideIndex);
-            });
-            // Mostrar/ocultar contenedor basado en si estamos en sección noticias activas (1, 2, 4, 5)
-            // Se excluye índice 3 (slide-4 deshabilitado)
-            sliderDotsContainer.style.display = ((slideIndex === 1 || slideIndex === 2 || slideIndex === 4 || slideIndex === 5)) ? 'flex' : 'none';
-        }
+        const activeSlide = slides[slideIndex];
 
-        // Actualizar dots de Módulos
-        if (moduleDotsContainer) {
-            const moduleDots = moduleDotsContainer.querySelectorAll('.slider-dot');
-            moduleDots.forEach(dot => {
+        const updateContainer = (container, slideClass) => {
+            if (!container) return;
+            const dots = container.querySelectorAll('.slider-dot');
+            
+            dots.forEach(dot => {
                 const dotIndex = parseInt(dot.dataset.slideIndex);
-                dot.classList.toggle('active', dotIndex === slideIndex);
+                // Comparación robusta
+                if (dotIndex === slideIndex) {
+                    dot.classList.add('active');
+                    dot.setAttribute('data-active', 'true');
+                } else {
+                    dot.classList.remove('active');
+                    dot.removeAttribute('data-active');
+                }
             });
-            // Mostrar/ocultar contenedor basado en si estamos en sección módulos
-            moduleDotsContainer.style.display = (slideIndex === 7 || slideIndex === 8) ? 'flex' : 'none';
-        }
+            
+            // Mostrar el contenedor si el slide actual pertenece a esta categoría
+            const isMatch = activeSlide.classList.contains(slideClass);
+            container.style.display = isMatch ? 'flex' : 'none';
+        };
 
-        // Actualizar dots de Eventos
-        if (eventosDotsContainer) {
-            const eventosDots = eventosDotsContainer.querySelectorAll('.slider-dot');
-            eventosDots.forEach(dot => {
-                const dotIndex = parseInt(dot.dataset.slideIndex);
-                dot.classList.toggle('active', dotIndex === slideIndex);
-            });
-            eventosDotsContainer.style.display = (slideIndex >= 9 && slideIndex <= 16) ? 'flex' : 'none';
-        }
+        updateContainer(sliderDotsContainer, 'slide-noticia');
+        updateContainer(moduleDotsContainer, 'slide-modulo');
+        updateContainer(eventosDotsContainer, 'slide-evento');
     }
 
     function startAutoplay() {
-        stopAutoplay(); // Detener cualquier autoplay anterior
+        stopAutoplay();
         autoplayInterval = setInterval(() => {
-            let nextSlideIndex;
-            // Autoplay cicla solo por las noticias activas (índices 1, 2, 4, 5)
-            // Se salta el índice 3 (slide-4 deshabilitado)
-            if (currentSlide === 1) {
-                nextSlideIndex = 2; // De slide-2 a slide-3
-            } else if (currentSlide === 2) {
-                nextSlideIndex = 4; // De slide-3 a slide-5 (salta el 3/slide-4)
-            } else if (currentSlide === 4) {
-                nextSlideIndex = 5; // De slide-5 a slide-6
-            } else if (currentSlide === 5) {
-                nextSlideIndex = 1; // De slide-6 vuelve a slide-2
+            // Filtrar solo noticias que no estén ocultas explícitamente
+            const newsSlides = Array.from(slides).filter(s => s.classList.contains('slide-noticia') && 
+                window.getComputedStyle(s).display !== 'none');
+            
+            if (newsSlides.length === 0) return;
+
+            const currentActiveSlide = slides[currentSlide];
+            const currentIndexInNews = newsSlides.indexOf(currentActiveSlide);
+
+            let nextSlide;
+            if (currentIndexInNews === -1 || currentIndexInNews === newsSlides.length - 1) {
+                nextSlide = newsSlides[0];
             } else {
-                nextSlideIndex = 1; // Si estamos fuera de las noticias, volver a la primera activa
+                nextSlide = newsSlides[currentIndexInNews + 1];
             }
-            updateSlide(nextSlideIndex);
-        }, 20000); // Cambiar slide cada 20 segundos
+
+            if (nextSlide) {
+                const nextIndex = Array.from(slides).indexOf(nextSlide);
+                updateSlide(nextIndex);
+            }
+        }, 20000);
     }
 
     function stopAutoplay() {
